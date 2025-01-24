@@ -21,7 +21,7 @@ import plugins.fmp.multiSPOTS96.dlg.spotsMeasures._DlgSpotMeasure_;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
 public class MultiSPOTS96 extends PluginActionable {
-	public IcyFrame mainFrame = new IcyFrame("multiSPOTS96 Jan 25, 2025", true, true, true, true);
+	public IcyFrame mainFrame = new IcyFrame("multiSPOTS96 Jan 24, 2025", true, true, true, true);
 	public JComboBoxExperiment expListCombo = new JComboBoxExperiment();
 
 	public _DlgBrowse_ dlgBrowse = new _DlgBrowse_();
@@ -29,8 +29,6 @@ public class MultiSPOTS96 extends PluginActionable {
 	public _DlgSpots_ dlgSpots = new _DlgSpots_();
 	public _DlgKymos_ dlgKymos = new _DlgKymos_();
 	public _DlgSpotMeasure_ dlgMeasure = new _DlgSpotMeasure_();
-	// public _DlgCages_ dlgCages = new _DlgCages_(); //TODO _CAGES
-	// TODO _CAGES public _DlgDetectFlies_ dlgDetectFlies = new _DlgDetectFlies_();
 	public _DlgExcel_ dlgExcel = new _DlgExcel_();
 
 	public JTabbedPane tabsPane = new JTabbedPane();
@@ -46,8 +44,6 @@ public class MultiSPOTS96 extends PluginActionable {
 		dlgSpots.init(mainPanel, "Spots", this);
 		dlgKymos.init(mainPanel, "Kymographs", this);
 		dlgMeasure.init(mainPanel, "Measure spots", this);
-		// dlgCages.init(mainPanel, "Cages", this); //TODO _CAGES
-		// TODO _CAGES dlgDetectFlies.init(mainPanel, "Detect flies", this);
 		dlgExcel.init(mainPanel, "Export", this);
 
 		mainFrame.setLayout(new BorderLayout());
