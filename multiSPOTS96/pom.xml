@@ -17,8 +17,8 @@
     
     <packaging>jar</packaging>
 
-    <name>MultiSPOTS</name>
-    <description>This plugin allows measuring how much flies eat from dry  drops of sugar mixed with a blue dye.</description>
+    <name>MultiSPOTS96</name>
+    <description>This plugin allows measuring how much flies eat from dry  drops of sugar mixed with a blue dye. This program is tuned to analyze data collected from a 96 wells multiplate?</description>
     <url></url>
     <inceptionYear>2024</inceptionYear>
 
