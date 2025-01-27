@@ -18,9 +18,9 @@
     <packaging>jar</packaging>
 
     <name>MultiSPOTS96</name>
-    <description>This plugin allows measuring how much flies eat from dry  drops of sugar mixed with a blue dye. This program is tuned to analyze data collected from a 96 wells multiplate?</description>
+    <description>This plugin allows measuring how much flies eat from dry  drops of sugar mixed with a blue dye. This version is tuned to analyze data collected from flies in an adaptor to a 96-wells microplate.</description>
     <url></url>
-    <inceptionYear>2024</inceptionYear>
+    <inceptionYear>2025</inceptionYear>
 
     <organization>
         <name>IDEEV UMR EGCE (CNRS-IRD-Paris-Saclay)</name>
