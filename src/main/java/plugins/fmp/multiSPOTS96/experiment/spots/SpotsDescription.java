@@ -178,7 +178,7 @@ public class SpotsDescription {
 
 	public String csvExportSectionHeader(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		sbf.append("#" + csvSep + "DESCRIPTION" + csvSep + "multiSPOTS data\n");
+		sbf.append("#" + csvSep + "DESCRIPTION" + csvSep + "multiSPOTS96 data\n");
 		List<String> row2 = Arrays.asList(ID_DESCGROUPING, ID_DESCVOLUMEUL, ID_DESCNPIXELS, ID_STIMR, ID_CONCR,
 				ID_STIML, ID_CONCL, ID_BOXID, ID_EXPT, ID_COMMENT1, ID_COMMENT2, ID_STRAIN, ID_SEX, ID_COND1, ID_COND2);
 		sbf.append(String.join(csvSep, row2));

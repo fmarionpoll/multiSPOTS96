@@ -223,8 +223,10 @@ public class CreateCages extends JPanel {
 		try {
 			n_columns = (int) nCagesPerPlateAlongXJSpinner.getValue();
 			n_rows = (int) nCagesPerPlateAlongYJSpinner.getValue();
-//			width_cage = (int) width_cageTextField.getValue();
+			width_cage = (int) width_cageTextField.getValue();
 			width_interval = (int) width_intervalTextField.getValue();
+			height_cage = (int) height_cageTextField.getValue();
+			height_interval = (int) height_intervalTextField.getValue();
 		} catch (Exception e) {
 			new AnnounceFrame("Can't interpret one of the ROI parameters value");
 		}
@@ -233,17 +235,14 @@ public class CreateCages extends JPanel {
 		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq), false);
 		exp.cagesArray.cagesList.clear();
 		exp.cagesArray = new CagesArray();
-		createCagesArray(exp, polygon2D, n_columns, n_rows,
-				// width_cage,
-				width_interval);
+		createCagesArray(exp, polygon2D, n_columns, n_rows, width_cage, width_interval, height_cage, height_interval);
 	}
 
 	private void createCagesArray(Experiment exp, Polygon2D roiPolygonMin, int ncolumns, int nrows,
-			// int width_cage,
-			int width_interval) {
+			 int width_cage, int width_interval, int height_cage, int height_interval) {
 		// generate cage frames
 		String cageRoot = "cage";
-		Polygon2D roiPolygon = PolygonUtilities.inflate(roiPolygonMin, ncolumns, nrows, width_cage, width_interval);
+		Polygon2D roiPolygon = PolygonUtilities.inflate2(roiPolygonMin, ncolumns, width_cage, width_interval, nrows, height_cage, height_interval);
 		int index = 0;
 
 		double deltax_top = (roiPolygon.xpoints[3] - roiPolygon.xpoints[0]) / ncolumns;

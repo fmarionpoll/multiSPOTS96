@@ -76,6 +76,33 @@ public class PolygonUtilities {
 		Polygon2D result = new Polygon2D(xpoints, ypoints, npoints);
 		return result;
 	}
+	
+	public static Polygon2D inflate2(Polygon2D roiPolygon, int ncolumns, int width_cage, int width_interval, int nrows, int height_cage, int height_interval) {
+		double width_x_current = ncolumns * (width_cage + 2 * width_interval) - 2 * width_interval;
+		double deltax_top = (roiPolygon.xpoints[3] - roiPolygon.xpoints[0]) * width_interval / width_x_current;
+		double deltax_bottom = (roiPolygon.xpoints[2] - roiPolygon.xpoints[1]) * width_interval / width_x_current;
+
+		double width_y_current = nrows * (height_cage + 2 * height_interval) - 2 * height_interval;
+		double deltay_left = (roiPolygon.ypoints[1] - roiPolygon.ypoints[0]) * height_interval / width_y_current;
+		double deltay_right = (roiPolygon.ypoints[2] - roiPolygon.ypoints[3]) * height_interval / width_y_current;
+
+		double[] xpoints = new double[4];
+		double[] ypoints = new double[4];
+		int npoints = 4;
+
+		xpoints[0] = roiPolygon.xpoints[0] - deltax_top;
+		xpoints[1] = roiPolygon.xpoints[1] - deltax_bottom;
+		xpoints[3] = roiPolygon.xpoints[3] + deltax_top;
+		xpoints[2] = roiPolygon.xpoints[2] + deltax_bottom;
+
+		ypoints[0] = roiPolygon.ypoints[0] - deltay_left;
+		ypoints[3] = roiPolygon.ypoints[3] - deltay_right;
+		ypoints[1] = roiPolygon.ypoints[1] + deltay_left;
+		ypoints[2] = roiPolygon.ypoints[2] + deltay_right;
+
+		Polygon2D result = new Polygon2D(xpoints, ypoints, npoints);
+		return result;
+	}
 
 	public static Point2D lineIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4,
 			double y4) {

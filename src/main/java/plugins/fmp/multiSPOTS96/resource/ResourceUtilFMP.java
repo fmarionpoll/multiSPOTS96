@@ -21,7 +21,7 @@ public class ResourceUtilFMP {
 	public static final IcyIcon ICON_FIT_XAXIS = new IcyIcon(getImage("fit_X.png"));
 
 	private static Image getImage(String fileName) {
-		String name = "plugins/fmp/multiSPOTS/" + ICON_PATH + ALPHA_PATH + fileName;
+		String name = "plugins/fmp/multiSPOTS96/" + ICON_PATH + ALPHA_PATH + fileName;
 		InputStream url = MultiSPOTS96.class.getClassLoader().getResourceAsStream(name);
 		if (url == null) {
 			System.out.println("ResourceUtilFMP:getImage resource not found: at: " + name);
