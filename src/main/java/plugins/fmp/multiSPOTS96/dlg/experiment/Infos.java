@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.ExperimentDescriptors;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxModelSorted;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
@@ -23,8 +24,8 @@ public class Infos extends JPanel {
 	 */
 	private static final long serialVersionUID = 2190848825783418962L;
 
-	private JComboBox<String> cmt1Combo = new JComboBox<String>(new JComboBoxModelSorted());
-	private JComboBox<String> comt2Combo = new JComboBox<String>(new JComboBoxModelSorted());
+	private JComboBox<String> stimCombo = new JComboBox<String>(new JComboBoxModelSorted());
+	private JComboBox<String> concCombo = new JComboBox<String>(new JComboBoxModelSorted());
 	private JComboBox<String> boxIDCombo = new JComboBox<String>(new JComboBoxModelSorted());
 	private JComboBox<String> exptCombo = new JComboBox<String>(new JComboBoxModelSorted());
 	private JComboBox<String> strainCombo = new JComboBox<String>(new JComboBoxModelSorted());
@@ -79,11 +80,11 @@ public class Infos extends JPanel {
 		c.gridx = 0;
 		add(comment1Check, c);
 		c.gridx += delta1;
-		add(cmt1Combo, c);
+		add(stimCombo, c);
 		c.gridx += delta2;
 		add(comment2Check, c);
 		c.gridx += delta1;
-		add(comt2Combo, c);
+		add(concCombo, c);
 		c.gridx += delta2;
 		add(saveButton, c);
 		// line 2
@@ -111,8 +112,8 @@ public class Infos extends JPanel {
 
 		boxIDCombo.setEditable(true);
 		exptCombo.setEditable(true);
-		cmt1Combo.setEditable(true);
-		comt2Combo.setEditable(true);
+		stimCombo.setEditable(true);
+		concCombo.setEditable(true);
 		strainCombo.setEditable(true);
 		sexCombo.setEditable(true);
 		cond1Combo.setEditable(true);
@@ -138,8 +139,8 @@ public class Infos extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					getExperimentInfosFromDialog(exp);
-					// parent0.dlgExperiment.tabIntervals.setExptParms(exp);
+					ExperimentDescriptors expDesc = exp.expDesc;
+					getExperimentInfosFromDialog(expDesc);
 					exp.saveXML_MCExperiment();
 				}
 			}
@@ -158,8 +159,8 @@ public class Infos extends JPanel {
 	public void transferPreviousExperimentInfosToDialog(Experiment exp_source, Experiment exp_destination) {
 		setInfoCombo(exp_destination, exp_source, boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
 		setInfoCombo(exp_destination, exp_source, exptCombo, EnumXLSColumnHeader.EXP_EXPT);
-		setInfoCombo(exp_destination, exp_source, cmt1Combo, EnumXLSColumnHeader.EXP_STIM);
-		setInfoCombo(exp_destination, exp_source, comt2Combo, EnumXLSColumnHeader.EXP_CONC);
+		setInfoCombo(exp_destination, exp_source, stimCombo, EnumXLSColumnHeader.EXP_STIM);
+		setInfoCombo(exp_destination, exp_source, concCombo, EnumXLSColumnHeader.EXP_CONC);
 		setInfoCombo(exp_destination, exp_source, strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
 		setInfoCombo(exp_destination, exp_source, sexCombo, EnumXLSColumnHeader.EXP_SEX);
 		setInfoCombo(exp_destination, exp_source, cond1Combo, EnumXLSColumnHeader.EXP_COND1);
@@ -177,16 +178,16 @@ public class Infos extends JPanel {
 		combo.setSelectedItem(text);
 	}
 
-	public void getExperimentInfosFromDialog(Experiment exp) {
+	public void getExperimentInfosFromDialog(ExperimentDescriptors expDesc) {
 
-		exp.expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID, (String) boxIDCombo.getSelectedItem());
-		exp.expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT, (String) exptCombo.getSelectedItem());
-		exp.expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM, (String) cmt1Combo.getSelectedItem());
-		exp.expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC, (String) comt2Combo.getSelectedItem());
-		exp.expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STRAIN, (String) strainCombo.getSelectedItem());
-		exp.expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_SEX, (String) sexCombo.getSelectedItem());
-		exp.expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND1, (String) cond1Combo.getSelectedItem());
-		exp.expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND2, (String) cond2Combo.getSelectedItem());
+		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID, (String) boxIDCombo.getSelectedItem());
+		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT, (String) exptCombo.getSelectedItem());
+		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM, (String) stimCombo.getSelectedItem());
+		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC, (String) concCombo.getSelectedItem());
+		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STRAIN, (String) strainCombo.getSelectedItem());
+		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_SEX, (String) sexCombo.getSelectedItem());
+		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND1, (String) cond1Combo.getSelectedItem());
+		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND2, (String) cond2Combo.getSelectedItem());
 	}
 
 	private void addItemToComboIfNew(String toAdd, JComboBox<String> combo) {
@@ -199,8 +200,8 @@ public class Infos extends JPanel {
 
 	public void initInfosCombos() {
 		parent0.expListCombo.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
-		parent0.expListCombo.getFieldValuesToCombo(cmt1Combo, EnumXLSColumnHeader.EXP_STIM);
-		parent0.expListCombo.getFieldValuesToCombo(comt2Combo, EnumXLSColumnHeader.EXP_CONC);
+		parent0.expListCombo.getFieldValuesToCombo(stimCombo, EnumXLSColumnHeader.EXP_STIM);
+		parent0.expListCombo.getFieldValuesToCombo(concCombo, EnumXLSColumnHeader.EXP_CONC);
 		parent0.expListCombo.getFieldValuesToCombo(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
 		parent0.expListCombo.getFieldValuesToCombo(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
 		parent0.expListCombo.getFieldValuesToCombo(sexCombo, EnumXLSColumnHeader.EXP_SEX);
@@ -213,8 +214,8 @@ public class Infos extends JPanel {
 
 	public void clearCombos() {
 		exptCombo.removeAllItems();
-		cmt1Combo.removeAllItems();
-		comt2Combo.removeAllItems();
+		stimCombo.removeAllItems();
+		concCombo.removeAllItems();
 		boxIDCombo.removeAllItems();
 		strainCombo.removeAllItems();
 		sexCombo.removeAllItems();
@@ -228,7 +229,6 @@ public class Infos extends JPanel {
 		Experiment exp0 = (Experiment) parent0.expListCombo.getItemAt(iprevious);
 		Experiment exp = (Experiment) parent0.expListCombo.getItemAt(iprevious + 1);
 		transferPreviousExperimentInfosToDialog(exp0, exp);
-//		parent0.dlgSpots.transferPreviousExperimentCapillariesInfos(exp0, exp);
 	}
 
 }

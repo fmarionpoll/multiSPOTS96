@@ -9,6 +9,8 @@ public class ExperimentDescriptors {
 
 	public String ffield_boxID = new String("..");
 	public String ffield_experiment = new String("..");
+	public String ffield_stim = new String("..");
+	public String ffield_conc = new String("..");
 	public String field_comment1 = new String("..");
 	public String field_comment2 = new String("..");
 	public String field_strain = new String("..");
@@ -18,6 +20,9 @@ public class ExperimentDescriptors {
 	
 	private final static String ID_BOXID = "boxID";
 	private final static String ID_EXPERIMENT = "experiment";
+	private final static String ID_STIM = "stim";
+	private final static String ID_CONC = "conc";
+	
 	private final static String ID_COMMENT1 = "comment";
 	private final static String ID_COMMENT2 = "comment2";
 	private final static String ID_STRAIN = "strain";
@@ -28,6 +33,9 @@ public class ExperimentDescriptors {
 	public void saveXML_Descriptors(Node node) {
 		XMLUtil.setElementValue(node, ID_BOXID, ffield_boxID);
 		XMLUtil.setElementValue(node, ID_EXPERIMENT, ffield_experiment);
+		XMLUtil.setElementValue(node, ID_STIM, ffield_stim);
+		XMLUtil.setElementValue(node, ID_CONC, ffield_conc);
+		
 		XMLUtil.setElementValue(node, ID_COMMENT1, field_comment1);
 		XMLUtil.setElementValue(node, ID_COMMENT2, field_comment2);
 		XMLUtil.setElementValue(node, ID_STRAIN, field_strain);
@@ -40,6 +48,9 @@ public class ExperimentDescriptors {
 //		if (field_boxID != null && field_boxID.contentEquals("..")) {
 		ffield_boxID = XMLUtil.getElementValue(node, ID_BOXID, "..");
 		ffield_experiment = XMLUtil.getElementValue(node, ID_EXPERIMENT, "..");
+		ffield_stim = XMLUtil.getElementValue(node, ID_STIM, "..");
+		ffield_conc = XMLUtil.getElementValue(node, ID_CONC, "..");
+		
 		field_comment1 = XMLUtil.getElementValue(node, ID_COMMENT1, "..");
 		field_comment2 = XMLUtil.getElementValue(node, ID_COMMENT2, "..");
 		field_strain = XMLUtil.getElementValue(node, ID_STRAIN, "..");
@@ -54,10 +65,10 @@ public class ExperimentDescriptors {
 		String strField = null;
 		switch (fieldEnumCode) {
 		case EXP_STIM:
-			strField = field_comment1;
+			strField = ffield_stim;
 			break;
 		case EXP_CONC:
-			strField = field_comment2;
+			strField = ffield_conc;
 			break;
 		case EXP_EXPT:
 			strField = ffield_experiment;
@@ -86,10 +97,10 @@ public class ExperimentDescriptors {
 	public void setExperimentFieldNoTest(EnumXLSColumnHeader fieldEnumCode, String newValue) {
 		switch (fieldEnumCode) {
 		case EXP_STIM:
-			ffield_boxID = newValue;
+			ffield_stim = newValue;
 			break;
 		case EXP_CONC:
-			field_comment2 = newValue;
+			ffield_conc = newValue;
 			break;
 		case EXP_EXPT:
 			ffield_experiment = newValue;

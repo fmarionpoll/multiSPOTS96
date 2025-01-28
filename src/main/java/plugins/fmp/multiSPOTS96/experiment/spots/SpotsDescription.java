@@ -159,7 +159,7 @@ public class SpotsDescription {
 			concentrationL = XMLUtil.getElementValue(xmlVal, IDS_CONCL, IDS_CONCL);
 		}
 
-		expDesc.saveXML_Descriptors(node);
+//		expDesc.saveXML_Descriptors(node);
 
 		return true;
 	}
