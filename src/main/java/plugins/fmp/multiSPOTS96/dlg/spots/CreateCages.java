@@ -43,10 +43,10 @@ public class CreateCages extends JPanel {
 	private JSpinner nCagesPerPlateAlongXJSpinner = new JSpinner(new SpinnerNumberModel(6, 0, 10000, 1));
 	private JSpinner nCagesPerPlateAlongYJSpinner = new JSpinner(new SpinnerNumberModel(8, 0, 10000, 1));
 
-	private JSpinner width_cageTextField = new JSpinner(new SpinnerNumberModel(40, 0, 10000, 1));
+//	private JSpinner width_cageTextField = new JSpinner(new SpinnerNumberModel(40, 0, 10000, 1));
 	private JSpinner width_intervalTextField = new JSpinner(new SpinnerNumberModel(1, 0, 10000, 1));
 
-	private int width_cage = 10;
+//	private int width_cage = 10;
 	private int width_interval = 1;
 
 	private Polygon2D polygon2D = null;
@@ -78,8 +78,8 @@ public class CreateCages extends JPanel {
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(new JLabel("Ratio cage width"));
-		panel2.add(width_cageTextField);
-		width_cageTextField.setPreferredSize(new Dimension(40, 20));
+//		panel2.add(width_cageTextField);
+//		width_cageTextField.setPreferredSize(new Dimension(40, 20));
 		panel2.add(new JLabel("to space"));
 		panel2.add(width_intervalTextField);
 		width_intervalTextField.setPreferredSize(new Dimension(40, 20));
@@ -211,7 +211,7 @@ public class CreateCages extends JPanel {
 		try {
 			n_columns = (int) nCagesPerPlateAlongXJSpinner.getValue();
 			n_rows = (int) nCagesPerPlateAlongYJSpinner.getValue();
-			width_cage = (int) width_cageTextField.getValue();
+//			width_cage = (int) width_cageTextField.getValue();
 			width_interval = (int) width_intervalTextField.getValue();
 		} catch (Exception e) {
 			new AnnounceFrame("Can't interpret one of the ROI parameters value");
@@ -221,14 +221,19 @@ public class CreateCages extends JPanel {
 		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq), false);
 		exp.cagesArray.cagesList.clear();
 		exp.cagesArray = new CagesArray();
-		createCagesArray(exp, polygon2D, n_columns, n_rows, width_cage, width_interval);
+		createCagesArray(exp, polygon2D, n_columns, n_rows,
+				// width_cage,
+				width_interval);
 	}
 
-	private void createCagesArray(Experiment exp, Polygon2D roiPolygonMin, int ncolumns, int nrows, int width_cage,
+	private void createCagesArray(Experiment exp, Polygon2D roiPolygonMin, int ncolumns, int nrows,
+			// int width_cage,
 			int width_interval) {
 		// generate cage frames
 		String cageRoot = "cage";
-		Polygon2D roiPolygon = PolygonUtilities.inflate(roiPolygonMin, ncolumns, nrows, width_cage, width_interval);
+		// Polygon2D roiPolygon = PolygonUtilities.inflate(roiPolygonMin, ncolumns,
+		// nrows, width_cage, width_interval);
+		Polygon2D roiPolygon = PolygonUtilities.inflate2(roiPolygonMin, ncolumns, nrows, width_interval);
 		int index = 0;
 
 		double deltax_top = (roiPolygon.xpoints[3] - roiPolygon.xpoints[0]) / ncolumns;
@@ -263,11 +268,15 @@ public class CreateCages extends JPanel {
 	private ROI2DPolygon createRoiPolygon(double[][] xyij) {
 		// shrink by
 		int k = 0;
-		double xspacer_top = (xyij[3][k] - xyij[0][k]) * width_interval / (width_cage + 2 * width_interval);
-		double xspacer_bottom = (xyij[2][k] - xyij[1][k]) * width_interval / (width_cage + 2 * width_interval);
+		double xspacer_top = width_interval / 2; // (xyij[3][k] - xyij[0][k]) * width_interval / (width_cage + 2 *
+													// width_interval);
+		double xspacer_bottom = width_interval / 2; // (xyij[2][k] - xyij[1][k]) * width_interval / (width_cage + 2 *
+													// width_interval);
 		k = 1;
-		double yspacer_left = (xyij[1][k] - xyij[0][k]) * width_interval / (width_cage + 2 * width_interval);
-		double yspacer_right = (xyij[2][k] - xyij[3][k]) * width_interval / (width_cage + 2 * width_interval);
+		double yspacer_left = width_interval / 2; // (xyij[1][k] - xyij[0][k]) * width_interval / (width_cage + 2 *
+													// width_interval);
+		double yspacer_right = width_interval / 2; // (xyij[2][k] - xyij[3][k]) * width_interval / (width_cage + 2 *
+													// width_interval);
 
 		// define intersection
 		List<Point2D> points = new ArrayList<>();

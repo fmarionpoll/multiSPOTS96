@@ -2,8 +2,15 @@
 <section name="icy">
 <key name="maxMemory" value="16640"/>
 <section name="general">
-<section name="toolTips"/>
-<section name="confirms"/>
+<section name="toolTips">
+<key name="mainMenuTip" value="false"/>
+<key name="virtualMode" value="false"/>
+<key name="magicWand" value="false"/>
+<key name="viewerVirtual" value="false"/>
+</section>
+<section name="confirms">
+<key name="exit" value="false"/>
+</section>
 <section name="roiOverlay"/>
 <key name="userLogin" value=""/>
 <key name="userName" value=""/>
@@ -68,10 +75,14 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1737984728489"/>
+<key name="lastUpdateCheckTime" value="1738046321676"/>
 <key name="sequencePersistence" value="false"/>
+<key name="virtualMode" value="true"/>
+<key name="loaderFolder" value="C:\Users\fred\Desktop\essai_sandwich\2025-01-24 4gouttes 0.5 micro litre\cam96_D01"/>
 </section>
-<section name="canvas"/>
+<section name="canvas">
+<section name="Canvas2D"/>
+</section>
 <section name="magicWand"/>
 <section name="network"/>
 <section name="repositories"/>
@@ -85,10 +96,10 @@
 </section>
 <section name="online"/>
 </section>
-<key name="id" value="253602009"/>
+<key name="id" value="288044565"/>
 <key name="os" value="win64"/>
-<key name="clientCpuNumber" value="20"/>
-<key name="clientTotalMemory" value="34078789632"/>
+<key name="clientCpuNumber" value="16"/>
+<key name="clientTotalMemory" value="67880230912"/>
 <key name="appFolder" value="C:/Users/fred/.m2/repository/org/bioimageanalysis/icy/icy-kernel/2.5.1"/>
 <section name="loader">
 <section name="entry0">
@@ -127,27 +138,33 @@
 <section name="imageLoader">
 <key name="width" value="600"/>
 <key name="heigth" value="400"/>
+<key name="loadtype" value="0"/>
+<key name="extension" value="All image files / Bio-Formats"/>
 </section>
 </section>
+<section name="gui.histo">
+<key name="logView" value="true"/>
+</section>
+<key name="lastUploadDate" value="1738047110190"/>
 </section>
 <section name="plugins"/>
 <section name="frame">
 <section name="main">
-<key name="XE" value="80"/>
-<key name="YE" value="50"/>
-<key name="WidthE" value="2460"/>
-<key name="HeightE" value="1292"/>
+<key name="XE" value="3533"/>
+<key name="YE" value="18"/>
+<key name="WidthE" value="1749"/>
+<key name="HeightE" value="1108"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="2152"/>
+<key name="XC" value="1441"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="300"/>
-<key name="HeightC" value="1130"/>
+<key name="HeightC" value="946"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -165,7 +182,7 @@
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="1040"/>
+<key name="HeightC" value="856"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -183,7 +200,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="1040"/>
+<key name="HeightC" value="856"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>

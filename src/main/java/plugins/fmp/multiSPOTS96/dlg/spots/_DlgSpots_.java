@@ -29,6 +29,7 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 //			ThresholdColors colorsThreshold = new ThresholdColors();
 	CreateCages tabCreateCages = new CreateCages();
 	CreateSpots tabCreateSpots = new CreateSpots();
+	CreateSpots_old tabCreateSpots_old = new CreateSpots_old();
 	Infos tabInfos = new Infos();
 	DetectContours tabShape = new DetectContours();
 	Edit tabEdit = new Edit();
@@ -58,7 +59,14 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 
 		tabCreateSpots.init(gridLayout, parent0);
 		tabCreateSpots.addPropertyChangeListener(this);
-		tabbedPane.addTab("(old spots)", null, tabCreateSpots,
+		tabbedPane.addTab("spots", null, tabCreateSpots,
+				"Create spots defining liquid drops without reference to cages");
+		id_create = order;
+		order++;
+
+		tabCreateSpots_old.init(gridLayout, parent0);
+		tabCreateSpots_old.addPropertyChangeListener(this);
+		tabbedPane.addTab("(old spots)", null, tabCreateSpots_old,
 				"Create spots defining liquid drops without reference to cages");
 		id_create = order;
 		order++;
@@ -126,7 +134,7 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 	public void updateDialogs(Experiment exp) {
 		if (exp != null) {
 			ExperimentUtils.transferSpotsToCamDataSequence(exp);
-			tabCreateSpots.updateDialog(exp);
+			tabCreateSpots_old.updateDialog(exp);
 			tabCreateCages.updateNColumnsFieldFromSequence();
 		}
 	}
