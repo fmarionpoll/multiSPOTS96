@@ -524,7 +524,6 @@ public class CagesArray {
 	public Polygon2D getPolygon2DEnclosingAllCages() {
 		if (cagesList.size() < 1 || cagesList.get(0).getRoi() == null)
 			return null;
-		updateArrayIndexes();
 		Polygon2D polygon = getCoordinatesOfROI(cagesList.get(0).getRoi());
 		for (Cage cage : cagesList) {
 			int col = cage.arrayColumn;
@@ -532,40 +531,15 @@ public class CagesArray {
 			Polygon2D n = getCoordinatesOfROI(cage.getRoi());
 			if (col == 0 && row == 0) {
 				transferPointToPolygon(0, polygon, n);
-			} else if (col == (nCagesAlongX - 1) && row == 0) {
+			} else if (col >= (nCagesAlongX - 1) && row == 0) {
 				transferPointToPolygon(3, polygon, n);
 			} else if (col == (nCagesAlongX - 1) && row == (nCagesAlongY - 1)) {
 				transferPointToPolygon(2, polygon, n);
-			} else if (col == 0 && row == (nCagesAlongY - 1)) {
+			} else if (col == 0 && row >= (nCagesAlongY - 1)) {
 				transferPointToPolygon(1, polygon, n);
 			}
 		}
 		return polygon;
-	}
-
-	public void updateArrayIndexes() {
-		int upleft = 0;
-		int downleft = 1;
-		int upright = 3;
-		Polygon2D polygon = getCoordinatesOfROI(cagesList.get(0).getRoi());
-		double width0 = polygon.xpoints[upright] - polygon.xpoints[upleft];
-		double height0 = polygon.ypoints[downleft] - polygon.ypoints[upleft];
-
-		nCagesAlongX = 1;
-		nCagesAlongY = 1;
-		for (Cage cage : cagesList) {
-			Polygon2D n = getCoordinatesOfROI(cage.getRoi());
-
-			int arrayColumn = (int) Math.round((n.xpoints[upright] - polygon.xpoints[upleft]) / width0);
-			cage.arrayColumn = arrayColumn - 1;
-			if (nCagesAlongX < arrayColumn)
-				nCagesAlongX = arrayColumn;
-
-			int arrayRow = (int) Math.round((n.ypoints[downleft] - polygon.ypoints[upleft]) / height0);
-			cage.arrayRow = arrayRow - 1;
-			if (nCagesAlongY < arrayRow)
-				nCagesAlongY = arrayRow;
-		}
 	}
 
 	private void transferPointToPolygon(int i, Polygon2D dest, Polygon2D source) {

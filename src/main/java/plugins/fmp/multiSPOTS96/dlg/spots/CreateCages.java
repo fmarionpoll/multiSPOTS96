@@ -37,8 +37,9 @@ public class CreateCages extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
-	private JButton displayFrameDButton = new JButton("(1) Display frame");
-	private JButton createCagesButton = new JButton("(2) Create (from frame)");
+	private JButton displayFrameDButton = new JButton("(1) Frame");
+	private JButton createMeshButton = new JButton("(2) Mesh (from 1)");
+	private JButton createCagesButton = new JButton("(3) Cages (from 2)");
 
 	private JSpinner nCagesPerPlateAlongXJSpinner = new JSpinner(new SpinnerNumberModel(6, 0, 10000, 1));
 	private JSpinner nCagesPerPlateAlongYJSpinner = new JSpinner(new SpinnerNumberModel(8, 0, 10000, 1));
@@ -53,6 +54,7 @@ public class CreateCages extends JPanel {
 	private int height_cage = 10;
 	private int height_interval = 1;
 
+	final String cages_perimeter = "cages_perimeter";
 	private Polygon2D polygon2D = null;
 
 	private MultiSPOTS96 parent0;
@@ -68,6 +70,7 @@ public class CreateCages extends JPanel {
 
 		JPanel panel0 = new JPanel(flowLayout);
 		panel0.add(displayFrameDButton);
+		panel0.add(createMeshButton);
 		panel0.add(createCagesButton);
 		add(panel0);
 
@@ -111,12 +114,22 @@ public class CreateCages extends JPanel {
 			}
 		});
 
+		createMeshButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					createMesh(exp);
+				}
+			}
+		});
+		
 		createCagesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					buildCages(exp);
+					createCages(exp);
 				}
 			}
 		});
@@ -127,7 +140,7 @@ public class CreateCages extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					selectRoiEnclosingCages(exp);
-					buildCages(exp);
+					createCages(exp);
 				}
 			}
 		});
@@ -138,14 +151,14 @@ public class CreateCages extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					selectRoiEnclosingCages(exp);
-					buildCages(exp);
+					createCages(exp);
 				}
 			}
 		});
 	}
 
-	private void buildCages(Experiment exp) {
-		polygon2D = getPolygonEnclosingCagesFromSelectedRoi(exp);
+	private void createCages(Experiment exp) {
+		polygon2D = getPolygonEnclosingCages(exp);
 		if (polygon2D != null) {
 			createCagesFromPolygon(exp, polygon2D);
 			ExperimentUtils.transferCagesToCamDataSequence(exp);
@@ -153,15 +166,10 @@ public class CreateCages extends JPanel {
 		}
 	}
 
-	private Polygon2D getPolygonEnclosingCagesFromSelectedRoi(Experiment exp) {
-		SequenceCamData seqCamData = exp.seqCamData;
-		ROI2D roi = seqCamData.seq.getSelectedROI2D();
-		if (!(roi instanceof ROI2DPolygon)) {
-			new AnnounceFrame("The frame must be a ROI2D Polygon");
-			return null;
-		}
+	private Polygon2D getPolygonEnclosingCages(Experiment exp) {
+		ROI2D roi = selectRoiEnclosingCages(exp);
 		polygon2D = PolygonUtilities.orderVerticesOf4CornersPolygon(((ROI2DPolygon) roi).getPolygon());
-		seqCamData.seq.removeROI(roi);
+		exp.seqCamData.seq.removeROI(roi);
 		return polygon2D;
 	}
 
@@ -170,25 +178,24 @@ public class CreateCages extends JPanel {
 		if (exp != null) {
 			int nrois = exp.cagesArray.cagesList.size();
 			if (nrois > 0) {
-				exp.cagesArray.updateArrayIndexes();
 				nCagesPerPlateAlongXJSpinner.setValue(exp.cagesArray.nCagesAlongX);
 				nCagesPerPlateAlongYJSpinner.setValue(exp.cagesArray.nCagesAlongY);
 			}
 		}
 	}
 
-	private void selectRoiEnclosingCages(Experiment exp) {
+	private ROI2D selectRoiEnclosingCages(Experiment exp) {
 		SequenceCamData seqCamData = exp.seqCamData;
-		final String dummyname = "perimeter_enclosing_cages";
-		ROI2D roi = getRoiWithSpecificName(seqCamData, dummyname);
+		ROI2D roi = getRoiWithSpecificName(seqCamData, cages_perimeter);
 		if (roi == null) {
 			roi = new ROI2DPolygon(getCagesPolygon(exp));
-			roi.setName(dummyname);
+			roi.setName(cages_perimeter);
 			seqCamData.seq.addROI(roi);
 		}
 		roi.setColor(Color.orange);
 		roi.setStroke(.2f);
 		seqCamData.seq.setSelectedROI(roi);
+		return roi;
 	}
 
 	private ROI2D getRoiWithSpecificName(SequenceCamData seqCamData, String dummyname) {
@@ -353,6 +360,10 @@ public class CreateCages extends JPanel {
 		xyij[2][k] = xyij[3][k] + deltay_right;
 
 		return xyij;
+	}
+	
+	private void createMesh (Experiment exp) {
+		
 	}
 
 }
