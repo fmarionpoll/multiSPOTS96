@@ -16,16 +16,6 @@ public class SpotsDescription {
 	public double volume = 5.;
 	public int pixels = 5;
 	public String sourceName = null;
-
-//	public String old_boxID = new String("..");
-//	public String old_experiment = new String("..");
-//	public String old_comment1 = new String("..");
-//	public String old_comment2 = new String("..");
-//	public String old_strain = new String("..");
-//	public String old_sex = new String("..");
-//	public String old_cond1 = new String("..");
-//	public String old_cond2 = new String("..");
-
 	public ExperimentDescriptors expDesc = new ExperimentDescriptors();
 
 	public int grouping = 2;
@@ -34,31 +24,31 @@ public class SpotsDescription {
 	public String stimulusL = new String("..");
 	public String concentrationL = new String("..");
 
-	private final static String ID_SPOTTRACK = "spotTrack";
-	private final static String ID_PARAMETERS = "Parameters";
-	private final static String ID_FILE = "file";
-	private final static String ID_ID = "ID";
-	private final static String ID_DESCGROUPING = "Grouping";
-	private final static String ID_DESCN = "n";
-	private final static String ID_DESCCAPVOLUME = "capillaryVolume";
-	private final static String ID_DESCVOLUMEUL = "volume_ul";
-	private final static String ID_DESCCAPILLARYPIX = "capillaryPixels";
-	private final static String ID_DESCNPIXELS = "npixels";
+	private final static String IDS_SPOTTRACK = "spotTrack";
+	private final static String IDS_PARAMETERS = "Parameters";
+	private final static String IDS_FILE = "file";
+	private final static String IDS_ID = "ID";
+	private final static String IDS_DESCGROUPING = "Grouping";
+	private final static String IDS_DESCN = "n";
+	private final static String IDS_DESCCAPVOLUME = "capillaryVolume";
+	private final static String IDS_DESCVOLUMEUL = "volume_ul";
+	private final static String IDS_DESCCAPILLARYPIX = "capillaryPixels";
+	private final static String IDS_DESCNPIXELS = "npixels";
 
-	private final static String ID_LRSTIMULUS = "LRstimulus";
-	private final static String ID_STIMR = "stimR";
-	private final static String ID_CONCR = "concR";
-	private final static String ID_STIML = "stimL";
-	private final static String ID_CONCL = "concL";
-	private final static String ID_EXPERIMENT = "Experiment";
-	private final static String ID_BOXID = "boxID";
-	private final static String ID_EXPT = "expt";
-	private final static String ID_COMMENT1 = "comment";
-	private final static String ID_COMMENT2 = "comment2";
-	private final static String ID_STRAIN = "strain";
-	private final static String ID_SEX = "sex";
-	private final static String ID_COND1 = "cond1";
-	private final static String ID_COND2 = "cond2";
+	private final static String IDS_LRSTIMULUS = "LRstimulus";
+	private final static String IDS_STIMR = "stimR";
+	private final static String IDS_CONCR = "concR";
+	private final static String IDS_STIML = "stimL";
+	private final static String IDS_CONCL = "concL";
+	private final static String IDS_EXPERIMENT = "Experiment";
+	private final static String IDS_BOXID = "boxID";
+	private final static String IDS_EXPT = "expt";
+	private final static String IDS_COMMENT1 = "comment";
+	private final static String IDS_COMMENT2 = "comment2";
+	private final static String IDS_STRAIN = "strain";
+	private final static String IDS_SEX = "sex";
+	private final static String IDS_COND1 = "cond1";
+	private final static String IDS_COND2 = "cond2";
 
 	public void copy(SpotsDescription desc) {
 		volume = desc.volume;
@@ -83,27 +73,27 @@ public class SpotsDescription {
 	}
 
 	public boolean xmlSaveSpotsDescription(Document doc) {
-		Node node = XMLUtil.addElement(XMLUtil.getRootElement(doc), ID_SPOTTRACK);
+		Node node = XMLUtil.addElement(XMLUtil.getRootElement(doc), IDS_SPOTTRACK);
 		if (node == null)
 			return false;
 		XMLUtil.setElementIntValue(node, "version", 2);
 
-		Element xmlElement = XMLUtil.addElement(node, ID_PARAMETERS);
+		Element xmlElement = XMLUtil.addElement(node, IDS_PARAMETERS);
 
-		XMLUtil.addElement(xmlElement, ID_FILE, sourceName);
+		XMLUtil.addElement(xmlElement, IDS_FILE, sourceName);
 		Element xmlVal = XMLUtil.addElement(xmlElement, "capillaries");
-		XMLUtil.setElementIntValue(xmlVal, ID_DESCGROUPING, grouping);
-		XMLUtil.setElementDoubleValue(xmlVal, ID_DESCVOLUMEUL, volume);
-		XMLUtil.setElementIntValue(xmlVal, ID_DESCNPIXELS, pixels);
+		XMLUtil.setElementIntValue(xmlVal, IDS_DESCGROUPING, grouping);
+		XMLUtil.setElementDoubleValue(xmlVal, IDS_DESCVOLUMEUL, volume);
+		XMLUtil.setElementIntValue(xmlVal, IDS_DESCNPIXELS, pixels);
 
-		xmlVal = XMLUtil.addElement(xmlElement, ID_EXPERIMENT);
+		xmlVal = XMLUtil.addElement(xmlElement, IDS_EXPERIMENT);
 		expDesc.saveXML_Descriptors(xmlVal);
 		return true;
 	}
 
 	public boolean xmlLoadSpotsDescription(Document doc) {
 		boolean flag = false;
-		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_SPOTTRACK);
+		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), IDS_SPOTTRACK);
 		if (node == null)
 			return flag;
 		version = XMLUtil.getElementIntValue(node, "version", 0);
@@ -120,28 +110,28 @@ public class SpotsDescription {
 	}
 
 	private boolean xmlLoadSpotsDescriptionv0(Node node) {
-		Element xmlElement = XMLUtil.getElement(node, ID_PARAMETERS);
+		Element xmlElement = XMLUtil.getElement(node, IDS_PARAMETERS);
 		if (xmlElement == null)
 			return false;
 
-		Element xmlVal = XMLUtil.getElement(xmlElement, ID_FILE);
-		sourceName = XMLUtil.getAttributeValue(xmlVal, ID_ID, null);
+		Element xmlVal = XMLUtil.getElement(xmlElement, IDS_FILE);
+		sourceName = XMLUtil.getAttributeValue(xmlVal, IDS_ID, null);
 
-		xmlVal = XMLUtil.getElement(xmlElement, ID_DESCGROUPING);
-		grouping = XMLUtil.getAttributeIntValue(xmlVal, ID_DESCN, 2);
+		xmlVal = XMLUtil.getElement(xmlElement, IDS_DESCGROUPING);
+		grouping = XMLUtil.getAttributeIntValue(xmlVal, IDS_DESCN, 2);
 
-		xmlVal = XMLUtil.getElement(xmlElement, ID_DESCCAPVOLUME);
-		volume = XMLUtil.getAttributeDoubleValue(xmlVal, ID_DESCVOLUMEUL, Double.NaN);
+		xmlVal = XMLUtil.getElement(xmlElement, IDS_DESCCAPVOLUME);
+		volume = XMLUtil.getAttributeDoubleValue(xmlVal, IDS_DESCVOLUMEUL, Double.NaN);
 
-		xmlVal = XMLUtil.getElement(xmlElement, ID_DESCCAPILLARYPIX);
-		pixels = (int) XMLUtil.getAttributeDoubleValue(xmlVal, ID_DESCNPIXELS, Double.NaN);
+		xmlVal = XMLUtil.getElement(xmlElement, IDS_DESCCAPILLARYPIX);
+		pixels = (int) XMLUtil.getAttributeDoubleValue(xmlVal, IDS_DESCNPIXELS, Double.NaN);
 
-		xmlVal = XMLUtil.getElement(xmlElement, ID_LRSTIMULUS);
+		xmlVal = XMLUtil.getElement(xmlElement, IDS_LRSTIMULUS);
 		if (xmlVal != null) {
-			stimulusR = XMLUtil.getAttributeValue(xmlVal, ID_STIMR, ID_STIMR);
-			concentrationR = XMLUtil.getAttributeValue(xmlVal, ID_CONCR, ID_CONCR);
-			stimulusL = XMLUtil.getAttributeValue(xmlVal, ID_STIML, ID_STIML);
-			concentrationL = XMLUtil.getAttributeValue(xmlVal, ID_CONCL, ID_CONCL);
+			stimulusR = XMLUtil.getAttributeValue(xmlVal, IDS_STIMR, IDS_STIMR);
+			concentrationR = XMLUtil.getAttributeValue(xmlVal, IDS_CONCR, IDS_CONCR);
+			stimulusL = XMLUtil.getAttributeValue(xmlVal, IDS_STIML, IDS_STIML);
+			concentrationL = XMLUtil.getAttributeValue(xmlVal, IDS_CONCL, IDS_CONCL);
 		}
 
 		expDesc.loadXML_Descriptors(node);
@@ -149,24 +139,24 @@ public class SpotsDescription {
 	}
 
 	private boolean xmlLoadCSpotsDescriptionv1(Node node) {
-		Element xmlElement = XMLUtil.getElement(node, ID_PARAMETERS);
+		Element xmlElement = XMLUtil.getElement(node, IDS_PARAMETERS);
 		if (xmlElement == null)
 			return false;
 
-		sourceName = XMLUtil.getElementValue(xmlElement, ID_FILE, null);
+		sourceName = XMLUtil.getElementValue(xmlElement, IDS_FILE, null);
 		Element xmlVal = XMLUtil.getElement(xmlElement, "capillaries");
 		if (xmlVal != null) {
-			grouping = XMLUtil.getElementIntValue(xmlVal, ID_DESCGROUPING, 2);
-			volume = XMLUtil.getElementDoubleValue(xmlVal, ID_DESCVOLUMEUL, Double.NaN);
-			pixels = XMLUtil.getElementIntValue(xmlVal, ID_DESCNPIXELS, 5);
+			grouping = XMLUtil.getElementIntValue(xmlVal, IDS_DESCGROUPING, 2);
+			volume = XMLUtil.getElementDoubleValue(xmlVal, IDS_DESCVOLUMEUL, Double.NaN);
+			pixels = XMLUtil.getElementIntValue(xmlVal, IDS_DESCNPIXELS, 5);
 		}
 
-		xmlVal = XMLUtil.getElement(xmlElement, ID_LRSTIMULUS);
+		xmlVal = XMLUtil.getElement(xmlElement, IDS_LRSTIMULUS);
 		if (xmlVal != null) {
-			stimulusR = XMLUtil.getElementValue(xmlVal, ID_STIMR, ID_STIMR);
-			concentrationR = XMLUtil.getElementValue(xmlVal, ID_CONCR, ID_CONCR);
-			stimulusL = XMLUtil.getElementValue(xmlVal, ID_STIML, ID_STIML);
-			concentrationL = XMLUtil.getElementValue(xmlVal, ID_CONCL, ID_CONCL);
+			stimulusR = XMLUtil.getElementValue(xmlVal, IDS_STIMR, IDS_STIMR);
+			concentrationR = XMLUtil.getElementValue(xmlVal, IDS_CONCR, IDS_CONCR);
+			stimulusL = XMLUtil.getElementValue(xmlVal, IDS_STIML, IDS_STIML);
+			concentrationL = XMLUtil.getElementValue(xmlVal, IDS_CONCL, IDS_CONCL);
 		}
 
 		expDesc.saveXML_Descriptors(node);
@@ -179,8 +169,22 @@ public class SpotsDescription {
 	public String csvExportSectionHeader(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("#" + csvSep + "DESCRIPTION" + csvSep + "multiSPOTS96 data\n");
-		List<String> row2 = Arrays.asList(ID_DESCGROUPING, ID_DESCVOLUMEUL, ID_DESCNPIXELS, ID_STIMR, ID_CONCR,
-				ID_STIML, ID_CONCL, ID_BOXID, ID_EXPT, ID_COMMENT1, ID_COMMENT2, ID_STRAIN, ID_SEX, ID_COND1, ID_COND2);
+		List<String> row2 = Arrays.asList(
+				IDS_DESCGROUPING, 
+				IDS_DESCVOLUMEUL, 
+				IDS_DESCNPIXELS, 
+				IDS_STIMR, 
+				IDS_CONCR,
+				IDS_STIML, 
+				IDS_CONCL, 
+				IDS_BOXID, 
+				IDS_EXPT, 
+				IDS_COMMENT1, 
+				IDS_COMMENT2, 
+				IDS_STRAIN, 
+				IDS_SEX, 
+				IDS_COND1, 
+				IDS_COND2);
 		sbf.append(String.join(csvSep, row2));
 		sbf.append("\n");
 		return sbf.toString();
@@ -188,10 +192,22 @@ public class SpotsDescription {
 
 	public String csvExportExperimentDescriptors(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		List<String> row3 = Arrays.asList(Integer.toString(grouping), Double.toString(volume), Integer.toString(pixels),
-				stimulusR, concentrationR.replace(",", "."), stimulusL, concentrationL.replace(",", "."),
-				expDesc.field_boxID, expDesc.field_experiment, expDesc.field_comment1, expDesc.field_comment2,
-				expDesc.field_strain, expDesc.field_sex, expDesc.field_cond1, expDesc.field_cond2);
+		List<String> row3 = Arrays.asList(
+				Integer.toString(grouping), 
+				Double.toString(volume), 
+				Integer.toString(pixels),
+				stimulusR, 
+				concentrationR.replace(",", "."), 
+				stimulusL, 
+				concentrationL.replace(",", "."),
+				expDesc.ffield_boxID, 
+				expDesc.ffield_experiment, 
+				expDesc.field_comment1, 
+				expDesc.field_comment2,
+				expDesc.field_strain, 
+				expDesc.field_sex, 
+				expDesc.field_cond1, 
+				expDesc.field_cond2);
 		sbf.append(String.join(csvSep, row3));
 		sbf.append("\n");
 		return sbf.toString();
@@ -213,9 +229,9 @@ public class SpotsDescription {
 		i++;
 		concentrationL = data[i];
 		i++;
-		expDesc.field_boxID = data[i];
+		expDesc.ffield_boxID = data[i];
 		i++;
-		expDesc.field_experiment = data[i];
+		expDesc.ffield_experiment = data[i];
 		i++;
 		expDesc.field_comment1 = data[i];
 		i++;

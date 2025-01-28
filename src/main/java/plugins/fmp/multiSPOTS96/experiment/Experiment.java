@@ -448,7 +448,7 @@ public class Experiment {
 		boolean flag = spotsArray.xmlLoad_MCSpots_Descriptors(mcSpotsFileName);
 
 		// load description of experiment
-		if (expDesc.field_boxID.contentEquals("..") && expDesc.field_experiment.contentEquals("..")
+		if (expDesc.ffield_boxID.contentEquals("..") && expDesc.ffield_experiment.contentEquals("..")
 				&& expDesc.field_comment1.contentEquals("..") && expDesc.field_comment2.contentEquals("..")
 				&& expDesc.field_sex.contentEquals("..") && expDesc.field_strain.contentEquals("..")) {
 			spotsArray.spotsDescription.expDesc.copyExperimentFields(expDesc);
