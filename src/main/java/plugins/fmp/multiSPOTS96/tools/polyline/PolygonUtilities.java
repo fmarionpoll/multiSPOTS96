@@ -3,6 +3,7 @@ package plugins.fmp.multiSPOTS96.tools.polyline;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 import icy.gui.frame.progress.AnnounceFrame;
 import icy.type.geom.Polygon2D;
@@ -76,8 +77,15 @@ public class PolygonUtilities {
 		Polygon2D result = new Polygon2D(xpoints, ypoints, npoints);
 		return result;
 	}
-	
-	public static Polygon2D inflate2(Polygon2D roiPolygon, int ncolumns, int width_cage, int width_interval, int nrows, int height_cage, int height_interval) {
+
+	public static ArrayList<Point2D.Double> divide4CornersPolygon(Polygon2D roiPolygon, int ncolumns, int nrows) {
+		ArrayList<Point2D.Double> coords = new ArrayList<Point2D.Double>();
+
+		return coords;
+	}
+
+	public static Polygon2D inflate2(Polygon2D roiPolygon, int ncolumns, int width_cage, int width_interval, int nrows,
+			int height_cage, int height_interval) {
 		double width_x_current = ncolumns * (width_cage + 2 * width_interval) - 2 * width_interval;
 		double deltax_top = (roiPolygon.xpoints[3] - roiPolygon.xpoints[0]) * width_interval / width_x_current;
 		double deltax_bottom = (roiPolygon.xpoints[2] - roiPolygon.xpoints[1]) * width_interval / width_x_current;
