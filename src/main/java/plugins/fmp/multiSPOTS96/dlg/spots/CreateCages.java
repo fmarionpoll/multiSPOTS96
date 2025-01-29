@@ -24,14 +24,15 @@ import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
+
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentUtils;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
-import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class CreateCages extends JPanel {
@@ -368,29 +369,10 @@ public class CreateCages extends JPanel {
 		}
 
 		Polygon2D polyGon = getPolygonEnclosingCages(exp);
-		Point2D.Double[][] arrayPoints = PolygonUtilities.createGridWithPolygon(polyGon, n_columns, n_rows);
+		ROI2DGrid roiMesh = new ROI2DGrid();
+		ArrayList<ROI2D> listRois = roiMesh.createGridFromFrame(polyGon, n_columns, n_rows);
 		
-		for (int icol = 0; icol <= n_columns; icol++) {
-			List<Point2D> points = new ArrayList<Point2D>(n_columns+1);
-			for (int irow = 0; irow <= n_rows; irow++) {
-				points.add(arrayPoints[icol][irow]);
-			}
-			ROI2DPolyLine roi = new ROI2DPolyLine(points);
-			roi.setName("col_"+icol);
-			exp.seqCamData.seq.addROI(roi);
-			
-		}
-
-		for (int irow = 0; irow <= n_rows; irow++) {
-			List<Point2D> points = new ArrayList<Point2D>(n_rows+1);
-			for (int icol = 0; icol <= n_columns; icol++) {
-				points.add(arrayPoints[icol][irow]);
-			}
-			ROI2DPolyLine roi = new ROI2DPolyLine(points);
-			roi.setName("row_"+irow);
-			exp.seqCamData.seq.addROI(roi);
-		}
-	
+		exp.seqCamData.seq.addROIs(listRois, false);
 	}
 
 }
