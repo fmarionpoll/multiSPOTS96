@@ -223,7 +223,7 @@ public class CreateSpots extends JPanel {
 		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("spot", exp.seqCamData.seq), false);
 		exp.spotsArray.spotsList.clear();
 		exp.spotsArray = new SpotsArray();
-		Point2D.Double[][] arrayPoints = PolygonUtilities.createArrayOfPointsFromPolygon(polygon2D, n_columns, n_rows);
+		Point2D.Double[][] arrayPoints = PolygonUtilities.createGridInsidePolygon(polygon2D, n_columns, n_rows);
 		convertPoint2DArrayToSpots(exp, arrayPoints, n_columns, n_rows, radius);
 		updateCageDescriptorsOfSpots(exp);
 	}

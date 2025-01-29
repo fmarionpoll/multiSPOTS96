@@ -75,13 +75,15 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1738046321676"/>
+<key name="lastUpdateCheckTime" value="1738151535474"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
 <key name="loaderFolder" value="\\comportement-egce.ideev.universite-paris-saclay.fr\MultiCAFE\2025 Beatrice\essai multispots  plaques 96\2025-01-24  4gouttes 0.5 micro litre"/>
 </section>
 <section name="canvas">
-<section name="Canvas2D"/>
+<section name="Canvas2D">
+<key name="fitCanvas" value="true"/>
+</section>
 </section>
 <section name="magicWand"/>
 <section name="network"/>
@@ -145,26 +147,26 @@
 <section name="gui.histo">
 <key name="logView" value="true"/>
 </section>
-<key name="lastUploadDate" value="1738047110190"/>
+<key name="lastUploadDate" value="1738151532772"/>
 </section>
 <section name="plugins"/>
 <section name="frame">
 <section name="main">
-<key name="XE" value="2704"/>
-<key name="YE" value="89"/>
-<key name="WidthE" value="2150"/>
-<key name="HeightE" value="1108"/>
+<key name="XE" value="66"/>
+<key name="YE" value="33"/>
+<key name="WidthE" value="2449"/>
+<key name="HeightE" value="1261"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1704"/>
+<key name="XC" value="2003"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="438"/>
-<key name="HeightC" value="946"/>
+<key name="HeightC" value="1099"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -182,7 +184,7 @@
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
 <key name="WidthC" value="430"/>
-<key name="HeightC" value="856"/>
+<key name="HeightC" value="1009"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -200,7 +202,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="430"/>
-<key name="HeightC" value="856"/>
+<key name="HeightC" value="1009"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>

@@ -20,16 +20,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import icy.gui.frame.progress.AnnounceFrame;
+import icy.roi.ROI;
 import icy.roi.ROI2D;
+import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentUtils;
-import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
+import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class CreateCages extends JPanel {
@@ -167,7 +169,8 @@ public class CreateCages extends JPanel {
 	}
 
 	private Polygon2D getPolygonEnclosingCages(Experiment exp) {
-		ROI2D roi = selectRoiEnclosingCages(exp);
+		selectRoiEnclosingCages(exp);
+		ROI2D roi = (ROI2D) exp.seqCamData.seq.getSelectedROI();
 		polygon2D = PolygonUtilities.orderVerticesOf4CornersPolygon(((ROI2DPolygon) roi).getPolygon());
 		exp.seqCamData.seq.removeROI(roi);
 		return polygon2D;
@@ -184,27 +187,19 @@ public class CreateCages extends JPanel {
 		}
 	}
 
-	private ROI2D selectRoiEnclosingCages(Experiment exp) {
-		SequenceCamData seqCamData = exp.seqCamData;
-		ROI2D roi = getRoiWithSpecificName(seqCamData, cages_perimeter);
-		if (roi == null) {
+	private void selectRoiEnclosingCages(Experiment exp) {
+		Sequence sequence = exp.seqCamData.seq;
+		List<ROI> listrois = ROIUtilities.getROIsContainingString(cages_perimeter, sequence);
+		ROI2DPolygon roi = null;
+		if (listrois != null && listrois.size() > 0) 
+			roi = (ROI2DPolygon) listrois.get(0);
+		else {
 			roi = new ROI2DPolygon(getCagesPolygon(exp));
 			roi.setName(cages_perimeter);
-			seqCamData.seq.addROI(roi);
+			sequence.addROI(roi);
 		}
 		roi.setColor(Color.orange);
-		roi.setStroke(.2f);
-		seqCamData.seq.setSelectedROI(roi);
-		return roi;
-	}
-
-	private ROI2D getRoiWithSpecificName(SequenceCamData seqCamData, String dummyname) {
-		ArrayList<ROI2D> listRois = seqCamData.seq.getROI2Ds();
-		for (ROI2D roi : listRois) {
-			if (roi.getName().equals(dummyname))
-				return roi;
-		}
-		return null;
+		sequence.setSelectedROI(roi);
 	}
 
 	private Polygon2D getCagesPolygon(Experiment exp) {
@@ -363,7 +358,39 @@ public class CreateCages extends JPanel {
 	}
 	
 	private void createMesh (Experiment exp) {
+		int n_columns = 6;
+		int n_rows = 8;
+		try {
+			n_columns = (int) nCagesPerPlateAlongXJSpinner.getValue();
+			n_rows = (int) nCagesPerPlateAlongYJSpinner.getValue();
+		} catch (Exception e) {
+			new AnnounceFrame("Can't interpret one of the ROI parameters value");
+		}
+
+		Polygon2D polyGon = getPolygonEnclosingCages(exp);
+		Point2D.Double[][] arrayPoints = PolygonUtilities.createGridWithPolygon(polyGon, n_columns, n_rows);
 		
+		for (int icol = 0; icol <= n_columns; icol++) {
+			List<Point2D> points = new ArrayList<Point2D>(n_columns+1);
+			for (int irow = 0; irow <= n_rows; irow++) {
+				points.add(arrayPoints[icol][irow]);
+			}
+			ROI2DPolyLine roi = new ROI2DPolyLine(points);
+			roi.setName("col_"+icol);
+			exp.seqCamData.seq.addROI(roi);
+			
+		}
+
+		for (int irow = 0; irow <= n_rows; irow++) {
+			List<Point2D> points = new ArrayList<Point2D>(n_rows+1);
+			for (int icol = 0; icol <= n_columns; icol++) {
+				points.add(arrayPoints[icol][irow]);
+			}
+			ROI2DPolyLine roi = new ROI2DPolyLine(points);
+			roi.setName("row_"+irow);
+			exp.seqCamData.seq.addROI(roi);
+		}
+	
 	}
 
 }
