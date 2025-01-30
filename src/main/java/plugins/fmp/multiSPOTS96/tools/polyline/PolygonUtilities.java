@@ -161,39 +161,5 @@ public class PolygonUtilities {
 		return arrayPoints;
 	}
 	
-	public static Point2D.Double[][] createGridWithPolygon(Polygon2D roiPolygon, int nbcols, int nbrows) {
-
-		if (roiPolygon.npoints != 4)
-			throw new IllegalArgumentException("Polygon must be 4-sided");
-		if (nbcols <= 0 || nbrows <= 0)
-			throw new IllegalArgumentException("There must be a positive number of parts per side");
-
-		Point2D.Double[][] arrayPoints = new Point2D.Double[nbcols+1][nbrows+1];
-
-		for (int col = 0; col <= nbcols; col++) {
-
-			double ratioX0 = col / (double) nbcols ;
-
-			double x = roiPolygon.xpoints[0] + (roiPolygon.xpoints[3] - roiPolygon.xpoints[0]) * ratioX0;
-			double y = roiPolygon.ypoints[0] + (roiPolygon.ypoints[3] - roiPolygon.ypoints[0]) * ratioX0;
-			Point2D.Double ipoint0 = new Point2D.Double(x, y);
-
-			x = roiPolygon.xpoints[1] + (roiPolygon.xpoints[2] - roiPolygon.xpoints[1]) * ratioX0;
-			y = roiPolygon.ypoints[1] + (roiPolygon.ypoints[2] - roiPolygon.ypoints[1]) * ratioX0;
-			Point2D.Double ipoint1 = new Point2D.Double(x, y);
-
-			for (int row = 0; row <= nbrows; row++) {
-
-				double ratioY0 = row / (double) nbrows;
-				x = ipoint0.x + (ipoint1.x - ipoint0.x) * ratioY0;
-				y = ipoint0.y + (ipoint1.y - ipoint0.y) * ratioY0;
-
-				Point2D.Double point = new Point2D.Double(x, y);
-				arrayPoints[col][row] = point;
-			}
-		}
-
-		return arrayPoints;
-	}
 
 }

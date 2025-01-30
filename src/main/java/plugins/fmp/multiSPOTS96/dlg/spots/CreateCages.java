@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,19 +47,16 @@ public class CreateCages extends JPanel {
 	private JSpinner nCagesPerPlateAlongXJSpinner = new JSpinner(new SpinnerNumberModel(6, 0, 10000, 1));
 	private JSpinner nCagesPerPlateAlongYJSpinner = new JSpinner(new SpinnerNumberModel(8, 0, 10000, 1));
 
-	private JSpinner width_cageTextField = new JSpinner(new SpinnerNumberModel(20, 0, 10000, 1));
+//	private JSpinner width_cageTextField = new JSpinner(new SpinnerNumberModel(20, 0, 10000, 1));
 	private JSpinner width_intervalTextField = new JSpinner(new SpinnerNumberModel(1, 0, 10000, 1));
-	private JSpinner height_cageTextField = new JSpinner(new SpinnerNumberModel(10, 0, 10000, 1));
+//	private JSpinner height_cageTextField = new JSpinner(new SpinnerNumberModel(10, 0, 10000, 1));
 	private JSpinner height_intervalTextField = new JSpinner(new SpinnerNumberModel(1, 0, 10000, 1));
 
-	private int width_cage = 10;
 	private int width_interval = 1;
-	private int height_cage = 10;
 	private int height_interval = 1;
-
 	final String cages_perimeter = "cages_perimeter";
 	private Polygon2D polygon2D = null;
-
+	private ROI2DGrid roiGrid = null;
 	private MultiSPOTS96 parent0;
 
 	// -------------------------------------------------
@@ -81,9 +79,9 @@ public class CreateCages extends JPanel {
 		panel1.add(nCagesPerPlateAlongXJSpinner);
 		nCagesPerPlateAlongXJSpinner.setPreferredSize(new Dimension(40, 20));
 
-		panel1.add(new JLabel("width"));
-		panel1.add(width_cageTextField);
-		width_cageTextField.setPreferredSize(new Dimension(40, 20));
+//		panel1.add(new JLabel("width"));
+//		panel1.add(width_cageTextField);
+//		width_cageTextField.setPreferredSize(new Dimension(40, 20));
 		panel1.add(new JLabel("space"));
 		panel1.add(width_intervalTextField);
 		width_intervalTextField.setPreferredSize(new Dimension(40, 20));
@@ -94,9 +92,9 @@ public class CreateCages extends JPanel {
 		panel2.add(nCagesPerPlateAlongYJSpinner);
 		nCagesPerPlateAlongYJSpinner.setPreferredSize(new Dimension(40, 20));
 
-		panel2.add(new JLabel("height"));
-		panel2.add(height_cageTextField);
-		height_cageTextField.setPreferredSize(new Dimension(40, 20));
+//		panel2.add(new JLabel("height"));
+//		panel2.add(height_cageTextField);
+//		height_cageTextField.setPreferredSize(new Dimension(40, 20));
 		panel2.add(new JLabel("space"));
 		panel2.add(height_intervalTextField);
 		height_intervalTextField.setPreferredSize(new Dimension(40, 20));
@@ -121,7 +119,7 @@ public class CreateCages extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					createMesh(exp);
+					createGrid(exp);
 				}
 			}
 		});
@@ -160,9 +158,12 @@ public class CreateCages extends JPanel {
 	}
 
 	private void createCages(Experiment exp) {
+		
 		polygon2D = getPolygonEnclosingCages(exp);
 		if (polygon2D != null) {
-			createCagesFromPolygon(exp, polygon2D);
+			if (roiGrid == null)
+				createGrid(exp);
+			createCagesFromGrid(exp, roiGrid);
 			ExperimentUtils.transferCagesToCamDataSequence(exp);
 			exp.fit_Spots_to_Cages();
 		}
@@ -203,7 +204,6 @@ public class CreateCages extends JPanel {
 	}
 
 	private Polygon2D getCagesPolygon(Experiment exp) {
-
 		if (exp.cagesArray.cagesList.size() > 0) {
 			polygon2D = exp.cagesArray.getPolygon2DEnclosingAllCages();
 		} else {
@@ -215,19 +215,16 @@ public class CreateCages extends JPanel {
 			points.add(new Point2D.Double(rect.x + rect.width / 5, rect.y + rect.height * 2 / 3));
 			polygon2D = new Polygon2D(points);
 		}
-
 		return polygon2D;
 	}
 
-	private void createCagesFromPolygon(Experiment exp, Polygon2D polygon2D) {
+	private void createCagesFromGrid(Experiment exp, ROI2DGrid roiGrid) {
 		int n_columns = 10;
 		int n_rows = 1;
 		try {
 			n_columns = (int) nCagesPerPlateAlongXJSpinner.getValue();
 			n_rows = (int) nCagesPerPlateAlongYJSpinner.getValue();
-			width_cage = (int) width_cageTextField.getValue();
 			width_interval = (int) width_intervalTextField.getValue();
-			height_cage = (int) height_cageTextField.getValue();
 			height_interval = (int) height_intervalTextField.getValue();
 		} catch (Exception e) {
 			new AnnounceFrame("Can't interpret one of the ROI parameters value");
@@ -237,28 +234,22 @@ public class CreateCages extends JPanel {
 		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq), false);
 		exp.cagesArray.cagesList.clear();
 		exp.cagesArray = new CagesArray();
-		createCagesArray(exp, polygon2D, n_columns, n_rows, width_cage, width_interval, height_cage, height_interval);
+		createCagesArrayFromGrid(exp, roiGrid, n_columns, n_rows, width_interval, height_interval);
 	}
 
-	private void createCagesArray(Experiment exp, Polygon2D roiPolygonMin, int ncolumns, int nrows, int width_cage,
-			int width_interval, int height_cage, int height_interval) {
+	private void createCagesArrayFromGrid(Experiment exp, ROI2DGrid roiGrid, int ncolumns, int nrows, 
+			int width_interval, int height_interval) {
+		Point2D.Double[][] grid = roiGrid.getGridPoints();
+		// test if dimensions are ok
+		if (grid.length != (nrows-1) || grid[0].length != (ncolumns-1)) {
+			System.out.println("error in the dimensions of grid");
+		}
 		// generate cage frames
 		String cageRoot = "cage";
-		Polygon2D roiPolygon = PolygonUtilities.inflate2(roiPolygonMin, ncolumns, width_cage, width_interval, nrows,
-				height_cage, height_interval);
 		int index = 0;
 
-		double deltax_top = (roiPolygon.xpoints[3] - roiPolygon.xpoints[0]) / ncolumns;
-		double deltax_bottom = (roiPolygon.xpoints[2] - roiPolygon.xpoints[1]) / ncolumns;
-		double deltay_top = (roiPolygon.ypoints[3] - roiPolygon.ypoints[0]) / ncolumns;
-		double deltay_bottom = (roiPolygon.ypoints[2] - roiPolygon.ypoints[1]) / ncolumns;
-
 		for (int column = 0; column < ncolumns; column++) {
-			double[][] xyi = initColumn(roiPolygon, deltax_top, deltax_bottom, deltay_top, deltay_bottom, column);
-
 			for (int row = 0; row < nrows; row++) {
-
-				double[][] xyij = initRow(roiPolygon, xyi, nrows, row);
 
 				ROI2DPolygon roiP = createRoiPolygon(xyij);
 				roiP.setName(cageRoot + String.format("%03d", index));
@@ -277,88 +268,21 @@ public class CreateCages extends JPanel {
 		}
 	}
 
-	private ROI2DPolygon createRoiPolygon(double[][] xyij) {
-		// shrink by
-		int k = 0;
-		double xspacer_top = (xyij[3][k] - xyij[0][k]) * width_interval / (width_cage + 2 * width_interval);
-		double xspacer_bottom = (xyij[2][k] - xyij[1][k]) * width_interval / (width_cage + 2 * width_interval);
-		k = 1;
-		double yspacer_left = (xyij[1][k] - xyij[0][k]) * width_interval / (width_cage + 2 * width_interval);
-		double yspacer_right = (xyij[2][k] - xyij[3][k]) * width_interval / (width_cage + 2 * width_interval);
-
-		// define intersection
+	private ROI2DPolygon createRoiPolygon(Point2D.Double[][] grid, int icol, int irow, int width, int height) {
 		List<Point2D> points = new ArrayList<>();
-
-		Point2D point0 = PolygonUtilities.lineIntersect(xyij[0][0] + xspacer_top, xyij[0][1],
-				xyij[1][0] + xspacer_bottom, xyij[1][1], xyij[0][0], xyij[0][1] + yspacer_left, xyij[3][0],
-				xyij[3][1] + yspacer_right);
-		points.add(point0);
-
-		Point2D point1 = PolygonUtilities.lineIntersect(xyij[1][0], xyij[1][1] - yspacer_left, xyij[2][0],
-				xyij[2][1] - yspacer_right, xyij[0][0] + xspacer_top, xyij[0][1], xyij[1][0] + xspacer_bottom,
-				xyij[1][1]);
-		points.add(point1);
-
-		Point2D point2 = PolygonUtilities.lineIntersect(xyij[1][0], xyij[1][1] - yspacer_left, xyij[2][0],
-				xyij[2][1] - yspacer_right, xyij[3][0] - xspacer_top, xyij[3][1], xyij[2][0] - xspacer_bottom,
-				xyij[2][1]);
-		points.add(point2);
-
-		Point2D point3 = PolygonUtilities.lineIntersect(xyij[0][0], xyij[0][1] + yspacer_left, xyij[3][0],
-				xyij[3][1] + yspacer_right, xyij[3][0] - xspacer_top, xyij[3][1], xyij[2][0] - xspacer_bottom,
-				xyij[2][1]);
-		points.add(point3);
-
+		Point2D.Double pt = (Double) grid[icol][irow].clone();
+		pt.x 
+		points.add(grid[icol][irow]);
+		points.add(grid[icol][irow+1]);
+		points.add(grid[icol+1][irow+1]);
+		points.add(grid[icol+1][irow]);
+		
 		ROI2DPolygon roiP = new ROI2DPolygon(points);
 		return roiP;
 	}
 
-	private double[][] initColumn(Polygon2D roiPolygon, double deltax_top, double deltax_bottom, double deltay_top,
-			double deltay_bottom, int i) {
-
-		double[][] xyi = new double[4][2];
-		int j = 0;
-		xyi[0][j] = roiPolygon.xpoints[0] + deltax_top * i;
-		xyi[1][j] = roiPolygon.xpoints[1] + deltax_bottom * i;
-		xyi[3][j] = xyi[0][j] + deltax_top;
-		xyi[2][j] = xyi[1][j] + deltax_bottom;
-
-		j = 1;
-		xyi[0][j] = roiPolygon.ypoints[0] + deltay_top * i;
-		xyi[1][j] = roiPolygon.ypoints[1] + deltay_bottom * i;
-		xyi[3][j] = xyi[0][j] + deltay_top;
-		xyi[2][j] = xyi[1][j] + deltay_bottom;
-
-		return xyi;
-	}
-
-	private double[][] initRow(Polygon2D roiPolygon, double[][] xyi, int nrows, int j) {
-
-		double[][] xyij = new double[4][2];
-
-		int k = 0;
-		double deltax_left = (xyi[1][k] - xyi[0][k]) / nrows;
-		double deltax_right = (xyi[2][k] - xyi[3][k]) / nrows;
-		k = 1;
-		double deltay_left = (xyi[1][k] - xyi[0][k]) / nrows;
-		double deltay_right = (xyi[2][k] - xyi[3][k]) / nrows;
-
-		k = 0;
-		xyij[0][k] = xyi[0][k] + deltax_left * j;
-		xyij[1][k] = xyij[0][k] + deltax_left;
-		xyij[3][k] = xyi[3][k] + deltax_right * j;
-		xyij[2][k] = xyij[3][k] + deltax_right;
-
-		k = 1;
-		xyij[0][k] = xyi[0][k] + deltay_left * j;
-		xyij[1][k] = xyij[0][k] + deltay_left;
-		xyij[3][k] = xyi[3][k] + deltay_right * j;
-		xyij[2][k] = xyij[3][k] + deltay_right;
-
-		return xyij;
-	}
-
-	private void createMesh(Experiment exp) {
+	private void createGrid(Experiment exp) {
+		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq), false);
 		int n_columns = 6;
 		int n_rows = 8;
 		try {
@@ -369,10 +293,10 @@ public class CreateCages extends JPanel {
 		}
 
 		Polygon2D polyGon = getPolygonEnclosingCages(exp);
-		ROI2DGrid roiMesh = new ROI2DGrid();
-		roiMesh.createGridFromFrame(polyGon, n_columns, n_rows);
-		exp.seqCamData.seq.addROIs(roiMesh.getHorizontalRois(), false);
-		exp.seqCamData.seq.addROIs(roiMesh.getVerticalRois(), false);
+		roiGrid = new ROI2DGrid();
+		roiGrid.createGridFromFrame(polyGon, n_columns, n_rows);
+		exp.seqCamData.seq.addROIs(roiGrid.getHorizontalRois(), false);
+		exp.seqCamData.seq.addROIs(roiGrid.getVerticalRois(), false);
 	}
 
 }

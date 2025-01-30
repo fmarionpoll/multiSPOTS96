@@ -10,25 +10,26 @@ import icy.roi.ROIEvent.ROIEventType;
 import icy.roi.ROIListener;
 import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
-import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
+
+
 
 public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 
-	Point2D.Double[][] grid;
-	ArrayList<ROI2DPolyLine> colRois;
-	ArrayList<ROI2DPolyLine> rowRois;
-	int grid_n_rows = 0;
-	int grid_n_columns = 0;
-	boolean allowUpdate = true;
+	private Point2D.Double[][] grid;
+	private ArrayList<ROI2DPolyLine> colRois;
+	private ArrayList<ROI2DPolyLine> rowRois;
+	private int grid_n_rows = 0;
+	private int grid_n_columns = 0;
+	private boolean allowUpdate = true;
 
 	public ROI2DGrid() {
 	}
 
-	public void createGridFromFrame(Polygon2D roiPolygon, int n_columns, int n_rows) {
+	public void createGridFromFrame(Polygon2D polygon, int n_columns, int n_rows) {
 		this.grid_n_rows = n_rows + 1;
 		this.grid_n_columns = n_columns + 1;
-		grid = PolygonUtilities.createGridWithPolygon(roiPolygon, n_columns, n_rows);
+		grid = createGridWithPolygon(polygon, n_columns, n_rows);
 		colRois = new ArrayList<ROI2DPolyLine>(grid_n_columns);
 		rowRois = new ArrayList<ROI2DPolyLine>(grid_n_rows);
 
@@ -55,7 +56,45 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		return colRois;
 	}
 
-	ROI2DPolyLine getVerticalROI(int icol) {
+	public Point2D.Double[][] getGridPoints() {
+		return grid;
+	}
+
+	private Point2D.Double[][] createGridWithPolygon(Polygon2D polygon, int nbcols, int nbrows) {
+
+		if (polygon.npoints != 4)
+			throw new IllegalArgumentException("Polygon must be 4-sided");
+		if (nbcols <= 0 || nbrows <= 0)
+			throw new IllegalArgumentException("There must be a positive number of parts per side");
+
+		Point2D.Double[][] arrayPoints = new Point2D.Double[nbcols+1][nbrows+1];
+
+		for (int col = 0; col <= nbcols; col++) {
+
+			double ratioX0 = col / (double) nbcols ;
+
+			double x = polygon.xpoints[0] + (polygon.xpoints[3] - polygon.xpoints[0]) * ratioX0;
+			double y = polygon.ypoints[0] + (polygon.ypoints[3] - polygon.ypoints[0]) * ratioX0;
+			Point2D.Double ipoint0 = new Point2D.Double(x, y);
+
+			x = polygon.xpoints[1] + (polygon.xpoints[2] - polygon.xpoints[1]) * ratioX0;
+			y = polygon.ypoints[1] + (polygon.ypoints[2] - polygon.ypoints[1]) * ratioX0;
+			Point2D.Double ipoint1 = new Point2D.Double(x, y);
+
+			for (int row = 0; row <= nbrows; row++) {
+
+				double ratioY0 = row / (double) nbrows;
+				x = ipoint0.x + (ipoint1.x - ipoint0.x) * ratioY0;
+				y = ipoint0.y + (ipoint1.y - ipoint0.y) * ratioY0;
+
+				Point2D.Double point = new Point2D.Double(x, y);
+				arrayPoints[col][row] = point;
+			}
+		}
+		return arrayPoints;
+	}
+	
+ 	private ROI2DPolyLine getVerticalROI(int icol) {
 		List<Point2D> points = new ArrayList<Point2D>(grid_n_columns);
 		for (int irow = 0; irow < grid_n_rows; irow++) {
 			points.add(grid[icol][irow]);
@@ -63,7 +102,7 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		return new ROI2DPolyLine(points);
 	}
 
-	ROI2DPolyLine getHorizontalROI(int irow) {
+	private ROI2DPolyLine getHorizontalROI(int irow) {
 		List<Point2D> points = new ArrayList<Point2D>(grid_n_columns);
 		for (int icol = 0; icol < grid_n_columns; icol++) {
 			points.add(grid[icol][irow]);
@@ -71,7 +110,7 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		return new ROI2DPolyLine(points);
 	}
 
-	Polyline2D getVerticalLine(int icol) {
+	private Polyline2D getVerticalLine(int icol) {
 		double[] xpoints = new double[grid_n_rows];
 		double[] ypoints = new double[grid_n_rows];
 		for (int irow = 0; irow < grid_n_rows; irow++) {
@@ -81,7 +120,7 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		return new Polyline2D(xpoints, ypoints, grid_n_rows);
 	}
 
-	Polyline2D getHorizontalLine(int irow) {
+	private Polyline2D getHorizontalLine(int irow) {
 		double[] xpoints = new double[grid_n_rows];
 		double[] ypoints = new double[grid_n_rows];
 		for (int icol = 0; icol < grid_n_columns; icol++) {
@@ -91,7 +130,7 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		return new Polyline2D(xpoints, ypoints, grid_n_columns);
 	}
 
-	void updateGridFromVerticalROI(int icol, ROI2DPolyLine roi) {
+	private void updateGridFromVerticalROI(int icol, ROI2DPolyLine roi) {
 		Polyline2D line = roi.getPolyline2D();
 		for (int irow = 0; irow < grid_n_rows; irow++) {
 			grid[icol][irow].x = line.xpoints[irow];
@@ -99,7 +138,7 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		}
 	}
 
-	void updateGridFromHorizontalROI(int irow, ROI2DPolyLine roi) {
+	private void updateGridFromHorizontalROI(int irow, ROI2DPolyLine roi) {
 		Polyline2D line = roi.getPolyline2D();
 		for (int icol = 0; icol < grid_n_columns; icol++) {
 			grid[icol][irow].x = line.xpoints[icol];
@@ -107,12 +146,12 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		}
 	}
 
-	void updateHorizontalROIFromGridValues(int irow) {
+	private void updateHorizontalROIFromGridValues(int irow) {
 		ROI2DPolyLine roi = rowRois.get(irow);
 		roi.setPolyline2D(getHorizontalLine(irow));
 	}
 
-	void updateVerticalROIFromGridValues(int icol) {
+	private void updateVerticalROIFromGridValues(int icol) {
 		ROI2DPolyLine roi = colRois.get(icol);
 		roi.setPolyline2D(getVerticalLine(icol));
 	}
