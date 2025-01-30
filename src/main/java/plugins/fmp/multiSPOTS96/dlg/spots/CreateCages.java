@@ -251,7 +251,7 @@ public class CreateCages extends JPanel {
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
 
-				ROI2DPolygon roiP = createRoiPolygon(xyij);
+				ROI2DPolygon roiP = createRoiPolygon(grid, column, row, width_interval, height_interval);
 				roiP.setName(cageRoot + String.format("%03d", index));
 				roiP.setColor(Color.yellow);
 
@@ -271,11 +271,24 @@ public class CreateCages extends JPanel {
 	private ROI2DPolygon createRoiPolygon(Point2D.Double[][] grid, int icol, int irow, int width, int height) {
 		List<Point2D> points = new ArrayList<>();
 		Point2D.Double pt = (Double) grid[icol][irow].clone();
-		pt.x 
-		points.add(grid[icol][irow]);
-		points.add(grid[icol][irow+1]);
-		points.add(grid[icol+1][irow+1]);
-		points.add(grid[icol+1][irow]);
+		pt.x += width;
+		pt.y += height;
+		points.add(pt);
+		
+		pt = (Double) grid[icol][irow+1].clone();
+		pt.x += width;
+		pt.y -= height;
+		points.add(pt);
+		
+		pt = (Double) grid[icol+1][irow+1].clone();
+		pt.x -= width;
+		pt.y -= height;
+		points.add(pt);
+		
+		pt = (Double) grid[icol+1][irow].clone();
+		pt.x -= width;
+		pt.y += height;
+		points.add(pt);
 		
 		ROI2DPolygon roiP = new ROI2DPolygon(points);
 		return roiP;
