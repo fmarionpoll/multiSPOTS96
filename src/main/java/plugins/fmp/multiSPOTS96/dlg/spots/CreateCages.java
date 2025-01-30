@@ -24,7 +24,6 @@ import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
-
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentUtils;
@@ -33,6 +32,7 @@ import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
+import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class CreateCages extends JPanel {
@@ -126,7 +126,7 @@ public class CreateCages extends JPanel {
 				}
 			}
 		});
-		
+
 		createCagesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -192,7 +192,7 @@ public class CreateCages extends JPanel {
 		Sequence sequence = exp.seqCamData.seq;
 		List<ROI> listrois = ROIUtilities.getROIsContainingString(cages_perimeter, sequence);
 		ROI2DPolygon roi = null;
-		if (listrois != null && listrois.size() > 0) 
+		if (listrois != null && listrois.size() > 0)
 			roi = (ROI2DPolygon) listrois.get(0);
 		else {
 			roi = new ROI2DPolygon(getCagesPolygon(exp));
@@ -241,11 +241,12 @@ public class CreateCages extends JPanel {
 		createCagesArray(exp, polygon2D, n_columns, n_rows, width_cage, width_interval, height_cage, height_interval);
 	}
 
-	private void createCagesArray(Experiment exp, Polygon2D roiPolygonMin, int ncolumns, int nrows,
-			 int width_cage, int width_interval, int height_cage, int height_interval) {
+	private void createCagesArray(Experiment exp, Polygon2D roiPolygonMin, int ncolumns, int nrows, int width_cage,
+			int width_interval, int height_cage, int height_interval) {
 		// generate cage frames
 		String cageRoot = "cage";
-		Polygon2D roiPolygon = PolygonUtilities.inflate2(roiPolygonMin, ncolumns, width_cage, width_interval, nrows, height_cage, height_interval);
+		Polygon2D roiPolygon = PolygonUtilities.inflate2(roiPolygonMin, ncolumns, width_cage, width_interval, nrows,
+				height_cage, height_interval);
 		int index = 0;
 
 		double deltax_top = (roiPolygon.xpoints[3] - roiPolygon.xpoints[0]) / ncolumns;
@@ -357,8 +358,8 @@ public class CreateCages extends JPanel {
 
 		return xyij;
 	}
-	
-	private void createMesh (Experiment exp) {
+
+	private void createMesh(Experiment exp) {
 		int n_columns = 6;
 		int n_rows = 8;
 		try {
@@ -370,8 +371,8 @@ public class CreateCages extends JPanel {
 
 		Polygon2D polyGon = getPolygonEnclosingCages(exp);
 		ROI2DGrid roiMesh = new ROI2DGrid();
-		ArrayList<ROI2D> listRois = roiMesh.createGridFromFrame(polyGon, n_columns, n_rows);
-		
+		ArrayList<ROI2DPolyLine> listRois = roiMesh.createGridFromFrame(polyGon, n_columns, n_rows);
+
 		exp.seqCamData.seq.addROIs(listRois, false);
 	}
 
