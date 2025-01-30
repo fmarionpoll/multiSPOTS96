@@ -40,21 +40,19 @@ public class CreateCages extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
-	private JButton displayFrameDButton = new JButton("(1) Frame");
-	private JButton createMeshButton = new JButton("(2) Mesh (from 1)");
+	private JButton createFrameButton = new JButton("(1) Frame");
+	private JButton createGridButton = new JButton("(2) Grid (from 1)");
 	private JButton createCagesButton = new JButton("(3) Cages (from 2)");
 
 	private JSpinner nCagesPerPlateAlongXJSpinner = new JSpinner(new SpinnerNumberModel(6, 0, 10000, 1));
 	private JSpinner nCagesPerPlateAlongYJSpinner = new JSpinner(new SpinnerNumberModel(8, 0, 10000, 1));
 
-//	private JSpinner width_cageTextField = new JSpinner(new SpinnerNumberModel(20, 0, 10000, 1));
-	private JSpinner width_intervalTextField = new JSpinner(new SpinnerNumberModel(1, 0, 10000, 1));
-//	private JSpinner height_cageTextField = new JSpinner(new SpinnerNumberModel(10, 0, 10000, 1));
-	private JSpinner height_intervalTextField = new JSpinner(new SpinnerNumberModel(1, 0, 10000, 1));
+	private JSpinner width_intervalTextField = new JSpinner(new SpinnerNumberModel(4, 0, 10000, 1));
+	private JSpinner height_intervalTextField = new JSpinner(new SpinnerNumberModel(4, 0, 10000, 1));
 
 	private int width_interval = 1;
 	private int height_interval = 1;
-	final String cages_perimeter = "cages_perimeter";
+	final String cages_perimeter = "perimeter";
 	private Polygon2D polygon2D = null;
 	private ROI2DGrid roiGrid = null;
 	private MultiSPOTS96 parent0;
@@ -69,8 +67,8 @@ public class CreateCages extends JPanel {
 		flowLayout.setVgap(0);
 
 		JPanel panel0 = new JPanel(flowLayout);
-		panel0.add(displayFrameDButton);
-		panel0.add(createMeshButton);
+		panel0.add(createFrameButton);
+		panel0.add(createGridButton);
 		panel0.add(createCagesButton);
 		add(panel0);
 
@@ -79,9 +77,6 @@ public class CreateCages extends JPanel {
 		panel1.add(nCagesPerPlateAlongXJSpinner);
 		nCagesPerPlateAlongXJSpinner.setPreferredSize(new Dimension(40, 20));
 
-//		panel1.add(new JLabel("width"));
-//		panel1.add(width_cageTextField);
-//		width_cageTextField.setPreferredSize(new Dimension(40, 20));
 		panel1.add(new JLabel("space"));
 		panel1.add(width_intervalTextField);
 		width_intervalTextField.setPreferredSize(new Dimension(40, 20));
@@ -92,9 +87,6 @@ public class CreateCages extends JPanel {
 		panel2.add(nCagesPerPlateAlongYJSpinner);
 		nCagesPerPlateAlongYJSpinner.setPreferredSize(new Dimension(40, 20));
 
-//		panel2.add(new JLabel("height"));
-//		panel2.add(height_cageTextField);
-//		height_cageTextField.setPreferredSize(new Dimension(40, 20));
 		panel2.add(new JLabel("space"));
 		panel2.add(height_intervalTextField);
 		height_intervalTextField.setPreferredSize(new Dimension(40, 20));
@@ -104,7 +96,7 @@ public class CreateCages extends JPanel {
 	}
 
 	private void defineActionListeners() {
-		displayFrameDButton.addActionListener(new ActionListener() {
+		createFrameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
@@ -114,7 +106,7 @@ public class CreateCages extends JPanel {
 			}
 		});
 
-		createMeshButton.addActionListener(new ActionListener() {
+		createGridButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
@@ -130,6 +122,7 @@ public class CreateCages extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					createCages(exp);
+					removeGrid(exp);
 				}
 			}
 		});
@@ -141,6 +134,7 @@ public class CreateCages extends JPanel {
 				if (exp != null) {
 					selectRoiEnclosingCages(exp);
 					createCages(exp);
+					removeGrid(exp);
 				}
 			}
 		});
@@ -152,13 +146,21 @@ public class CreateCages extends JPanel {
 				if (exp != null) {
 					selectRoiEnclosingCages(exp);
 					createCages(exp);
+					removeGrid(exp);
 				}
 			}
 		});
 	}
 
+	private void removeGrid(Experiment exp) {
+		if (roiGrid == null)
+			return;
+		exp.seqCamData.seq.removeROIs(roiGrid.getHorizontalRois(), false);
+		exp.seqCamData.seq.removeROIs(roiGrid.getVerticalRois(), false);
+	}
+
 	private void createCages(Experiment exp) {
-		
+
 		polygon2D = getPolygonEnclosingCages(exp);
 		if (polygon2D != null) {
 			if (roiGrid == null)
@@ -227,7 +229,7 @@ public class CreateCages extends JPanel {
 			width_interval = (int) width_intervalTextField.getValue();
 			height_interval = (int) height_intervalTextField.getValue();
 		} catch (Exception e) {
-			new AnnounceFrame("Can't interpret one of the ROI parameters value");
+			new AnnounceFrame("Can't interpret ROI parameters value");
 		}
 
 		// erase existing cages
@@ -237,11 +239,11 @@ public class CreateCages extends JPanel {
 		createCagesArrayFromGrid(exp, roiGrid, n_columns, n_rows, width_interval, height_interval);
 	}
 
-	private void createCagesArrayFromGrid(Experiment exp, ROI2DGrid roiGrid, int ncolumns, int nrows, 
+	private void createCagesArrayFromGrid(Experiment exp, ROI2DGrid roiGrid, int ncolumns, int nrows,
 			int width_interval, int height_interval) {
 		Point2D.Double[][] grid = roiGrid.getGridPoints();
 		// test if dimensions are ok
-		if (grid.length != (nrows-1) || grid[0].length != (ncolumns-1)) {
+		if (grid.length != (nrows - 1) || grid[0].length != (ncolumns - 1)) {
 			System.out.println("error in the dimensions of grid");
 		}
 		// generate cage frames
@@ -274,22 +276,22 @@ public class CreateCages extends JPanel {
 		pt.x += width;
 		pt.y += height;
 		points.add(pt);
-		
-		pt = (Double) grid[icol][irow+1].clone();
+
+		pt = (Double) grid[icol][irow + 1].clone();
 		pt.x += width;
 		pt.y -= height;
 		points.add(pt);
-		
-		pt = (Double) grid[icol+1][irow+1].clone();
+
+		pt = (Double) grid[icol + 1][irow + 1].clone();
 		pt.x -= width;
 		pt.y -= height;
 		points.add(pt);
-		
-		pt = (Double) grid[icol+1][irow].clone();
+
+		pt = (Double) grid[icol + 1][irow].clone();
 		pt.x -= width;
 		pt.y += height;
 		points.add(pt);
-		
+
 		ROI2DPolygon roiP = new ROI2DPolygon(points);
 		return roiP;
 	}
