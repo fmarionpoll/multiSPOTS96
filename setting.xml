@@ -98,10 +98,10 @@
 </section>
 <section name="online"/>
 </section>
-<key name="id" value="228029513"/>
+<key name="id" value="45224538"/>
 <key name="os" value="win64"/>
-<key name="clientCpuNumber" value="16"/>
-<key name="clientTotalMemory" value="67880230912"/>
+<key name="clientCpuNumber" value="20"/>
+<key name="clientTotalMemory" value="34078789632"/>
 <key name="appFolder" value="C:/Users/fred/.m2/repository/org/bioimageanalysis/icy/icy-kernel/2.5.1"/>
 <section name="loader">
 <section name="entry0">
@@ -152,14 +152,14 @@
 <section name="plugins"/>
 <section name="frame">
 <section name="main">
-<key name="XE" value="3458"/>
-<key name="YE" value="32"/>
-<key name="WidthE" value="1884"/>
+<key name="XE" value="2891"/>
+<key name="YE" value="48"/>
+<key name="WidthE" value="2165"/>
 <key name="HeightE" value="1054"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1438"/>
+<key name="XC" value="1719"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>

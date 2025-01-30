@@ -16,7 +16,8 @@ import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 
 	Point2D.Double[][] grid;
-	ArrayList<ROI2DPolyLine> listRois;
+	ArrayList<ROI2DPolyLine> colRois;
+	ArrayList<ROI2DPolyLine> rowRois;
 	int grid_n_rows = 0;
 	int grid_n_columns = 0;
 	boolean allowUpdate = true;
@@ -24,26 +25,34 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 	public ROI2DGrid() {
 	}
 
-	public ArrayList<ROI2DPolyLine> createGridFromFrame(Polygon2D roiPolygon, int n_columns, int n_rows) {
+	public void createGridFromFrame(Polygon2D roiPolygon, int n_columns, int n_rows) {
 		this.grid_n_rows = n_rows + 1;
 		this.grid_n_columns = n_columns + 1;
 		grid = PolygonUtilities.createGridWithPolygon(roiPolygon, n_columns, n_rows);
-		listRois = new ArrayList<ROI2DPolyLine>((grid_n_columns) * (grid_n_rows));
+		colRois = new ArrayList<ROI2DPolyLine>(grid_n_columns);
+		rowRois = new ArrayList<ROI2DPolyLine>(grid_n_rows);
 
 		for (int icol = 0; icol < grid_n_columns; icol++) {
 			ROI2DPolyLine roi = getVerticalROI(icol);
 			roi.setName("col_" + icol);
-			listRois.add(roi);
+			colRois.add(roi);
 			roi.addListener(this);
 		}
 
 		for (int irow = 0; irow < grid_n_rows; irow++) {
 			ROI2DPolyLine roi = getHorizontalROI(irow);
 			roi.setName("row_" + irow);
-			listRois.add(roi);
+			rowRois.add(roi);
 			roi.addListener(this);
 		}
-		return listRois;
+	}
+	
+	public ArrayList<ROI2DPolyLine> getHorizontalRois() {
+		return rowRois;
+	}
+	
+	public ArrayList<ROI2DPolyLine> getVerticalRois() {
+		return colRois;
 	}
 
 	ROI2DPolyLine getVerticalROI(int icol) {
@@ -76,8 +85,8 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		double[] xpoints = new double[grid_n_rows];
 		double[] ypoints = new double[grid_n_rows];
 		for (int icol = 0; icol < grid_n_columns; icol++) {
-			xpoints[irow] = grid[icol][irow].x;
-			ypoints[irow] = grid[icol][irow].y;
+			xpoints[icol] = grid[icol][irow].x;
+			ypoints[icol] = grid[icol][irow].y;
 		}
 		return new Polyline2D(xpoints, ypoints, grid_n_columns);
 	}
@@ -90,7 +99,7 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		}
 	}
 
-	void updateGridFromHorizontallROI(int irow, ROI2DPolyLine roi) {
+	void updateGridFromHorizontalROI(int irow, ROI2DPolyLine roi) {
 		Polyline2D line = roi.getPolyline2D();
 		for (int icol = 0; icol < grid_n_columns; icol++) {
 			grid[icol][irow].x = line.xpoints[icol];
@@ -98,11 +107,13 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		}
 	}
 
-	void updateHorizontalROIFromGridValues(int irow, ROI2DPolyLine roi) {
+	void updateHorizontalROIFromGridValues(int irow) {
+		ROI2DPolyLine roi = rowRois.get(irow);
 		roi.setPolyline2D(getHorizontalLine(irow));
 	}
 
-	void updateVerticalROIFromGridValues(int icol, ROI2DPolyLine roi) {
+	void updateVerticalROIFromGridValues(int icol) {
+		ROI2DPolyLine roi = colRois.get(icol);
 		roi.setPolyline2D(getVerticalLine(icol));
 	}
 
@@ -113,7 +124,30 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 
 		if (event.getType() == ROIEventType.ROI_CHANGED) {
 			ROI roi = event.getSource();
-			System.out.println(roi.getName() + " : " + event.getType() + " __ " + event.getPropertyName());
+			String name = roi.getName();
+			int index = 0;
+			try {
+				   index = Integer.parseInt(name.substring(name.lastIndexOf("_")+1));
+				}
+				catch (NumberFormatException e) {
+				   index = 0;
+				}
+			
+			//System.out.println(roi.getName() + " : " +index+ " ___" + event.getType() + " __ " + event.getPropertyName());
+			allowUpdate = false;
+			if (name.contains("row")) {
+				updateGridFromHorizontalROI(index, (ROI2DPolyLine) roi);
+				for (int i = 0; i < grid_n_columns; i++) {
+					updateVerticalROIFromGridValues(i);
+				}
+			}
+			else if (name.contains("col")){
+				updateGridFromVerticalROI(index, (ROI2DPolyLine) roi);
+				for (int i = 0; i < grid_n_rows; i++) {
+					updateHorizontalROIFromGridValues(i);
+				}
+			}
+			allowUpdate = true;
 			return;
 		}
 	}

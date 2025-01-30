@@ -32,7 +32,6 @@ import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
-import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class CreateCages extends JPanel {
@@ -371,9 +370,9 @@ public class CreateCages extends JPanel {
 
 		Polygon2D polyGon = getPolygonEnclosingCages(exp);
 		ROI2DGrid roiMesh = new ROI2DGrid();
-		ArrayList<ROI2DPolyLine> listRois = roiMesh.createGridFromFrame(polyGon, n_columns, n_rows);
-
-		exp.seqCamData.seq.addROIs(listRois, false);
+		roiMesh.createGridFromFrame(polyGon, n_columns, n_rows);
+		exp.seqCamData.seq.addROIs(roiMesh.getHorizontalRois(), false);
+		exp.seqCamData.seq.addROIs(roiMesh.getVerticalRois(), false);
 	}
 
 }
