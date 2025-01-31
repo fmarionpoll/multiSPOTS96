@@ -19,15 +19,19 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import icy.canvas.Canvas2D;
 import icy.gui.frame.progress.AnnounceFrame;
+import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentUtils;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
@@ -39,16 +43,17 @@ public class CreateSpots extends JPanel {
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
 
-	private JButton displayFrameDButton = new JButton("(1) Display frame");
-	private JButton createCirclesButton = new JButton("(2) Create circles");
+	private JButton zoomCageButton = new JButton("(1) Zoom 1 cage");
+	private JSpinner nRowsJSpinner = new JSpinner(new SpinnerNumberModel(4, 1, 16, 1));
+	private JSpinner nColumnsJSpinner = new JSpinner(new SpinnerNumberModel(8, 1, 16, 1));
+ 
+	private JButton displayFrameDButton = new JButton("(2) Create spots");
+	private JButton createCirclesButton = new JButton("(3) Duplicate / all cages");
 
 	private JSpinner nColsPerCageJSpinner = new JSpinner(new SpinnerNumberModel(2, 1, 500, 1));
 	private JSpinner nRowsPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 500, 1));
 	private JSpinner nFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
 	private JSpinner pixelRadiusSpinner = new JSpinner(new SpinnerNumberModel(10, 1, 1000, 1));
-
-	private JSpinner nRowsJSpinner = new JSpinner(new SpinnerNumberModel(8, 2, 100, 1));
-	private JSpinner nColumnsJSpinner = new JSpinner(new SpinnerNumberModel(12, 2, 100, 1));
 
 	private Polygon2D polygon2D = null;
 	private String[] flyString = new String[] { "fly", "flies" };
@@ -56,6 +61,7 @@ public class CreateSpots extends JPanel {
 
 	private MultiSPOTS96 parent0 = null;
 	private boolean silent = false;
+	private ROI2DGrid roiGrid = null;
 
 	// ----------------------------------------------------------
 
@@ -65,20 +71,25 @@ public class CreateSpots extends JPanel {
 		flowLayout.setVgap(0);
 
 		JPanel panel0 = new JPanel(flowLayout);
-		panel0.add(displayFrameDButton);
-		panel0.add(createCirclesButton);
-		panel0.add(pixelRadiusSpinner);
-		pixelRadiusSpinner.setPreferredSize(new Dimension(40, 20));
-		panel0.add(new JLabel("pixels"));
+		panel0.add(zoomCageButton);
+		panel0.add(new JLabel("cols"));
+		panel0.add(nColumnsJSpinner);
+		panel0.add(new JLabel("rows"));
+		panel0.add(nRowsJSpinner);
 
 		JPanel panel1 = new JPanel(flowLayout);
-		panel1.add(new JLabel("Spots:"));
-		panel1.add(new JLabel("cols"));
-		panel1.add(nColumnsJSpinner);
-		nColumnsJSpinner.setPreferredSize(new Dimension(40, 20));
-		panel1.add(new JLabel("rows"));
-		panel1.add(nRowsJSpinner);
-		nRowsJSpinner.setPreferredSize(new Dimension(40, 20));
+		panel1.add(displayFrameDButton);
+		panel1.add(createCirclesButton);
+		panel1.add(pixelRadiusSpinner);
+		pixelRadiusSpinner.setPreferredSize(new Dimension(40, 20));
+		panel1.add(new JLabel("pixels"));
+//		panel1.add(new JLabel("Spots:"));
+//		panel1.add(new JLabel("cols"));
+//		panel1.add(nColumnsJSpinner);
+//		nColumnsJSpinner.setPreferredSize(new Dimension(40, 20));
+//		panel1.add(new JLabel("rows"));
+//		panel1.add(nRowsJSpinner);
+//		nRowsJSpinner.setPreferredSize(new Dimension(40, 20));
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(new JLabel("Grouped within n cols"));
@@ -102,6 +113,16 @@ public class CreateSpots extends JPanel {
 	}
 
 	private void defineActionListeners() {
+		zoomCageButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					zoomCage(exp, 0);
+				}
+			}
+		});
+
 		displayFrameDButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -213,8 +234,8 @@ public class CreateSpots extends JPanel {
 		int n_rows = 1;
 		int radius = 3;
 		try {
-			n_columns = (int) nColumnsJSpinner.getValue();
-			n_rows = (int) nRowsJSpinner.getValue();
+//			n_columns = (int) nColumnsJSpinner.getValue();
+//			n_rows = (int) nRowsJSpinner.getValue();
 			radius = (int) pixelRadiusSpinner.getValue();
 		} catch (Exception e) {
 			new AnnounceFrame("Can't interpret one of the ROI parameters value");
@@ -277,6 +298,42 @@ public class CreateSpots extends JPanel {
 			nColsPerCageJSpinner.setValue(exp.spotsArray.nColumnsPerCage);
 			nRowsPerCageJSpinner.setValue(exp.spotsArray.nRowsPerCage);
 			silent = false;
+		}
+	}
+	
+	void zoomCage(Experiment exp, int cagenb) {
+		Cage cage = exp.cagesArray.getCageFromNumber(cagenb);
+		if (cage == null) return;
+		ROI2D roiCage = cage.getRoi();
+		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Canvas2D canvas = (Canvas2D) v.getCanvas();
+		
+		Rectangle rect = roiCage.getBounds();
+		canvas.centerOn(rect);
+		
+		createGrid(exp, roiCage); 
+	}
+	
+	private void createGrid(Experiment exp, ROI2D roi) {
+		int n_columns = 16;
+		int n_rows = 2;
+		try {
+			n_columns = (int) nColumnsJSpinner.getValue();
+			n_rows = (int) nRowsJSpinner.getValue();
+		} catch (Exception e) {
+			new AnnounceFrame("Can't interpret one of the ROI parameters value");
+		}
+		
+		Polygon2D polygon = ((ROI2DPolygon) roi).getPolygon2D();
+		if (polygon != null) {
+			if (roiGrid != null) {
+				exp.seqCamData.seq.removeROIs(roiGrid.getHorizontalRois(), false);
+				exp.seqCamData.seq.removeROIs(roiGrid.getVerticalRois(), false);
+			}
+			roiGrid= new ROI2DGrid(); 
+			roiGrid.createGridFromFrame(polygon, n_columns, n_rows);
+			exp.seqCamData.seq.addROIs(roiGrid.getHorizontalRois(), false);
+			exp.seqCamData.seq.addROIs(roiGrid.getVerticalRois(), false);
 		}
 	}
 

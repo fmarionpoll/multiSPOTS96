@@ -102,6 +102,7 @@ public class CreateCages extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					selectRoiEnclosingCages(exp);
+					removeGrid(exp);
 				}
 			}
 		});
@@ -243,7 +244,7 @@ public class CreateCages extends JPanel {
 			int width_interval, int height_interval) {
 		Point2D.Double[][] grid = roiGrid.getGridPoints();
 		// test if dimensions are ok
-		if (grid.length != (nrows - 1) || grid[0].length != (ncolumns - 1)) {
+		if (grid.length != (nrows + 1) || grid[0].length != (ncolumns + 1)) {
 			System.out.println("error in the dimensions of grid");
 		}
 		// generate cage frames
