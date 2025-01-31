@@ -1,6 +1,8 @@
 package plugins.fmp.multiSPOTS96.tools.ROI2D;
 
+import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,9 +10,11 @@ import icy.roi.ROI;
 import icy.roi.ROIEvent;
 import icy.roi.ROIEvent.ROIEventType;
 import icy.roi.ROIListener;
+import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
+import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 
 
@@ -19,6 +23,7 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 	private Point2D.Double[][] grid;
 	private ArrayList<ROI2DPolyLine> colRois;
 	private ArrayList<ROI2DPolyLine> rowRois;
+	private ArrayList<ROI2DPolygon> areaRois;
 	private int grid_n_rows = 0;
 	private int grid_n_columns = 0;
 	private boolean allowUpdate = true;
@@ -55,11 +60,68 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 	public ArrayList<ROI2DPolyLine> getVerticalRois() {
 		return colRois;
 	}
+	
+	public ArrayList<ROI2DPolygon> getAreaRois() {
+		return areaRois;
+	}
 
 	public Point2D.Double[][] getGridPoints() {
 		return grid;
 	}
+	
+	public void clearGridRois(Sequence seq) {
+		if (rowRois != null && rowRois.size() > 0)
+			seq.removeROIs(rowRois, false);
+		if (colRois != null && colRois.size() > 0)
+			seq.removeROIs(colRois, false);
+		if (areaRois != null && areaRois.size() > 0)
+			seq.removeROIs(areaRois, false);
+	}
+	
 
+
+	public ArrayList<ROI2DPolygon>  gridToRois(String cageRoot, Color color, int width_interval, int height_interval) {
+
+		areaRois = new ArrayList<ROI2DPolygon> (grid_n_columns * grid_n_rows);
+		int index = 0;
+		for (int row = 0; row < (grid_n_rows-1); row++) {
+			for (int column = 0; column < (grid_n_columns-1); column++) {
+				ROI2DPolygon roiP = createRoiPolygon(column, row, width_interval, height_interval);
+				roiP.setName(cageRoot + String.format("%03d", index));
+				roiP.setColor(color); 
+				areaRois.add(roiP);
+				index++;
+			}
+		}
+		return areaRois;
+	}
+	
+	private ROI2DPolygon createRoiPolygon(int icol, int irow, int width, int height) {
+		List<Point2D> points = new ArrayList<>();
+		Point2D.Double pt = (Double) grid[icol][irow].clone();
+		pt.x += width;
+		pt.y += height;
+		points.add(pt);
+
+		pt = (Double) grid[icol][irow + 1].clone();
+		pt.x += width;
+		pt.y -= height;
+		points.add(pt);
+
+		pt = (Double) grid[icol + 1][irow + 1].clone();
+		pt.x -= width;
+		pt.y -= height;
+		points.add(pt);
+
+		pt = (Double) grid[icol + 1][irow].clone();
+		pt.x -= width;
+		pt.y += height;
+		points.add(pt);
+
+		ROI2DPolygon roiP = new ROI2DPolygon(points);
+		return roiP;
+	}
+	
 	private Point2D.Double[][] createGridWithPolygon(Polygon2D polygon, int nbcols, int nbrows) {
 
 		if (polygon.npoints != 4)
