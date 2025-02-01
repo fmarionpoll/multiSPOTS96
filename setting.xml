@@ -147,26 +147,26 @@
 <section name="gui.histo">
 <key name="logView" value="true"/>
 </section>
-<key name="lastUploadDate" value="1738332332082"/>
+<key name="lastUploadDate" value="1738428209855"/>
 </section>
 <section name="plugins"/>
 <section name="frame">
 <section name="main">
-<key name="XE" value="3467"/>
-<key name="YE" value="63"/>
-<key name="WidthE" value="1837"/>
-<key name="HeightE" value="1040"/>
-<key name="MaximizedE" value="false"/>
+<key name="XE" value="628"/>
+<key name="YE" value="76"/>
+<key name="WidthE" value="1840"/>
+<key name="HeightE" value="1093"/>
+<key name="MaximizedE" value="true"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1461"/>
+<key name="XC" value="3072"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="368"/>
-<key name="HeightC" value="878"/>
+<key name="HeightC" value="1238"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -184,7 +184,7 @@
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
 <key name="WidthC" value="360"/>
-<key name="HeightC" value="788"/>
+<key name="HeightC" value="1148"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -202,7 +202,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="360"/>
-<key name="HeightC" value="788"/>
+<key name="HeightC" value="1148"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>
