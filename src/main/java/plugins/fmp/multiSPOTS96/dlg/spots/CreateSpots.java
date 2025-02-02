@@ -14,6 +14,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,10 +51,10 @@ public class CreateSpots extends JPanel {
 	private JButton keepAreasButton = new JButton("(2) Keep selected areas");
 	private JButton restoreAreasButton = new JButton("restore areas");
 
-	private JButton duplicateAllButton = new JButton("(3) Create spots / all cages");
-	private JComboBox<String> spotShapeCombo = new JComboBox<String>(new String[] { "ellipse", "polygon" });
-
+	private JButton duplicateAllButton = new JButton("(3) Create spots");
 	private JSpinner nFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
+	private JCheckBox shiftAreasForColumnsAfterMidLine = new JCheckBox("shift areas midline", false);
+	private JSpinner shiftAreaJSpinner = new JSpinner(new SpinnerNumberModel(30, -500, 500, 1));
 
 	private String[] flyString = new String[] { "fly", "flies" };
 	private JLabel flyLabel = new JLabel(flyString[0]);
@@ -82,12 +83,13 @@ public class CreateSpots extends JPanel {
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(duplicateAllButton);
-		panel2.add(spotShapeCombo);
-		panel2.add(new JLabel("with"));
-
+//		panel2.add(new JLabel("with"));
 		panel2.add(nFliesPerCageJSpinner);
-		nFliesPerCageJSpinner.setPreferredSize(new Dimension(40, 20));
 		panel2.add(flyLabel);
+		nFliesPerCageJSpinner.setPreferredSize(new Dimension(40, 20));
+		panel2.add(shiftAreasForColumnsAfterMidLine);
+		panel2.add(shiftAreaJSpinner);
+		shiftAreaJSpinner.setPreferredSize(new Dimension(40, 20));
 
 		add(panel0);
 		add(panel1);
@@ -95,6 +97,9 @@ public class CreateSpots extends JPanel {
 
 		nRowsCombo.setSelectedItem(4);
 		nColumnsCombo.setSelectedItem(8);
+
+		shiftAreasForColumnsAfterMidLine.setEnabled(false);
+		shiftAreaJSpinner.setEnabled(false);
 
 		defineActionListeners();
 		this.parent0 = parent0;
@@ -107,6 +112,8 @@ public class CreateSpots extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("carre", exp.seqCamData.seq),
+							false);
+					exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("spot", exp.seqCamData.seq),
 							false);
 					int cagenb = findSelectedCage(exp);
 					zoomCage(exp, cagenb);
@@ -189,51 +196,28 @@ public class CreateSpots extends JPanel {
 		int spotIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			Point2D.Double cagePosition = (Double) cage.getRoi().getPosition2D();
+			cage.getRoi().setSelected(true);
 			int carreIndex = 0;
 			for (ROI2DPolygon roi : listCarres) {
-				if (roi.isSelected()) {
-					Rectangle2D rect = roi.getBounds2D();
-					Point2D.Double center = getCenter(cagePosition, rect, referenceCagePosition);
-					int radius = (int) (rect.getHeight() / 2);
+				Rectangle2D rect = roi.getBounds2D();
+				Point2D.Double center = getAbsoluteSpotPosition(cagePosition, rect, referenceCagePosition);
+				int radius = (int) (rect.getHeight() / 2);
 
-					Spot spot = (spotShapeCombo.getSelectedIndex() == 0)
-							? createEllipseSpot(exp, cage, carreIndex, spotIndex, center, radius)
-							: createPolygonSpot(exp, cage, carreIndex, spotIndex, center, radius);
-					exp.spotsArray.spotsList.add(spot);
-					spotIndex++;
-				}
+				Spot spot = createEllipseSpot(exp, cage, carreIndex, spotIndex, center, radius);
+				exp.spotsArray.spotsList.add(spot);
+				spotIndex++;
 				carreIndex++;
 			}
+			cage.getRoi().setSelected(false);
 		}
 	}
 
-	private Point2D.Double getCenter(Point2D.Double cagePosition, Rectangle2D rect,
+	private Point2D.Double getAbsoluteSpotPosition(Point2D.Double cagePosition, Rectangle2D rect,
 			Point2D.Double referenceCagePosition) {
-		Point2D.Double center = new Point2D.Double(rect.getX(), rect.getY());
-		center.x = center.x - referenceCagePosition.x + cagePosition.x;
-		center.y = center.y - referenceCagePosition.y + cagePosition.y;
-		return center;
-	}
-
-	private Spot createPolygonSpot(Experiment exp, Cage cage, int carreIndex, int spotIndex, Point2D.Double center,
-			int radius) {
-		Polygon2D polygon = new Polygon2D(new Rectangle2D.Double(center.x, center.y, (double) radius, (double) radius));
-		ROI2DPolygon roiPolygon = new ROI2DPolygon(polygon);
-		roiPolygon.setName("spot_" + String.format("%03d", cage.cageID) + String.format("%03d", carreIndex)
-				+ String.format("%03d", spotIndex));
-
-		Spot spot = new Spot(roiPolygon);
-		spot.plateIndex = spotIndex;
-		spot.spotRadius = radius;
-		spot.spotXCoord = (int) center.getX();
-		spot.spotYCoord = (int) center.getY();
-		try {
-			spot.spotNPixels = (int) roiPolygon.getNumberOfPoints();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return spot;
+		Point2D.Double spotPosition = new Point2D.Double(rect.getX(), rect.getY());
+		spotPosition.x = cagePosition.x + (spotPosition.x - referenceCagePosition.x);
+		spotPosition.y = cagePosition.y + (spotPosition.y - referenceCagePosition.y);
+		return spotPosition;
 	}
 
 	private Spot createEllipseSpot(Experiment exp, Cage cage, int carreIndex, int spotIndex, Point2D.Double center,
@@ -256,45 +240,6 @@ public class CreateSpots extends JPanel {
 		}
 		return spot;
 	}
-
-//	private void createCirclesFromSelectedAreas(Experiment exp) {
-//		int radius = 3;// half of rectangle in which selected roi fits.
-////		try {
-////			radius = (int) pixelRadiusSpinner.getValue();
-////		} catch (Exception e) {
-////			new AnnounceFrame("Can't interpret one of the ROI parameters value");
-////		}
-//		// erase existing spots
-//		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("circle_", exp.seqCamData.seq), false);
-//		ArrayList<ROI2DPolygon> listCarres = roiGrid.getAreaRois();
-//
-//		ArrayList<Point2D.Double> listPoints = new ArrayList<Point2D.Double>(1);
-//		for (ROI2DPolygon roi : listCarres) {
-//			if (roi.isSelected()) {
-//				Rectangle2D rect = roi.getBounds2D();
-//				Point2D.Double center = new Point2D.Double(rect.getCenterX(), rect.getCenterY());
-//				listPoints.add(center);
-//			}
-//		}
-//		ArrayList<ROI2DEllipse> listCircles = convertPoint2DArrayToCircles(exp, listPoints, radius);
-//		exp.seqCamData.seq.addROIs(listCircles, false);
-//	}
-
-//	private ArrayList<ROI2DEllipse> convertPoint2DArrayToCircles(Experiment exp, ArrayList<Point2D.Double> arrayPoints,
-//			int radius) {
-//		int spotIndex = 0;
-//		ArrayList<ROI2DEllipse> listCircles = new ArrayList<ROI2DEllipse>(1);
-//		for (Point2D.Double point : arrayPoints) {
-//			double x = point.getX() - radius;
-//			double y = point.getY() - radius;
-//			Ellipse2D ellipse = new Ellipse2D.Double(x, y, 2 * radius, 2 * radius);
-//			ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
-//			roiEllipse.setName("circle_" + String.format("%03d", spotIndex));
-//			listCircles.add(roiEllipse);
-//			spotIndex++;
-//		}
-//		return listCircles;
-//	}
 
 	int findSelectedCage(Experiment exp) {
 		int selectedCage = 0;

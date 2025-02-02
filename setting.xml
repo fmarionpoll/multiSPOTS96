@@ -75,7 +75,7 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1738391274664"/>
+<key name="lastUpdateCheckTime" value="1738494303748"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
 <key name="loaderFolder" value="C:\Users\fred\Desktop\essai_sandwich\2025-01-24 4gouttes 0.5 micro litre"/>
@@ -159,14 +159,14 @@
 <key name="MaximizedE" value="true"/>
 </section>
 <section name="inspector">
-<key name="XC" value="3072"/>
+<key name="XC" value="3064"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="368"/>
-<key name="HeightC" value="1238"/>
+<key name="HeightC" value="1230"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -184,7 +184,7 @@
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
 <key name="WidthC" value="360"/>
-<key name="HeightC" value="1148"/>
+<key name="HeightC" value="1140"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -202,7 +202,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="360"/>
-<key name="HeightC" value="1148"/>
+<key name="HeightC" value="1140"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>
