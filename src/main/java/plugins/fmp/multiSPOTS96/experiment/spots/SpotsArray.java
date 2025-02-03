@@ -1,7 +1,6 @@
 package plugins.fmp.multiSPOTS96.experiment.spots;
 
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -247,20 +246,20 @@ public class SpotsArray {
 		return cageID;
 	}
 
-	public void updatePlateIndexToCageIndexes(int nColsPerCage, int nRowsPerCage) {
-
-		this.nColumnsPerCage = nColsPerCage;
-		this.nRowsPerCage = nRowsPerCage;
-
-		for (Spot spot : spotsList) {
-			spot.cageID = getCageIndexFromPlateIndex(spot.plateIndex);
-			int spotCageColumn = spot.plateColumn % nColsPerCage;
-			int spotCageRow = spot.plateRow % nRowsPerCage;
-			spot.cagePosition = spotCageRow * nColsPerCage + spotCageColumn;
-
-			spot.setSpotRoi_InColorAccordingToSpotIndex(spot.cagePosition);
-		}
-	}
+//	public void updatePlateIndexToCageIndexes(int nColsPerCage, int nRowsPerCage) {
+//
+//		this.nColumnsPerCage = nColsPerCage;
+//		this.nRowsPerCage = nRowsPerCage;
+//
+//		for (Spot spot : spotsList) {
+//			spot.cageID = getCageIndexFromPlateIndex(spot.plateIndex);
+//			int spotCageColumn = spot.cageColumn % nColsPerCage;
+//			int spotCageRow = spot.cageRow % nRowsPerCage;
+//			spot.cagePosition = spotCageRow * nColsPerCage + spotCageColumn;
+//
+//			spot.setSpotRoi_InColorAccordingToSpotIndex(spot.cagePosition);
+//		}
+//	}
 
 	public void transferROIsFromSequenceToSpots(Sequence seq) {
 		List<ROI> listROISSpot = ROIUtilities.getROIsContainingString("spot", seq);
@@ -342,40 +341,40 @@ public class SpotsArray {
 		}
 	}
 
-	public Polygon2D getPolygon2DEnclosingAllSpots() {
-		if (spotsList.size() < 1)
-			return null;
+//	public Polygon2D getPolygon2DEnclosingAllSpots() {
+//		if (spotsList.size() < 1)
+//			return null;
+//
+//		List<Point2D> points = new ArrayList<Point2D>();
+//		int spotX = spotsList.get(0).spotXCoord;
+//		int spotY = spotsList.get(0).spotYCoord;
+//		points.add(new Point2D.Double(spotX, spotY));
+//		points.add(new Point2D.Double(spotX + 1, spotY));
+//		points.add(new Point2D.Double(spotX + 1, spotY + 1));
+//		points.add(new Point2D.Double(spotX, spotY + 1));
+//		Polygon2D polygon = new Polygon2D(points);
+//
+//		for (Spot spot : spotsList) {
+//			int col = spot.plateColumn;
+//			int row = spot.plateRow;
+//
+//			if (col == 0 && row == 0) {
+//				replaceItem(polygon, 0, spot);
+//			} else if (col == (nColumnsPerPlate - 1) && row == 0) {
+//				replaceItem(polygon, 1, spot);
+//			} else if (col == (nColumnsPerPlate - 1) && row == (nRowsPerPlate - 1)) {
+//				replaceItem(polygon, 2, spot);
+//			} else if (col == 0 && row == (nRowsPerPlate - 1)) {
+//				replaceItem(polygon, 3, spot);
+//			}
+//		}
+//		return polygon;
+//	}
 
-		List<Point2D> points = new ArrayList<Point2D>();
-		int spotX = spotsList.get(0).spotXCoord;
-		int spotY = spotsList.get(0).spotYCoord;
-		points.add(new Point2D.Double(spotX, spotY));
-		points.add(new Point2D.Double(spotX + 1, spotY));
-		points.add(new Point2D.Double(spotX + 1, spotY + 1));
-		points.add(new Point2D.Double(spotX, spotY + 1));
-		Polygon2D polygon = new Polygon2D(points);
-
-		for (Spot spot : spotsList) {
-			int col = spot.plateColumn;
-			int row = spot.plateRow;
-
-			if (col == 0 && row == 0) {
-				replaceItem(polygon, 0, spot);
-			} else if (col == (nColumnsPerPlate - 1) && row == 0) {
-				replaceItem(polygon, 1, spot);
-			} else if (col == (nColumnsPerPlate - 1) && row == (nRowsPerPlate - 1)) {
-				replaceItem(polygon, 2, spot);
-			} else if (col == 0 && row == (nRowsPerPlate - 1)) {
-				replaceItem(polygon, 3, spot);
-			}
-		}
-		return polygon;
-	}
-
-	private void replaceItem(Polygon2D polygon, int index, Spot spot) {
-		polygon.xpoints[index] = spot.spotXCoord;
-		polygon.ypoints[index] = spot.spotYCoord;
-	}
+//	private void replaceItem(Polygon2D polygon, int index, Spot spot) {
+//		polygon.xpoints[index] = spot.spotXCoord;
+//		polygon.ypoints[index] = spot.spotYCoord;
+//	}
 
 	public ArrayList<Spot> getSpotsEnclosed(ROI2DPolygon envelopeRoi) {
 		ArrayList<Spot> enclosedSpots = new ArrayList<Spot>();
@@ -710,10 +709,10 @@ public class SpotsArray {
 			if (!setFilter)
 				continue;
 
-			if (!options.detectL && spot.isL())
-				spot.okToAnalyze = false;
-			if (!options.detectR && spot.isR())
-				spot.okToAnalyze = false;
+//			if (!options.detectL && spot.isL())
+//				spot.okToAnalyze = false;
+//			if (!options.detectR && spot.isR())
+//				spot.okToAnalyze = false;
 			if (options.detectSelectedROIs && !spot.isIndexSelected(options.selectedIndexes))
 				spot.okToAnalyze = false;
 		}

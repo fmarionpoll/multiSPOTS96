@@ -411,9 +411,9 @@ public class CagesArray {
 		}
 	}
 
-	public void setCageNbFromSpotsArray(SpotsArray spotsArray) {
-		spotsArray.updatePlateIndexToCageIndexes(spotsArray.nColumnsPerCage, spotsArray.nRowsPerCage);
-	}
+//	public void setCageNbFromSpotsArray(SpotsArray spotsArray) {
+//		spotsArray.updatePlateIndexToCageIndexes(spotsArray.nColumnsPerCage, spotsArray.nRowsPerCage);
+//	}
 
 	public Cage getCageFromNumber(int number) {
 		Cage cageFound = null;

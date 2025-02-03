@@ -177,7 +177,7 @@ public class Display extends JPanel implements ViewerListener {
 				int nspotsArray = exp.spotsArray.spotsList.size();
 				for (int i = 0; i < nspotsArray; i++) {
 					Spot spot = exp.spotsArray.spotsList.get(i);
-					String name = spot.getPlateCoordinatesAsString();
+					String name = spot.getRoi().getName(); // .getPlateCoordinatesAsString();
 					kymographsCombo.addItem(name);
 				}
 			}

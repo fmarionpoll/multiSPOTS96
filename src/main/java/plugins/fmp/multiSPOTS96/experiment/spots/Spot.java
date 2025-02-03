@@ -34,9 +34,9 @@ public class Spot implements Comparable<Spot> {
 
 	public int cageID = -1;
 	public int cagePosition = 0;
-	public int plateIndex = 0;
-	public int plateColumn = 0;
-	public int plateRow = 0;
+	public int spotArrayIndex = 0;
+	public int cageColumn = 0;
+	public int cageRow = 0;
 
 	public String version = null;
 	public String spotStim = new String("..");
@@ -70,9 +70,9 @@ public class Spot implements Comparable<Spot> {
 
 	private final String ID_CAGE = "cage_id";
 	private final String ID_CAGEINDEX = "cage_index";
-	private final String ID_PLATEINDEX = "plate_index";
-	private final String ID_PLATECOL = "plate_col";
-	private final String ID_PLATEROW = "plate_row";
+	private final String ID_SPOTARRAYINDEX = "spot_array_index";
+	private final String ID_CAGECOL = "cage_col";
+	private final String ID_CAGEROW = "cage_row";
 
 	private final String ID_SPOTVOLUME = "volume";
 	private final String ID_PIXELS = "pixels";
@@ -116,10 +116,7 @@ public class Spot implements Comparable<Spot> {
 		version = spotFrom.version;
 		spotRoi2D = (ROI2DShape) spotFrom.spotRoi2D.getCopy();
 
-		plateIndex = spotFrom.plateIndex;
-		plateColumn = spotFrom.plateColumn;
-		plateRow = spotFrom.plateRow;
-
+		spotArrayIndex = spotFrom.spotArrayIndex;
 		cageID = spotFrom.cageID;
 		cagePosition = spotFrom.cagePosition;
 
@@ -136,8 +133,6 @@ public class Spot implements Comparable<Spot> {
 
 		sum_in.copyLevel2D(spotFrom.sum_in);
 		sum_clean.copyLevel2D(spotFrom.sum_clean);
-//		sum_out.copyLevel2D(spotFrom.sum_out);
-//		sum_diff.copyLevel2D(spotFrom.sum_diff);
 		flyPresent.copyLevel2D(spotFrom.flyPresent);
 	}
 
@@ -158,14 +153,14 @@ public class Spot implements Comparable<Spot> {
 		this.spotRoi_old = roi;
 	}
 
-	public String getPlateCoordinatesAsString() {
-		String plateCoords = getCharForNumber(plateRow) + "_" + Integer.toString(plateColumn);
-		return plateCoords;
-	}
+//	public String getPlateCoordinatesAsString() {
+//		String plateCoords = getCharForNumber(plateRow) + "_" + Integer.toString(plateColumn);
+//		return plateCoords;
+//	}
 
-	private String getCharForNumber(int i) {
-		return i > -1 && i < 26 ? String.valueOf((char) (i + 'A')) : null;
-	}
+//	private String getCharForNumber(int i) {
+//		return i > -1 && i < 26 ? String.valueOf((char) (i + 'A')) : null;
+//	}
 
 	public void setSpotRoi_InColorAccordingToSpotIndex(int index) {
 		Color value = spotColors[index % 8];
@@ -255,22 +250,22 @@ public class Spot implements Comparable<Spot> {
 		}
 	}
 
-	public boolean isL() {
-		int i = plateIndex % 2;
-		return (0 == i);
-	}
-
-	public boolean isR() {
-		int i = plateIndex % 2;
-		return (1 == i);
-	}
+//	public boolean isL() {
+//		int i = plateIndex % 2;
+//		return (0 == i);
+//	}
+//
+//	public boolean isR() {
+//		int i = plateIndex % 2;
+//		return (1 == i);
+//	}
 
 	public boolean isIndexSelected(List<Integer> selectedIndexes) {
 		if (selectedIndexes == null || selectedIndexes.size() < 1)
 			return true;
 
 		for (int i : selectedIndexes) {
-			if (i == plateIndex) {
+			if (i == spotArrayIndex) {
 				return true;
 			}
 		}
@@ -343,9 +338,9 @@ public class Spot implements Comparable<Spot> {
 			cageID = XMLUtil.getElementIntValue(nodeMeta, ID_CAGE, cageID);
 			cagePosition = XMLUtil.getElementIntValue(nodeMeta, ID_CAGEINDEX, cagePosition);
 
-			plateIndex = XMLUtil.getElementIntValue(nodeMeta, ID_PLATEINDEX, plateIndex);
-			plateColumn = XMLUtil.getElementIntValue(nodeMeta, ID_PLATECOL, plateColumn);
-			plateRow = XMLUtil.getElementIntValue(nodeMeta, ID_PLATEROW, plateRow);
+//			cageIndex = XMLUtil.getElementIntValue(nodeMeta, ID_PLATEINDEX, cageIndex);
+			cageColumn = XMLUtil.getElementIntValue(nodeMeta, ID_CAGECOL, cageColumn);
+			cageRow = XMLUtil.getElementIntValue(nodeMeta, ID_CAGEROW, cageRow);
 
 			spotVolume = XMLUtil.getElementDoubleValue(nodeMeta, ID_SPOTVOLUME, Double.NaN);
 			spotNPixels = XMLUtil.getElementIntValue(nodeMeta, ID_PIXELS, 5);
@@ -401,9 +396,9 @@ public class Spot implements Comparable<Spot> {
 		XMLUtil.setElementIntValue(nodeMeta, ID_CAGE, cageID);
 		XMLUtil.setElementIntValue(nodeMeta, ID_CAGEINDEX, cagePosition);
 
-		XMLUtil.setElementIntValue(nodeMeta, ID_PLATEINDEX, plateIndex);
-		XMLUtil.setElementIntValue(nodeMeta, ID_PLATECOL, plateColumn);
-		XMLUtil.setElementIntValue(nodeMeta, ID_PLATEROW, plateRow);
+		XMLUtil.setElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, spotArrayIndex);
+		XMLUtil.setElementIntValue(nodeMeta, ID_CAGECOL, cageColumn);
+		XMLUtil.setElementIntValue(nodeMeta, ID_CAGEROW, cageRow);
 
 		XMLUtil.setElementDoubleValue(nodeMeta, ID_SPOTVOLUME, spotVolume);
 		XMLUtil.setElementIntValue(nodeMeta, ID_PIXELS, spotNPixels);
@@ -565,7 +560,7 @@ public class Spot implements Comparable<Spot> {
 
 	public String csvExportDescription(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		List<String> row = Arrays.asList(String.valueOf(plateIndex), getRoi().getName(), String.valueOf(cageID),
+		List<String> row = Arrays.asList(String.valueOf(spotArrayIndex), getRoi().getName(), String.valueOf(cageID),
 				String.valueOf(spotNFlies), String.valueOf(spotVolume), String.valueOf(spotNPixels),
 				String.valueOf(spotRadius), spotStim.replace(",", "."), spotConc.replace(",", "."),
 				String.valueOf(cagePosition));
@@ -595,7 +590,7 @@ public class Spot implements Comparable<Spot> {
 
 	public String csvExportMeasures_OneType(EnumSpotMeasures measureType, String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		sbf.append(spotRoi2D.getName() + csvSep + plateIndex + csvSep);
+		sbf.append(spotRoi2D.getName() + csvSep + spotArrayIndex + csvSep);
 		switch (measureType) {
 		case AREA_SUM:
 			sum_in.cvsExportYDataToRow(sbf, csvSep);
@@ -621,7 +616,7 @@ public class Spot implements Comparable<Spot> {
 
 	public void csvImportDescription(String[] data, boolean dummyColumn) {
 		int i = dummyColumn ? 1 : 0;
-		plateIndex = Integer.valueOf(data[i]);
+		spotArrayIndex = Integer.valueOf(data[i]);
 		i++;
 		spotRoi2D.setName(data[i]);
 		i++;

@@ -34,6 +34,7 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DPolygonPlus;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -173,7 +174,7 @@ public class CreateSpots extends JPanel {
 	// ---------------------------------
 
 	private void keepSelectedAreas(Experiment exp) {
-		ArrayList<ROI2DPolygon> listCarres = roiGrid.getAreaRois();
+		ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.getAreaRois();
 		for (ROI2DPolygon roi : listCarres) {
 			if (!roi.isSelected()) {
 				exp.seqCamData.seq.removeROI(roi);
@@ -183,16 +184,17 @@ public class CreateSpots extends JPanel {
 
 	private void restoreAreas(Experiment exp) {
 		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("carre", exp.seqCamData.seq), false);
-		ArrayList<ROI2DPolygon> listCarres = roiGrid.getAreaRois();
-		for (ROI2DPolygon roi : listCarres)
+		ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.getAreaRois();
+		for (ROI2DPolygon roi : listCarres) {
 			exp.seqCamData.seq.addROI(roi);
+		}
 	}
 
 	private void createSpotsForAllCages(Experiment exp, ROI2DGrid roiGrid, Point2D.Double referenceCagePosition) {
 		exp.spotsArray.spotsList.clear();
 		exp.spotsArray = new SpotsArray();
 
-		ArrayList<ROI2DPolygon> listCarres = roiGrid.getAreaRois();
+		ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.getAreaRois();
 		int spotIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			Point2D.Double cagePosition = (Double) cage.getRoi().getPosition2D();
@@ -228,7 +230,9 @@ public class CreateSpots extends JPanel {
 				+ String.format("%03d", spotIndex));
 
 		Spot spot = new Spot(roiEllipse);
-		spot.plateIndex = spotIndex;
+		spot.spotArrayIndex = spotIndex;
+		spot.cageID = cage.cageID;
+		spot.cagePosition = carreIndex;
 		spot.spotRadius = radius;
 		spot.spotXCoord = (int) center.getX();
 		spot.spotYCoord = (int) center.getY();
@@ -277,7 +281,7 @@ public class CreateSpots extends JPanel {
 			int n_columns = (int) nColumnsCombo.getSelectedItem();
 			int n_rows = (int) nRowsCombo.getSelectedItem();
 			roiGrid.createGridFromFrame(polygon, n_columns, n_rows);
-			ArrayList<ROI2DPolygon> listCarres = roiGrid.gridToRois("carre", Color.RED, 1, 1);
+			ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.gridToRois("carre", Color.RED, 1, 1);
 			exp.seqCamData.seq.addROIs(listCarres, false);
 		}
 	}

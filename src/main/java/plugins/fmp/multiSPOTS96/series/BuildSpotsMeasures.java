@@ -258,7 +258,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 		int nFrames = exp.seqCamData.nTotalFrames;
 		for (Spot spot : exp.spotsArray.spotsList) {
-			int i = spot.plateIndex % 2;
+			int i = spot.cagePosition % 2;
 			if (0 == i && !options.detectL)
 				continue;
 			if (1 == i && !options.detectR)

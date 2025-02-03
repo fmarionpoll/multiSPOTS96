@@ -14,16 +14,13 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
-import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
-
-
-public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
+public class ROI2DGrid implements ROIListener {
 
 	private Point2D.Double[][] grid;
 	private ArrayList<ROI2DPolyLine> colRois;
 	private ArrayList<ROI2DPolyLine> rowRois;
-	private ArrayList<ROI2DPolygon> areaRois;
+	private ArrayList<ROI2DPolygonPlus> areaRois;
 	private int grid_n_rows = 0;
 	private int grid_n_columns = 0;
 	private boolean allowUpdate = true;
@@ -52,23 +49,23 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 			roi.addListener(this);
 		}
 	}
-	
+
 	public ArrayList<ROI2DPolyLine> getHorizontalRois() {
 		return rowRois;
 	}
-	
+
 	public ArrayList<ROI2DPolyLine> getVerticalRois() {
 		return colRois;
 	}
-	
-	public ArrayList<ROI2DPolygon> getAreaRois() {
+
+	public ArrayList<ROI2DPolygonPlus> getAreaRois() {
 		return areaRois;
 	}
 
 	public Point2D.Double[][] getGridPoints() {
 		return grid;
 	}
-	
+
 	public void clearGridRois(Sequence seq) {
 		if (rowRois != null && rowRois.size() > 0)
 			seq.removeROIs(rowRois, false);
@@ -77,26 +74,25 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		if (areaRois != null && areaRois.size() > 0)
 			seq.removeROIs(areaRois, false);
 	}
-	
 
+	public ArrayList<ROI2DPolygonPlus> gridToRois(String cageRoot, Color color, int width_interval,
+			int height_interval) {
 
-	public ArrayList<ROI2DPolygon>  gridToRois(String cageRoot, Color color, int width_interval, int height_interval) {
-
-		areaRois = new ArrayList<ROI2DPolygon> (grid_n_columns * grid_n_rows);
+		areaRois = new ArrayList<ROI2DPolygonPlus>(grid_n_columns * grid_n_rows);
 		int index = 0;
-		for (int row = 0; row < (grid_n_rows-1); row++) {
-			for (int column = 0; column < (grid_n_columns-1); column++) {
-				ROI2DPolygon roiP = createRoiPolygon(column, row, width_interval, height_interval);
+		for (int row = 0; row < (grid_n_rows - 1); row++) {
+			for (int column = 0; column < (grid_n_columns - 1); column++) {
+				ROI2DPolygonPlus roiP = createRoiPolygon(column, row, width_interval, height_interval);
 				roiP.setName(cageRoot + String.format("%03d", index));
-				roiP.setColor(color); 
+				roiP.setColor(color);
 				areaRois.add(roiP);
 				index++;
 			}
 		}
 		return areaRois;
 	}
-	
-	private ROI2DPolygon createRoiPolygon(int icol, int irow, int width, int height) {
+
+	private ROI2DPolygonPlus createRoiPolygon(int icol, int irow, int width, int height) {
 		List<Point2D> points = new ArrayList<>();
 		Point2D.Double pt = (Double) grid[icol][irow].clone();
 		pt.x += width;
@@ -118,10 +114,10 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		pt.y += height;
 		points.add(pt);
 
-		ROI2DPolygon roiP = new ROI2DPolygon(points);
+		ROI2DPolygonPlus roiP = new ROI2DPolygonPlus(points, irow, icol);
 		return roiP;
 	}
-	
+
 	private Point2D.Double[][] createGridWithPolygon(Polygon2D polygon, int nbcols, int nbrows) {
 
 		if (polygon.npoints != 4)
@@ -129,11 +125,11 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		if (nbcols <= 0 || nbrows <= 0)
 			throw new IllegalArgumentException("There must be a positive number of parts per side");
 
-		Point2D.Double[][] arrayPoints = new Point2D.Double[nbcols+1][nbrows+1];
+		Point2D.Double[][] arrayPoints = new Point2D.Double[nbcols + 1][nbrows + 1];
 
 		for (int col = 0; col <= nbcols; col++) {
 
-			double ratioX0 = col / (double) nbcols ;
+			double ratioX0 = col / (double) nbcols;
 
 			double x = polygon.xpoints[0] + (polygon.xpoints[3] - polygon.xpoints[0]) * ratioX0;
 			double y = polygon.ypoints[0] + (polygon.ypoints[3] - polygon.ypoints[0]) * ratioX0;
@@ -155,8 +151,8 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 		}
 		return arrayPoints;
 	}
-	
- 	private ROI2DPolyLine getVerticalROI(int icol) {
+
+	private ROI2DPolyLine getVerticalROI(int icol) {
 		List<Point2D> points = new ArrayList<Point2D>(grid_n_columns);
 		for (int irow = 0; irow < grid_n_rows; irow++) {
 			points.add(grid[icol][irow]);
@@ -228,21 +224,20 @@ public class ROI2DGrid extends ROI2DPolyLine implements ROIListener {
 			String name = roi.getName();
 			int index = 0;
 			try {
-				   index = Integer.parseInt(name.substring(name.lastIndexOf("_")+1));
-				}
-				catch (NumberFormatException e) {
-				   index = 0;
-				}
-			
-			//System.out.println(roi.getName() + " : " +index+ " ___" + event.getType() + " __ " + event.getPropertyName());
+				index = Integer.parseInt(name.substring(name.lastIndexOf("_") + 1));
+			} catch (NumberFormatException e) {
+				index = 0;
+			}
+
+			// System.out.println(roi.getName() + " : " +index+ " ___" + event.getType() + "
+			// __ " + event.getPropertyName());
 			allowUpdate = false;
 			if (name.contains("row")) {
 				updateGridFromHorizontalROI(index, (ROI2DPolyLine) roi);
 				for (int i = 0; i < grid_n_columns; i++) {
 					updateVerticalROIFromGridValues(i);
 				}
-			}
-			else if (name.contains("col")){
+			} else if (name.contains("col")) {
 				updateGridFromVerticalROI(index, (ROI2DPolyLine) roi);
 				for (int i = 0; i < grid_n_rows; i++) {
 					updateHorizontalROIFromGridValues(i);

@@ -191,7 +191,7 @@ public class SpotTablePanel extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.cagesArray.setCageNbFromSpotsArray(exp.spotsArray);
+//					exp.cagesArray.setCageNbFromSpotsArray(exp.spotsArray);
 					spotTableModel.fireTableDataChanged();
 				}
 			}
