@@ -215,7 +215,7 @@ public class Edit extends JPanel {
 		if (enclosedSpots.size() > 0) {
 			ArrayList<Point2D> listPoint = new ArrayList<Point2D>();
 			for (Spot spot : enclosedSpots) {
-				listPoint.add(new Point2D.Double(spot.spotXCoord, spot.spotYCoord));
+				listPoint.add(new Point2D.Double(spot.spotXCoord + spot.spotRadius, spot.spotYCoord + spot.spotRadius));
 			}
 			snakeRoi = new ROI2DPolyLine(listPoint);
 			exp.seqCamData.seq.addROI(snakeRoi);
@@ -240,8 +240,8 @@ public class Edit extends JPanel {
 			Polyline2D snake = snakeRoi.getPolyline2D();
 			int i = 0;
 			for (Spot spot : enclosedSpots) {
-				double deltax = snake.xpoints[i] - spot.spotXCoord;
-				double deltay = snake.ypoints[i] - spot.spotYCoord;
+				double deltax = snake.xpoints[i] - spot.spotXCoord - spot.spotRadius;
+				double deltay = snake.ypoints[i] - spot.spotYCoord - spot.spotRadius;
 				spot.spotXCoord = (int) snake.xpoints[i];
 				spot.spotYCoord = (int) snake.ypoints[i];
 				spot.getRoi().translate(deltax, deltay);

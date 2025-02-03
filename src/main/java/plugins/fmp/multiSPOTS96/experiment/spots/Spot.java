@@ -317,8 +317,6 @@ public class Spot implements Comparable<Spot> {
 	public void transferROIsMeasuresToLevel2D() {
 		sum_in.transferROItoLevel2D();
 		sum_clean.transferROItoLevel2D();
-//		sum_out.transferROItoLevel2D();
-//		sum_diff.transferROItoLevel2D();
 		flyPresent.transferROItoLevel2D();
 	}
 
