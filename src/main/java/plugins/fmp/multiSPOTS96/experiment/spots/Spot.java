@@ -26,7 +26,6 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 public class Spot implements Comparable<Spot> {
 
 	private ROI2DShape spotRoi2D = null;
-	private ROI2DShape spotRoi_old = null;
 	private ArrayList<ROI2DAlongT> listRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
 
@@ -140,27 +139,10 @@ public class Spot implements Comparable<Spot> {
 		return spotRoi2D;
 	}
 
-	public ROI2D getRoi_old() {
-		return spotRoi_old;
-	}
-
 	public void setRoi(ROI2DShape roi) {
 		this.spotRoi2D = roi;
 		listRoiAlongT.clear();
 	}
-
-	public void setRoi_old(ROI2DShape roi) {
-		this.spotRoi_old = roi;
-	}
-
-//	public String getPlateCoordinatesAsString() {
-//		String plateCoords = getCharForNumber(plateRow) + "_" + Integer.toString(plateColumn);
-//		return plateCoords;
-//	}
-
-//	private String getCharForNumber(int i) {
-//		return i > -1 && i < 26 ? String.valueOf((char) (i + 'A')) : null;
-//	}
 
 	public void setSpotRoi_InColorAccordingToSpotIndex(int index) {
 		Color value = spotColors[index % 8];

@@ -304,7 +304,6 @@ public class DetectContours extends JPanel {
 
 				roi_new.setName(spot.getRoi().getName());
 				roi_new.setColor(spot.getRoi().getColor());
-				spot.setRoi_old((ROI2DShape) spot.getRoi().getCopy());
 				spot.setRoi(roi_new);
 			}
 			exp.seqCamData.seq.addROI(spot.getRoi());
@@ -333,7 +332,6 @@ public class DetectContours extends JPanel {
 	}
 
 	private void replaceRoi(Experiment exp, Spot spot, ROI2D roi_old, ROI2D roi_new) {
-		spot.setRoi_old((ROI2DShape) roi_old);
 		exp.seqCamData.seq.removeROI(roi_new);
 		exp.seqCamData.seq.removeROI(roi_old);
 		roi_new.setName(roi_old.getName());

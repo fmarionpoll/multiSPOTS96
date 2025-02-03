@@ -35,7 +35,7 @@ public class Edit extends JPanel {
 	private static final long serialVersionUID = -7582410775062671523L;
 
 	private JButton editSpotsButton = new JButton("Change spots position with time");
-	private JCheckBox showFrameButton = new JCheckBox("Select spots within frame");
+	private JCheckBox selectSpotsButton = new JCheckBox("Select spots within frame");
 	private JToggleButton displaySnakeButton = new JToggleButton("Display snake over spots");
 	private JButton updateSpotsFromSnakeButton = new JButton("Center spots to snake");
 	private MultiSPOTS96 parent0 = null;
@@ -56,7 +56,7 @@ public class Edit extends JPanel {
 		flowLayout.setVgap(0);
 
 		JPanel panel0 = new JPanel(flowLayout);
-		panel0.add(showFrameButton);
+		panel0.add(selectSpotsButton);
 		panel0.add(displaySnakeButton);
 		panel0.add(updateSpotsFromSnakeButton);
 		add(panel0);
@@ -90,14 +90,14 @@ public class Edit extends JPanel {
 			}
 		});
 
-		showFrameButton.addActionListener(new ActionListener() {
+		selectSpotsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp == null)
 					return;
-				updateButtonsState(showFrameButton.isSelected());
-				showFrame(showFrameButton.isSelected());
+				updateButtonsState(selectSpotsButton.isSelected());
+				showFrame(selectSpotsButton.isSelected());
 			}
 		});
 
@@ -111,7 +111,7 @@ public class Edit extends JPanel {
 					displaySnake(exp);
 				else
 					removeSnake(exp);
-				updateButtonsState(showFrameButton.isSelected());
+				updateButtonsState(selectSpotsButton.isSelected());
 			}
 		});
 
@@ -163,7 +163,6 @@ public class Edit extends JPanel {
 	public void openDialog() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-//			exp.spotsArray.transferDescriptionToSpots();
 			if (editSpotsTable == null)
 				editSpotsTable = new EditPositionWithTime();
 			editSpotsTable.initialize(parent0, getFramePosition());
@@ -183,14 +182,14 @@ public class Edit extends JPanel {
 
 		if (show) {
 			int t = exp.seqCamData.seq.getFirstViewer().getPositionT();
-			addFrameAroundSpots(t, exp);
+			setSpotsFrame(t, exp);
 		} else {
 			removeSpotsFrame(exp);
 			removeSnake(exp);
 		}
 	}
 
-	private void addFrameAroundSpots(int t, Experiment exp) {
+	private void setSpotsFrame(int t, Experiment exp) {
 		if (spotsFrame == null) {
 			ArrayList<ROI2D> listRoisAtT = new ArrayList<ROI2D>();
 			for (Spot spot : exp.spotsArray.spotsList) {
@@ -232,7 +231,6 @@ public class Edit extends JPanel {
 	private void removeSpotsFrame(Experiment exp) {
 		if (spotsFrame != null)
 			exp.seqCamData.seq.removeROI(spotsFrame);
-		spotsFrame = null;
 	}
 
 	private void updateSpotsFromSnake(Experiment exp) {
@@ -240,11 +238,11 @@ public class Edit extends JPanel {
 			Polyline2D snake = snakeRoi.getPolyline2D();
 			int i = 0;
 			for (Spot spot : enclosedSpots) {
-				double deltax = snake.xpoints[i] - spot.spotXCoord - spot.spotRadius;
-				double deltay = snake.ypoints[i] - spot.spotYCoord - spot.spotRadius;
 				spot.spotXCoord = (int) snake.xpoints[i];
 				spot.spotYCoord = (int) snake.ypoints[i];
-				spot.getRoi().translate(deltax, deltay);
+				spot.getRoi().setPosition2D(new Point2D.Double(
+						snake.xpoints[i] - spot.spotRadius, 
+						snake.ypoints[i] - spot.spotRadius));
 				i++;
 			}
 		}
