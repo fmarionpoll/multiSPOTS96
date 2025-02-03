@@ -9,6 +9,8 @@ public class ROI2DPolygonPlus extends ROI2DPolygon {
 
 	public int cageRow = -1;
 	public int cageColumn = -1;
+	public int cagePosition = -1;
+	public boolean isSelected = false;
 
 	public ROI2DPolygonPlus() {
 		super();

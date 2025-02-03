@@ -59,8 +59,20 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 		tabCreateSpots.init(gridLayout, parent0);
 		tabCreateSpots.addPropertyChangeListener(this);
 		tabbedPane.addTab("Spots", null, tabCreateSpots,
-				"Create spots defining liquid drops without reference to cages");
+				"Create spots defining drops with reference to cages");
 		id_create = order;
+		order++;
+		
+		tabEdit.init(gridLayout, parent0);
+		tabEdit.addPropertyChangeListener(this);
+		tabbedPane.addTab("Edit", null, tabEdit, "Edit spots position");
+		order++;
+
+		
+		tabShape.init(gridLayout, parent0);
+		tabShape.addPropertyChangeListener(this);
+		tabbedPane.addTab("Shape", null, tabShape, "Edit spots shape");
+		id_shape = order;
 		order++;
 
 		tabInfos.init(gridLayout, parent0);
@@ -69,16 +81,6 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 		id_infos = order;
 		order++;
 
-		tabShape.init(gridLayout, parent0);
-		tabShape.addPropertyChangeListener(this);
-		tabbedPane.addTab("Shape", null, tabShape, "Edit spots shape");
-		id_shape = order;
-		order++;
-
-		tabEdit.init(gridLayout, parent0);
-		tabEdit.addPropertyChangeListener(this);
-		tabbedPane.addTab("Edit", null, tabEdit, "Edit spots position with time");
-		order++;
 
 		tabFile.init(gridLayout, parent0);
 		tabFile.addPropertyChangeListener(this);

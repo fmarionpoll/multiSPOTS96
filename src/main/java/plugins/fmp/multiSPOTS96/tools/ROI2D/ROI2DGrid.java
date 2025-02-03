@@ -61,6 +61,30 @@ public class ROI2DGrid implements ROIListener {
 	public ArrayList<ROI2DPolygonPlus> getAreaRois() {
 		return areaRois;
 	}
+	
+	public ArrayList<ROI2DPolygonPlus> getSelectedAreaRois() {
+		ArrayList<ROI2DPolygonPlus> listCarres = new ArrayList<ROI2DPolygonPlus>(areaRois.size());
+		for (ROI2DPolygonPlus roiP: areaRois) {
+			if (roiP.isSelected)
+				listCarres.add(roiP);
+		}
+		return listCarres;
+	}
+	
+	public ROI2DPolygonPlus getAreaAt(int position) {
+		ROI2DPolygonPlus roiP = areaRois.get(position); 
+		int pos = roiP.cagePosition;
+		if (pos != position) {
+			roiP = null;
+			for (ROI2DPolygonPlus roi: areaRois) {
+				if (roi.cagePosition == position) {
+					roiP = roi;
+					break;
+				}
+			}
+		}
+		return roiP;
+	}
 
 	public Point2D.Double[][] getGridPoints() {
 		return grid;
@@ -75,7 +99,7 @@ public class ROI2DGrid implements ROIListener {
 			seq.removeROIs(areaRois, false);
 	}
 
-	public ArrayList<ROI2DPolygonPlus> gridToRois(String cageRoot, Color color, int width_interval,
+	public void gridToRois(String cageRoot, Color color, int width_interval,
 			int height_interval) {
 
 		areaRois = new ArrayList<ROI2DPolygonPlus>(grid_n_columns * grid_n_rows);
@@ -85,11 +109,13 @@ public class ROI2DGrid implements ROIListener {
 				ROI2DPolygonPlus roiP = createRoiPolygon(column, row, width_interval, height_interval);
 				roiP.setName(cageRoot + String.format("%03d", index));
 				roiP.setColor(color);
+				roiP.cageRow = row;
+				roiP.cageColumn = column;
+				roiP.cagePosition = index;
 				areaRois.add(roiP);
 				index++;
 			}
 		}
-		return areaRois;
 	}
 
 	private ROI2DPolygonPlus createRoiPolygon(int icol, int irow, int width, int height) {

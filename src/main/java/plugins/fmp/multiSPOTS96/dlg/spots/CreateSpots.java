@@ -54,7 +54,7 @@ public class CreateSpots extends JPanel {
 
 	private JButton duplicateAllButton = new JButton("(3) Create spots");
 	private JSpinner nFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
-	private JCheckBox shiftAreasForColumnsAfterMidLine = new JCheckBox("shift areas midline", false);
+	private JCheckBox shiftAreasForColumnsAfterMidLine = new JCheckBox("shift right cages", false);
 	private JSpinner shiftAreaJSpinner = new JSpinner(new SpinnerNumberModel(30, -500, 500, 1));
 
 	private String[] flyString = new String[] { "fly", "flies" };
@@ -175,34 +175,37 @@ public class CreateSpots extends JPanel {
 
 	private void keepSelectedAreas(Experiment exp) {
 		ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.getAreaRois();
-		for (ROI2DPolygon roi : listCarres) {
-			if (!roi.isSelected()) {
+		for (ROI2DPolygonPlus roi : listCarres) {
+			roi.isSelected = roi.isSelected();
+			if (!roi.isSelected) 
 				exp.seqCamData.seq.removeROI(roi);
-			}
 		}
 	}
 
 	private void restoreAreas(Experiment exp) {
 		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("carre", exp.seqCamData.seq), false);
 		ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.getAreaRois();
-		for (ROI2DPolygon roi : listCarres) {
+		for (ROI2DPolygonPlus roi : listCarres) {
 			exp.seqCamData.seq.addROI(roi);
+			roi.isSelected = true;
 		}
 	}
 
 	private void createSpotsForAllCages(Experiment exp, ROI2DGrid roiGrid, Point2D.Double referenceCagePosition) {
 		exp.spotsArray.spotsList.clear();
 		exp.spotsArray = new SpotsArray();
-
-		ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.getAreaRois();
+		ArrayList<ROI2DPolygonPlus> listSelectedCarres = roiGrid.getSelectedAreaRois();
+		
 		int spotIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
-			Point2D.Double cagePosition = (Double) cage.getRoi().getPosition2D();
-			cage.getRoi().setSelected(true);
+			ROI2D cageRoi = cage.getRoi();
+			ROI2DGrid cageGrid = createGrid(cageRoi);
+			
 			int carreIndex = 0;
-			for (ROI2DPolygon roi : listCarres) {
-				Rectangle2D rect = roi.getBounds2D();
-				Point2D.Double center = getAbsoluteSpotPosition(cagePosition, rect, referenceCagePosition);
+			for (ROI2DPolygonPlus roi : listSelectedCarres) {
+				ROI2DPolygonPlus roiP = cageGrid.getAreaAt(roi.cagePosition);
+				Rectangle2D rect = roiP.getBounds2D();
+				Point2D.Double center = (Double) roiP.getPosition2D();
 				int radius = (int) (rect.getHeight() / 2);
 
 				Spot spot = createEllipseSpot(exp, cage, carreIndex, spotIndex, center, radius);
@@ -212,14 +215,6 @@ public class CreateSpots extends JPanel {
 			}
 			cage.getRoi().setSelected(false);
 		}
-	}
-
-	private Point2D.Double getAbsoluteSpotPosition(Point2D.Double cagePosition, Rectangle2D rect,
-			Point2D.Double referenceCagePosition) {
-		Point2D.Double spotPosition = new Point2D.Double(rect.getX(), rect.getY());
-		spotPosition.x = cagePosition.x + (spotPosition.x - referenceCagePosition.x);
-		spotPosition.y = cagePosition.y + (spotPosition.y - referenceCagePosition.y);
-		return spotPosition;
 	}
 
 	private Spot createEllipseSpot(Experiment exp, Cage cage, int carreIndex, int spotIndex, Point2D.Double center,
@@ -269,21 +264,23 @@ public class CreateSpots extends JPanel {
 		Rectangle rect = roiCage.getBounds();
 		canvas.centerOn(rect);
 
-		createGrid(exp, roiCage);
+		if (roiGrid != null)
+			roiGrid.clearGridRois(exp.seqCamData.seq);
+		roiGrid = createGrid(roiCage);
+		exp.seqCamData.seq.addROIs(roiGrid.getAreaRois(), false);
 	}
 
-	private void createGrid(Experiment exp, ROI2D roi) {
+	private ROI2DGrid createGrid(ROI2D roi) {
+		ROI2DGrid grid = null; 
 		Polygon2D polygon = ((ROI2DPolygon) roi).getPolygon2D();
 		if (polygon != null) {
-			roiGrid = new ROI2DGrid();
-			roiGrid.clearGridRois(exp.seqCamData.seq);
-
 			int n_columns = (int) nColumnsCombo.getSelectedItem();
 			int n_rows = (int) nRowsCombo.getSelectedItem();
-			roiGrid.createGridFromFrame(polygon, n_columns, n_rows);
-			ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.gridToRois("carre", Color.RED, 1, 1);
-			exp.seqCamData.seq.addROIs(listCarres, false);
+			grid = new ROI2DGrid();
+			grid.createGridFromFrame(polygon, n_columns, n_rows);
+			grid.gridToRois("carre", Color.RED, 1, 1);
 		}
+		return grid;
 	}
 
 }
