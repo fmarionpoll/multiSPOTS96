@@ -34,8 +34,6 @@ public class Spot implements Comparable<Spot> {
 	public int cageID = -1;
 	public int cagePosition = 0;
 	public int spotArrayIndex = 0;
-//	public int cageColumn = 0;
-//	public int cageRow = 0;
 
 	public String version = null;
 	public String spotStim = new String("..");

@@ -349,8 +349,7 @@ public class ChartSpots extends IcyFrame {
 			return null;
 		}
 
-		String[] roiDescription = description.split("_");
-		int index = exp.spotsArray.getSpotIndexFromPlateCoordinates(roiDescription[1], roiDescription[2]);
+		int index = exp.spotsArray.getSpotIndexFromSpotName(description);
 		spotFound.spot_Kymograph_T = index;
 		return spotFound;
 	}

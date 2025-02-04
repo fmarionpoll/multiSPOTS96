@@ -414,32 +414,29 @@ public class SpotsArray {
 			spot.initLevel2DMeasures();
 	}
 
-	public int getSpotIndexFromPlateCoordinates(String rowLetter, String columnNumber) {
+	public int getSpotIndexFromSpotName(String description) {
 		int index = 0;
-		int col = 0;
+		String[] roiDescription = description.split("_");
 		try {
-			col = Integer.parseInt(columnNumber);
+			index = Integer.parseInt(roiDescription[3]);
 		} catch (NumberFormatException e1) {
-			col = 0;
+			index = 0;
 		}
-
-		int row = getNumericReferenceNumber(rowLetter);
-		index = row * nColumnsPerPlate + col;
 		return index;
 	}
 
-	private int getNumericReferenceNumber(String str) {
-		String result = "";
-		for (int i = 0; i < str.length(); i++) {
-			char ch = str.charAt(i);
-			if (Character.isLetter(ch)) {
-				char initialCharacter = Character.isUpperCase(ch) ? 'A' : 'a';
-				result = result.concat(String.valueOf((ch - initialCharacter)));
-			} else
-				result = result + ch;
-		}
-		return Integer.parseInt(result);
-	}
+//	private int getNumericReferenceNumber(String str) {
+//		String result = "";
+//		for (int i = 0; i < str.length(); i++) {
+//			char ch = str.charAt(i);
+//			if (Character.isLetter(ch)) {
+//				char initialCharacter = Character.isUpperCase(ch) ? 'A' : 'a';
+//				result = result.concat(String.valueOf((ch - initialCharacter)));
+//			} else
+//				result = result + ch;
+//		}
+//		return Integer.parseInt(result);
+//	}
 
 	public KymoIntervals getKymoIntervalsFromSpots() {
 		if (spotsListTimeIntervals == null) {

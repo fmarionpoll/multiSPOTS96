@@ -221,7 +221,9 @@ public class CreateSpots extends JPanel {
 			int radius) {
 		Ellipse2D ellipse = new Ellipse2D.Double(center.x, center.y, 2 * radius, 2 * radius);
 		ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
-		roiEllipse.setName("spot_" + String.format("%03d", cage.cageID) + String.format("%03d", carreIndex)
+		roiEllipse.setName("spot_" 
+				+ String.format("%03d", cage.cageID) +"_" 
+				+ String.format("%03d", carreIndex) +"_"
 				+ String.format("%03d", spotIndex));
 
 		Spot spot = new Spot(roiEllipse);
