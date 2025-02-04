@@ -65,10 +65,6 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 
 		JPanel panel02 = new JPanel(layout);
 		panel02.add(relativeToCheckbox);
-//		panel02.add(t0Button);
-//		panel02.add(medianT0Button);
-//		panel02.add(medianT0FromNPointsSpinner);
-//		panel02.add(medianT0Legend);
 		add(panel02);
 
 		JPanel panel04 = new JPanel(layout);
@@ -79,11 +75,6 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 		group1.add(displayAllButton);
 		group1.add(displaySelectedButton);
 		displayAllButton.setSelected(true);
-
-//		enableRelativeOptions(relativeToCheckbox.isSelected());
-//		ButtonGroup group2 = new ButtonGroup();
-//		group2.add(t0Button);
-//		group2.add(medianT0Button);
 
 		exportTypeComboBox.setSelectedIndex(1);
 		defineActionListeners();
@@ -156,7 +147,6 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 
 		boolean bRelative = relativeToCheckbox.isSelected();
 		xlsExportOptions.relativeToT0 = bRelative;
-		xlsExportOptions.subtractEvaporation = false;
 		xlsExportOptions.exportType = exportType;
 
 		if (displayAllButton.isSelected()) {

@@ -34,8 +34,8 @@ public class Spot implements Comparable<Spot> {
 	public int cageID = -1;
 	public int cagePosition = 0;
 	public int spotArrayIndex = 0;
-	public int cageColumn = 0;
-	public int cageRow = 0;
+//	public int cageColumn = 0;
+//	public int cageRow = 0;
 
 	public String version = null;
 	public String spotStim = new String("..");
@@ -70,8 +70,6 @@ public class Spot implements Comparable<Spot> {
 	private final String ID_CAGE = "cage_id";
 	private final String ID_CAGEINDEX = "cage_index";
 	private final String ID_SPOTARRAYINDEX = "spot_array_index";
-	private final String ID_CAGECOL = "cage_col";
-	private final String ID_CAGEROW = "cage_row";
 
 	private final String ID_SPOTVOLUME = "volume";
 	private final String ID_PIXELS = "pixels";
@@ -318,10 +316,7 @@ public class Spot implements Comparable<Spot> {
 			cageID = XMLUtil.getElementIntValue(nodeMeta, ID_CAGE, cageID);
 			cagePosition = XMLUtil.getElementIntValue(nodeMeta, ID_CAGEINDEX, cagePosition);
 
-//			cageIndex = XMLUtil.getElementIntValue(nodeMeta, ID_PLATEINDEX, cageIndex);
-			cageColumn = XMLUtil.getElementIntValue(nodeMeta, ID_CAGECOL, cageColumn);
-			cageRow = XMLUtil.getElementIntValue(nodeMeta, ID_CAGEROW, cageRow);
-
+			spotArrayIndex = XMLUtil.getElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, spotArrayIndex);
 			spotVolume = XMLUtil.getElementDoubleValue(nodeMeta, ID_SPOTVOLUME, Double.NaN);
 			spotNPixels = XMLUtil.getElementIntValue(nodeMeta, ID_PIXELS, 5);
 			spotRadius = XMLUtil.getElementIntValue(nodeMeta, ID_RADIUS, 30);
@@ -377,9 +372,6 @@ public class Spot implements Comparable<Spot> {
 		XMLUtil.setElementIntValue(nodeMeta, ID_CAGEINDEX, cagePosition);
 
 		XMLUtil.setElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, spotArrayIndex);
-		XMLUtil.setElementIntValue(nodeMeta, ID_CAGECOL, cageColumn);
-		XMLUtil.setElementIntValue(nodeMeta, ID_CAGEROW, cageRow);
-
 		XMLUtil.setElementDoubleValue(nodeMeta, ID_SPOTVOLUME, spotVolume);
 		XMLUtil.setElementIntValue(nodeMeta, ID_PIXELS, spotNPixels);
 		XMLUtil.setElementIntValue(nodeMeta, ID_RADIUS, spotRadius);

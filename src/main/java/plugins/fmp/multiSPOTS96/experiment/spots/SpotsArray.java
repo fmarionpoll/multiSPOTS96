@@ -34,15 +34,14 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class SpotsArray {
 	public SpotsDescription spotsDescription = new SpotsDescription();
-//	public SpotsDescription desc_old = new SpotsDescription();
 	public ArrayList<Spot> spotsList = new ArrayList<Spot>();
 	public int nColumnsPerPlate = 12;
 	public int nRowsPerPlate = 8;
 
 	public int nColumnsPerCage = 2;
 	public int nRowsPerCage = 1;
+	
 	private KymoIntervals spotsListTimeIntervals = null;
-
 	private final static String ID_SPOTTRACK = "spotTrack";
 	private final static String ID_NSPOTS = "N_spots";
 	private final static String ID_NCOLUMNSPERPLATE = "N_columns";
@@ -674,10 +673,6 @@ public class SpotsArray {
 			if (!setFilter)
 				continue;
 
-//			if (!options.detectL && spot.isL())
-//				spot.okToAnalyze = false;
-//			if (!options.detectR && spot.isR())
-//				spot.okToAnalyze = false;
 			if (options.detectSelectedROIs && !spot.isIndexSelected(options.selectedIndexes))
 				spot.okToAnalyze = false;
 		}

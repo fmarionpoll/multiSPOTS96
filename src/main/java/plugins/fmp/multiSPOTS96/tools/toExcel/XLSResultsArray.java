@@ -171,8 +171,6 @@ public class XLSResultsArray {
 					xlsExportOptions.buildExcelStepMs);
 			if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExportType.AREA_FLYPRESENT)
 				results.relativeToT0();
-//			if (xlsExportOptions.relativeToMedianT0 && xlsExportOptions.exportType != EnumXLSExportType.AREA_FLYPRESENT)
-//				results.relativeToMedianT(0, xlsExportOptions.medianT0FromNPoints);
 			results.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
 			resultsList.add(results);
 		}

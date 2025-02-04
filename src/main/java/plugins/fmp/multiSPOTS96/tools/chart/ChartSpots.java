@@ -35,6 +35,7 @@ import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExport;
@@ -76,19 +77,17 @@ public class ChartSpots extends IcyFrame {
 		mainChartPanel.setLayout(new GridLayout(nCagesAlongY, nCagesAlongX));
 	}
 
-	private NumberAxis setYaxis(int row, int col, XLSExportOptions xlsExportOptions) {
+	private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions xlsExportOptions) {
 		NumberAxis yAxis = new NumberAxis();
 		row = row * exp.spotsArray.nRowsPerCage;
 		col = col * exp.spotsArray.nColumnsPerCage;
-		String yLegend = String.valueOf((char) (row + 'A')) + "_" + Integer.toString(col);
+		String yLegend = title + " " + String.valueOf((char) (row + 'A')) + "_" + Integer.toString(col);
 		yAxis.setLabel(yLegend);
 
 		if (xlsExportOptions.relativeToT0 || xlsExportOptions.relativeToMedianT0) {
-//			yAxis.setLabel("ratio"); // (t-t0)/t0 of " + yAxis.getLabel());
 			yAxis.setAutoRange(false);
 			yAxis.setRange(-0.2, 1.2);
 		} else {
-//			yAxis.setLabel("grey lvl");
 			yAxis.setAutoRange(true);
 			yAxis.setAutoRangeIncludesZero(false);
 		}
@@ -111,16 +110,20 @@ public class ChartSpots extends IcyFrame {
 		}
 
 		// ---------------------------
-		int cageID = 0;
+
 		for (int row = 0; row < nCagesAlongY; row++) {
 			for (int col = 0; col < nCagesAlongX; col++) {
+				Cage cage = exp.cagesArray.getCageFromRowColCoordinates (row, col);
+				if (cage == null)
+					continue;
+				int cageID = cage.cageID;
 				if (xlsExportOptions.cageIndexFirst >= 0
 						&& (cageID < xlsExportOptions.cageIndexFirst || cageID > xlsExportOptions.cageIndexLast)) {
 					cageID++;
 					continue;
 				}
-				NumberAxis yAxis = setYaxis(row, col, xlsExportOptions);
-				XYPlot subplot = getXYPlotOfOneCage(cageID, yAxis, chartColor, xlsResultsArray, xlsResultsArray2);
+				NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
+				XYPlot subplot = getXYPlotForOneCage(cage, yAxis, chartColor, xlsResultsArray, xlsResultsArray2);
 				CombinedRangeXYPlot combinedXYPlot = new CombinedRangeXYPlot(yAxis);
 				combinedXYPlot.add(subplot);
 
@@ -129,8 +132,6 @@ public class ChartSpots extends IcyFrame {
 						combinedXYPlot, // plot
 						false); // true);
 				// create legend
-//				Font font = chart.getTitle().getFont().deriveFont(Font.BOLD, (float) 14.);
-//				chart.getTitle().setFont(font);
 				chart.setID("row:" + row + ":col:" + col + ":cageID:" + cageID);
 
 				ChartPanel panel = new ChartPanel(chart, // chart
@@ -158,7 +159,6 @@ public class ChartSpots extends IcyFrame {
 
 				panelHolder[row][col] = panel;
 				mainChartPanel.add(panel);
-				cageID++;
 			}
 		}
 
@@ -222,7 +222,7 @@ public class ChartSpots extends IcyFrame {
 
 	private XLSResultsArray getDataAsResultsArray(Experiment exp, XLSExportOptions xlsExportOptions) {
 		XLSExport xlsExport = new XLSExport();
-		return xlsExport.getSpotsDataFromOneExperiment(exp, xlsExportOptions);
+		return xlsExport.getSpotsDataFromOneExperiment_v2parms(exp, xlsExportOptions);
 	}
 
 	private void updateGlobalMaxMin() {
@@ -266,22 +266,22 @@ public class ChartSpots extends IcyFrame {
 		}
 	}
 
-	private XYPlot getXYPlotOfOneCage(int cageID, NumberAxis yAxis, Paint[] chartColor, XLSResultsArray xlsResultsArray,
+	private XYPlot getXYPlotForOneCage(Cage cage, NumberAxis yAxis, Paint[] chartColor, XLSResultsArray xlsResultsArray,
 			XLSResultsArray xlsResultsArray2) {
 
-		XYSeriesCollection xyDataSetList = getDataOfOneCage(xlsResultsArray, cageID, "");
+		XYSeriesCollection xyDataSetList = getSpotDataFromOneCage(xlsResultsArray, cage, "");
 		if (xlsResultsArray2 != null)
-			addXYSeriesCollection(xyDataSetList, getDataOfOneCage(xlsResultsArray2, cageID, "*"));
+			addXYSeriesCollection(xyDataSetList, getSpotDataFromOneCage(xlsResultsArray2, cage, "*"));
 
 		final XYPlot subplot = buildSubPlot(xyDataSetList, chartColor);
 		return subplot;
 	}
 
-	private XYSeriesCollection getDataOfOneCage(XLSResultsArray xlsResultsArray, int cageID, String token) {
+	private XYSeriesCollection getSpotDataFromOneCage(XLSResultsArray xlsResultsArray, Cage cage, String token) {
 		XYSeriesCollection xySeriesCollection = null;
 		for (int i = 0; i < xlsResultsArray.size(); i++) {
 			XLSResults xlsResults = xlsResultsArray.getRow(i);
-			if (cageID != xlsResults.cageID)
+			if (cage.cageID != xlsResults.cageID)
 				continue;
 			if (xySeriesCollection == null) {
 				xySeriesCollection = new XYSeriesCollection();

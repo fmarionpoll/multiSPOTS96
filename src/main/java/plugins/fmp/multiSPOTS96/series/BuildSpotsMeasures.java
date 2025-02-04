@@ -118,20 +118,6 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 			final int t = ii;
 			final IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t));
-//			double background = 0.;		
-//			final IcyBufferedImage transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage,
-//					transformOptions01);
-//			final IcyBufferedImage transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage,
-//					transformOptions02);
-//			final IcyBufferedImageCursor cursorToDetectFly = new IcyBufferedImageCursor(transformToDetectFly);
-//			final IcyBufferedImageCursor cursorToMeasureArea = new IcyBufferedImageCursor(transformToMeasureArea);
-//			if (options.compensateBackground) {
-//				final ROI2DAlongT outerRoiT = getROI2DAlongTEnclosingAllSpots(exp, t);
-//				final ResultsThreshold outerResult = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly,
-//						outerRoiT);
-//				background = outerResult.sumTot_no_fly_over_threshold / outerResult.nPoints_no_fly;
-//			}
-//			final double final_background = background;
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
@@ -156,11 +142,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 					for (Spot spot : exp.spotsArray.spotsList) {
 						if (!spot.okToAnalyze)
 							continue;
-//						int i = spot.plateIndex % 2;
-//						if (0 == i && !options.detectL)
-//							continue;
-//						if (1 == i && !options.detectR)
-//							continue;
+
 						ROI2DAlongT roiT = spot.getROIAtT(t);
 						ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly,
 								roiT);

@@ -360,6 +360,18 @@ public class CagesArray {
 		return cageList;
 	}
 
+	public Cage getCageFromRowColCoordinates (int row, int column) {
+		Cage cage_found = null;
+		for (Cage cage: cagesList) {
+			if (cage.arrayColumn == column && cage.arrayRow == row)
+			{
+				cage_found = cage;
+				break;
+			}
+		}
+		return cage_found;
+	}
+	
 	// --------------
 
 	public void transferCagesToSequenceAsROIs(Sequence seq) {

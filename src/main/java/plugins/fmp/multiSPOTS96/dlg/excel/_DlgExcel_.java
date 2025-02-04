@@ -138,7 +138,6 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 		options.lrPIThreshold = (double) tabAreas.lrPIThresholdJSpinner.getValue();
 		options.sumPerCage = tabAreas.sumPerCageCheckBox.isSelected();
 		options.relativeToT0 = tabAreas.t0CheckBox.isSelected();
-		options.subtractEvaporation = false;
 		getCommonOptions(options);
 		return options;
 	}
