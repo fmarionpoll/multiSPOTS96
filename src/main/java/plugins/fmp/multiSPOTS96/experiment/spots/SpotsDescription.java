@@ -8,7 +8,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multiSPOTS96.experiment.ExperimentDescriptors;
+
+
 
 public class SpotsDescription {
 	public int version = 1;
@@ -16,7 +17,7 @@ public class SpotsDescription {
 	public double volume = 5.;
 	public int pixels = 5;
 	public String sourceName = null;
-	public ExperimentDescriptors expDesc = new ExperimentDescriptors();
+	//public ExperimentDescriptors expDesc = new ExperimentDescriptors();
 
 	public int grouping2 = 2;
 	public String stimulusR = new String("..");
@@ -87,7 +88,6 @@ public class SpotsDescription {
 		XMLUtil.setElementIntValue(xmlVal, IDS_DESCNPIXELS, pixels);
 
 		xmlVal = XMLUtil.addElement(xmlElement, IDS_EXPERIMENT);
-		expDesc.saveXML_Descriptors(xmlVal);
 		return true;
 	}
 
@@ -134,7 +134,6 @@ public class SpotsDescription {
 			concentrationL = XMLUtil.getAttributeValue(xmlVal, IDS_CONCL, IDS_CONCL);
 		}
 
-		expDesc.loadXML_Descriptors(node);
 		return true;
 	}
 
@@ -190,29 +189,6 @@ public class SpotsDescription {
 		return sbf.toString();
 	}
 
-	public String csvExportExperimentDescriptors(String csvSep) {
-		StringBuffer sbf = new StringBuffer();
-		List<String> row3 = Arrays.asList(
-				Integer.toString(grouping2), 
-				Double.toString(volume), 
-				Integer.toString(pixels),
-				stimulusR, 
-				concentrationR.replace(",", "."), 
-				stimulusL, 
-				concentrationL.replace(",", "."),
-				expDesc.ffield_boxID, 
-				expDesc.ffield_experiment, 
-				expDesc.field_comment1, 
-				expDesc.field_comment2,
-				expDesc.field_strain, 
-				expDesc.field_sex, 
-				expDesc.field_cond1, 
-				expDesc.field_cond2);
-		sbf.append(String.join(csvSep, row3));
-		sbf.append("\n");
-		return sbf.toString();
-	}
-
 	public void csvImportSpotsDescriptionData(String[] data) {
 		int i = 0;
 		grouping2 = Integer.valueOf(data[i]);
@@ -229,23 +205,21 @@ public class SpotsDescription {
 		i++;
 		concentrationL = data[i];
 		i++;
-		expDesc.ffield_boxID = data[i];
-		i++;
-		expDesc.ffield_experiment = data[i];
-		i++;
-		expDesc.field_comment1 = data[i];
-		i++;
-		expDesc.field_comment2 = data[i];
-		i++;
-		expDesc.field_strain = data[i];
-		i++;
-		expDesc.field_sex = data[i];
-		int nitems = data.length;
-		if (i < nitems)
-			expDesc.field_cond1 = data[i];
-		i++;
-		if (i < nitems)
-			expDesc.field_cond2 = data[i];
+	}
+	
+	public String csvExportSpotsDescriptionData(String csvSep) {
+		StringBuffer sbf = new StringBuffer();
+		List<String> row3 = Arrays.asList(
+				String.valueOf(grouping2), 
+				String.valueOf(volume), 
+				String.valueOf(pixels), 
+				stimulusR,
+				concentrationR, 
+				stimulusL, 
+				concentrationL);
+		sbf.append(String.join(csvSep, row3));
+		sbf.append("\n");
+		return sbf.toString();
 	}
 
 }

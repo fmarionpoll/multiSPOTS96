@@ -312,7 +312,7 @@ public class XLSExport {
 		expAll.cagesArray.copy(exp.cagesArray);
 		expAll.spotsArray.copy(exp.spotsArray);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
-		expAll.expDesc.copyExperimentFields(exp.expDesc);
+		expAll.expDesc.copyExperimentFieldsFrom(exp.expDesc);
 		expAll.setResultsDirectory(exp.getResultsDirectory());
 
 		Experiment expi = exp.chainToNextExperiment;
@@ -346,7 +346,7 @@ public class XLSExport {
 		expAll.cagesArray.copy(exp.cagesArray);
 		expAll.spotsArray.copy(exp.spotsArray);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
-		expAll.expDesc.copyExperimentFields(exp.expDesc);
+		expAll.expDesc.copyExperimentFieldsFrom(exp.expDesc);
 		expAll.setResultsDirectory(exp.getResultsDirectory());
 
 		Experiment expi = exp.chainToNextExperiment;

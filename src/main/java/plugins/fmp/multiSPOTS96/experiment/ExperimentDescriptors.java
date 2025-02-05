@@ -122,9 +122,9 @@ public class ExperimentDescriptors {
 		}
 	}
 
-	public void copyExperimentFields(ExperimentDescriptors expSource) {
-		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_BOXID);
+	public void copyExperimentFieldsFrom(ExperimentDescriptors expSource) {
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_EXPT);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_BOXID);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STIM);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_CONC);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STRAIN);

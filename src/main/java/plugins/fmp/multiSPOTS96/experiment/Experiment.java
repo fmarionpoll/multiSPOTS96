@@ -3,12 +3,14 @@ package plugins.fmp.multiSPOTS96.experiment;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -428,6 +430,56 @@ public class Experiment {
 		return false;
 	}
 
+	final String csvSep = ";";
+	
+	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
+		try {
+			csvWriter.append(expDesc.csvExportSectionHeader(csvSep));
+			csvWriter.append(expDesc.csvExportExperimentDescriptors(csvSep));
+			csvWriter.append("#" + csvSep + "#\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	public String csvExportExperimentDescriptors(String csvSep) {
+		StringBuffer sbf = new StringBuffer();
+		List<String> row3 = Arrays.asList(
+				expDesc.ffield_boxID, 
+				expDesc.ffield_experiment, 
+				expDesc.field_comment1, 
+				expDesc.field_comment2,
+				expDesc.field_strain, 
+				expDesc.field_sex, 
+				expDesc.field_cond1, 
+				expDesc.field_cond2);
+		sbf.append(String.join(csvSep, row3));
+		sbf.append("\n");
+		return sbf.toString();
+	}
+	
+	public void csvImporteExperimentDescriptionData(String[] data) {
+		int i = 0;
+		expDesc.ffield_boxID = data[i];
+		i++;
+		expDesc.ffield_experiment = data[i];
+		i++;
+		expDesc.field_comment1 = data[i];
+		i++;
+		expDesc.field_comment2 = data[i];
+		i++;
+		expDesc.field_strain = data[i];
+		i++;
+		expDesc.field_sex = data[i];
+		int nitems = data.length;
+		if (i < nitems)
+			expDesc.field_cond1 = data[i];
+		i++;
+		if (i < nitems)
+			expDesc.field_cond2 = data[i];
+	}
+	
 	public boolean loadKymographs() {
 		if (seqSpotKymos == null)
 			seqSpotKymos = new SequenceKymos();
@@ -445,20 +497,11 @@ public class Experiment {
 		if (mcSpotsFileName == null && seqCamData != null)
 			return false;
 
-		boolean flag = spotsArray.xmlLoad_MCSpots_Descriptors(mcSpotsFileName);
-
-		// load description of experiment
-		if (expDesc.ffield_boxID.contentEquals("..") && expDesc.ffield_experiment.contentEquals("..")
-				&& expDesc.field_comment1.contentEquals("..") && expDesc.field_comment2.contentEquals("..")
-				&& expDesc.field_sex.contentEquals("..") && expDesc.field_strain.contentEquals("..")) {
-			spotsArray.spotsDescription.expDesc.copyExperimentFields(expDesc);
-		}
-		return flag;
+		return spotsArray.xmlLoad_MCSpots_Descriptors(mcSpotsFileName);
 	}
 
 	public boolean save_MCSpots_Only() {
 		String mcSpotsFileName = resultsDirectory + File.separator + spotsArray.getXMLSpotsName();
-		expDesc.copyExperimentFields(spotsArray.spotsDescription.expDesc);
 		boolean flag = spotsArray.xmlSave_MCSpots_Descriptors(mcSpotsFileName);
 		return flag;
 	}

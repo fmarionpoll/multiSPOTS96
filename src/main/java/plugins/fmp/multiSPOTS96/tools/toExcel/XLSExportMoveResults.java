@@ -100,7 +100,7 @@ public class XLSExportMoveResults extends XLSExport {
 		expAll.firstImage_FileTime = exp.firstImage_FileTime;
 		expAll.lastImage_FileTime = exp.lastImage_FileTime;
 		expAll.setResultsDirectory(exp.getResultsDirectory());
-		expAll.expDesc.copyExperimentFields(exp.expDesc);
+		expAll.expDesc.copyExperimentFieldsFrom(exp.expDesc);
 
 		Experiment expi = exp.chainToNextExperiment;
 		while (expi != null) {

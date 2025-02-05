@@ -367,17 +367,6 @@ public class SpotsArray {
 
 	public double getScalingFactorToPhysicalUnits(EnumXLSExportType xlsoption) {
 		double scalingFactorToPhysicalUnits = 1.;
-//		switch (xlsoption) 
-//		{
-//			case AUTOCORREL:
-//			case CROSSCORREL:
-//			case CROSSCORREL_LR:
-//				scalingFactorToPhysicalUnits = 1.;
-//				break;
-//			default:
-//				scalingFactorToPhysicalUnits = spotsDescription.volume / spotsDescription.pixels;
-//				break;
-//		}
 		return scalingFactorToPhysicalUnits;
 	}
 
@@ -424,19 +413,6 @@ public class SpotsArray {
 		}
 		return index;
 	}
-
-//	private int getNumericReferenceNumber(String str) {
-//		String result = "";
-//		for (int i = 0; i < str.length(); i++) {
-//			char ch = str.charAt(i);
-//			if (Character.isLetter(ch)) {
-//				char initialCharacter = Character.isUpperCase(ch) ? 'A' : 'a';
-//				result = result.concat(String.valueOf((ch - initialCharacter)));
-//			} else
-//				result = result + ch;
-//		}
-//		return Integer.parseInt(result);
-//	}
 
 	public KymoIntervals getKymoIntervalsFromSpots() {
 		if (spotsListTimeIntervals == null) {
@@ -553,33 +529,6 @@ public class SpotsArray {
 		return null;
 	}
 
-	private String csvLoadDescription(BufferedReader csvReader, String csvSep) {
-		String row;
-		try {
-			row = csvReader.readLine();
-			row = csvReader.readLine();
-			String[] data = row.split(csvSep);
-			spotsDescription.csvImportSpotsDescriptionData(data);
-			row = csvReader.readLine();
-			data = row.split(csvSep);
-			if (data[0].substring(0, Math.min(data[0].length(), 5)).equals("n spot")) {
-				int nspots = Integer.valueOf(data[1]);
-				if (nspots >= spotsList.size())
-					spotsList.ensureCapacity(nspots);
-				else
-					spotsList.subList(nspots, spotsList.size()).clear();
-				row = csvReader.readLine();
-				data = row.split(csvSep);
-			}
-			if (data[0].equals("#")) {
-				return data[1];
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	private String csvLoadSpotsMeasures(BufferedReader csvReader, EnumSpotMeasures measureType, String csvSep) {
 		String row;
 		try {
@@ -628,10 +577,36 @@ public class SpotsArray {
 		return true;
 	}
 
+	private String csvLoadDescription(BufferedReader csvReader, String csvSep) {
+		String row;
+		try {
+			row = csvReader.readLine();
+			row = csvReader.readLine();
+			String[] data = row.split(csvSep);
+			spotsDescription.csvImportSpotsDescriptionData(data);
+			row = csvReader.readLine();
+			data = row.split(csvSep);
+			if (data[0].substring(0, Math.min(data[0].length(), 5)).equals("n spot")) {
+				int nspots = Integer.valueOf(data[1]);
+				if (nspots >= spotsList.size())
+					spotsList.ensureCapacity(nspots);
+				else
+					spotsList.subList(nspots, spotsList.size()).clear();
+				row = csvReader.readLine();
+				data = row.split(csvSep);
+			}
+			if (data[0].equals("#")) {
+				return data[1];
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
 		try {
 			csvWriter.append(spotsDescription.csvExportSectionHeader(csvSep));
-			csvWriter.append(spotsDescription.csvExportExperimentDescriptors(csvSep));
 			csvWriter.append("n spots=" + csvSep + Integer.toString(spotsList.size()) + "\n");
 			csvWriter.append("#" + csvSep + "#\n");
 
@@ -644,7 +619,6 @@ public class SpotsArray {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return true;
 	}
 
