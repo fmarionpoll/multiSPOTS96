@@ -35,7 +35,7 @@ import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
-public class EditPositionWithTime extends JPanel implements ListSelectionListener {
+public class PositionWithTimePanel extends JPanel implements ListSelectionListener {
 
 	/**
 	 * 
@@ -58,7 +58,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 
 	private TableModelSpotWithTime spotsWithTimeTablemodel = null;
 
-	public void initialize(MultiSPOTS96 parent0, Point pt) {
+	public void initialize(MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
 		spotsWithTimeTablemodel = new TableModelSpotWithTime(parent0.expListCombo);
 
@@ -92,7 +92,7 @@ public class EditPositionWithTime extends JPanel implements ListSelectionListene
 		dialogFrame = new IcyFrame("Edit spots position", true, true);
 		dialogFrame.add(topPanel, BorderLayout.NORTH);
 		dialogFrame.add(tablePanel, BorderLayout.CENTER);
-		dialogFrame.setLocation(pt);
+		dialogFrame.setLocation(new Point(5, 5));
 
 		dialogFrame.pack();
 		dialogFrame.addToDesktopPane();

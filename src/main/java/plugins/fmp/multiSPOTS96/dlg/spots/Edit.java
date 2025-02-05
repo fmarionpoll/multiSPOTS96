@@ -1,10 +1,8 @@
 package plugins.fmp.multiSPOTS96.dlg.spots;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -39,7 +37,7 @@ public class Edit extends JPanel {
 	private JToggleButton displaySnakeButton = new JToggleButton("Display snake over spots");
 	private JButton updateSpotsFromSnakeButton = new JButton("Center spots to snake");
 	private MultiSPOTS96 parent0 = null;
-	private EditPositionWithTime editSpotsTable = null;
+	private PositionWithTimePanel editPositionWithTime = null;
 
 	private final String dummyname = "perimeter_enclosing";
 	private ROI2DPolygon spotsFrame = null;
@@ -146,31 +144,17 @@ public class Edit extends JPanel {
 		});
 	}
 
-	private Point getFramePosition() {
-		Point point = new Point();
-		Component currComponent = (Component) editSpotsButton;
-		int index = 0;
-		int indexMax = 12; // TODO : why 12??
-		while (currComponent != null && index < indexMax) {
-			Point relativeLocation = currComponent.getLocation();
-			point.translate(relativeLocation.x, relativeLocation.y);
-			currComponent = currComponent.getParent();
-			index++;
-		}
-		return point;
-	}
-
 	public void openDialog() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			if (editSpotsTable == null)
-				editSpotsTable = new EditPositionWithTime();
-			editSpotsTable.initialize(parent0, getFramePosition());
+			if (editPositionWithTime == null)
+				editPositionWithTime = new PositionWithTimePanel();
+			editPositionWithTime.initialize(parent0);
 		}
 	}
 
 	public void closeDialog() {
-		editSpotsTable.close();
+		editPositionWithTime.close();
 	}
 
 	// --------------------------------------
@@ -240,9 +224,8 @@ public class Edit extends JPanel {
 			for (Spot spot : enclosedSpots) {
 				spot.spotXCoord = (int) snake.xpoints[i];
 				spot.spotYCoord = (int) snake.ypoints[i];
-				spot.getRoi().setPosition2D(new Point2D.Double(
-						snake.xpoints[i] - spot.spotRadius, 
-						snake.ypoints[i] - spot.spotRadius));
+				spot.getRoi().setPosition2D(
+						new Point2D.Double(snake.xpoints[i] - spot.spotRadius, snake.ypoints[i] - spot.spotRadius));
 				i++;
 			}
 		}

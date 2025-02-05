@@ -217,26 +217,12 @@ public class Spot implements Comparable<Spot> {
 		case AREA_SUMCLEAN:
 		case AREA_SUMCLEAN_LR:
 			return sum_clean;
-//		case AREA_OUT:
-//			return sum_out;
-//		case AREA_DIFF:
-//			return sum_diff;
 		case AREA_FLYPRESENT:
 			return flyPresent;
 		default:
 			return null;
 		}
 	}
-
-//	public boolean isL() {
-//		int i = plateIndex % 2;
-//		return (0 == i);
-//	}
-//
-//	public boolean isR() {
-//		int i = plateIndex % 2;
-//		return (1 == i);
-//	}
 
 	public boolean isIndexSelected(List<Integer> selectedIndexes) {
 		if (selectedIndexes == null || selectedIndexes.size() < 1)
@@ -269,8 +255,6 @@ public class Spot implements Comparable<Spot> {
 	public void cropSpotMeasuresToNPoints(int npoints) {
 		cropSpotMeasureToNPoints(sum_in, npoints);
 		cropSpotMeasureToNPoints(sum_clean, npoints);
-//		cropSpotMeasureToNPoints(sum_out, npoints);
-//		cropSpotMeasureToNPoints(sum_diff, npoints);
 		cropSpotMeasureToNPoints(flyPresent, npoints);
 	}
 
@@ -282,8 +266,6 @@ public class Spot implements Comparable<Spot> {
 	public void restoreClippedSpotMeasures() {
 		restoreClippedMeasures(sum_in);
 		restoreClippedMeasures(sum_clean);
-//		restoreClippedMeasures(sum_out);
-//		restoreClippedMeasures(sum_diff);
 		restoreClippedMeasures(flyPresent);
 	}
 
@@ -293,9 +275,12 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	public void transferROIsMeasuresToLevel2D() {
-		sum_in.transferROItoLevel2D();
-		sum_clean.transferROItoLevel2D();
-		flyPresent.transferROItoLevel2D();
+		if (sum_in != null)
+			sum_in.transferROItoLevel2D();
+		if (sum_clean != null)
+			sum_clean.transferROItoLevel2D();
+		if (flyPresent != null)
+			flyPresent.transferROItoLevel2D();
 	}
 
 	// -----------------------------------------------------------------------------

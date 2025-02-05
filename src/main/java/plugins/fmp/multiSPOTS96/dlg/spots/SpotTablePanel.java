@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -35,13 +36,12 @@ public class SpotTablePanel extends JPanel {
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicateLRButton = new JButton("Duplicate cell to pos");
-	private JButton duplicateCageButton = new JButton("Duplicate cage stim");
+	private JButton duplicateCageStimButton = new JButton("Duplicate cage stim");
 
 	private JButton exchangeLRButton = new JButton("Exchg L/R");
 
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
 	private JButton getNfliesButton = new JButton("Get n flies from cage");
-	private JButton setCageNoButton = new JButton("Set cage n#");
 	private JButton nPixelsButton = new JButton("Get n pixels");
 	private MultiSPOTS96 parent0 = null;
 	private List<Spot> spotsArrayCopy = null;
@@ -83,10 +83,9 @@ public class SpotTablePanel extends JPanel {
 		topPanel.add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(setCageNoButton);
 		panel2.add(getNfliesButton);
 		panel2.add(nPixelsButton);
-		panel2.add(duplicateCageButton);
+		panel2.add(duplicateCageStimButton);
 		topPanel.add(panel2);
 
 		JPanel tablePanel = new JPanel();
@@ -99,7 +98,7 @@ public class SpotTablePanel extends JPanel {
 		dialogFrame.pack();
 		dialogFrame.addToDesktopPane();
 		dialogFrame.requestFocus();
-		dialogFrame.center();
+		dialogFrame.setLocation(new Point(5, 5));
 		dialogFrame.setVisible(true);
 		defineActionListeners();
 
@@ -146,7 +145,7 @@ public class SpotTablePanel extends JPanel {
 			}
 		});
 
-		duplicateCageButton.addActionListener(new ActionListener() {
+		duplicateCageStimButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
@@ -186,16 +185,6 @@ public class SpotTablePanel extends JPanel {
 			}
 		});
 
-		setCageNoButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) {
-//					exp.cagesArray.setCageNbFromSpotsArray(exp.spotsArray);
-					spotTableModel.fireTableDataChanged();
-				}
-			}
-		});
 	}
 
 	void close() {
