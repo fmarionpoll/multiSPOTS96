@@ -18,7 +18,7 @@ public class SpotsDescription {
 	public String sourceName = null;
 	public ExperimentDescriptors expDesc = new ExperimentDescriptors();
 
-	public int grouping = 2;
+	public int grouping2 = 2;
 	public String stimulusR = new String("..");
 	public String concentrationR = new String("..");
 	public String stimulusL = new String("..");
@@ -53,7 +53,7 @@ public class SpotsDescription {
 	public void copy(SpotsDescription desc) {
 		volume = desc.volume;
 		pixels = desc.pixels;
-		grouping = desc.grouping;
+		grouping2 = desc.grouping2;
 		stimulusR = desc.stimulusR;
 		stimulusL = desc.stimulusL;
 		concentrationR = desc.concentrationR;
@@ -64,7 +64,7 @@ public class SpotsDescription {
 		boolean flag = false;
 		flag |= (volume != desc.volume);
 		flag |= (pixels != desc.pixels);
-		flag |= (grouping != desc.grouping);
+		flag |= (grouping2 != desc.grouping2);
 		flag |= (stimulusR != null && !stimulusR.equals(desc.stimulusR));
 		flag |= (concentrationR != null && !concentrationR.equals(desc.concentrationR));
 		flag |= (stimulusL != null && !stimulusL.equals(desc.stimulusL));
@@ -82,7 +82,7 @@ public class SpotsDescription {
 
 		XMLUtil.addElement(xmlElement, IDS_FILE, sourceName);
 		Element xmlVal = XMLUtil.addElement(xmlElement, "capillaries");
-		XMLUtil.setElementIntValue(xmlVal, IDS_DESCGROUPING, grouping);
+		XMLUtil.setElementIntValue(xmlVal, IDS_DESCGROUPING, grouping2);
 		XMLUtil.setElementDoubleValue(xmlVal, IDS_DESCVOLUMEUL, volume);
 		XMLUtil.setElementIntValue(xmlVal, IDS_DESCNPIXELS, pixels);
 
@@ -118,7 +118,7 @@ public class SpotsDescription {
 		sourceName = XMLUtil.getAttributeValue(xmlVal, IDS_ID, null);
 
 		xmlVal = XMLUtil.getElement(xmlElement, IDS_DESCGROUPING);
-		grouping = XMLUtil.getAttributeIntValue(xmlVal, IDS_DESCN, 2);
+		grouping2 = XMLUtil.getAttributeIntValue(xmlVal, IDS_DESCN, 2);
 
 		xmlVal = XMLUtil.getElement(xmlElement, IDS_DESCCAPVOLUME);
 		volume = XMLUtil.getAttributeDoubleValue(xmlVal, IDS_DESCVOLUMEUL, Double.NaN);
@@ -146,7 +146,7 @@ public class SpotsDescription {
 		sourceName = XMLUtil.getElementValue(xmlElement, IDS_FILE, null);
 		Element xmlVal = XMLUtil.getElement(xmlElement, "capillaries");
 		if (xmlVal != null) {
-			grouping = XMLUtil.getElementIntValue(xmlVal, IDS_DESCGROUPING, 2);
+			grouping2 = XMLUtil.getElementIntValue(xmlVal, IDS_DESCGROUPING, 2);
 			volume = XMLUtil.getElementDoubleValue(xmlVal, IDS_DESCVOLUMEUL, Double.NaN);
 			pixels = XMLUtil.getElementIntValue(xmlVal, IDS_DESCNPIXELS, 5);
 		}
@@ -193,7 +193,7 @@ public class SpotsDescription {
 	public String csvExportExperimentDescriptors(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row3 = Arrays.asList(
-				Integer.toString(grouping), 
+				Integer.toString(grouping2), 
 				Double.toString(volume), 
 				Integer.toString(pixels),
 				stimulusR, 
@@ -215,7 +215,7 @@ public class SpotsDescription {
 
 	public void csvImportSpotsDescriptionData(String[] data) {
 		int i = 0;
-		grouping = Integer.valueOf(data[i]);
+		grouping2 = Integer.valueOf(data[i]);
 		i++;
 		volume = Double.valueOf(data[i]);
 		i++;

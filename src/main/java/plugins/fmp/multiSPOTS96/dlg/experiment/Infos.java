@@ -154,8 +154,6 @@ public class Infos extends JPanel {
 		});
 	}
 
-	// set/ get
-
 	public void transferPreviousExperimentInfosToDialog(Experiment exp_source, Experiment exp_destination) {
 		setInfoCombo(exp_destination, exp_source, boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
 		setInfoCombo(exp_destination, exp_source, exptCombo, EnumXLSColumnHeader.EXP_EXPT);
@@ -179,7 +177,6 @@ public class Infos extends JPanel {
 	}
 
 	public void getExperimentInfosFromDialog(ExperimentDescriptors expDesc) {
-
 		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID, (String) boxIDCombo.getSelectedItem());
 		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT, (String) exptCombo.getSelectedItem());
 		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM, (String) stimCombo.getSelectedItem());

@@ -45,7 +45,6 @@ public class ExperimentDescriptors {
 	}
 
 	public void loadXML_Descriptors(Node node) {
-//		if (field_boxID != null && field_boxID.contentEquals("..")) {
 		ffield_boxID = XMLUtil.getElementValue(node, ID_BOXID, "..");
 		ffield_experiment = XMLUtil.getElementValue(node, ID_EXPERIMENT, "..");
 		ffield_stim = XMLUtil.getElementValue(node, ID_STIM, "..");
@@ -57,8 +56,6 @@ public class ExperimentDescriptors {
 		field_sex = XMLUtil.getElementValue(node, ID_SEX, "..");
 		field_cond1 = XMLUtil.getElementValue(node, ID_COND1, "..");
 		field_cond2 = XMLUtil.getElementValue(node, ID_COND2, "..");
-//	}
-
 	}
 
 	public String getExperimentField(EnumXLSColumnHeader fieldEnumCode) {
@@ -126,42 +123,35 @@ public class ExperimentDescriptors {
 	}
 
 	public void copyExperimentFields(ExperimentDescriptors expSource) {
-		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID,
-				expSource.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
-		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT,
-				expSource.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
-		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM,
-				expSource.getExperimentField(EnumXLSColumnHeader.EXP_STIM));
-		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_CONC,
-				expSource.getExperimentField(EnumXLSColumnHeader.EXP_CONC));
-		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STRAIN,
-				expSource.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
-		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_SEX,
-				expSource.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
-		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND1,
-				expSource.getExperimentField(EnumXLSColumnHeader.EXP_COND1));
-		setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_COND2,
-				expSource.getExperimentField(EnumXLSColumnHeader.EXP_COND2));
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_BOXID);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_EXPT);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STIM);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_CONC);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STRAIN);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_SEX);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_COND1);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_COND2);
+	}
+	
+	private void copyExperimentalField(ExperimentDescriptors expSource, EnumXLSColumnHeader fieldEnumCode) {
+		String newValue = expSource.getExperimentField(fieldEnumCode);
+		setExperimentFieldNoTest(fieldEnumCode, newValue);
 	}
 
 	public boolean isSameDescriptors(ExperimentDescriptors expi) {
 		boolean flag = true;
-		flag &= expi.getExperimentField(EnumXLSColumnHeader.EXP_EXPT)
-				.equals(getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
-		flag &= expi.getExperimentField(EnumXLSColumnHeader.EXP_BOXID)
-				.equals(getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
-		flag &= expi.getExperimentField(EnumXLSColumnHeader.EXP_STIM)
-				.equals(getExperimentField(EnumXLSColumnHeader.EXP_STIM));
-		flag &= expi.getExperimentField(EnumXLSColumnHeader.EXP_CONC)
-				.equals(getExperimentField(EnumXLSColumnHeader.EXP_CONC));
-		flag &= expi.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN)
-				.equals(getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
-		flag &= expi.getExperimentField(EnumXLSColumnHeader.EXP_SEX)
-				.equals(getExperimentField(EnumXLSColumnHeader.EXP_SEX));
-		flag &= expi.getExperimentField(EnumXLSColumnHeader.EXP_COND1)
-				.equals(getExperimentField(EnumXLSColumnHeader.EXP_COND1));
-		flag &= expi.getExperimentField(EnumXLSColumnHeader.EXP_COND2)
-				.equals(getExperimentField(EnumXLSColumnHeader.EXP_COND2));
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_EXPT);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_BOXID);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_STIM);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_CONC);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_STRAIN);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_SEX);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_COND1);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_COND2);
 		return flag;
+	}
+	
+	private boolean isFieldEqual(ExperimentDescriptors expi, EnumXLSColumnHeader fieldEnumCode) {
+		return expi.getExperimentField(fieldEnumCode) .equals(this.getExperimentField(fieldEnumCode));
 	}
 }

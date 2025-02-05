@@ -612,7 +612,6 @@ public class SpotsArray {
 
 		try {
 			FileWriter csvWriter = new FileWriter(directory + File.separator + csvFileName);
-
 			csvSave_DescriptionSection(csvWriter);
 			csvSave_MeasuresSection(csvWriter, EnumSpotMeasures.AREA_SUM);
 			csvSave_MeasuresSection(csvWriter, EnumSpotMeasures.AREA_SUMCLEAN);

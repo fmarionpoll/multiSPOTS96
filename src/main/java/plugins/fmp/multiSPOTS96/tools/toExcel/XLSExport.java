@@ -90,26 +90,17 @@ public class XLSExport {
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
 
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_BOXID.getValue(), transpose,
-					exp.expDesc.getExperimentField(EnumXLSColumnHeader.EXP_BOXID));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_EXPT.getValue(), transpose,
-					exp.expDesc.getExperimentField(EnumXLSColumnHeader.EXP_EXPT));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STIM.getValue(), transpose,
-					exp.expDesc.getExperimentField(EnumXLSColumnHeader.EXP_STIM));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_CONC.getValue(), transpose,
-					exp.expDesc.getExperimentField(EnumXLSColumnHeader.EXP_CONC));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_STRAIN.getValue(), transpose,
-					exp.expDesc.getExperimentField(EnumXLSColumnHeader.EXP_STRAIN));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_SEX.getValue(), transpose,
-					exp.expDesc.getExperimentField(EnumXLSColumnHeader.EXP_SEX));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_COND1.getValue(), transpose,
-					exp.expDesc.getExperimentField(EnumXLSColumnHeader.EXP_COND1));
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.EXP_COND2.getValue(), transpose,
-					exp.expDesc.getExperimentField(EnumXLSColumnHeader.EXP_COND2));
+			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_BOXID);
+			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_EXPT);
+			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_STIM);
+			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_CONC);
+			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_STRAIN);
+			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_SEX);
+			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_COND1);
+			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_COND2);
 
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, spot.spotVolume); // exp.spotsArray.spotsDescription.volume);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, spot.spotNPixels); // exp.spotsArray.spotsDescription.pixels);
-
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, spot.spotVolume); 
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, spot.spotNPixels); 
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose,
 					spot.getCagePosition(xlsExportOption));
 			outputStimAndConc_according_to_DataOption(sheet, xlsExportOption, spot, transpose, x, y);

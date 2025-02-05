@@ -481,7 +481,7 @@ public class Experiment {
 
 	}
 
-	public void fit_Spots_to_Cages() {
+	public void find_which_cage_each_spot_belongs_to() {
 		for (Spot spot : spotsArray.spotsList) {
 			ROI2D spotRoi = spot.getRoi();
 			spot.cageID = -1;
