@@ -305,7 +305,6 @@ public class SpotsArray {
 	}
 
 	public void transferSpotsToSequenceAsROIs(Sequence seq) {
-		seq.removeROIs(ROIUtilities.getROIsContainingString("spot", seq), false);
 		List<ROI2D> spotROIList = new ArrayList<ROI2D>(spotsList.size());
 		for (Spot spot : spotsList)
 			spotROIList.add(spot.getRoi());

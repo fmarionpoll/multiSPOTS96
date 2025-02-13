@@ -280,7 +280,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (exp.seqCamData != null) {
 			exp.load_Spots();
 			exp.load_SpotsMeasures();
-			exp.spotsArray.transferSpotsToSequenceAsROIs(exp.seqCamData.seq);
+			exp.cagesArray.transferSpotsToSequenceAsROIs(exp.seqCamData.seq);
 
 			exp.load_Cages();
 			exp.cagesArray.transferCagesToSequenceAsROIs(exp.seqCamData.seq);

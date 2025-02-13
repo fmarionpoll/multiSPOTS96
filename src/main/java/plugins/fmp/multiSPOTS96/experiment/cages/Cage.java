@@ -11,8 +11,12 @@ import org.w3c.dom.Node;
 import icy.roi.BooleanMask2D;
 import icy.roi.ROI;
 import icy.roi.ROI2D;
+import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
+import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 import plugins.kernel.roi.roi2d.ROI2DShape;
@@ -36,7 +40,9 @@ public class Cage {
 	public String strCageSex = "..";
 	public String strCageStrain = "..";
 	private String strCageNumber = null;
-
+	
+	public SpotsArray spotsArray = new SpotsArray();	
+	
 	public boolean valid = false;
 	public boolean bDetect = true;
 	public boolean initialflyRemoved = false;
@@ -261,5 +267,9 @@ public class Cage {
 		sbf.append("\n");
 		return sbf.toString();
 	}
+	
+	// --------------------------------------------------------
+	
+
 
 }

@@ -1,5 +1,8 @@
 package plugins.fmp.multiSPOTS96.experiment;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
@@ -153,5 +156,65 @@ public class ExperimentDescriptors {
 	
 	private boolean isFieldEqual(ExperimentDescriptors expi, EnumXLSColumnHeader fieldEnumCode) {
 		return expi.getExperimentField(fieldEnumCode) .equals(this.getExperimentField(fieldEnumCode));
+	}
+	
+	public String csvExportExperimentSectionHeader(String csvSep) {
+		StringBuffer sbf = new StringBuffer();
+		sbf.append("#" + csvSep + "DESCRIPTION" + csvSep + "multiSPOTS96 data\n");
+		List<String> row2 = Arrays.asList(
+				ID_BOXID,
+				ID_EXPERIMENT,
+				ID_STIM,
+				ID_CONC,
+				ID_COMMENT1,
+				ID_COMMENT2,
+				ID_STRAIN,
+				ID_SEX,
+				ID_COND1,
+				ID_COND2);
+		sbf.append(String.join(csvSep, row2));
+		sbf.append("\n");
+		return sbf.toString();
+	}
+	
+	public String csvExportExperimentDescriptors(String csvSep) {
+		StringBuffer sbf = new StringBuffer();
+		List<String> row3 = Arrays.asList(
+				ffield_boxID, 
+				ffield_experiment,
+				ffield_stim,
+				ffield_conc,
+				field_comment1, 
+				field_comment2,
+				field_strain, 
+				field_sex, 
+				field_cond1, 
+				field_cond2);
+		sbf.append(String.join(csvSep, row3));
+		sbf.append("\n");
+		return sbf.toString();
+	}
+	
+	public void csvImporteExperimentDescriptionData(String[] data) {
+		int i = 0;
+		ffield_boxID = data[i];
+		i++;
+		ffield_experiment = data[i];
+		i++;
+		ffield_stim = data[i];
+		i++;
+		ffield_conc = data[i];
+		i++;
+		field_comment1 = data[i];
+		i++;
+		field_comment2 = data[i];
+		i++;
+		field_strain = data[i];
+		i++;
+		field_sex = data[i];
+		i++;
+		field_cond1 = data[i];
+		i++;
+		field_cond2 = data[i];
 	}
 }

@@ -29,7 +29,6 @@ import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
-import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
@@ -107,8 +106,8 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 					exp.cagesArray.removeCages();
 					createROIsFromSelectedPolygonAndSpots(exp);
 					exp.cagesArray.transferROIsFromSequenceToCages(exp.seqCamData.seq);
-					if (exp.spotsArray.spotsList.size() > 0)
-						exp.cagesArray.transferNFliesFromSpotsToCages(exp.spotsArray);
+//					if (exp.spotsArray.spotsList.size() > 0)
+//						exp.cagesArray.transferNFliesFromSpotsToCages(exp.spotsArray);
 				}
 			}
 		});
@@ -201,31 +200,31 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		blobs.getBlobsConnected();
 		blobs.fillBlanksPixelsWithinBlobs();
 
-		List<Integer> blobsfound = new ArrayList<Integer>();
-		for (Spot spot : exp.spotsArray.spotsList) {
-			Point2D pt = spot.getSpotCenter();
-			if (pt != null) {
-				int ix = (int) (pt.getX() - rectGrid.x);
-				int iy = (int) (pt.getY() - rectGrid.y);
-				int blobi = blobs.getBlobAt(ix, iy);
-				boolean found = false;
-				for (int i : blobsfound) {
-					if (i == blobi) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					blobsfound.add(blobi);
-					ROI2DPolygon roiP = new ROI2DPolygon(blobs.getBlobPolygon2D(blobi));
-					roiP.translate(rectGrid.x, rectGrid.y);
-					int cagenb = spot.cageID;
-					roiP.setName("cage" + String.format("%03d", cagenb));
-					spot.cageID = cagenb;
-					exp.seqCamData.seq.addROI(roiP);
-				}
-			}
-		}
+//		List<Integer> blobsfound = new ArrayList<Integer>();
+//		for (Spot spot : exp.spotsArray.spotsList) {
+//			Point2D pt = spot.getSpotCenter();
+//			if (pt != null) {
+//				int ix = (int) (pt.getX() - rectGrid.x);
+//				int iy = (int) (pt.getY() - rectGrid.y);
+//				int blobi = blobs.getBlobAt(ix, iy);
+//				boolean found = false;
+//				for (int i : blobsfound) {
+//					if (i == blobi) {
+//						found = true;
+//						break;
+//					}
+//				}
+//				if (!found) {
+//					blobsfound.add(blobi);
+//					ROI2DPolygon roiP = new ROI2DPolygon(blobs.getBlobPolygon2D(blobi));
+//					roiP.translate(rectGrid.x, rectGrid.y);
+//					int cagenb = spot.cageID;
+//					roiP.setName("cage" + String.format("%03d", cagenb));
+//					spot.cageID = cagenb;
+//					exp.seqCamData.seq.addROI(roiP);
+//				}
+//			}
+//		}
 	}
 
 	void deletePointsIncluded(Experiment exp) throws InterruptedException {
@@ -261,9 +260,9 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		}
 
 		Polygon2D polygon = null;
-		if (exp.spotsArray.spotsList.size() > 0) {
-			polygon = exp.spotsArray.get2DPolygonEnclosingSpots();
-		} else {
+//		if (exp.spotsArray.spotsList.size() > 0) {
+//			polygon = exp.spotsArray.get2DPolygonEnclosingSpots();
+//		} else {
 			Rectangle rect = exp.seqCamData.seq.getBounds2D();
 			List<Point2D> points = new ArrayList<Point2D>();
 			int rectleft = rect.x + rect.width / 6;
@@ -274,7 +273,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 			points.add(new Point2D.Double(rectright, rect.y + rect.height - 4));
 			points.add(new Point2D.Double(rectleft, rect.y + rect.height - 4));
 			polygon = new Polygon2D(points);
-		}
+//		}
 		ROI2DPolygon roi = new ROI2DPolygon(polygon);
 		roi.setName(dummyname);
 		exp.seqCamData.seq.addROI(roi);

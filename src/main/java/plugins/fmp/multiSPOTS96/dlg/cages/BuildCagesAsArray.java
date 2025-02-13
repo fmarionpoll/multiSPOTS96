@@ -95,8 +95,8 @@ public class BuildCagesAsArray extends JPanel {
 					exp.cagesArray.removeCages();
 					createROIsFromSelectedPolygon(exp);
 					exp.cagesArray.transferROIsFromSequenceToCages(exp.seqCamData.seq);
-					if (exp.spotsArray.spotsList.size() > 0)
-						exp.cagesArray.transferNFliesFromSpotsToCages(exp.spotsArray);
+//					if (exp.spotsArray.spotsList.size() > 0)
+//						exp.cagesArray.transferNFliesFromSpotsToCages(exp.spotsArray);
 				}
 			}
 		});
@@ -132,9 +132,9 @@ public class BuildCagesAsArray extends JPanel {
 		}
 
 		Polygon2D polygon = null;
-		if (exp.spotsArray.spotsList.size() > 0) {
-			polygon = exp.spotsArray.get2DPolygonEnclosingSpots();
-		} else {
+//		if (exp.spotsArray.spotsList.size() > 0) {
+//			polygon = exp.spotsArray.get2DPolygonEnclosingSpots();
+//		} else {
 			Rectangle rect = exp.seqCamData.seq.getBounds2D();
 			List<Point2D> points = new ArrayList<Point2D>();
 			int rectleft = rect.x + rect.width / 6;
@@ -145,7 +145,7 @@ public class BuildCagesAsArray extends JPanel {
 			points.add(new Point2D.Double(rectright, rect.y + rect.height - 4));
 			points.add(new Point2D.Double(rectleft, rect.y + rect.height - 4));
 			polygon = new Polygon2D(points);
-		}
+//		}
 		ROI2DPolygon roi = new ROI2DPolygon(polygon);
 		roi.setName(dummyname);
 		exp.seqCamData.seq.addROI(roi);

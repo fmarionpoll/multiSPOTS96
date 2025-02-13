@@ -570,4 +570,12 @@ public class CagesArray {
 		return polygon;
 	}
 
+	// --------------------------------------------------------
+	
+	public void transferSpotsToSequenceAsROIs(Sequence seq) {
+		seq.removeROIs(ROIUtilities.getROIsContainingString("spot", seq), false);
+		for (Cage cage: cagesList) {
+			cage.spotsArray.transferSpotsToSequenceAsROIs(seq);
+		}
+	}
 }

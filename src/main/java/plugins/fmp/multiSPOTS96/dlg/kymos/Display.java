@@ -33,6 +33,7 @@ import icy.sequence.Sequence;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.Directories;
@@ -173,12 +174,14 @@ public class Display extends JPanel implements ViewerListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				kymographsCombo.removeAllItems();
-				Collections.sort(exp.spotsArray.spotsList);
-				int nspotsArray = exp.spotsArray.spotsList.size();
-				for (int i = 0; i < nspotsArray; i++) {
-					Spot spot = exp.spotsArray.spotsList.get(i);
-					String name = spot.getRoi().getName(); // .getPlateCoordinatesAsString();
-					kymographsCombo.addItem(name);
+				for (Cage cage: exp.cagesArray.cagesList) {
+					Collections.sort(cage.spotsArray.spotsList);
+					int nspotsArray = cage.spotsArray.spotsList.size();
+					for (int i = 0; i < nspotsArray; i++) {
+						Spot spot = cage.spotsArray.spotsList.get(i);
+						String name = spot.getRoi().getName();
+						kymographsCombo.addItem(name);
+					}
 				}
 			}
 		});
@@ -364,16 +367,18 @@ public class Display extends JPanel implements ViewerListener {
 	}
 
 	private void selectSpot(Experiment exp, int isel) {
-		SpotsArray spotsArray = exp.spotsArray;
-		for (Spot spot : spotsArray.spotsList) {
-			spot.getRoi().setSelected(false);
-			spot.getRoi().setFocused(false);
-		}
-		if (isel >= 0) {
-			Spot selectedSpot = spotsArray.spotsList.get(isel);
-			selectedSpot.getRoi().setFocused(true);
+		int i = 0;
+		for (Cage cage: exp.cagesArray.cagesList) {
+			SpotsArray spotsArray = cage.spotsArray;
+			for (Spot spot : spotsArray.spotsList) {
+				spot.getRoi().setSelected(isel == i);
+				spot.getRoi().setFocused(isel == i);
+				i++;
+			}			
 		}
 	}
+		
+
 
 	@Override
 	public void viewerChanged(ViewerEvent event) {

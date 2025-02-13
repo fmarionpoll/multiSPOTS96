@@ -42,7 +42,6 @@ public class Experiment {
 	public SequenceKymos seqSpotKymos = null;
 	public Sequence seqReference = null;
 
-	public SpotsArray spotsArray = new SpotsArray();
 	public CagesArray cagesArray = new CagesArray();
 
 	public FileTime firstImage_FileTime;
@@ -434,7 +433,7 @@ public class Experiment {
 	
 	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
 		try {
-			csvWriter.append(expDesc.csvExportSectionHeader(csvSep));
+			csvWriter.append(expDesc.csvExportExperimentSectionHeader(csvSep));
 			csvWriter.append(expDesc.csvExportExperimentDescriptors(csvSep));
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {
@@ -443,42 +442,6 @@ public class Experiment {
 		return true;
 	}
 	
-	public String csvExportExperimentDescriptors(String csvSep) {
-		StringBuffer sbf = new StringBuffer();
-		List<String> row3 = Arrays.asList(
-				expDesc.ffield_boxID, 
-				expDesc.ffield_experiment, 
-				expDesc.field_comment1, 
-				expDesc.field_comment2,
-				expDesc.field_strain, 
-				expDesc.field_sex, 
-				expDesc.field_cond1, 
-				expDesc.field_cond2);
-		sbf.append(String.join(csvSep, row3));
-		sbf.append("\n");
-		return sbf.toString();
-	}
-	
-	public void csvImporteExperimentDescriptionData(String[] data) {
-		int i = 0;
-		expDesc.ffield_boxID = data[i];
-		i++;
-		expDesc.ffield_experiment = data[i];
-		i++;
-		expDesc.field_comment1 = data[i];
-		i++;
-		expDesc.field_comment2 = data[i];
-		i++;
-		expDesc.field_strain = data[i];
-		i++;
-		expDesc.field_sex = data[i];
-		int nitems = data.length;
-		if (i < nitems)
-			expDesc.field_cond1 = data[i];
-		i++;
-		if (i < nitems)
-			expDesc.field_cond2 = data[i];
-	}
 	
 	public boolean loadKymographs() {
 		if (seqSpotKymos == null)
