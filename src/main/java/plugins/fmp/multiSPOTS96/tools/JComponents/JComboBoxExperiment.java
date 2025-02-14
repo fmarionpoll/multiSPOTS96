@@ -122,8 +122,11 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 					if (loadDrosoTrack)
 						exp.openPositionsMeasures();
 
-					if (maxSizeOfSpotsArrays < exp.spotsArray.spotsList.size()) {
-						maxSizeOfSpotsArrays = exp.spotsArray.spotsList.size();
+					int nCages = exp.cagesArray.cagesList.size();
+					int nSpotsPerCage = exp.cagesArray.nColumnsPerCage * exp.cagesArray.nRowsPerCage;
+					int nMaxSpots = nCages* nSpotsPerCage;
+					if (maxSizeOfSpotsArrays < nMaxSpots) {
+						maxSizeOfSpotsArrays = nMaxSpots;
 						if (maxSizeOfSpotsArrays % 2 != 0)
 							maxSizeOfSpotsArrays += 1;
 					}

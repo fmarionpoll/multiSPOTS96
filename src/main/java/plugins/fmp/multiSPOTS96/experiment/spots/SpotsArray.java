@@ -38,16 +38,14 @@ public class SpotsArray {
 	public int nColumnsPerPlate = 12;
 	public int nRowsPerPlate = 8;
 
-	public int nColumnsPerCage = 2;
-	public int nRowsPerCage = 1;
+
 	
 	private KymoIntervals spotsListTimeIntervals = null;
 	private final static String ID_SPOTTRACK = "spotTrack";
 	private final static String ID_NSPOTS = "N_spots";
 	private final static String ID_NCOLUMNSPERPLATE = "N_columns";
 	private final static String ID_NROWSPERPLATE = "N_rows";
-	private final static String ID_NCOLUMNSPERCAGE = "N_columns_per_cage";
-	private final static String ID_NROWSPERCAGE = "N_rows_per_cage";
+
 	private final static String ID_LISTOFSPOTS = "List_of_spots";
 	private final static String ID_SPOT_ = "spot_";
 	private final static String ID_MCSPOTS_XML = "MCspots.xml";
@@ -111,8 +109,7 @@ public class SpotsArray {
 		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
 		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NCOLUMNSPERPLATE, nColumnsPerPlate);
 		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NROWSPERPLATE, nRowsPerPlate);
-		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
-		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NROWSPERCAGE, nRowsPerCage);
+
 		int i = 0;
 		Collections.sort(spotsList);
 		for (Spot spot : spotsList) {
@@ -156,8 +153,6 @@ public class SpotsArray {
 		int nitems = XMLUtil.getElementIntValue(nodecaps, ID_NSPOTS, 0);
 		nColumnsPerPlate = XMLUtil.getElementIntValue(nodecaps, ID_NCOLUMNSPERPLATE, 12);
 		nRowsPerPlate = XMLUtil.getElementIntValue(nodecaps, ID_NROWSPERPLATE, 8);
-		nColumnsPerCage = XMLUtil.getElementIntValue(nodecaps, ID_NCOLUMNSPERCAGE, 2);
-		nRowsPerCage = XMLUtil.getElementIntValue(nodecaps, ID_NROWSPERCAGE, 1);
 
 		spotsList = new ArrayList<Spot>(nitems);
 		for (int i = 0; i < nitems; i++) {
@@ -244,21 +239,6 @@ public class SpotsArray {
 		int cageID = cageRow * nCagesAlongX + cageColumn;
 		return cageID;
 	}
-
-//	public void updatePlateIndexToCageIndexes(int nColsPerCage, int nRowsPerCage) {
-//
-//		this.nColumnsPerCage = nColsPerCage;
-//		this.nRowsPerCage = nRowsPerCage;
-//
-//		for (Spot spot : spotsList) {
-//			spot.cageID = getCageIndexFromPlateIndex(spot.plateIndex);
-//			int spotCageColumn = spot.cageColumn % nColsPerCage;
-//			int spotCageRow = spot.cageRow % nRowsPerCage;
-//			spot.cagePosition = spotCageRow * nColsPerCage + spotCageColumn;
-//
-//			spot.setSpotRoi_InColorAccordingToSpotIndex(spot.cagePosition);
-//		}
-//	}
 
 	public void transferROIsFromSequenceToSpots(Sequence seq) {
 		List<ROI> listROISSpot = ROIUtilities.getROIsContainingString("spot", seq);
@@ -402,7 +382,7 @@ public class SpotsArray {
 			spot.initLevel2DMeasures();
 	}
 
-	public int getSpotIndexFromSpotName(String description) {
+	static public int getSpotIndexFromSpotName(String description) {
 		int index = 0;
 		String[] roiDescription = description.split("_");
 		try {

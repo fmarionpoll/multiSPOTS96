@@ -34,6 +34,8 @@ public class CagesArray {
 	public ArrayList<Cage> cagesList = new ArrayList<Cage>();
 	public int nCagesAlongX = 6;
 	public int nCagesAlongY = 8;
+	public int nColumnsPerCage = 2;
+	public int nRowsPerCage = 1;
 
 	// ---------- not saved to xml:
 	public long detectFirst_Ms = 0;
@@ -50,8 +52,13 @@ public class CagesArray {
 	private final String ID_NBITEMS = "nb_items";
 	private final String ID_CAGELIMITS = "Cage_Limits";
 	private final String ID_FLYDETECTED = "Fly_Detected";
+	
+	private final String ID_NCAGESALONGX = "N_cages_along_X";
+	private final String ID_NCAGESALONGY = "N_cages_along_Y";
+	private final String ID_NCOLUMNSPERCAGE = "N_columns_per_cage";
+	private final String ID_NROWSPERCAGE = "N_rows_per_cage";
 
-	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
+	private final String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 
 	public void clearAllMeasures(int option_detectCage) {
 		for (Cage cage : cagesList) {
@@ -103,6 +110,11 @@ public class CagesArray {
 		Element xmlVal = XMLUtil.addElement(node, ID_CAGES);
 		int ncages = cagesList.size();
 		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, ncages);
+		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
+		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
+		XMLUtil.setAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
+		XMLUtil.setAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
+
 		for (Cage cage : cagesList) {
 			cage.xmlSaveCage(xmlVal, index);
 			index++;
@@ -216,6 +228,11 @@ public class CagesArray {
 		Element xmlVal = XMLUtil.getElement(node, ID_CAGES);
 		if (xmlVal != null) {
 			int ncages = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
+			nCagesAlongX = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
+			nCagesAlongY = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
+			nColumnsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
+			nRowsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
+
 			for (int index = 0; index < ncages; index++) {
 				Cage cage = new Cage();
 				cage.xmlLoadCage(xmlVal, index);
@@ -577,5 +594,31 @@ public class CagesArray {
 		for (Cage cage: cagesList) {
 			cage.spotsArray.transferSpotsToSequenceAsROIs(seq);
 		}
+	}
+	
+	public Spot getSpotContainingName(String name) {
+		Spot spotFound = null;
+		for (Cage cage: cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				if (spot.getRoi().getName().contains(name)) {
+					spotFound = spot;
+					break;
+				}
+			}
+			if (spotFound != null)
+				break;
+		}
+		return spotFound;
+	}
+	
+	static public int getCageIndexFromSpotName(String description) {
+		int index = 0;
+		String[] roiDescription = description.split("_");
+		try {
+			index = Integer.parseInt(roiDescription[2]);
+		} catch (NumberFormatException e1) {
+			index = 0;
+		}
+		return index;
 	}
 }

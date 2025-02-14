@@ -27,6 +27,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ImageFileDescriptor;
 import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
 public class LoadSave extends JPanel {
@@ -102,23 +103,25 @@ public class LoadSave extends JPanel {
 		if (returnedval == JFileChooser.APPROVE_OPTION) {
 			outputpath = f.getSelectedFile().getAbsolutePath();
 			for (int t = 0; t < seqKymos.seq.getSizeT(); t++) {
-				Spot spot = exp.spotsArray.spotsList.get(t);
-				progress.setMessage("Save kymograph file : " + spot.getRoi().getName());
-				spot.spot_filenameTIFF = outputpath + File.separator + spot.getRoi().getName() + ".tiff";
-				final File file = new File(spot.spot_filenameTIFF);
-				IcyBufferedImage image = seqKymos.getSeqImage(t, 0);
-				ThreadUtil.bgRun(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							Saver.saveImage(image, file, true);
-						} catch (FormatException | IOException e) {
-							e.printStackTrace();
+				for (Cage cage: exp.cagesArray.cagesList) { 
+					Spot spot = cage.spotsArray.spotsList.get(t);
+					progress.setMessage("Save kymograph file : " + spot.getRoi().getName());
+					spot.spot_filenameTIFF = outputpath + File.separator + spot.getRoi().getName() + ".tiff";
+					final File file = new File(spot.spot_filenameTIFF);
+					IcyBufferedImage image = seqKymos.getSeqImage(t, 0);
+					ThreadUtil.bgRun(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								Saver.saveImage(image, file, true);
+							} catch (FormatException | IOException e) {
+								e.printStackTrace();
+							}
+							System.out.println(
+									"LoadSaveKymos:saveKymographFiles() File " + spot.spot_filenameTIFF + " saved ");
 						}
-						System.out.println(
-								"LoadSaveKymos:saveKymographFiles() File " + spot.spot_filenameTIFF + " saved ");
-					}
-				});
+					});
+				}
 			}
 		}
 		progress.close();
@@ -127,7 +130,7 @@ public class LoadSave extends JPanel {
 	public boolean loadDefaultKymos(Experiment exp) {
 		boolean flag = false;
 		SequenceKymos seqKymos = exp.seqSpotKymos;
-		if (seqKymos == null || exp.spotsArray == null) {
+		if (seqKymos == null || exp.cagesArray == null) {
 			System.out.println("LoadSaveKymos:loadDefaultKymos() no parent sequence or no spots found");
 			return flag;
 		}
@@ -140,11 +143,13 @@ public class LoadSave extends JPanel {
 			exp.setBinSubDirectory(localString);
 
 		List<ImageFileDescriptor> myList = exp.seqSpotKymos
-				.loadListOfPotentialKymographsFromSpots(exp.getKymosBinFullDirectory(), exp.spotsArray);
+				.loadListOfPotentialKymographsFromSpots(exp.getKymosBinFullDirectory(), exp.cagesArray);
 		int nItems = ImageFileDescriptor.getExistingFileNames(myList);
 		if (nItems > 0) {
 			flag = seqKymos.loadKymographImagesFromList(myList, true);
-			exp.spotsArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqSpotKymos.seq);
+			for (Cage cage: exp.cagesArray.cagesList) {
+				cage.spotsArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqSpotKymos.seq);
+			}
 			parent0.dlgKymos.tabDisplay.transferSpotNamesToComboBox(exp);
 		} else
 			seqKymos.closeSequence();

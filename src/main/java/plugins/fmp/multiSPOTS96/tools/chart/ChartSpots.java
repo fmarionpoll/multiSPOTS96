@@ -37,6 +37,7 @@ import icy.roi.ROI2D;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
@@ -71,16 +72,16 @@ public class ChartSpots extends IcyFrame {
 				true);
 		mainChartFrame.add(mainChartPanel);
 
-		nCagesAlongX = exp.spotsArray.nColumnsPerPlate / exp.spotsArray.nColumnsPerCage;
-		nCagesAlongY = exp.spotsArray.nRowsPerPlate / exp.spotsArray.nRowsPerCage;
+		nCagesAlongX = exp.cagesArray.nCagesAlongX;
+		nCagesAlongY = exp.cagesArray.nCagesAlongY;
 		panelHolder = new ChartPanel[nCagesAlongY][nCagesAlongX];
 		mainChartPanel.setLayout(new GridLayout(nCagesAlongY, nCagesAlongX));
 	}
 
 	private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions xlsExportOptions) {
 		NumberAxis yAxis = new NumberAxis();
-		row = row * exp.spotsArray.nRowsPerCage;
-		col = col * exp.spotsArray.nColumnsPerCage;
+		row = row * exp.cagesArray.nRowsPerCage;
+		col = col * exp.cagesArray.nColumnsPerCage;
 		String yLegend = title + " " + String.valueOf((char) (row + 'A')) + "_" + Integer.toString(col);
 		yAxis.setLabel(yLegend);
 
@@ -336,20 +337,20 @@ public class ChartSpots extends IcyFrame {
 			XYDataset xyDataset = xyItemEntity.getDataset();
 			description = (String) xyDataset.getSeriesKey(isel); // TODO check
 
-			spotFound = exp.spotsArray.getSpotContainingName(description.substring(0, 5));
+			spotFound = exp.cagesArray.getSpotContainingName(description.substring(0, 5));
 			spotFound.spot_CamData_T = xyItemEntity.getItem();
 
 		} else if (subplotindex >= 0) {
 			XYDataset xyDataset = subplots.get(subplotindex).getDataset(0);
 			description = (String) xyDataset.getSeriesKey(0); // TODO check
-			spotFound = exp.spotsArray.getSpotContainingName(description.substring(0, 5));
+			spotFound = exp.cagesArray.getSpotContainingName(description.substring(0, 5));
 
 		} else {
 			System.out.println("Graph clicked but source not found");
 			return null;
 		}
 
-		int index = exp.spotsArray.getSpotIndexFromSpotName(description);
+		int index = SpotsArray.getSpotIndexFromSpotName(description);
 		spotFound.spot_Kymograph_T = index;
 		return spotFound;
 	}

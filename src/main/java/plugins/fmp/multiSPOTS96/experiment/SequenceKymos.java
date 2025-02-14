@@ -20,6 +20,9 @@ import icy.type.DataType;
 import icy.type.collection.array.Array1DUtil;
 import loci.formats.FormatException;
 import ome.xml.meta.OMEXMLMetadata;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
+import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
@@ -63,14 +66,19 @@ public class SequenceKymos extends SequenceCamData {
 		Collections.sort(listRois, new Comparators.ROI2D_Name_Comparator());
 	}
 
-	public List<ImageFileDescriptor> loadListOfPotentialKymographsFromSpots(String dir, SpotsArray spotsArray) {
+	public List<ImageFileDescriptor> loadListOfPotentialKymographsFromSpots(String dir, CagesArray cagesArray) {
 		String directoryFull = dir + File.separator;
-		int nspots = spotsArray.spotsList.size();
+		int ncages = cagesArray.cagesList.size();
+		int nspots = cagesArray.cagesList.get(0).spotsArray.spotsList.size();
+		nspots = nspots*ncages;
+		
 		List<ImageFileDescriptor> myListOfFiles = new ArrayList<ImageFileDescriptor>(nspots);
-		for (int i = 0; i < nspots; i++) {
-			ImageFileDescriptor temp = new ImageFileDescriptor();
-			temp.fileName = directoryFull + spotsArray.spotsList.get(i).getRoi().getName() + ".tiff";
-			myListOfFiles.add(temp);
+		for (Cage cage: cagesArray.cagesList) {
+			for (Spot spot: cage.spotsArray.spotsList) {
+				ImageFileDescriptor temp = new ImageFileDescriptor();
+				temp.fileName = directoryFull + spot.getRoi().getName() + ".tiff";
+				myListOfFiles.add(temp);
+			}
 		}
 		return myListOfFiles;
 	}
