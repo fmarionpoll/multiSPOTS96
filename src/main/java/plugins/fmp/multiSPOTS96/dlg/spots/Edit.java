@@ -19,6 +19,7 @@ import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
@@ -176,15 +177,17 @@ public class Edit extends JPanel {
 	private void setSpotsFrame(int t, Experiment exp) {
 		if (spotsFrame == null) {
 			ArrayList<ROI2D> listRoisAtT = new ArrayList<ROI2D>();
-			for (Spot spot : exp.spotsArray.spotsList) {
-				ROI2DAlongT kymoROI2D = spot.getROIAtT(t);
-				listRoisAtT.add(kymoROI2D.getRoi_in());
-			}
-			Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(listRoisAtT);
+			for (Cage cage : exp.cagesArray.cagesList) {
+				for (Spot spot : cage.spotsArray.spotsList) {
 
-			spotsFrame = new ROI2DPolygon(polygon);
-			spotsFrame.setName(dummyname);
-			spotsFrame.setColor(Color.YELLOW);
+					ROI2DAlongT kymoROI2D = spot.getROIAtT(t);
+					listRoisAtT.add(kymoROI2D.getRoi_in());
+				}
+				Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(listRoisAtT);
+				spotsFrame = new ROI2DPolygon(polygon);
+				spotsFrame.setName(dummyname);
+				spotsFrame.setColor(Color.YELLOW);
+			}
 		}
 
 		exp.seqCamData.seq.removeROI(spotsFrame);

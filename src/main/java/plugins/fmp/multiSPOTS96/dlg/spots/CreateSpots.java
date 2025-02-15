@@ -7,7 +7,6 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.awt.geom.Rectangle2D;
@@ -31,12 +30,9 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentUtils;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
-import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DPolygonPlus;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
-import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class CreateSpots extends JPanel {
@@ -153,7 +149,7 @@ public class CreateSpots extends JPanel {
 
 					ExperimentUtils.transferSpotsToCamDataSequence(exp);
 					int nbFliesPerCage = (int) nFliesPerCageJSpinner.getValue();
-					exp.spotsArray.initSpotsWithNFlies(nbFliesPerCage);
+					exp.cagesArray.initCagesAndSpotsWithNFlies(nbFliesPerCage);
 					exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("carre", exp.seqCamData.seq),
 							false);
 				}
@@ -177,7 +173,7 @@ public class CreateSpots extends JPanel {
 		ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.getAreaRois();
 		for (ROI2DPolygonPlus roi : listCarres) {
 			roi.isSelected = roi.isSelected();
-			if (!roi.isSelected) 
+			if (!roi.isSelected)
 				exp.seqCamData.seq.removeROI(roi);
 		}
 	}
@@ -192,54 +188,25 @@ public class CreateSpots extends JPanel {
 	}
 
 	private void createSpotsForAllCages(Experiment exp, ROI2DGrid roiGrid, Point2D.Double referenceCagePosition) {
-		exp.spotsArray.spotsList.clear();
-		exp.spotsArray = new SpotsArray();
-		ArrayList<ROI2DPolygonPlus> listSelectedCarres = roiGrid.getSelectedAreaRois();
-		
+
+		ArrayList<ROI2DPolygonPlus> listSelectedAreas = roiGrid.getSelectedAreaRois();
 		int spotIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			ROI2D cageRoi = cage.getRoi();
 			ROI2DGrid cageGrid = createGrid(cageRoi);
-			
-			int carreIndex = 0;
-			for (ROI2DPolygonPlus roi : listSelectedCarres) {
+
+			for (ROI2DPolygonPlus roi : listSelectedAreas) {
 				ROI2DPolygonPlus roiP = cageGrid.getAreaAt(roi.cagePosition);
 				Rectangle2D rect = roiP.getBounds2D();
 				Point2D.Double center = (Double) roiP.getPosition2D();
 				int radius = (int) (rect.getHeight() / 2);
 
-				Spot spot = createEllipseSpot(exp, cage, carreIndex, spotIndex, center, radius);
-				exp.spotsArray.spotsList.add(spot);
+				cage.addEllipseSpot(spotIndex, center, radius);
 				spotIndex++;
-				carreIndex++;
+
 			}
 			cage.getRoi().setSelected(false);
 		}
-	}
-
-	private Spot createEllipseSpot(Experiment exp, Cage cage, int carreIndex, int spotIndex, Point2D.Double center,
-			int radius) {
-		Ellipse2D ellipse = new Ellipse2D.Double(center.x, center.y, 2 * radius, 2 * radius);
-		ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
-		roiEllipse.setName("spot_" 
-				+ String.format("%03d", cage.cageID) +"_" 
-				+ String.format("%03d", carreIndex) +"_"
-				+ String.format("%03d", spotIndex));
-
-		Spot spot = new Spot(roiEllipse);
-		spot.spotArrayIndex = spotIndex;
-		spot.cageID = cage.cageID;
-		spot.cagePosition = carreIndex;
-		spot.spotRadius = radius;
-		spot.spotXCoord = (int) center.getX();
-		spot.spotYCoord = (int) center.getY();
-		try {
-			spot.spotNPixels = (int) roiEllipse.getNumberOfPoints();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return spot;
 	}
 
 	int findSelectedCage(Experiment exp) {
@@ -273,7 +240,7 @@ public class CreateSpots extends JPanel {
 	}
 
 	private ROI2DGrid createGrid(ROI2D roi) {
-		ROI2DGrid grid = null; 
+		ROI2DGrid grid = null;
 		Polygon2D polygon = ((ROI2DPolygon) roi).getPolygon2D();
 		if (polygon != null) {
 			int n_columns = (int) nColumnsCombo.getSelectedItem();

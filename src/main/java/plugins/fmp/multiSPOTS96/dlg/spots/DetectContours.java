@@ -28,6 +28,7 @@ import icy.sequence.Sequence;
 import plugins.adufour.quickhull.QuickHull2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DMeasures;
@@ -284,50 +285,52 @@ public class DetectContours extends JPanel {
 		IcyBufferedImage sourceImage = seq.getImage(t, 0);
 		IcyBufferedImage workImage = transformFunction.getTransformedImage(sourceImage, transformOptions);
 		boolean detectSelectedROIs = selectedSpotCheckBox.isSelected();
-		for (Spot spot : exp.spotsArray.spotsList) {
+		for (Cage cage : exp.cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				ROI2D roi_in = spot.getRoi();
+				if (detectSelectedROIs && !roi_in.isSelected())
+					continue;
 
-			ROI2D roi_in = spot.getRoi();
-			if (detectSelectedROIs && !roi_in.isSelected())
-				continue;
+				exp.seqCamData.seq.removeROI(roi_in);
+				try {
+					spot.mask2DSpot = spot.getRoi().getBooleanMask2D(0, 0, 1, true);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				ROI2DPolygon roi0 = ROI2DMeasures.getContourOfDetectedSpot(workImage, spot, options);
+				if (roi0 != null) {
+					List<Point2D> listPoints = QuickHull2D.computeConvexEnvelope(((ROI2DShape) roi0).getPoints());
+					ROI2DPolygon roi_new = new ROI2DPolygon(listPoints);
 
-			exp.seqCamData.seq.removeROI(roi_in);
-			try {
-				spot.mask2DSpot = spot.getRoi().getBooleanMask2D(0, 0, 1, true);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+					roi_new.setName(spot.getRoi().getName());
+					roi_new.setColor(spot.getRoi().getColor());
+					spot.setRoi(roi_new);
+				}
+				exp.seqCamData.seq.addROI(spot.getRoi());
 			}
-			ROI2DPolygon roi0 = ROI2DMeasures.getContourOfDetectedSpot(workImage, spot, options);
-			if (roi0 != null) {
-				List<Point2D> listPoints = QuickHull2D.computeConvexEnvelope(((ROI2DShape) roi0).getPoints());
-				ROI2DPolygon roi_new = new ROI2DPolygon(listPoints);
-
-				roi_new.setName(spot.getRoi().getName());
-				roi_new.setColor(spot.getRoi().getColor());
-				spot.setRoi(roi_new);
-			}
-			exp.seqCamData.seq.addROI(spot.getRoi());
 		}
 	}
 
 	private void restoreContours(Experiment exp) {
 		boolean detectSelectedROIs = selectedSpotCheckBox.isSelected();
-		for (Spot spot : exp.spotsArray.spotsList) {
+		for (Cage cage : exp.cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				ROI2D roi_in = spot.getRoi();
+				if (detectSelectedROIs && !roi_in.isSelected())
+					continue;
 
-			ROI2D roi_in = spot.getRoi();
-			if (detectSelectedROIs && !roi_in.isSelected())
-				continue;
-
-			String roiName = roi_in.getName();
-			exp.seqCamData.seq.removeROI(roi_in);
-			Point2D point = new Point2D.Double(spot.spotXCoord, spot.spotYCoord);
-			double x = point.getX() - spot.spotRadius;
-			double y = point.getY() - spot.spotRadius;
-			Ellipse2D ellipse = new Ellipse2D.Double(x, y, 2 * spot.spotRadius, 2 * spot.spotRadius);
-			ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
-			roiEllipse.setName(roiName);
-			spot.setRoi(roiEllipse);
-			exp.seqCamData.seq.addROI(spot.getRoi());
+				String roiName = roi_in.getName();
+				exp.seqCamData.seq.removeROI(roi_in);
+				Point2D point = new Point2D.Double(spot.spotXCoord, spot.spotYCoord);
+				double x = point.getX() - spot.spotRadius;
+				double y = point.getY() - spot.spotRadius;
+				Ellipse2D ellipse = new Ellipse2D.Double(x, y, 2 * spot.spotRadius, 2 * spot.spotRadius);
+				ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
+				roiEllipse.setName(roiName);
+				spot.setRoi(roiEllipse);
+				exp.seqCamData.seq.addROI(spot.getRoi());
+			}
 		}
 	}
 
@@ -350,19 +353,21 @@ public class DetectContours extends JPanel {
 		if (roi == null)
 			return;
 
-		for (Spot spot : exp.spotsArray.spotsList) {
-			ROI2D spotRoi = spot.getRoi();
-			try {
-				if (!spotRoi.intersects(roi))
-					continue;
+		for (Cage cage : exp.cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				ROI2D spotRoi = spot.getRoi();
+				try {
+					if (!spotRoi.intersects(roi))
+						continue;
 
-				ROI newRoi = spotRoi.getSubtraction(roi);
-				replaceRoi(exp, spot, spotRoi, (ROI2D) newRoi);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+					ROI newRoi = spotRoi.getSubtraction(roi);
+					replaceRoi(exp, spot, spotRoi, (ROI2D) newRoi);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
 			}
-			break;
 		}
 	}
 

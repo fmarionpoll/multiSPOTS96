@@ -1,5 +1,6 @@
 package plugins.fmp.multiSPOTS96.experiment.cages;
 
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -11,12 +12,11 @@ import org.w3c.dom.Node;
 import icy.roi.BooleanMask2D;
 import icy.roi.ROI;
 import icy.roi.ROI2D;
-import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
+import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 import plugins.kernel.roi.roi2d.ROI2DShape;
@@ -40,9 +40,9 @@ public class Cage {
 	public String strCageSex = "..";
 	public String strCageStrain = "..";
 	private String strCageNumber = null;
-	
-	public SpotsArray spotsArray = new SpotsArray();	
-	
+
+	public SpotsArray spotsArray = new SpotsArray();
+
 	public boolean valid = false;
 	public boolean bDetect = true;
 	public boolean initialflyRemoved = false;
@@ -267,9 +267,46 @@ public class Cage {
 		sbf.append("\n");
 		return sbf.toString();
 	}
-	
+
 	// --------------------------------------------------------
-	
 
+	public void setNFlies(int nFlies) {
+		this.cageNFlies = nFlies;
+		for (Spot spot : spotsArray.spotsList) {
+			spot.spotNFlies = nFlies;
+		}
+	}
 
+	public int addEllipseSpot(int spotIndex, Point2D.Double center, int radius) {
+
+		if (spotsArray.spotsList == null)
+			spotsArray.spotsList = new ArrayList<Spot>(1);
+		int carreIndex = spotsArray.spotsList.size();
+		Spot spot = createEllipseSpot(spotIndex, carreIndex, center, radius);
+		spot.cagePosition = spotsArray.spotsList.size();
+		spotsArray.spotsList.add(spot);
+		return spotsArray.spotsList.size();
+	}
+
+	private Spot createEllipseSpot(int spotIndex, int carreIndex, Point2D.Double center, int radius) {
+		Ellipse2D ellipse = new Ellipse2D.Double(center.x, center.y, 2 * radius, 2 * radius);
+		ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
+		roiEllipse.setName("spot_" + String.format("%03d", cageID) + "_" + String.format("%03d", carreIndex) + "_"
+				+ String.format("%03d", spotIndex));
+
+		Spot spot = new Spot(roiEllipse);
+		spot.spotArrayIndex = spotIndex;
+		spot.cageID = cageID;
+		spot.spotArrayIndex = carreIndex;
+		spot.spotRadius = radius;
+		spot.spotXCoord = (int) center.getX();
+		spot.spotYCoord = (int) center.getY();
+		try {
+			spot.spotNPixels = (int) roiEllipse.getNumberOfPoints();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return spot;
+	}
 }

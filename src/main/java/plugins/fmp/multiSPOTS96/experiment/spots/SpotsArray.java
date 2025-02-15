@@ -38,8 +38,6 @@ public class SpotsArray {
 	public int nColumnsPerPlate = 12;
 	public int nRowsPerPlate = 8;
 
-
-	
 	private KymoIntervals spotsListTimeIntervals = null;
 	private final static String ID_SPOTTRACK = "spotTrack";
 	private final static String ID_NSPOTS = "N_spots";
@@ -228,17 +226,17 @@ public class SpotsArray {
 		return spotFound;
 	}
 
-	public int getCageIndexFromPlateIndex(int plateIndex) {
-		int plateColumn = plateIndex % nColumnsPerPlate;
-		int cageColumn = plateColumn / nColumnsPerCage;
-
-		int plateRow = plateIndex / nColumnsPerPlate;
-		int cageRow = plateRow / nRowsPerCage;
-
-		int nCagesAlongX = nColumnsPerPlate / nColumnsPerCage;
-		int cageID = cageRow * nCagesAlongX + cageColumn;
-		return cageID;
-	}
+//	public int getCageIndexFromPlateIndex(int plateIndex) {
+//		int plateColumn = plateIndex % nColumnsPerPlate;
+//		int cageColumn = plateColumn / nColumnsPerCage;
+//
+//		int plateRow = plateIndex / nColumnsPerPlate;
+//		int cageRow = plateRow / nRowsPerCage;
+//
+//		int nCagesAlongX = nColumnsPerPlate / nColumnsPerCage;
+//		int cageID = cageRow * nCagesAlongX + cageColumn;
+//		return cageID;
+//	}
 
 	public void transferROIsFromSequenceToSpots(Sequence seq) {
 		List<ROI> listROISSpot = ROIUtilities.getROIsContainingString("spot", seq);
@@ -309,14 +307,6 @@ public class SpotsArray {
 		ROIUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, seq);
 		seq.removeAllROI();
 		seq.addROIs(seqRoisList, false);
-	}
-
-	public void initSpotsWithNFlies(int nflies) {
-		int spotArraySize = spotsList.size();
-		for (int i = 0; i < spotArraySize; i++) {
-			Spot spot = spotsList.get(i);
-			spot.spotNFlies = nflies;
-		}
 	}
 
 	public ArrayList<Spot> getSpotsEnclosed(ROI2DPolygon envelopeRoi) {
@@ -582,7 +572,7 @@ public class SpotsArray {
 		}
 		return null;
 	}
-	
+
 	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
 		try {
 			csvWriter.append(spotsDescription.csvExportSectionHeader(csvSep));

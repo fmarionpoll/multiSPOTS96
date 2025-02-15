@@ -52,7 +52,7 @@ public class CagesArray {
 	private final String ID_NBITEMS = "nb_items";
 	private final String ID_CAGELIMITS = "Cage_Limits";
 	private final String ID_FLYDETECTED = "Fly_Detected";
-	
+
 	private final String ID_NCAGESALONGX = "N_cages_along_X";
 	private final String ID_NCAGESALONGY = "N_cages_along_Y";
 	private final String ID_NCOLUMNSPERCAGE = "N_columns_per_cage";
@@ -377,18 +377,17 @@ public class CagesArray {
 		return cageList;
 	}
 
-	public Cage getCageFromRowColCoordinates (int row, int column) {
+	public Cage getCageFromRowColCoordinates(int row, int column) {
 		Cage cage_found = null;
-		for (Cage cage: cagesList) {
-			if (cage.arrayColumn == column && cage.arrayRow == row)
-			{
+		for (Cage cage : cagesList) {
+			if (cage.arrayColumn == column && cage.arrayRow == row) {
 				cage_found = cage;
 				break;
 			}
 		}
 		return cage_found;
 	}
-	
+
 	// --------------
 
 	public void transferCagesToSequenceAsROIs(Sequence seq) {
@@ -588,17 +587,17 @@ public class CagesArray {
 	}
 
 	// --------------------------------------------------------
-	
+
 	public void transferSpotsToSequenceAsROIs(Sequence seq) {
 		seq.removeROIs(ROIUtilities.getROIsContainingString("spot", seq), false);
-		for (Cage cage: cagesList) {
+		for (Cage cage : cagesList) {
 			cage.spotsArray.transferSpotsToSequenceAsROIs(seq);
 		}
 	}
-	
+
 	public Spot getSpotContainingName(String name) {
 		Spot spotFound = null;
-		for (Cage cage: cagesList) {
+		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				if (spot.getRoi().getName().contains(name)) {
 					spotFound = spot;
@@ -610,7 +609,14 @@ public class CagesArray {
 		}
 		return spotFound;
 	}
-	
+
+	public void initCagesAndSpotsWithNFlies(int nflies) {
+		for (Cage cage : cagesList) {
+			cage.cageNFlies = nflies;
+			cage.setNFlies(nflies);
+		}
+	}
+
 	static public int getCageIndexFromSpotName(String description) {
 		int index = 0;
 		String[] roiDescription = description.split("_");
