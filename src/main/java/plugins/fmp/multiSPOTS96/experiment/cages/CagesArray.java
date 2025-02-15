@@ -617,6 +617,33 @@ public class CagesArray {
 		}
 	}
 
+	public ArrayList<Spot> getSpotsEnclosed(ROI2DPolygon envelopeRoi) {
+		ArrayList<Spot> enclosedSpots = new ArrayList<Spot>();
+		if (envelopeRoi != null) {
+			for (Cage cage : cagesList) {
+				for (Spot spot : cage.spotsArray.spotsList) {
+					try {
+						if (envelopeRoi.contains(spot.getRoi())) {
+							spot.getRoi().setSelected(true);
+							enclosedSpots.add(spot);
+						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		} else {
+			for (Cage cage : cagesList) {
+				for (Spot spot : cage.spotsArray.spotsList) {
+					if (spot.getRoi().isSelected())
+						enclosedSpots.add(spot);
+				}
+			}
+		}
+		return enclosedSpots;
+	}
+
 	static public int getCageIndexFromSpotName(String description) {
 		int index = 0;
 		String[] roiDescription = description.split("_");
@@ -626,5 +653,29 @@ public class CagesArray {
 			index = 0;
 		}
 		return index;
+	}
+
+	static public int getSpotIndexFromSpotName(String description) {
+		int index = 0;
+		String[] roiDescription = description.split("_");
+		try {
+			index = Integer.parseInt(roiDescription[3]);
+		} catch (NumberFormatException e1) {
+			index = 0;
+		}
+		return index;
+	}
+
+	public Spot getSpotFromTotalIndex(int indexT) {
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				ROI2D roi = spot.getRoi();
+				int index = getSpotIndexFromSpotName(roi.getName());
+				if (index == indexT) {
+					return spot;
+				}
+			}
+		}
+		return null;
 	}
 }

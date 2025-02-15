@@ -29,7 +29,6 @@ import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
-import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class SpotsArray {
@@ -307,29 +306,6 @@ public class SpotsArray {
 		ROIUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, seq);
 		seq.removeAllROI();
 		seq.addROIs(seqRoisList, false);
-	}
-
-	public ArrayList<Spot> getSpotsEnclosed(ROI2DPolygon envelopeRoi) {
-		ArrayList<Spot> enclosedSpots = new ArrayList<Spot>();
-		if (envelopeRoi != null) {
-			for (Spot spot : spotsList) {
-				try {
-					if (envelopeRoi.contains(spot.getRoi())) {
-						spot.getRoi().setSelected(true);
-						enclosedSpots.add(spot);
-					}
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} else {
-			for (Spot spot : spotsList) {
-				if (spot.getRoi().isSelected())
-					enclosedSpots.add(spot);
-			}
-		}
-		return enclosedSpots;
 	}
 
 	// ------------------------------------------------

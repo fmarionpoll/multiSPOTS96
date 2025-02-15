@@ -197,7 +197,7 @@ public class Edit extends JPanel {
 	}
 
 	private void displaySnake(Experiment exp) {
-		enclosedSpots = exp.spotsArray.getSpotsEnclosed(spotsFrame);
+		enclosedSpots = exp.cagesArray.getSpotsEnclosed(spotsFrame);
 		if (enclosedSpots.size() > 0) {
 			ArrayList<Point2D> listPoint = new ArrayList<Point2D>();
 			for (Spot spot : enclosedSpots) {
@@ -235,7 +235,7 @@ public class Edit extends JPanel {
 	}
 
 	private void resizeSpots(Experiment exp, int delta) {
-		enclosedSpots = exp.spotsArray.getSpotsEnclosed(spotsFrame);
+		enclosedSpots = exp.cagesArray.getSpotsEnclosed(spotsFrame);
 		if (enclosedSpots.size() > 0) {
 			for (Spot spot : enclosedSpots) {
 				ROI2DShape roi = (ROI2DShape) spot.getRoi();
