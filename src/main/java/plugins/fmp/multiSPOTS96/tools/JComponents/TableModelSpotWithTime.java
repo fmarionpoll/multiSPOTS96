@@ -25,7 +25,7 @@ public class TableModelSpotWithTime extends AbstractTableModel {
 	public int getRowCount() {
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			intervals = exp.spotsArray.getKymoIntervalsFromSpots().intervals;
+			intervals = exp.cagesArray.getKymoIntervalsFromSpotsOFCage0().intervals;
 			return intervals.size();
 		}
 		return 0;

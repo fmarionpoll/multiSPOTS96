@@ -124,6 +124,7 @@ public class Cage {
 		strCageNumber = cage.strCageNumber;
 		valid = false;
 		flyPositions.copyXYTaSeries(cage.flyPositions);
+		spotsArray.copy(cage.spotsArray);
 	}
 
 	public ROI2DRectangle getRoiRectangleFromPositionAtT(int t) {

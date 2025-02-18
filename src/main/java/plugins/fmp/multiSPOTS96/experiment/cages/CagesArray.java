@@ -20,6 +20,7 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.KymoIntervals;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
@@ -677,5 +678,20 @@ public class CagesArray {
 			}
 		}
 		return null;
+	}
+	
+	public int getTotalNumberOfSpots() {
+		int nspots = 0;
+		for (Cage cage : cagesList) {
+			nspots +=  cage.spotsArray.spotsList.size();
+		}
+		return nspots;
+	}
+	
+	public KymoIntervals getKymoIntervalsFromSpotsOFCage0() {
+
+		Cage cage = cagesList.get(0);
+		KymoIntervals intervals =  cage.spotsArray.getKymoIntervalsFromSpots();
+		return intervals;
 	}
 }

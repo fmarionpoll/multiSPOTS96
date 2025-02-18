@@ -77,43 +77,43 @@ public class XLSExport {
 				rowmax = dumb.getValue();
 		}
 
-		List<Spot> spotsList = exp.spotsArray.spotsList;
-		for (int t = 0; t < spotsList.size(); t++) {
-			Spot spot = spotsList.get(t);
-			String name = spot.getRoi().getName();
-			int col = getRowIndexFromSpotName(name);
-			if (col >= 0)
-				pt.x = colseries + col;
-			int x = pt.x;
-			int y = row;
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.PATH.getValue(), transpose, name0);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
-
-			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_BOXID);
-			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_EXPT);
-			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_STIM);
-			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_CONC);
-			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_STRAIN);
-			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_SEX);
-			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_COND1);
-			XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_COND2);
-
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, spot.spotVolume); 
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, spot.spotNPixels); 
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose,
-					spot.getCagePosition(xlsExportOption));
-			outputStimAndConc_according_to_DataOption(sheet, xlsExportOption, spot, transpose, x, y);
-
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEID.getValue(), transpose, spot.cageID);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose, charSeries + spot.cageID);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose, spot.spotNFlies);
-
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
-					desc_getChoiceTestType(spotsList, t));
-			if (exp.cagesArray.cagesList.size() > t / 2) {
-				Cage cage = exp.cagesArray.cagesList.get(t / 2); // cap.capCageID);
+		for (Cage cage: exp.cagesArray.cagesList) {
+			List<Spot> spotsList = cage.spotsArray.spotsList;
+			for (int t = 0; t < spotsList.size(); t++) {
+				Spot spot = spotsList.get(t);
+				String name = spot.getRoi().getName();
+				int col = getRowIndexFromSpotName(name);
+				if (col >= 0)
+					pt.x = colseries + col;
+				int x = pt.x;
+				int y = row;
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.PATH.getValue(), transpose, name0);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
+	
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_BOXID);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_EXPT);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_STIM);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_CONC);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_STRAIN);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_SEX);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_COND1);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_COND2);
+	
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, spot.spotVolume); 
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, spot.spotNPixels); 
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose,
+						spot.getCagePosition(xlsExportOption));
+				outputStimAndConc_according_to_DataOption(sheet, xlsExportOption, spot, transpose, x, y);
+	
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEID.getValue(), transpose, spot.cageID);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose, charSeries + spot.cageID);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose, spot.spotNFlies);
+	
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
+						desc_getChoiceTestType(spotsList, t));
+				
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose,
 						cage.strCageStrain);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.strCageSex);
@@ -310,7 +310,6 @@ public class XLSExport {
 
 		// loop to get all spots into expAll and init rows for this experiment
 		expAll.cagesArray.copy(exp.cagesArray);
-		expAll.spotsArray.copy(exp.spotsArray);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
 		expAll.expDesc.copyExperimentFieldsFrom(exp.expDesc);
 		expAll.setResultsDirectory(exp.getResultsDirectory());
@@ -344,7 +343,6 @@ public class XLSExport {
 
 		// loop to get all spots into expAll and init rows for this experiment
 		expAll.cagesArray.copy(exp.cagesArray);
-		expAll.spotsArray.copy(exp.spotsArray);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
 		expAll.expDesc.copyExperimentFieldsFrom(exp.expDesc);
 		expAll.setResultsDirectory(exp.getResultsDirectory());
