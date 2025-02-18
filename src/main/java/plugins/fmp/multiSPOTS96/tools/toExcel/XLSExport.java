@@ -316,22 +316,23 @@ public class XLSExport {
 
 		Experiment expi = exp.chainToNextExperiment;
 		while (expi != null) {
-			expAll.spotsArray.mergeLists(expi.spotsArray);
+			expAll.cagesArray.mergeSpotsLists(expi.cagesArray);
 			expi = expi.chainToNextExperiment;
 		}
 
 		int nFrames = (int) ((expAll.seqCamData.lastImage_ms - expAll.seqCamData.firstImage_ms)
 				/ options.buildExcelStepMs + 1);
-		int nspots = expAll.spotsArray.spotsList.size();
+		int nspots = expAll.cagesArray.getTotalNumberOfSpots();
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
-		for (int i = 0; i < nspots; i++) {
-			Spot spot = expAll.spotsArray.spotsList.get(i);
-			XLSResults rowResults = new XLSResults(spot.getRoi().getName(), spot.spotNFlies, spot.cageID,
-					spot.cagePosition, xlsOption, nFrames);
-			rowResults.stimulus = spot.spotStim;
-			rowResults.concentration = spot.spotConc;
-			rowResults.cageID = spot.cageID;
-			rowListForOneExp.resultsList.add(rowResults);
+		for (Cage cage: expAll.cagesArray.cagesList) {
+			for (Spot spot: cage.spotsArray.spotsList) {
+				XLSResults rowResults = new XLSResults(spot.getRoi().getName(), spot.spotNFlies, spot.cageID,
+						spot.cagePosition, xlsOption, nFrames);
+				rowResults.stimulus = spot.spotStim;
+				rowResults.concentration = spot.spotConc;
+				rowResults.cageID = spot.cageID;
+				rowListForOneExp.resultsList.add(rowResults);
+			}
 		}
 		Collections.sort(rowListForOneExp.resultsList, new Comparators.XLSResults_Name_Comparator());
 		return rowListForOneExp;
@@ -349,22 +350,23 @@ public class XLSExport {
 
 		Experiment expi = exp.chainToNextExperiment;
 		while (expi != null) {
-			expAll.spotsArray.mergeLists(expi.spotsArray);
+			expAll.cagesArray.mergeSpotsLists(expi.cagesArray);
 			expi = expi.chainToNextExperiment;
 		}
 
 		int nFrames = (int) ((expAll.seqCamData.lastImage_ms - expAll.seqCamData.firstImage_ms)
 				/ options.buildExcelStepMs + 1);
-		int nspots = expAll.spotsArray.spotsList.size();
+		int nspots = expAll.cagesArray.getTotalNumberOfSpots();
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
-		for (int i = 0; i < nspots; i++) {
-			Spot spot = expAll.spotsArray.spotsList.get(i);
-			XLSResults rowResults = new XLSResults(spot.getRoi().getName(), spot.spotNFlies, spot.cageID,
-					spot.cagePosition, xlsOption, nFrames);
-			rowResults.stimulus = spot.spotStim;
-			rowResults.concentration = spot.spotConc;
-			rowResults.cageID = spot.cageID;
-			rowListForOneExp.resultsList.add(rowResults);
+		for (Cage cage: expAll.cagesArray.cagesList) {
+			for (Spot spot: cage.spotsArray.spotsList) {
+				XLSResults rowResults = new XLSResults(spot.getRoi().getName(), spot.spotNFlies, spot.cageID,
+						spot.cagePosition, xlsOption, nFrames);
+				rowResults.stimulus = spot.spotStim;
+				rowResults.concentration = spot.spotConc;
+				rowResults.cageID = spot.cageID;
+				rowListForOneExp.resultsList.add(rowResults);
+			}
 		}
 		Collections.sort(rowListForOneExp.resultsList, new Comparators.XLSResults_Name_Comparator());
 		return rowListForOneExp;
@@ -421,9 +423,9 @@ public class XLSExport {
 		while (expi != null) {
 			int nOutputFrames = getNOutputFrames(expi);
 			if (nOutputFrames > 1) {
-				XLSResultsArray resultsArrayList = new XLSResultsArray(expi.spotsArray.spotsList.size());
+				XLSResultsArray resultsArrayList = new XLSResultsArray(expi.cagesArray.getTotalNumberOfSpots());
 				options.compensateEvaporation = false;
-				resultsArrayList.getSpotsArrayResults1(expi.spotsArray, nOutputFrames, exp.seqCamData.binDuration_ms,
+				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames, exp.seqCamData.binDuration_ms,
 						options);
 				addResultsTo_rowsForOneExp(rowListForOneExp, expi, resultsArrayList);
 			}
@@ -438,9 +440,9 @@ public class XLSExport {
 		while (expi != null) {
 			int nOutputFrames = getNOutputFrames(expi);
 			if (nOutputFrames > 1) {
-				XLSResultsArray resultsArrayList = new XLSResultsArray(expi.spotsArray.spotsList.size());
+				XLSResultsArray resultsArrayList = new XLSResultsArray(expi.cagesArray.getTotalNumberOfSpots());
 				options.compensateEvaporation = false;
-				resultsArrayList.getSpotsArrayResults1(expi.spotsArray, nOutputFrames, exp.seqCamData.binDuration_ms,
+				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames, exp.seqCamData.binDuration_ms,
 						options);
 				addResultsTo_rowsForOneExp(rowListForOneExp, expi, resultsArrayList);
 			}

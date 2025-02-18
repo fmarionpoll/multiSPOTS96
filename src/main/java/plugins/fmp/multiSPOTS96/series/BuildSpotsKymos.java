@@ -22,6 +22,7 @@ import loci.formats.FormatException;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.GaspardRigidRegistration;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
@@ -35,7 +36,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	// -----------------------------------
 
 	void analyzeExperiment(Experiment exp) {
-		if (!loadExperimentDataToBuildKymos(exp) || exp.spotsArray.spotsList.size() < 1)
+		if (!loadExperimentDataToBuildKymos(exp) || exp.cagesArray.getTotalNumberOfSpots() < 1)
 			return;
 		openKymoViewers(exp);
 		getTimeLimitsOfSequence(exp);
@@ -74,7 +75,7 @@ public class BuildSpotsKymos extends BuildSeries {
 			futuresArray.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					Spot spot = exp.spotsArray.spotsList.get(t_index);
+					Spot spot = exp.cagesArray.getSpotAtGlobalIndex(t_index);
 					String filename = directory + File.separator + spot.getRoi().getName() + ".tiff";
 
 					File file = new File(filename);
@@ -95,7 +96,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private boolean buildKymo(Experiment exp) {
-		if (exp.spotsArray.spotsList.size() < 1) {
+		if (exp.cagesArray.getTotalNumberOfSpots() < 1) {
 			System.out.println("BuildKymoSpots:buildKymo Abort (1): nb spots = 0");
 			return false;
 		}
@@ -136,8 +137,10 @@ public class BuildSpotsKymos extends BuildSeries {
 					IcyBufferedImage sourceImage = loadImageFromIndex(exp, t);
 					int sizeC = sourceImage.getSizeC();
 					IcyBufferedImageCursor cursorSource = new IcyBufferedImageCursor(sourceImage);
-					for (Spot spot : exp.spotsArray.spotsList) {
-						analyzeImageWithSpot(cursorSource, spot, t - iiFirst, sizeC);
+					for (Cage cage: exp.cagesArray.cagesList) {
+						for (Spot spot : cage.spotsArray.spotsList) {
+							analyzeImageWithSpot(cursorSource, spot, t - iiFirst, sizeC);
+						}
 					}
 				}
 			}));
@@ -185,23 +188,25 @@ public class BuildSpotsKymos extends BuildSeries {
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("buildKymograph");
 		processor.setPriority(Processor.NORM_PRIORITY);
-		int nbspots = exp.spotsArray.spotsList.size();
+		int nbspots = exp.cagesArray.getTotalNumberOfSpots();
 		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(nbspots);
 		tasks.clear();
 		int vertical_resolution = 512;
 
-		for (int ispot = 0; ispot < nbspots; ispot++) {
-			final Spot spot = exp.spotsArray.spotsList.get(ispot);
-			final int indexSpot = ispot;
-			tasks.add(processor.submit(new Runnable() {
-				@Override
-				public void run() {
-					IcyBufferedImage kymoImage = IcyBufferedImageUtil.scale(spot.spot_Image, spot.spot_Image.getWidth(),
-							vertical_resolution);
-					seqKymo.setImage(indexSpot, 0, kymoImage);
-					spot.spot_Image = null;
-				}
-			}));
+		for (Cage cage: exp.cagesArray.cagesList) {
+			for (int ispot = 0; ispot < nbspots; ispot++) {
+				final Spot spot = cage.spotsArray.spotsList.get(ispot);
+				final int indexSpot = ispot;
+				tasks.add(processor.submit(new Runnable() {
+					@Override
+					public void run() {
+						IcyBufferedImage kymoImage = IcyBufferedImageUtil.scale(spot.spot_Image, spot.spot_Image.getWidth(),
+								vertical_resolution);
+						seqKymo.setImage(indexSpot, 0, kymoImage);
+						spot.spot_Image = null;
+					}
+				}));
+			}
 		}
 
 		waitFuturesCompletion(processor, tasks, null);
@@ -228,19 +233,21 @@ public class BuildSpotsKymos extends BuildSeries {
 		if (dataType.toString().equals("undefined"))
 			dataType = DataType.UBYTE;
 
-		for (Spot spot : exp.spotsArray.spotsList) {
-			int imageHeight = 0;
-			for (ROI2DAlongT roiT : spot.getROIAlongTList()) {
-				roiT.buildMask2DFromRoi_in();
-
-				// TODO transform into ROIT and add to outer
-				// subtract booleanmap from booleantmap of roiT
-
-				int imageHeight_i = roiT.mask2DPoints_in.length;
-				if (imageHeight_i > imageHeight)
-					imageHeight = imageHeight_i;
+		for (Cage cage: exp.cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				int imageHeight = 0;
+				for (ROI2DAlongT roiT : spot.getROIAlongTList()) {
+					roiT.buildMask2DFromRoi_in();
+	
+					// TODO transform into ROIT and add to outer
+					// subtract booleanmap from booleantmap of roiT
+	
+					int imageHeight_i = roiT.mask2DPoints_in.length;
+					if (imageHeight_i > imageHeight)
+						imageHeight = imageHeight_i;
+				}
+				spot.spot_Image = new IcyBufferedImage(kymoImageWidth, imageHeight, numC, dataType);
 			}
-			spot.spot_Image = new IcyBufferedImage(kymoImageWidth, imageHeight, numC, dataType);
 		}
 	}
 

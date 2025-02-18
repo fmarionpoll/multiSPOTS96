@@ -18,6 +18,7 @@ import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
@@ -37,14 +38,14 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 	void analyzeExperiment(Experiment exp) {
 		loadExperimentDataToMeasureSpots(exp);
-		exp.spotsArray.setFilterOfSpotsToAnalyze(true, options);
+		exp.cagesArray.setFilterOfSpotsToAnalyze(true, options);
 
 		openViewers(exp);
 		getTimeLimitsOfSequence(exp);
 		if (measureSpots(exp))
 			saveComputation(exp);
 
-		exp.spotsArray.setFilterOfSpotsToAnalyze(false, options);
+		exp.cagesArray.setFilterOfSpotsToAnalyze(false, options);
 		closeViewers();
 	}
 
@@ -61,8 +62,8 @@ public class BuildSpotsMeasures extends BuildSeries {
 		if (directory == null)
 			return;
 
-		exp.spotsArray.transferSumToSumClean();
-		exp.spotsArray.initLevel2DMeasures();
+		exp.cagesArray.transferSumToSumClean();
+		exp.cagesArray.initLevel2DMeasures();
 		exp.saveXML_MCExperiment();
 		exp.save_SpotsMeasures();
 	}
@@ -86,7 +87,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 	}
 
 	private boolean measureSpots(Experiment exp) {
-		if (exp.spotsArray.spotsList.size() < 1) {
+		if (exp.cagesArray.getTotalNumberOfSpots() < 1) {
 			System.out.println("DetectAreas:measureAreas Abort (1): nbspots = 0");
 			return false;
 		}
@@ -139,18 +140,20 @@ public class BuildSpotsMeasures extends BuildSeries {
 					final double final_background = background;
 
 					int ii = t - iiFirst;
-					for (Spot spot : exp.spotsArray.spotsList) {
-						if (!spot.okToAnalyze)
-							continue;
-
-						ROI2DAlongT roiT = spot.getROIAtT(t);
-						ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly,
-								roiT);
-						spot.flyPresent.isPresent[ii] = results.nPoints_fly_present;
-						spot.sum_in.values[ii] = results.sumOverThreshold / results.npoints_in - final_background;
-						if (results.nPoints_no_fly != results.npoints_in)
-							spot.sum_in.values[ii] = results.sumTot_no_fly_over_threshold / results.nPoints_no_fly
-									- final_background;
+					for (Cage cage: exp.cagesArray.cagesList) {
+						for (Spot spot : cage.spotsArray.spotsList) {
+							if (!spot.okToAnalyze)
+								continue;
+	
+							ROI2DAlongT roiT = spot.getROIAtT(t);
+							ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly,
+									roiT);
+							spot.flyPresent.isPresent[ii] = results.nPoints_fly_present;
+							spot.sum_in.values[ii] = results.sumOverThreshold / results.npoints_in - final_background;
+							if (results.nPoints_no_fly != results.npoints_in)
+								spot.sum_in.values[ii] = results.sumTot_no_fly_over_threshold / results.nPoints_no_fly
+										- final_background;
+						}
 					}
 				}
 			}));
@@ -167,9 +170,11 @@ public class BuildSpotsMeasures extends BuildSeries {
 		ROI2DRectangle roiRect = new ROI2DRectangle(rect);
 		try {
 			BooleanMask2D roiRectMask = roiRect.getBooleanMask(true);
-			for (Spot spot : exp.spotsArray.spotsList) {
-				BooleanMask2D mask = spot.getROIAtT(t).getMask2D_in();
-				roiRectMask.subtract(mask.bounds, mask.mask);
+			for (Cage cage: exp.cagesArray.cagesList) {
+				for (Spot spot : cage.spotsArray.spotsList) {
+					BooleanMask2D mask = spot.getROIAtT(t).getMask2D_in();
+					roiRectMask.subtract(mask.bounds, mask.mask);
+				}
 			}
 			ROI2DAlongT roiT = new ROI2DAlongT(0, roiRect);
 			roiT.setMask2D_in(roiRectMask);
@@ -185,10 +190,12 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 	Rectangle2D getRectangleEnclosingAllSpots(Experiment exp, int t) {
 
-		Rectangle2D outerRectangle = (Rectangle2D) exp.spotsArray.spotsList.get(0).getROIAtT(t).getRoi_in().getBounds();
-		for (Spot spot : exp.spotsArray.spotsList) {
-			Rectangle2D rect = (Rectangle2D) spot.getROIAtT(t).getRoi_in().getBounds();
-			Rectangle2D.union(outerRectangle, rect, outerRectangle);
+		Rectangle2D outerRectangle = (Rectangle2D) exp.cagesArray.cagesList.get(0).spotsArray.spotsList.get(0).getROIAtT(t).getRoi_in().getBounds();
+		for (Cage cage: exp.cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				Rectangle2D rect = (Rectangle2D) spot.getROIAtT(t).getRoi_in().getBounds();
+				Rectangle2D.union(outerRectangle, rect, outerRectangle);
+			}
 		}
 		return outerRectangle;
 	}
@@ -229,7 +236,6 @@ public class BuildSpotsMeasures extends BuildSeries {
 	}
 
 	private boolean isOverThreshold(double value) {
-
 		boolean flag = value > options.spotThreshold;
 		if (!options.spotThresholdUp)
 			flag = !flag;
@@ -237,17 +243,18 @@ public class BuildSpotsMeasures extends BuildSeries {
 	}
 
 	private void initSpotsDataArrays(Experiment exp) {
-
 		int nFrames = exp.seqCamData.nTotalFrames;
-		for (Spot spot : exp.spotsArray.spotsList) {
-			int i = spot.cagePosition % 2;
-			if (0 == i && !options.detectL)
-				continue;
-			if (1 == i && !options.detectR)
-				continue;
-			spot.sum_in.values = new double[nFrames];
-			spot.sum_clean.values = new double[nFrames];
-			spot.flyPresent.isPresent = new int[nFrames];
+		for (Cage cage: exp.cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				int i = spot.cagePosition % 2;
+				if (0 == i && !options.detectL)
+					continue;
+				if (1 == i && !options.detectR)
+					continue;
+				spot.sum_in.values = new double[nFrames];
+				spot.sum_clean.values = new double[nFrames];
+				spot.flyPresent.isPresent = new int[nFrames];
+			}
 		}
 	}
 
@@ -255,17 +262,18 @@ public class BuildSpotsMeasures extends BuildSeries {
 		SequenceCamData seqCamData = exp.seqCamData;
 		if (seqCamData.seq == null)
 			seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
-
-		for (Spot spot : exp.spotsArray.spotsList) {
-//			int i = spot.plateIndex % 2;
-//			if (0 == i && !options.detectL)
-//				continue;
-//			if (1 == i && !options.detectR)
-//				continue;
-			List<ROI2DAlongT> listRoiT = spot.getROIAlongTList();
-			for (ROI2DAlongT roiT : listRoiT) {
-				if (roiT.getMask2D_in() == null)
-					roiT.buildMask2DFromRoi_in();
+		for (Cage cage: exp.cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+	//			int i = spot.plateIndex % 2;
+	//			if (0 == i && !options.detectL)
+	//				continue;
+	//			if (1 == i && !options.detectR)
+	//				continue;
+				List<ROI2DAlongT> listRoiT = spot.getROIAlongTList();
+				for (ROI2DAlongT roiT : listRoiT) {
+					if (roiT.getMask2D_in() == null)
+						roiT.buildMask2DFromRoi_in();
+				}
 			}
 		}
 	}

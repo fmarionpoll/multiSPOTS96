@@ -225,18 +225,6 @@ public class SpotsArray {
 		return spotFound;
 	}
 
-//	public int getCageIndexFromPlateIndex(int plateIndex) {
-//		int plateColumn = plateIndex % nColumnsPerPlate;
-//		int cageColumn = plateColumn / nColumnsPerCage;
-//
-//		int plateRow = plateIndex / nColumnsPerPlate;
-//		int cageRow = plateRow / nRowsPerCage;
-//
-//		int nCagesAlongX = nColumnsPerPlate / nColumnsPerCage;
-//		int cageID = cageRow * nCagesAlongX + cageColumn;
-//		return cageID;
-//	}
-
 	public void transferROIsFromSequenceToSpots(Sequence seq) {
 		List<ROI> listROISSpot = ROIUtilities.getROIsContainingString("spot", seq);
 		Collections.sort(listROISSpot, new Comparators.ROI_Name_Comparator());

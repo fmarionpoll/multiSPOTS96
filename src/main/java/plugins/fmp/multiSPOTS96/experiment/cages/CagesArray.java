@@ -24,6 +24,7 @@ import plugins.fmp.multiSPOTS96.experiment.KymoIntervals;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
+import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
@@ -440,10 +441,6 @@ public class CagesArray {
 		}
 	}
 
-//	public void setCageNbFromSpotsArray(SpotsArray spotsArray) {
-//		spotsArray.updatePlateIndexToCageIndexes(spotsArray.nColumnsPerCage, spotsArray.nRowsPerCage);
-//	}
-
 	public Cage getCageFromNumber(int number) {
 		Cage cageFound = null;
 		for (Cage cage : cagesList) {
@@ -667,7 +664,7 @@ public class CagesArray {
 		return index;
 	}
 
-	public Spot getSpotFromTotalIndex(int indexT) {
+	public Spot getSpotAtGlobalIndex(int indexT) {
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				ROI2D roi = spot.getRoi();
@@ -689,9 +686,36 @@ public class CagesArray {
 	}
 	
 	public KymoIntervals getKymoIntervalsFromSpotsOFCage0() {
-
 		Cage cage = cagesList.get(0);
 		KymoIntervals intervals =  cage.spotsArray.getKymoIntervalsFromSpots();
 		return intervals;
+	}
+	
+	public void mergeSpotsLists(CagesArray arrayToMerge) {
+		for (Cage cage: cagesList) {
+			for (Cage cageToMerge: arrayToMerge.cagesList) {
+				if (cage.cagePosition != cageToMerge.cagePosition)
+					continue;
+				cage.spotsArray.mergeLists(cageToMerge.spotsArray);
+			}
+		}
+	}
+	
+	public void setFilterOfSpotsToAnalyze(boolean setFilter, BuildSeriesOptions options) {
+		for (Cage cage: cagesList) {
+			cage.spotsArray.setFilterOfSpotsToAnalyze(setFilter, options);
+		}
+	}
+	
+	public void transferSumToSumClean() {
+		for (Cage cage: cagesList) {
+			cage.spotsArray.transferSumToSumClean();
+		}
+	}
+
+	public void initLevel2DMeasures() {
+		for (Cage cage: cagesList) {
+			cage.spotsArray.initLevel2DMeasures();
+		}
 	}
 }

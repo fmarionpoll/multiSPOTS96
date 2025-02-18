@@ -3,8 +3,10 @@ package plugins.fmp.multiSPOTS96.tools.toExcel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
+
 
 public class XLSResultsArray {
 	ArrayList<XLSResults> resultsList = null;
@@ -146,33 +148,35 @@ public class XLSResultsArray {
 
 	// ---------------------------------------------------
 
-	public void getSpotsArrayResults_T0(SpotsArray spotsArray, EnumXLSExportType exportType, int nOutputFrames,
+	public void getSpotsArrayResults_T0(CagesArray cagesArray, EnumXLSExportType exportType, int nOutputFrames,
 			long kymoBinCol_Ms, XLSExportOptions xlsExportOptions) {
 		xlsExportOptions.exportType = exportType;
-		buildSpotsDataForPass1(spotsArray, nOutputFrames, kymoBinCol_Ms, xlsExportOptions);
+		buildSpotsDataForPass1(cagesArray, nOutputFrames, kymoBinCol_Ms, xlsExportOptions);
 		buildDataForPass2(xlsExportOptions);
 	}
 
-	public void getSpotsArrayResults1(SpotsArray spotsArray, int nOutputFrames, long kymoBinCol_Ms,
+	public void getSpotsArrayResults1(CagesArray cagesArray, int nOutputFrames, long kymoBinCol_Ms,
 			XLSExportOptions xlsExportOptions) {
-		buildSpotsDataForPass1(spotsArray, nOutputFrames, kymoBinCol_Ms, xlsExportOptions);
+		buildSpotsDataForPass1(cagesArray, nOutputFrames, kymoBinCol_Ms, xlsExportOptions);
 		buildDataForPass2(xlsExportOptions);
 	}
 
-	private void buildSpotsDataForPass1(SpotsArray spotsArray, int nOutputFrames, long kymoBinCol_Ms,
+	private void buildSpotsDataForPass1(CagesArray cagesArray, int nOutputFrames, long kymoBinCol_Ms,
 			XLSExportOptions xlsExportOptions) {
-		double scalingFactorToPhysicalUnits = spotsArray.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
-		for (Spot spot : spotsArray.spotsList) {
-			checkIfSameStimulusAndConcentration(spot);
-			XLSResults results = new XLSResults(spot.getRoi().getName(), spot.spotNFlies, spot.cageID,
-					spot.cagePosition, xlsExportOptions.exportType, nOutputFrames);
-
-			results.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
-					xlsExportOptions.buildExcelStepMs);
-			if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExportType.AREA_FLYPRESENT)
-				results.relativeToT0();
-			results.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
-			resultsList.add(results);
+		for (Cage cage: cagesArray.cagesList) { 
+			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
+			for (Spot spot : cage.spotsArray.spotsList) {
+				checkIfSameStimulusAndConcentration(spot);
+				XLSResults results = new XLSResults(spot.getRoi().getName(), spot.spotNFlies, spot.cageID,
+						spot.cagePosition, xlsExportOptions.exportType, nOutputFrames);
+	
+				results.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
+						xlsExportOptions.buildExcelStepMs);
+				if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExportType.AREA_FLYPRESENT)
+					results.relativeToT0();
+				results.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
+				resultsList.add(results);
+			}
 		}
 	}
 

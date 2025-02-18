@@ -137,7 +137,7 @@ public class TableModelSpot extends AbstractTableModel {
 		Spot spot = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			spot = exp.cagesArray.getSpotFromTotalIndex(rowIndex);
+			spot = exp.cagesArray.getSpotAtGlobalIndex(rowIndex);
 		}
 		return spot;
 	}
