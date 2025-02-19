@@ -81,7 +81,7 @@ public class SpotsMeasuresLoadSave extends JPanel {
 		parent0.dlgExperiment.getExperimentInfosFromDialog(exp);
 //		exp.spotsArray.transferDescriptionToSpots();
 		boolean flag = exp.zsaveXML_MCExperiment();
-		exp.spotsArray.transferROIsFromSequenceToSpots(exp.seqCamData.seq);
+		exp.spotsArray.transferROIsFromSequenceToCageSpots(exp.seqCamData.seq);
 		exp.spotsArray.transferROIsMeasuresFromSequenceToSpots();
 		flag &= exp.zsave_MCSpots_Only();
 		flag &= exp.zsave_SpotsMeasures();

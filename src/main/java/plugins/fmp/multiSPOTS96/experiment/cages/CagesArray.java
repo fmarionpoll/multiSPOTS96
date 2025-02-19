@@ -592,6 +592,30 @@ public class CagesArray {
 			cage.spotsArray.transferSpotsToSequenceAsROIs(seq);
 		}
 	}
+	
+	public void transferROIsFromSequenceToCageSpots(Sequence seq) {
+		List<ROI> listROISSpot = ROIUtilities.getROIsContainingString("spot", seq);
+		Collections.sort(listROISSpot, new Comparators.ROI_Name_Comparator());
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				spot.valid = false;
+				String spotName = spot.getRoi().getName();
+				Iterator<ROI> iterator = listROISSpot.iterator();
+				while (iterator.hasNext()) {
+					ROI roi = iterator.next();
+					String roiName = roi.getName();
+					if (roiName.equals(spotName) && (roi instanceof ROI2DShape)) {
+						spot.setRoi((ROI2DShape) roi);
+						spot.valid = true;
+					}
+					if (spot.valid) {
+						iterator.remove();
+						break;
+					}
+				}
+			}
+		}
+	}
 
 	public Spot getSpotContainingName(String name) {
 		Spot spotFound = null;

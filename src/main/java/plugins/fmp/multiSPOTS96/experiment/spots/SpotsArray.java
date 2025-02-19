@@ -11,25 +11,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.KymoIntervals;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
-import plugins.kernel.roi.roi2d.ROI2DShape;
+
 
 public class SpotsArray {
 	public SpotsDescription spotsDescription = new SpotsDescription();
@@ -225,43 +222,43 @@ public class SpotsArray {
 		return spotFound;
 	}
 
-	public void transferROIsFromSequenceToSpots(Sequence seq) {
-		List<ROI> listROISSpot = ROIUtilities.getROIsContainingString("spot", seq);
-		Collections.sort(listROISSpot, new Comparators.ROI_Name_Comparator());
-		for (Spot spot : spotsList) {
-			spot.valid = false;
-			String spotName = spot.getRoi().getName();
-			Iterator<ROI> iterator = listROISSpot.iterator();
-			while (iterator.hasNext()) {
-				ROI roi = iterator.next();
-				String roiName = roi.getName();
-				if (roiName.equals(spotName) && (roi instanceof ROI2DShape)) {
-					spot.setRoi((ROI2DShape) roi);
-					spot.valid = true;
-				}
-				if (spot.valid) {
-					iterator.remove();
-					break;
-				}
-			}
-		}
-
-		Iterator<Spot> iterator = spotsList.iterator();
-		while (iterator.hasNext()) {
-			Spot spot = iterator.next();
-			if (!spot.valid)
-				iterator.remove();
-		}
-		if (listROISSpot.size() > 0) {
-			for (ROI roi : listROISSpot) {
-				Spot spot = new Spot((ROI2DShape) roi);
-				if (!isPresent(spot))
-					spotsList.add(spot);
-			}
-		}
-		Collections.sort(spotsList);
-		return;
-	}
+//	public void transferROIsFromSequenceToSpots(Sequence seq) {
+//		List<ROI> listROISSpot = ROIUtilities.getROIsContainingString("spot", seq);
+//		Collections.sort(listROISSpot, new Comparators.ROI_Name_Comparator());
+//		for (Spot spot : spotsList) {
+//			spot.valid = false;
+//			String spotName = spot.getRoi().getName();
+//			Iterator<ROI> iterator = listROISSpot.iterator();
+//			while (iterator.hasNext()) {
+//				ROI roi = iterator.next();
+//				String roiName = roi.getName();
+//				if (roiName.equals(spotName) && (roi instanceof ROI2DShape)) {
+//					spot.setRoi((ROI2DShape) roi);
+//					spot.valid = true;
+//				}
+//				if (spot.valid) {
+//					iterator.remove();
+//					break;
+//				}
+//			}
+//		}
+//
+//		Iterator<Spot> iterator = spotsList.iterator();
+//		while (iterator.hasNext()) {
+//			Spot spot = iterator.next();
+//			if (!spot.valid)
+//				iterator.remove();
+//		}
+//		if (listROISSpot.size() > 0) {
+//			for (ROI roi : listROISSpot) {
+//				Spot spot = new Spot((ROI2DShape) roi);
+//				if (!isPresent(spot))
+//					spotsList.add(spot);
+//			}
+//		}
+//		Collections.sort(spotsList);
+//		return;
+//	}
 
 	public void transferROIsMeasuresFromSequenceToSpots() {
 		for (Spot spot : spotsList) {
