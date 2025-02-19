@@ -401,7 +401,7 @@ public class XLSExport {
 				+ 1);
 		if (nOutputFrames <= 1) {
 			if (expi.seqSpotKymos.imageWidthMax == 0)
-				expi.loadKymographs();
+				expi.zloadKymographs();
 			expi.seqCamData.binLast_ms = expi.seqCamData.binFirst_ms
 					+ expi.seqSpotKymos.imageWidthMax * expi.seqCamData.binDuration_ms;
 			if (expi.seqCamData.binLast_ms <= 0)

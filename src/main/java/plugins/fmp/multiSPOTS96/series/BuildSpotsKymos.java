@@ -48,7 +48,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
-		boolean flag = exp.loadMCSpots_Only();
+		boolean flag = exp.zloadMCSpots_Only();
 		exp.seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
 		return flag;
 	}
@@ -92,7 +92,7 @@ public class BuildSpotsKymos extends BuildSeries {
 		}
 		waitFuturesCompletion(processor, futuresArray, progressBar);
 		progressBar.close();
-		exp.saveXML_MCExperiment();
+		exp.zsaveXML_MCExperiment();
 	}
 
 	private boolean buildKymo(Experiment exp) {

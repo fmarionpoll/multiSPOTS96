@@ -176,7 +176,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 
 	protected boolean loadDrosoTrack(Experiment exp) {
 		exp.seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
-		boolean flag = exp.load_Cages();
+		boolean flag = exp.zload_Cages();
 		return flag;
 	}
 

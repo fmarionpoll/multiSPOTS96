@@ -361,7 +361,7 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 			detectButton.setText(detectString);
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				exp.load_SpotsMeasures();
+				exp.zload_SpotsMeasures();
 				parent0.dlgMeasure.tabGraphs.displayGraphsPanels(exp);
 			}
 		}

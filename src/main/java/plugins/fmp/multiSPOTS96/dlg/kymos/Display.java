@@ -436,7 +436,7 @@ public class Display extends JPanel implements ViewerListener {
 		parent0.expListCombo.stringExpBinSubDirectory = localString;
 		exp.setBinSubDirectory(localString);
 		exp.seqSpotKymos.seq.close();
-		exp.loadKymographs();
+		exp.zloadKymographs();
 		parent0.dlgKymos.updateDialogs(exp);
 	}
 

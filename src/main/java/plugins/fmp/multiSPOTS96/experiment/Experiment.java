@@ -98,7 +98,7 @@ public class Experiment {
 		this.seqSpotKymos = new SequenceKymos();
 		resultsDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
-		xmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML));
+		zxmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML));
 	}
 
 	public Experiment(ExperimentDirectories eADF) {
@@ -107,7 +107,7 @@ public class Experiment {
 		binSubDirectory = eADF.getBinSubDirectory();
 		seqCamData = new SequenceCamData();
 		String fileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML);
-		xmlLoadExperiment(fileName);
+		zxmlLoadExperiment(fileName);
 
 		seqCamData.imagesDirectory = eADF.getCameraImagesDirectory();
 		List<String> imagesList = ExperimentDirectories.getImagesListFromPathV2(seqCamData.imagesDirectory, "jpg");
@@ -213,33 +213,19 @@ public class Experiment {
 			seqReference.close();
 	}
 
-	public boolean openPositionsMeasures() {
+	public boolean zopenPositionsMeasures() {
 		if (seqCamData == null)
 			seqCamData = new SequenceCamData();
-		loadXML_MCExperiment();
+		zloadXML_MCExperiment();
 
 		getFileIntervalsFromSeqCamData();
 
 		if (seqSpotKymos == null)
 			seqSpotKymos = new SequenceKymos();
 
-		return xmlReadDrosoTrack(null);
+		return zxmlReadDrosoTrack(null);
 	}
-
-	public boolean openSpotsMeasures() {
-		if (seqCamData == null)
-			seqCamData = new SequenceCamData();
-		loadXML_MCExperiment();
-
-		getFileIntervalsFromSeqCamData();
-
-		loadMCSpots_Only();
-		if (!spotsArray.load_Measures(getKymosBinFullDirectory()))
-			return false;
-
-		return true;
-	}
-
+	
 	private String getRootWithNoResultNorBinString(String directoryName) {
 		String name = directoryName.toLowerCase();
 		while (name.contains(RESULTS) || name.contains(BIN))
@@ -260,9 +246,9 @@ public class Experiment {
 	}
 
 	public boolean loadCamDataSpots() {
-		loadMCSpots_Only();
+		zloadMCSpots_Only();
 		if (seqCamData != null && seqCamData.seq != null)
-			spotsArray.transferSpotsToSequenceAsROIs(seqCamData.seq);
+			cagesArray.transferSpotsToSequenceAsROIs(seqCamData.seq);
 
 		return (seqCamData != null && seqCamData.seq != null);
 	}
@@ -270,7 +256,7 @@ public class Experiment {
 	public SequenceCamData openSequenceCamData() {
 		loadImagesForSequenceCamData(camDataImagesDirectory);
 		if (seqCamData != null) {
-			loadXML_MCExperiment();
+			zloadXML_MCExperiment();
 			getFileIntervalsFromSeqCamData();
 		}
 		return seqCamData;
@@ -386,17 +372,42 @@ public class Experiment {
 	}
 
 	// -------------------------------
+	// -------------------------------
+	
+	public boolean loadMS96_experiment() {
+		return false;
+	}
+	
+	public boolean loadMS96_cages() {
+		return false;
+	}
+	
+	public boolean loadMS96_spotsMeasures() {
+		return false;
+	}
 
-	public boolean loadXML_MCExperiment() {
+	public boolean loadMS96_fliesPosition() {
+		return false;
+	}
+	
+	public boolean loadMS96_kymographs() {
+		return false;
+	}
+	
+
+	// -------------------------------
+	// -------------------------------
+
+	public boolean zloadXML_MCExperiment() {
 		if (resultsDirectory == null && seqCamData != null) {
 			camDataImagesDirectory = seqCamData.getImagesDirectory();
 			resultsDirectory = camDataImagesDirectory + File.separator + RESULTS;
 		}
-		boolean found = xmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML));
+		boolean found = zxmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MCEXPERIMENT_XML));
 		return found;
 	}
 
-	public boolean saveXML_MCExperiment() {
+	public boolean zsaveXML_MCExperiment() {
 		final Document doc = XMLUtil.createDocument(true);
 		if (doc != null) {
 			Node xmlRoot = XMLUtil.getRootElement(doc, true);
@@ -441,9 +452,8 @@ public class Experiment {
 		}
 		return true;
 	}
-	
-	
-	public boolean loadKymographs() {
+
+	public boolean zloadKymographs() {
 		if (seqSpotKymos == null)
 			seqSpotKymos = new SequenceKymos();
 		List<ImageFileDescriptor> myList = seqSpotKymos
@@ -454,7 +464,12 @@ public class Experiment {
 
 	// ------------------------------------------------
 
-	public boolean loadMCSpots_Only() {
+	public boolean zload_Spots() {
+		boolean flag1 = zloadMCSpots_Only();
+		return flag1 & spotsArray.load_Spots(resultsDirectory);
+	}
+	
+	public boolean zloadMCSpots_Only() {
 		String mcSpotsFileName = findFile_3Locations(spotsArray.getXMLSpotsName(), EXPT_DIRECTORY, BIN_DIRECTORY,
 				IMG_DIRECTORY);
 		if (mcSpotsFileName == null && seqCamData != null)
@@ -463,22 +478,42 @@ public class Experiment {
 		return spotsArray.xmlLoad_MCSpots_Descriptors(mcSpotsFileName);
 	}
 
-	public boolean save_MCSpots_Only() {
+	public boolean zsave_MCSpots_Only() {
 		String mcSpotsFileName = resultsDirectory + File.separator + spotsArray.getXMLSpotsName();
 		boolean flag = spotsArray.xmlSave_MCSpots_Descriptors(mcSpotsFileName);
 		return flag;
 	}
 
-	public boolean load_Spots() {
-		boolean flag1 = loadMCSpots_Only();
-		return flag1 & spotsArray.load_Spots(resultsDirectory);
-	}
-
-	public boolean save_Spots() {
+	public boolean zsave_Spots() {
 		return spotsArray.save_Spots(resultsDirectory);
 	}
+	
+	public boolean zload_SpotsMeasures() {
+		return spotsArray.load_Measures(getResultsDirectory());
+	}
 
-	public boolean load_Cages() {
+	public boolean zsave_SpotsMeasures() {
+		return spotsArray.save_Measures(getResultsDirectory());
+	}
+
+	public boolean zopenSpotsMeasures() {
+		if (seqCamData == null)
+			seqCamData = new SequenceCamData();
+		zloadXML_MCExperiment();
+
+		getFileIntervalsFromSeqCamData();
+
+		zloadMCSpots_Only();
+		if (!spotsArray.load_Measures(getKymosBinFullDirectory()))
+			return false;
+
+		return true;
+	}
+
+
+	// ------------------------------------------------
+
+	public boolean zload_Cages() {
 
 		String filename = getXMLDrosoTrackLocation();
 		if (filename == null)
@@ -508,21 +543,11 @@ public class Experiment {
 		}
 	}
 
-	// ---------------------------------------------
-
-	public boolean load_SpotsMeasures() {
-		return spotsArray.load_Measures(getResultsDirectory());
-	}
-
-	public boolean save_SpotsMeasures() {
-		return spotsArray.save_Measures(getResultsDirectory());
-	}
-
-	public boolean load_CagesMeasures() {
+	public boolean zload_CagesMeasures() {
 		return cagesArray.loadCagesMeasures(getResultsDirectory());
 	}
 
-	public boolean save_CagesMeasures() {
+	public boolean zsave_CagesMeasures() {
 		return cagesArray.saveCagesMeasures(getResultsDirectory());
 	}
 
@@ -596,7 +621,7 @@ public class Experiment {
 		case CAP_CONC:
 			if (replaceSpotsValuesIfEqualOld(fieldEnumCode, oldValue, newValue))
 				;
-			save_MCSpots_Only();
+			zsave_MCSpots_Only();
 			break;
 		default:
 			break;
@@ -660,7 +685,7 @@ public class Experiment {
 		}
 	}
 
-	public String getMCDrosoTrackFullName() {
+	public String zgetMCDrosoTrackFullName() {
 		return resultsDirectory + File.separator + ID_MCDROSOTRACK_XML;
 	}
 
@@ -695,7 +720,7 @@ public class Experiment {
 		return step;
 	}
 
-	private boolean xmlReadDrosoTrack(String filename) {
+	private boolean zxmlReadDrosoTrack(String filename) {
 		if (filename == null) {
 			filename = getXMLDrosoTrackLocation();
 			if (filename == null)
@@ -765,7 +790,7 @@ public class Experiment {
 
 	private boolean replaceSpotsValuesIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue, String newValue) {
 		if (spotsArray.spotsList.size() == 0)
-			loadMCSpots_Only();
+			zloadMCSpots_Only();
 		boolean flag = false;
 		for (Spot spot : spotsArray.spotsList) {
 			if (spot.getSpotField(fieldEnumCode).equals(oldValue)) {
@@ -783,7 +808,7 @@ public class Experiment {
 			return resultsDirectory + File.separator + name;
 	}
 
-	private boolean xmlLoadExperiment(String csFileName) {
+	private boolean zxmlLoadExperiment(String csFileName) {
 		final Document doc = XMLUtil.loadDocument(csFileName);
 		if (doc == null)
 			return false;
@@ -835,7 +860,7 @@ public class Experiment {
 
 	private void addSpotsValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
 		if (spotsArray.spotsList.size() == 0)
-			loadMCSpots_Only();
+			zloadMCSpots_Only();
 		for (Spot spot : spotsArray.spotsList)
 			addValue(spot.getSpotField(fieldEnumCode), textList);
 	}

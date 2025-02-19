@@ -718,4 +718,5 @@ public class CagesArray {
 			cage.spotsArray.initLevel2DMeasures();
 		}
 	}
+	
 }

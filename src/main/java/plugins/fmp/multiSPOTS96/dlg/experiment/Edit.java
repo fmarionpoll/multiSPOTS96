@@ -100,14 +100,14 @@ public class Edit extends JPanel {
 
 		for (int i = 0; i < nExperiments; i++) {
 			Experiment exp = editExpList.getItemAt(i);
-			exp.loadXML_MCExperiment();
-			exp.load_Spots();
+			exp.zloadXML_MCExperiment();
+			exp.zload_Spots();
 
 			exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
 
-			exp.save_Spots();
+			exp.zsave_Spots();
 			// parent0.dlgExperiment.tabIntervals.setExptParms(exp);
-			exp.saveXML_MCExperiment();
+			exp.zsaveXML_MCExperiment();
 
 		}
 	}

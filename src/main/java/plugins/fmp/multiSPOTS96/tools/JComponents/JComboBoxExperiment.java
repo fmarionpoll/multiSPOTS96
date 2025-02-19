@@ -118,9 +118,9 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 					if (stringExpBinSubDirectory == null)
 						exp.checkKymosDirectory(exp.getBinSubDirectory());
 					if (loadSpots)
-						exp.openSpotsMeasures();
+						exp.zopenSpotsMeasures();
 					if (loadDrosoTrack)
-						exp.openPositionsMeasures();
+						exp.zopenPositionsMeasures();
 
 					int nCages = exp.cagesArray.cagesList.size();
 					int nSpotsPerCage = exp.cagesArray.nColumnsPerCage * exp.cagesArray.nRowsPerCage;

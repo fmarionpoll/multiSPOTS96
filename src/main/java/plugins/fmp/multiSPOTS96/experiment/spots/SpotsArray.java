@@ -45,7 +45,7 @@ public class SpotsArray {
 
 	private final static String ID_LISTOFSPOTS = "List_of_spots";
 	private final static String ID_SPOT_ = "spot_";
-	private final static String ID_MCSPOTS_XML = "MCspots.xml";
+//	private final static String ID_MCSPOTS_XML = "MCspots.xml";
 	private final String csvFileName = "SpotsMeasures.csv";
 
 	// ---------------------------------
@@ -93,9 +93,9 @@ public class SpotsArray {
 
 	// ---------------------------------
 
-	public String getXMLSpotsName() {
-		return ID_MCSPOTS_XML;
-	}
+//	public String getXMLSpotsName() {
+//		return ID_MCSPOTS_XML;
+//	}
 
 	private boolean xmlSave_ListOfSpots(Document doc) {
 		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_SPOTTRACK);

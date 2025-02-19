@@ -25,7 +25,7 @@ public class FlyDetect1 extends BuildSeries {
 		runFlyDetect1(exp);
 		exp.cagesArray.orderFlyPositions();
 		if (!stopFlag)
-			exp.save_CagesMeasures();
+			exp.zsave_CagesMeasures();
 		exp.seqCamData.closeSequence();
 		closeSequence(seqNegative);
 	}

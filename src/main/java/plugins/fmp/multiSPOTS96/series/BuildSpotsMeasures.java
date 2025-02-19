@@ -50,7 +50,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 	}
 
 	private boolean loadExperimentDataToMeasureSpots(Experiment exp) {
-		boolean flag = exp.load_Spots();
+		boolean flag = exp.zload_Spots();
 		exp.seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
 		return flag;
 	}
@@ -64,8 +64,8 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 		exp.cagesArray.transferSumToSumClean();
 		exp.cagesArray.initLevel2DMeasures();
-		exp.saveXML_MCExperiment();
-		exp.save_SpotsMeasures();
+		exp.zsaveXML_MCExperiment();
+		exp.zsave_SpotsMeasures();
 	}
 
 	private void initMeasureSpots(Experiment exp) {

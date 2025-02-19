@@ -43,7 +43,7 @@ public class XLSExportMoveResults extends XLSExport {
 			workbook = xlsInitWorkbook();
 			for (int index = options.experimentIndexFirst; index <= options.experimentIndexLast; index++) {
 				Experiment exp = expList.getItemAt(index);
-				exp.load_SpotsMeasures();
+				exp.zload_SpotsMeasures();
 				if (exp.chainToPreviousExperiment != null)
 					continue;
 				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
