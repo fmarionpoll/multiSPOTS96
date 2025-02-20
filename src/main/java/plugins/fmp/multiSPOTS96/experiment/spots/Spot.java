@@ -51,10 +51,10 @@ public class Spot implements Comparable<Spot> {
 
 	public BuildSeriesOptions limitsOptions = new BuildSeriesOptions();
 
-	public int spot_CamData_T = -1;
-	public int spot_Kymograph_T = -1;
-	public String spot_filenameTIFF = null;
-	public IcyBufferedImage spot_Image = null;
+	public int spotCamData_T = -1;
+	public int spotKymograph_T = -1;
+	public String spotFilenameTIFF = null;
+	public IcyBufferedImage spotImage = null;
 
 	public SpotMeasure sum_in = new SpotMeasure("sum");
 	public SpotMeasure sum_clean = new SpotMeasure("clean");
@@ -107,7 +107,7 @@ public class Spot implements Comparable<Spot> {
 
 	// ------------------------------------------
 
-	public void copySpot(Spot spotFrom) {
+	public void copySpot(Spot spotFrom, boolean bCopyMeasures) {
 		version = spotFrom.version;
 		spotRoi2D = (ROI2DShape) spotFrom.spotRoi2D.getCopy();
 
@@ -458,15 +458,15 @@ public class Spot implements Comparable<Spot> {
 	public List<ROI2D> transferSpotMeasuresToROIs(int imageHeight) {
 		List<ROI2D> measuresRoisList = new ArrayList<ROI2D>();
 		if (sum_in.getLevel2DNPoints() != 0)
-			measuresRoisList.add(sum_in.getROIForImage(spotRoi2D.getName(), spot_Kymograph_T, imageHeight));
+			measuresRoisList.add(sum_in.getROIForImage(spotRoi2D.getName(), spotKymograph_T, imageHeight));
 		if (sum_clean.getLevel2DNPoints() != 0)
-			measuresRoisList.add(sum_clean.getROIForImage(spotRoi2D.getName(), spot_Kymograph_T, imageHeight));
+			measuresRoisList.add(sum_clean.getROIForImage(spotRoi2D.getName(), spotKymograph_T, imageHeight));
 //		if (sum_out.getLevel2DNPoints() != 0)
 //			measuresRoisList.add(sum_out.getROIForImage(spotRoi_in.getName(), spot_Kymograph_T, imageHeight));
 //		if (sum_diff.getLevel2DNPoints() != 0)
 //			measuresRoisList.add(sum_diff.getROIForImage(spotRoi_in.getName(), spot_Kymograph_T, imageHeight));
 		if (flyPresent.getLevel2DNPoints() != 0)
-			measuresRoisList.add(flyPresent.getROIForImage(spotRoi2D.getName(), spot_Kymograph_T, 10));
+			measuresRoisList.add(flyPresent.getROIForImage(spotRoi2D.getName(), spotKymograph_T, 10));
 		return measuresRoisList;
 	}
 

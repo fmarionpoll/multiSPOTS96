@@ -59,7 +59,7 @@ public class TableModelSpot extends AbstractTableModel {
 	public int getRowCount() {
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			return exp.cagesArray.cagesList.size()*(exp.cagesArray.nColumnsPerCage * exp.cagesArray.nRowsPerCage);
+			return exp.cagesArray.cagesList.size() * (exp.cagesArray.nColumnsPerCage * exp.cagesArray.nRowsPerCage);
 		}
 		return 0;
 	}

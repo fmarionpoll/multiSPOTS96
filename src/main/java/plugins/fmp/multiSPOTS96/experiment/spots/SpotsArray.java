@@ -27,7 +27,6 @@ import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 
-
 public class SpotsArray {
 	public SpotsDescription spotsDescription = new SpotsDescription();
 	public ArrayList<Spot> spotsList = new ArrayList<Spot>();
@@ -42,7 +41,6 @@ public class SpotsArray {
 
 	private final static String ID_LISTOFSPOTS = "List_of_spots";
 	private final static String ID_SPOT_ = "spot_";
-//	private final static String ID_MCSPOTS_XML = "MCspots.xml";
 	private final String csvFileName = "SpotsMeasures.csv";
 
 	// ---------------------------------
@@ -162,12 +160,12 @@ public class SpotsArray {
 
 	// ---------------------------------
 
-	public void copy(SpotsArray sourceSpotArray) {
+	public void copy(SpotsArray sourceSpotArray, boolean bCopyMeasures) {
 		spotsDescription.copy(sourceSpotArray.spotsDescription);
 		spotsList.clear();
 		for (Spot sourceSpot : sourceSpotArray.spotsList) {
 			Spot spot = new Spot();
-			spot.copySpot(sourceSpot);
+			spot.copySpot(sourceSpot, bCopyMeasures);
 			spotsList.add(spot);
 		}
 	}
@@ -331,17 +329,6 @@ public class SpotsArray {
 	public void initLevel2DMeasures() {
 		for (Spot spot : spotsList)
 			spot.initLevel2DMeasures();
-	}
-
-	static public int getSpotIndexFromSpotName(String description) {
-		int index = 0;
-		String[] roiDescription = description.split("_");
-		try {
-			index = Integer.parseInt(roiDescription[3]);
-		} catch (NumberFormatException e1) {
-			index = 0;
-		}
-		return index;
 	}
 
 	public KymoIntervals getKymoIntervalsFromSpots() {

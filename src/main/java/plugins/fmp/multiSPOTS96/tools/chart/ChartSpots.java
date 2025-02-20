@@ -37,7 +37,7 @@ import icy.roi.ROI2D;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
@@ -114,7 +114,7 @@ public class ChartSpots extends IcyFrame {
 
 		for (int row = 0; row < nCagesAlongY; row++) {
 			for (int col = 0; col < nCagesAlongX; col++) {
-				Cage cage = exp.cagesArray.getCageFromRowColCoordinates (row, col);
+				Cage cage = exp.cagesArray.getCageFromRowColCoordinates(row, col);
 				if (cage == null)
 					continue;
 				int cageID = cage.cageID;
@@ -337,21 +337,21 @@ public class ChartSpots extends IcyFrame {
 			XYDataset xyDataset = xyItemEntity.getDataset();
 			description = (String) xyDataset.getSeriesKey(isel); // TODO check
 
-			spotFound = exp.cagesArray.getSpotContainingName(description.substring(0, 5));
-			spotFound.spot_CamData_T = xyItemEntity.getItem();
+			spotFound = exp.cagesArray.getSpotFromROIame(description.substring(0, 5));
+			spotFound.spotCamData_T = xyItemEntity.getItem();
 
 		} else if (subplotindex >= 0) {
 			XYDataset xyDataset = subplots.get(subplotindex).getDataset(0);
 			description = (String) xyDataset.getSeriesKey(0); // TODO check
-			spotFound = exp.cagesArray.getSpotContainingName(description.substring(0, 5));
+			spotFound = exp.cagesArray.getSpotFromROIame(description.substring(0, 5));
 
 		} else {
 			System.out.println("Graph clicked but source not found");
 			return null;
 		}
 
-		int index = SpotsArray.getSpotIndexFromSpotName(description);
-		spotFound.spot_Kymograph_T = index;
+		int index = SpotString.getSpotArrayIndexFromSpotName(description);
+		spotFound.spotKymograph_T = index;
 		return spotFound;
 	}
 
@@ -365,8 +365,8 @@ public class ChartSpots extends IcyFrame {
 
 	private void selectT(Experiment exp, XLSExportOptions xlsExportOptions, Spot spot) {
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
-		if (v != null && spot != null && spot.spot_CamData_T > 0) {
-			int ii = (int) (spot.spot_CamData_T * xlsExportOptions.buildExcelStepMs / exp.seqCamData.binDuration_ms);
+		if (v != null && spot != null && spot.spotCamData_T > 0) {
+			int ii = (int) (spot.spotCamData_T * xlsExportOptions.buildExcelStepMs / exp.seqCamData.binDuration_ms);
 			v.setPositionT(ii);
 		}
 	}
@@ -375,7 +375,7 @@ public class ChartSpots extends IcyFrame {
 		if (exp.seqSpotKymos != null) {
 			Viewer v = exp.seqSpotKymos.seq.getFirstViewer();
 			if (v != null && spot != null) {
-				v.setPositionT(spot.spot_Kymograph_T);
+				v.setPositionT(spot.spotKymograph_T);
 			}
 		}
 	}

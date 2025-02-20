@@ -160,7 +160,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	private void analyzeImageWithSpot(IcyBufferedImageCursor cursorSource, Spot spot, int t, int sizeC) {
 		ROI2DAlongT roiT = spot.getROIAtT(t);
 		for (int chan = 0; chan < sizeC; chan++) {
-			IcyBufferedImageCursor cursor = new IcyBufferedImageCursor(spot.spot_Image);
+			IcyBufferedImageCursor cursor = new IcyBufferedImageCursor(spot.spotImage);
 			try {
 				for (int y = 0; y < roiT.mask2DPoints_in.length; y++) {
 					Point pt = roiT.mask2DPoints_in[y];
@@ -200,10 +200,10 @@ public class BuildSpotsKymos extends BuildSeries {
 				tasks.add(processor.submit(new Runnable() {
 					@Override
 					public void run() {
-						IcyBufferedImage kymoImage = IcyBufferedImageUtil.scale(spot.spot_Image, spot.spot_Image.getWidth(),
+						IcyBufferedImage kymoImage = IcyBufferedImageUtil.scale(spot.spotImage, spot.spotImage.getWidth(),
 								vertical_resolution);
 						seqKymo.setImage(indexSpot, 0, kymoImage);
-						spot.spot_Image = null;
+						spot.spotImage = null;
 					}
 				}));
 			}
@@ -246,7 +246,7 @@ public class BuildSpotsKymos extends BuildSeries {
 					if (imageHeight_i > imageHeight)
 						imageHeight = imageHeight_i;
 				}
-				spot.spot_Image = new IcyBufferedImage(kymoImageWidth, imageHeight, numC, dataType);
+				spot.spotImage = new IcyBufferedImage(kymoImageWidth, imageHeight, numC, dataType);
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -108,7 +109,7 @@ public class Cage {
 		return pt;
 	}
 
-	public void copyCage(Cage cage) {
+	public void copyCage(Cage cage, boolean bCopyMeasures) {
 		arrayIndex = cage.arrayIndex;
 		arrayColumn = cage.arrayColumn;
 		arrayRow = cage.arrayRow;
@@ -123,8 +124,9 @@ public class Cage {
 		strCageStrain = cage.strCageStrain;
 		strCageNumber = cage.strCageNumber;
 		valid = false;
-		flyPositions.copyXYTaSeries(cage.flyPositions);
-		spotsArray.copy(cage.spotsArray);
+		if (bCopyMeasures)
+			flyPositions.copyXYTaSeries(cage.flyPositions);
+		spotsArray.copy(cage.spotsArray, bCopyMeasures);
 	}
 
 	public ROI2DRectangle getRoiRectangleFromPositionAtT(int t) {
@@ -289,16 +291,15 @@ public class Cage {
 		return spotsArray.spotsList.size();
 	}
 
-	private Spot createEllipseSpot(int spotIndex, int carreIndex, Point2D.Double center, int radius) {
+	private Spot createEllipseSpot(int spotArrayIndex, int cagePosition, Point2D.Double center, int radius) {
 		Ellipse2D ellipse = new Ellipse2D.Double(center.x, center.y, 2 * radius, 2 * radius);
 		ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
-		roiEllipse.setName("spot_" + String.format("%03d", cageID) + "_" + String.format("%03d", carreIndex) + "_"
-				+ String.format("%03d", spotIndex));
+		roiEllipse.setName(SpotString.createSpotString(cageID, cagePosition, spotArrayIndex));
 
 		Spot spot = new Spot(roiEllipse);
-		spot.spotArrayIndex = spotIndex;
+		spot.spotArrayIndex = spotArrayIndex;
 		spot.cageID = cageID;
-		spot.spotArrayIndex = carreIndex;
+		spot.cagePosition = cagePosition;
 		spot.spotRadius = radius;
 		spot.spotXCoord = (int) center.getX();
 		spot.spotYCoord = (int) center.getY();

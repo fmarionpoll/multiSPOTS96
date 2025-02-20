@@ -23,6 +23,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.KymoIntervals;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
@@ -254,13 +255,12 @@ public class CagesArray {
 
 	// --------------
 
-	public void copy(CagesArray cag) {
-//		detect.copyParameters(cag.detect);	
+	public void copy(ArrayList<Cage> cagesListFrom, boolean bCopyMeasures) {
 		cagesList.clear();
-		for (Cage ccag : cag.cagesList) {
-			Cage cagi = new Cage();
-			cagi.copyCage(ccag);
-			cagesList.add(cagi);
+		for (Cage cageFrom : cagesListFrom) {
+			Cage cageTo = new Cage();
+			cageTo.copyCage(cageFrom, bCopyMeasures);
+			cagesList.add(cageTo);
 		}
 	}
 
@@ -419,12 +419,10 @@ public class CagesArray {
 		}
 	}
 
-	public void transferNFliesFromCagesToSpots(SpotsArray spotsArray) {
-		for (Spot spot : spotsArray.spotsList) {
-			for (Cage cage : cagesList) {
-				int cagenb = cage.getCageNumberInteger();
-				if (spot.cageID != cagenb)
-					continue;
+	public void transferNFliesFromCagesToSpots() {
+
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
 				spot.spotNFlies = cage.cageNFlies;
 			}
 		}
@@ -445,6 +443,17 @@ public class CagesArray {
 		Cage cageFound = null;
 		for (Cage cage : cagesList) {
 			if (number == cage.getCageNumberInteger()) {
+				cageFound = cage;
+				break;
+			}
+		}
+		return cageFound;
+	}
+
+	public Cage getCageFromID(int cageID) {
+		Cage cageFound = null;
+		for (Cage cage : cagesList) {
+			if (cageID == cage.cageID) {
 				cageFound = cage;
 				break;
 			}
@@ -592,7 +601,7 @@ public class CagesArray {
 			cage.spotsArray.transferSpotsToSequenceAsROIs(seq);
 		}
 	}
-	
+
 	public void transferROIsFromSequenceToCageSpots(Sequence seq) {
 		List<ROI> listROISSpot = ROIUtilities.getROIsContainingString("spot", seq);
 		Collections.sort(listROISSpot, new Comparators.ROI_Name_Comparator());
@@ -617,7 +626,7 @@ public class CagesArray {
 		}
 	}
 
-	public Spot getSpotContainingName(String name) {
+	public Spot getSpotFromROIame(String name) {
 		Spot spotFound = null;
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
@@ -666,33 +675,11 @@ public class CagesArray {
 		return enclosedSpots;
 	}
 
-	static public int getCageIndexFromSpotName(String description) {
-		int index = 0;
-		String[] roiDescription = description.split("_");
-		try {
-			index = Integer.parseInt(roiDescription[2]);
-		} catch (NumberFormatException e1) {
-			index = 0;
-		}
-		return index;
-	}
-
-	static public int getSpotIndexFromSpotName(String description) {
-		int index = 0;
-		String[] roiDescription = description.split("_");
-		try {
-			index = Integer.parseInt(roiDescription[3]);
-		} catch (NumberFormatException e1) {
-			index = 0;
-		}
-		return index;
-	}
-
 	public Spot getSpotAtGlobalIndex(int indexT) {
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				ROI2D roi = spot.getRoi();
-				int index = getSpotIndexFromSpotName(roi.getName());
+				int index = SpotString.getSpotArrayIndexFromSpotName(roi.getName());
 				if (index == indexT) {
 					return spot;
 				}
@@ -700,47 +687,47 @@ public class CagesArray {
 		}
 		return null;
 	}
-	
+
 	public int getTotalNumberOfSpots() {
 		int nspots = 0;
 		for (Cage cage : cagesList) {
-			nspots +=  cage.spotsArray.spotsList.size();
+			nspots += cage.spotsArray.spotsList.size();
 		}
 		return nspots;
 	}
-	
+
 	public KymoIntervals getKymoIntervalsFromSpotsOFCage0() {
 		Cage cage = cagesList.get(0);
-		KymoIntervals intervals =  cage.spotsArray.getKymoIntervalsFromSpots();
+		KymoIntervals intervals = cage.spotsArray.getKymoIntervalsFromSpots();
 		return intervals;
 	}
-	
+
 	public void mergeSpotsLists(CagesArray arrayToMerge) {
-		for (Cage cage: cagesList) {
-			for (Cage cageToMerge: arrayToMerge.cagesList) {
+		for (Cage cage : cagesList) {
+			for (Cage cageToMerge : arrayToMerge.cagesList) {
 				if (cage.cagePosition != cageToMerge.cagePosition)
 					continue;
 				cage.spotsArray.mergeLists(cageToMerge.spotsArray);
 			}
 		}
 	}
-	
+
 	public void setFilterOfSpotsToAnalyze(boolean setFilter, BuildSeriesOptions options) {
-		for (Cage cage: cagesList) {
+		for (Cage cage : cagesList) {
 			cage.spotsArray.setFilterOfSpotsToAnalyze(setFilter, options);
 		}
 	}
-	
+
 	public void transferSumToSumClean() {
-		for (Cage cage: cagesList) {
+		for (Cage cage : cagesList) {
 			cage.spotsArray.transferSumToSumClean();
 		}
 	}
 
 	public void initLevel2DMeasures() {
-		for (Cage cage: cagesList) {
+		for (Cage cage : cagesList) {
 			cage.spotsArray.initLevel2DMeasures();
 		}
 	}
-	
+
 }

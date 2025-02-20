@@ -106,8 +106,8 @@ public class LoadSave extends JPanel {
 				for (Cage cage: exp.cagesArray.cagesList) { 
 					Spot spot = cage.spotsArray.spotsList.get(t);
 					progress.setMessage("Save kymograph file : " + spot.getRoi().getName());
-					spot.spot_filenameTIFF = outputpath + File.separator + spot.getRoi().getName() + ".tiff";
-					final File file = new File(spot.spot_filenameTIFF);
+					spot.spotFilenameTIFF = outputpath + File.separator + spot.getRoi().getName() + ".tiff";
+					final File file = new File(spot.spotFilenameTIFF);
 					IcyBufferedImage image = seqKymos.getSeqImage(t, 0);
 					ThreadUtil.bgRun(new Runnable() {
 						@Override
@@ -118,7 +118,7 @@ public class LoadSave extends JPanel {
 								e.printStackTrace();
 							}
 							System.out.println(
-									"LoadSaveKymos:saveKymographFiles() File " + spot.spot_filenameTIFF + " saved ");
+									"LoadSaveKymos:saveKymographFiles() File " + spot.spotFilenameTIFF + " saved ");
 						}
 					});
 				}

@@ -21,8 +21,8 @@ import icy.sequence.SequenceListener;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
-import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.tools.chart.ChartSpots;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
@@ -155,7 +155,7 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 			xlsExportOptions.cageIndexFirst = -1;
 		} else {
 			String kymoName = (String) parent0.dlgKymos.tabDisplay.kymographsCombo.getSelectedItem();
-			xlsExportOptions.cageIndexFirst = CagesArray.getCageIndexFromSpotName(kymoName);
+			xlsExportOptions.cageIndexFirst = SpotString.getCageIDFromSpotName(kymoName);
 			xlsExportOptions.cageIndexLast = xlsExportOptions.cageIndexFirst;
 		}
 
@@ -178,7 +178,7 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 
 	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExportType option) {
 		boolean flag = false;
-		for (Cage cage: exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				flag = spot.isThereAnyMeasuresDone(option);
 				if (flag)
