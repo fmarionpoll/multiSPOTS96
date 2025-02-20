@@ -28,6 +28,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -35,6 +36,8 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class CagesArray {
 	public ArrayList<Cage> cagesList = new ArrayList<Cage>();
+	private KymoIntervals cagesListTimeIntervals = null;
+
 	public int nCagesAlongX = 6;
 	public int nCagesAlongY = 8;
 	public int nColumnsPerCage = 2;
@@ -62,6 +65,9 @@ public class CagesArray {
 	private final String ID_NROWSPERCAGE = "N_rows_per_cage";
 
 	private final String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
+	public final String ID_MS96_cages_XML = "MS96_cages.xml";
+	public final String ID_MS96_spotsMeasures_XML = "MS96_spotsMeasures.xml";
+	public final String ID_MS96_fliesPositions_XML = "MS96_fliesPositions.xml";
 
 	public void clearAllMeasures(int option_detectCage) {
 		for (Cage cage : cagesList) {
@@ -366,17 +372,17 @@ public class CagesArray {
 		}
 	}
 
-	public List<ROI2D> getRoisWithCageName(Sequence seq) {
+	public List<ROI2D> getROIsWithCageName(Sequence seq) {
 		List<ROI2D> roiList = seq.getROI2Ds();
-		List<ROI2D> cageList = new ArrayList<ROI2D>();
+		List<ROI2D> roisCageList = new ArrayList<ROI2D>();
 		for (ROI2D roi : roiList) {
 			String csName = roi.getName();
 			if ((roi instanceof ROI2DPolygon) || (roi instanceof ROI2DArea)) {
 				if ((csName.length() > 4 && csName.substring(0, 4).contains("cage") || csName.contains("Polygon2D")))
-					cageList.add(roi);
+					roisCageList.add(roi);
 			}
 		}
-		return cageList;
+		return roisCageList;
 	}
 
 	public Cage getCageFromRowColCoordinates(int row, int column) {
@@ -401,7 +407,7 @@ public class CagesArray {
 	}
 
 	public void transferROIsFromSequenceToCages(Sequence seq) {
-		List<ROI2D> roiList = getRoisWithCageName(seq);
+		List<ROI2D> roiList = getROIsWithCageName(seq);
 		Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
 		addMissingCages(roiList);
 		removeOrphanCages(roiList);
@@ -595,11 +601,14 @@ public class CagesArray {
 
 	// --------------------------------------------------------
 
-	public void transferSpotsToSequenceAsROIs(Sequence seq) {
+	public void transferCageSpotsToSequenceAsROIs(Sequence seq) {
 		seq.removeROIs(ROIUtilities.getROIsContainingString("spot", seq), false);
+		List<ROI2D> spotROIList = new ArrayList<ROI2D>(cagesList.get(0).spotsArray.spotsList.size() * cagesList.size());
 		for (Cage cage : cagesList) {
-			cage.spotsArray.transferSpotsToSequenceAsROIs(seq);
+			for (Spot spot : cage.spotsArray.spotsList)
+				spotROIList.add(spot.getRoi());
 		}
+		seq.addROIs(spotROIList, true);
 	}
 
 	public void transferROIsFromSequenceToCageSpots(Sequence seq) {
@@ -626,7 +635,7 @@ public class CagesArray {
 		}
 	}
 
-	public Spot getSpotFromROIame(String name) {
+	public Spot getSpotFromROIName(String name) {
 		Spot spotFound = null;
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
@@ -728,6 +737,83 @@ public class CagesArray {
 		for (Cage cage : cagesList) {
 			cage.spotsArray.initLevel2DMeasures();
 		}
+	}
+
+	public boolean zzload_Spots(String resultsDirectory) {
+		return false;
+	}
+
+	public void transferROIsMeasuresFromSequenceToSpots() {
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				spot.transferROIsMeasuresToLevel2D();
+			}
+		}
+	}
+
+	public void transferSpotsMeasuresToSequenceAsROIs(Sequence seq) {
+		List<ROI2D> seqRoisList = seq.getROI2Ds(false);
+		ROIUtilities.removeROIsMissingChar(seqRoisList, '_');
+		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
+		int height = seq.getHeight();
+		int i = 0;
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				List<ROI2D> listOfRois = spot.transferSpotMeasuresToROIs(height);
+				for (ROI2D roi : listOfRois) {
+					if (roi != null)
+						roi.setT(i);
+				}
+				newRoisList.addAll(listOfRois);
+				i++;
+			}
+		}
+		ROIUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, seq);
+		seq.removeAllROI();
+		seq.addROIs(seqRoisList, false);
+	}
+
+	// ------------------------------------------------
+
+	public KymoIntervals getKymoIntervalsFromSpots() {
+		if (cagesListTimeIntervals == null) {
+			cagesListTimeIntervals = new KymoIntervals();
+			for (Cage cage : cagesList) {
+				for (ROI2DAlongT roiFK : cage.getROIAlongTList()) {
+					Long[] interval = { roiFK.getT(), (long) -1 };
+					cagesListTimeIntervals.addIfNew(interval);
+				}
+			}
+		}
+		return cagesListTimeIntervals;
+	}
+
+	public int findKymoROI2DIntervalStart(long intervalT) {
+		return cagesListTimeIntervals.findStartItem(intervalT);
+	}
+
+	public long getKymoROI2DIntervalsStartAt(int selectedItem) {
+		return cagesListTimeIntervals.get(selectedItem)[0];
+	}
+
+	public int addKymoROI2DInterval(long start) {
+		Long[] interval = { start, (long) -1 };
+		int item = cagesListTimeIntervals.addIfNew(interval);
+
+		for (Cage cage : cagesList) {
+			List<ROI2DAlongT> listROI2DForKymo = cage.getROIAlongTList();
+			ROI2D roi = cage.getRoi();
+			if (item > 0)
+				roi = (ROI2D) listROI2DForKymo.get(item - 1).getRoi_in().getCopy();
+			listROI2DForKymo.add(item, new ROI2DAlongT(start, roi));
+		}
+		return item;
+	}
+
+	public void deleteKymoROI2DInterval(long start) {
+		cagesListTimeIntervals.deleteIntervalStartingAt(start);
+		for (Cage cage : cagesList)
+			cage.removeROIAlongTListItem(start);
 	}
 
 }

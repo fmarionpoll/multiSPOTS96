@@ -23,7 +23,6 @@ import ome.xml.meta.OMEXMLMetadata;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
@@ -70,11 +69,11 @@ public class SequenceKymos extends SequenceCamData {
 		String directoryFull = dir + File.separator;
 		int ncages = cagesArray.cagesList.size();
 		int nspots = cagesArray.cagesList.get(0).spotsArray.spotsList.size();
-		nspots = nspots*ncages;
-		
+		nspots = nspots * ncages;
+
 		List<ImageFileDescriptor> myListOfFiles = new ArrayList<ImageFileDescriptor>(nspots);
-		for (Cage cage: cagesArray.cagesList) {
-			for (Spot spot: cage.spotsArray.spotsList) {
+		for (Cage cage : cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
 				ImageFileDescriptor temp = new ImageFileDescriptor();
 				temp.fileName = directoryFull + spot.getRoi().getName() + ".tiff";
 				myListOfFiles.add(temp);

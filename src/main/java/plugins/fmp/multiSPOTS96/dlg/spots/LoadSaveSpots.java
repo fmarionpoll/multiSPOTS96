@@ -71,7 +71,7 @@ public class LoadSaveSpots extends JPanel {
 
 	public boolean loadSpotsArray_File(Experiment exp) {
 		boolean flag = exp.zload_Spots();
-		exp.cagesArray.transferSpotsToSequenceAsROIs(exp.seqCamData.seq);
+		exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData.seq);
 		return flag;
 	}
 

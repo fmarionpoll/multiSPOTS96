@@ -5,14 +5,13 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 
 public class Infos extends JPanel {
 	/**
@@ -22,7 +21,7 @@ public class Infos extends JPanel {
 
 	private JButton editSpotsButton = new JButton("Edit spots infos...");
 	private SpotTablePanel infosSpotTable = null;
-	private List<Spot> spotsArrayCopy = new ArrayList<Spot>();
+	private ArrayList<Cage> cagesArrayCopy = new ArrayList<Cage>();
 
 	private MultiSPOTS96 parent0 = null;
 
@@ -51,7 +50,7 @@ public class Infos extends JPanel {
 						infosSpotTable.close();
 					}
 					infosSpotTable = new SpotTablePanel();
-					infosSpotTable.initialize(parent0, spotsArrayCopy);
+					infosSpotTable.initialize(parent0, cagesArrayCopy);
 					infosSpotTable.requestFocus();
 				}
 			}

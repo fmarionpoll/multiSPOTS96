@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -24,10 +23,7 @@ import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.Directories;
-import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
-import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
 public class Experiment {
@@ -225,7 +221,7 @@ public class Experiment {
 
 		return zxmlReadDrosoTrack(null);
 	}
-	
+
 	private String getRootWithNoResultNorBinString(String directoryName) {
 		String name = directoryName.toLowerCase();
 		while (name.contains(RESULTS) || name.contains(BIN))
@@ -248,7 +244,7 @@ public class Experiment {
 	public boolean loadCamDataSpots() {
 		zloadMCSpots_Only();
 		if (seqCamData != null && seqCamData.seq != null)
-			cagesArray.transferSpotsToSequenceAsROIs(seqCamData.seq);
+			cagesArray.transferCageSpotsToSequenceAsROIs(seqCamData.seq);
 
 		return (seqCamData != null && seqCamData.seq != null);
 	}
@@ -373,27 +369,26 @@ public class Experiment {
 
 	// -------------------------------
 	// -------------------------------
-	
+
 	public boolean loadMS96_experiment() {
 		return false;
 	}
-	
+
 	public boolean loadMS96_cages() {
 		return false;
 	}
-	
+
 	public boolean loadMS96_spotsMeasures() {
 		return false;
 	}
 
-	public boolean loadMS96_fliesPosition() {
+	public boolean loadMS96_fliesPositions() {
 		return false;
 	}
-	
+
 	public boolean loadMS96_kymographs() {
 		return false;
 	}
-	
 
 	// -------------------------------
 	// -------------------------------
@@ -441,7 +436,7 @@ public class Experiment {
 	}
 
 	final String csvSep = ";";
-	
+
 	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
 		try {
 			csvWriter.append(expDesc.csvExportExperimentSectionHeader(csvSep));
@@ -457,7 +452,7 @@ public class Experiment {
 		if (seqSpotKymos == null)
 			seqSpotKymos = new SequenceKymos();
 		List<ImageFileDescriptor> myList = seqSpotKymos
-				.loadListOfPotentialKymographsFromSpots(getKymosBinFullDirectory(), spotsArray);
+				.loadListOfPotentialKymographsFromSpots(getKymosBinFullDirectory(), cagesArray);
 		ImageFileDescriptor.getExistingFileNames(myList);
 		return seqSpotKymos.loadKymographImagesFromList(myList, true);
 	}
@@ -466,11 +461,11 @@ public class Experiment {
 
 	public boolean zload_Spots() {
 		boolean flag1 = zloadMCSpots_Only();
-		return flag1 & spotsArray.load_Spots(resultsDirectory);
+		return flag1 & cagesArray.zzload_Spots(resultsDirectory);
 	}
-	
+
 	public boolean zloadMCSpots_Only() {
-		String mcSpotsFileName = findFile_3Locations(spotsArray.getXMLSpotsName(), EXPT_DIRECTORY, BIN_DIRECTORY,
+		String mcSpotsFileName = findFile_3Locations(cagesArray.ID_MS96_cages_XML, EXPT_DIRECTORY, BIN_DIRECTORY,
 				IMG_DIRECTORY);
 		if (mcSpotsFileName == null && seqCamData != null)
 			return false;
@@ -487,7 +482,7 @@ public class Experiment {
 	public boolean zsave_Spots() {
 		return spotsArray.save_Spots(resultsDirectory);
 	}
-	
+
 	public boolean zload_SpotsMeasures() {
 		return spotsArray.load_Measures(getResultsDirectory());
 	}
@@ -510,7 +505,6 @@ public class Experiment {
 		return true;
 	}
 
-
 	// ------------------------------------------------
 
 	public boolean zload_Cages() {
@@ -522,26 +516,26 @@ public class Experiment {
 
 	}
 
-	public void find_which_cage_each_spot_belongs_to() {
-		for (Spot spot : spotsArray.spotsList) {
-			ROI2D spotRoi = spot.getRoi();
-			spot.cageID = -1;
-			for (Cage cage : cagesArray.cagesList) {
-				ROI2D cageRoi = cage.getRoi();
-				boolean flag = false;
-				try {
-					flag = cageRoi.contains(spotRoi);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if (flag) {
-					spot.cageID = cage.cageID;
-					break;
-				}
-			}
-		}
-	}
+//	public void find_which_cage_each_spot_belongs_to() {
+//		for (Spot spot : spotsArray.spotsList) {
+//			ROI2D spotRoi = spot.getRoi();
+//			spot.cageID = -1;
+//			for (Cage cage : cagesArray.cagesList) {
+//				ROI2D cageRoi = cage.getRoi();
+//				boolean flag = false;
+//				try {
+//					flag = cageRoi.contains(spotRoi);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				if (flag) {
+//					spot.cageID = cage.cageID;
+//					break;
+//				}
+//			}
+//		}
+//	}
 
 	public boolean zload_CagesMeasures() {
 		return cagesArray.loadCagesMeasures(getResultsDirectory());
@@ -619,9 +613,8 @@ public class Experiment {
 			break;
 		case CAP_STIM:
 		case CAP_CONC:
-			if (replaceSpotsValuesIfEqualOld(fieldEnumCode, oldValue, newValue))
-				;
-			zsave_MCSpots_Only();
+			if (replaceSpotsFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue))
+				zsave_MCSpots_Only();
 			break;
 		default:
 			break;
@@ -630,29 +623,29 @@ public class Experiment {
 
 	// --------------------------------------------
 
-	public void kymosBuildFiltered01(int zChannelSource, int zChannelDestination, ImageTransformEnums transformop1,
-			int spanDiff) {
-		int nimages = seqSpotKymos.seq.getSizeT();
-		seqSpotKymos.seq.beginUpdate();
-
-		ImageTransformInterface transform = transformop1.getFunction();
-		if (transform == null)
-			return;
-
-		for (int t = 0; t < nimages; t++) {
-			Spot spot = spotsArray.spotsList.get(t);
-			spot.kymographIndex = t;
-			IcyBufferedImage img = seqSpotKymos.getSeqImage(t, zChannelSource);
-			IcyBufferedImage img2 = transform.getTransformedImage(img, null);
-			if (seqSpotKymos.seq.getSizeZ(0) < (zChannelDestination + 1))
-				seqSpotKymos.seq.addImage(t, img2);
-			else
-				seqSpotKymos.seq.setImage(t, zChannelDestination, img2);
-		}
-
-		seqSpotKymos.seq.dataChanged();
-		seqSpotKymos.seq.endUpdate();
-	}
+//	public void kymosBuildFiltered01(int zChannelSource, int zChannelDestination, ImageTransformEnums transformop1,
+//			int spanDiff) {
+//		int nimages = seqSpotKymos.seq.getSizeT();
+//		seqSpotKymos.seq.beginUpdate();
+//
+//		ImageTransformInterface transform = transformop1.getFunction();
+//		if (transform == null)
+//			return;
+//
+//		for (int t = 0; t < nimages; t++) {
+////			Spot spot = spotsArray.spotsList.get(t);
+////			spot.kymographIndex = t;
+//			IcyBufferedImage img = seqSpotKymos.getSeqImage(t, zChannelSource);
+//			IcyBufferedImage img2 = transform.getTransformedImage(img, null);
+//			if (seqSpotKymos.seq.getSizeZ(0) < (zChannelDestination + 1))
+//				seqSpotKymos.seq.addImage(t, img2);
+//			else
+//				seqSpotKymos.seq.setImage(t, zChannelDestination, img2);
+//		}
+//
+//		seqSpotKymos.seq.dataChanged();
+//		seqSpotKymos.seq.endUpdate();
+//	}
 
 	public boolean loadReferenceImage() {
 		BufferedImage image = null;
@@ -788,14 +781,17 @@ public class Experiment {
 		return (f.exists() && !f.isDirectory());
 	}
 
-	private boolean replaceSpotsValuesIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue, String newValue) {
-		if (spotsArray.spotsList.size() == 0)
+	private boolean replaceSpotsFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
+			String newValue) {
+		if (cagesArray.cagesList.size() == 0)
 			zloadMCSpots_Only();
 		boolean flag = false;
-		for (Spot spot : spotsArray.spotsList) {
-			if (spot.getSpotField(fieldEnumCode).equals(oldValue)) {
-				spot.setSpotField(fieldEnumCode, newValue);
-				flag = true;
+		for (Cage cage : cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				if (spot.getSpotField(fieldEnumCode).equals(oldValue)) {
+					spot.setSpotField(fieldEnumCode, newValue);
+					flag = true;
+				}
 			}
 		}
 		return flag;
@@ -859,10 +855,11 @@ public class Experiment {
 	}
 
 	private void addSpotsValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
-		if (spotsArray.spotsList.size() == 0)
+		if (cagesArray.cagesList.size() == 0)
 			zloadMCSpots_Only();
-		for (Spot spot : spotsArray.spotsList)
-			addValue(spot.getSpotField(fieldEnumCode), textList);
+		for (Cage cage : cagesArray.cagesList)
+			for (Spot spot : cage.spotsArray.spotsList)
+				addValue(spot.getSpotField(fieldEnumCode), textList);
 	}
 
 	private void addValue(String text, List<String> textList) {

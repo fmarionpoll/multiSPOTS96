@@ -17,13 +17,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.roi.ROI2D;
-import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.KymoIntervals;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 
@@ -258,38 +256,19 @@ public class SpotsArray {
 //		return;
 //	}
 
-	public void transferROIsMeasuresFromSequenceToSpots() {
-		for (Spot spot : spotsList) {
-			spot.transferROIsMeasuresToLevel2D();
-		}
-	}
-
-	public void transferSpotsToSequenceAsROIs(Sequence seq) {
-		List<ROI2D> spotROIList = new ArrayList<ROI2D>(spotsList.size());
-		for (Spot spot : spotsList)
-			spotROIList.add(spot.getRoi());
-		seq.addROIs(spotROIList, true);
-	}
-
-	public void transferSpotsMeasuresToSequenceAsROIs(Sequence seq) {
-		List<ROI2D> seqRoisList = seq.getROI2Ds(false);
-		ROIUtilities.removeROIsMissingChar(seqRoisList, '_');
-
-		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
-		int nspots = spotsList.size();
-		int height = seq.getHeight();
-		for (int i = 0; i < nspots; i++) {
-			List<ROI2D> listOfRois = spotsList.get(i).transferSpotMeasuresToROIs(height);
-			for (ROI2D roi : listOfRois) {
-				if (roi != null)
-					roi.setT(i);
-			}
-			newRoisList.addAll(listOfRois);
-		}
-		ROIUtilities.mergeROIsListNoDuplicate(seqRoisList, newRoisList, seq);
-		seq.removeAllROI();
-		seq.addROIs(seqRoisList, false);
-	}
+//	public void transferROIsMeasuresFromSequenceToSpots() {
+//		for (Spot spot : spotsList) {
+//			spot.transferROIsMeasuresToLevel2D();
+//		}
+//	}
+//
+//	public void transferSpotsToSequenceAsROIs(Sequence seq) {
+//		List<ROI2D> spotROIList = new ArrayList<ROI2D>(spotsList.size());
+//		for (Spot spot : spotsList)
+//			spotROIList.add(spot.getRoi());
+//		seq.addROIs(spotROIList, true);
+//	}
+//
 
 	// ------------------------------------------------
 
@@ -330,6 +309,8 @@ public class SpotsArray {
 		for (Spot spot : spotsList)
 			spot.initLevel2DMeasures();
 	}
+
+	// ------------------------------------------------
 
 	public KymoIntervals getKymoIntervalsFromSpots() {
 		if (spotsListTimeIntervals == null) {

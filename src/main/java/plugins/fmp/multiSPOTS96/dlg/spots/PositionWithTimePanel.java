@@ -29,6 +29,7 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelSpotWithTime;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
@@ -194,9 +195,11 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 
 	private void addFrameAroundSpots(int t, Experiment exp) {
 		ArrayList<ROI2D> listRoisAtT = new ArrayList<ROI2D>();
-		for (Spot spot : exp.spotsArray.spotsList) {
-			ROI2DAlongT kymoROI2D = spot.getROIAtT(t);
-			listRoisAtT.add(kymoROI2D.getRoi_in());
+		for (Cage cage : exp.cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				ROI2DAlongT kymoROI2D = spot.getROIAtT(t);
+				listRoisAtT.add(kymoROI2D.getRoi_in());
+			}
 		}
 		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(listRoisAtT);
 
@@ -223,8 +226,8 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		long intervalT = v.getPositionT();
 
-		if (exp.spotsArray.findKymoROI2DIntervalStart(intervalT) < 0) {
-			exp.spotsArray.addKymoROI2DInterval(intervalT);
+		if (exp.cagesArray.findKymoROI2DIntervalStart(intervalT) < 0) {
+			exp.cagesArray.addKymoROI2DInterval(intervalT);
 		}
 	}
 
@@ -236,8 +239,8 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		long intervalT = v.getPositionT();
 
-		if (exp.spotsArray.findKymoROI2DIntervalStart(intervalT) >= 0) {
-			exp.spotsArray.deleteKymoROI2DInterval(intervalT);
+		if (exp.cagesArray.findKymoROI2DIntervalStart(intervalT) >= 0) {
+			exp.cagesArray.deleteKymoROI2DInterval(intervalT);
 		}
 	}
 
@@ -247,11 +250,12 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 			return;
 		Sequence seq = exp.seqCamData.seq;
 
-		int intervalT = (int) exp.spotsArray.getKymoROI2DIntervalsStartAt(selectedRow);
+		int intervalT = (int) exp.cagesArray.getKymoROI2DIntervalsStartAt(selectedRow);
 		seq.removeAllROI();
 		List<ROI2D> listRois = new ArrayList<ROI2D>();
-		for (Spot spot : exp.spotsArray.spotsList)
-			listRois.add(spot.getROIAtT((int) intervalT).getRoi_in());
+		for (Cage cage : exp.cagesArray.cagesList)
+			for (Spot spot : cage.spotsArray.spotsList)
+				listRois.add(spot.getROIAtT((int) intervalT).getRoi_in());
 		seq.addROIs(listRois, false);
 
 		Viewer v = seq.getFirstViewer();
@@ -264,12 +268,12 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 			return;
 		Sequence seq = exp.seqCamData.seq;
 
-		int intervalT = (int) exp.spotsArray.getKymoROI2DIntervalsStartAt(selectedRow);
+		int intervalT = (int) exp.cagesArray.getKymoROI2DIntervalsStartAt(selectedRow);
 		List<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!roi.getName().contains("line"))
 				continue;
-			Spot spot = exp.spotsArray.getSpotFromName(roi.getName());
+			Spot spot = exp.cagesArray.getSpotFromROIName(roi.getName());
 			if (spot != null) {
 				ROI2D roilocal = (ROI2D) roi.getCopy();
 				spot.getROIAtT(intervalT).setRoi_in(roilocal);

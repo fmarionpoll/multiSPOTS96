@@ -168,7 +168,6 @@ public class CreateCages extends JPanel {
 				createGrid(exp);
 			createCagesFromGrid(exp, roiGrid);
 			ExperimentUtils.transferCagesToCamDataSequence(exp);
-			exp.find_which_cage_each_spot_belongs_to();
 		}
 	}
 

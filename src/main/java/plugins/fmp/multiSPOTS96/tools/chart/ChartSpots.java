@@ -337,13 +337,13 @@ public class ChartSpots extends IcyFrame {
 			XYDataset xyDataset = xyItemEntity.getDataset();
 			description = (String) xyDataset.getSeriesKey(isel); // TODO check
 
-			spotFound = exp.cagesArray.getSpotFromROIame(description.substring(0, 5));
+			spotFound = exp.cagesArray.getSpotFromROIName(description.substring(0, 5));
 			spotFound.spotCamData_T = xyItemEntity.getItem();
 
 		} else if (subplotindex >= 0) {
 			XYDataset xyDataset = subplots.get(subplotindex).getDataset(0);
 			description = (String) xyDataset.getSeriesKey(0); // TODO check
-			spotFound = exp.cagesArray.getSpotFromROIame(description.substring(0, 5));
+			spotFound = exp.cagesArray.getSpotFromROIName(description.substring(0, 5));
 
 		} else {
 			System.out.println("Graph clicked but source not found");

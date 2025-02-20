@@ -25,7 +25,7 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Spot implements Comparable<Spot> {
 
-	private ROI2DShape spotRoi2D = null;
+	private ROI2DShape spotRoiOI2D = null;
 	private ArrayList<ROI2DAlongT> listRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
 
@@ -92,7 +92,7 @@ public class Spot implements Comparable<Spot> {
 	// ----------------------------------------------------
 
 	public Spot(ROI2DShape roi) {
-		this.spotRoi2D = roi;
+		this.spotRoiOI2D = roi;
 	}
 
 	public Spot() {
@@ -101,7 +101,7 @@ public class Spot implements Comparable<Spot> {
 	@Override
 	public int compareTo(Spot o) {
 		if (o != null)
-			return (this.spotRoi2D.getName()).compareTo(o.spotRoi2D.getName());
+			return (this.spotRoiOI2D.getName()).compareTo(o.spotRoiOI2D.getName());
 		return 1;
 	}
 
@@ -109,7 +109,7 @@ public class Spot implements Comparable<Spot> {
 
 	public void copySpot(Spot spotFrom, boolean bCopyMeasures) {
 		version = spotFrom.version;
-		spotRoi2D = (ROI2DShape) spotFrom.spotRoi2D.getCopy();
+		spotRoiOI2D = (ROI2DShape) spotFrom.spotRoiOI2D.getCopy();
 
 		spotArrayIndex = spotFrom.spotArrayIndex;
 		cageID = spotFrom.cageID;
@@ -132,17 +132,17 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	public ROI2D getRoi() {
-		return spotRoi2D;
+		return spotRoiOI2D;
 	}
 
 	public void setRoi(ROI2DShape roi) {
-		this.spotRoi2D = roi;
+		this.spotRoiOI2D = roi;
 		listRoiAlongT.clear();
 	}
 
 	public void setSpotRoi_InColorAccordingToSpotIndex(int index) {
 		Color value = spotColors[index % 8];
-		spotRoi2D.setColor(value);
+		spotRoiOI2D.setColor(value);
 	}
 
 	public String getCagePosition(EnumXLSExportType xlsExportOption) {
@@ -203,8 +203,8 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	public Point2D getSpotCenter() {
-		Point pt = spotRoi2D.getPosition();
-		Rectangle rect = spotRoi2D.getBounds();
+		Point pt = spotRoiOI2D.getPosition();
+		Rectangle rect = spotRoiOI2D.getBounds();
 		pt.translate(rect.height / 2, rect.width / 2);
 		return pt;
 	}
@@ -308,7 +308,7 @@ public class Spot implements Comparable<Spot> {
 			spotStim = XMLUtil.getElementValue(nodeMeta, ID_STIMULUS, ID_STIMULUS);
 			spotConc = XMLUtil.getElementValue(nodeMeta, ID_CONCENTRATION, ID_CONCENTRATION);
 
-			spotRoi2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
+			spotRoiOI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
 			setSpotRoi_InColorAccordingToSpotIndex(cagePosition);
 			limitsOptions.loadFromXML(nodeMeta);
 
@@ -331,7 +331,7 @@ public class Spot implements Comparable<Spot> {
 				listRoiAlongT.add(roiInterval);
 
 				if (i == 0) {
-					spotRoi2D = (ROI2DShape) listRoiAlongT.get(0).getRoi_in();
+					spotRoiOI2D = (ROI2DShape) listRoiAlongT.get(0).getRoi_in();
 				}
 			}
 		}
@@ -363,7 +363,7 @@ public class Spot implements Comparable<Spot> {
 		XMLUtil.setElementValue(nodeMeta, ID_STIMULUS, spotStim);
 		XMLUtil.setElementValue(nodeMeta, ID_CONCENTRATION, spotConc);
 
-		ROI2DUtilities.saveToXML_ROI(nodeMeta, spotRoi2D);
+		ROI2DUtilities.saveToXML_ROI(nodeMeta, spotRoiOI2D);
 
 		boolean flag = saveToXML_SpotAlongT(node);
 		return flag;
@@ -417,7 +417,7 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	private void initROIAlongTList() {
-		listRoiAlongT.add(new ROI2DAlongT(0, spotRoi2D));
+		listRoiAlongT.add(new ROI2DAlongT(0, spotRoiOI2D));
 	}
 
 	// --------------------------------------------
@@ -458,15 +458,15 @@ public class Spot implements Comparable<Spot> {
 	public List<ROI2D> transferSpotMeasuresToROIs(int imageHeight) {
 		List<ROI2D> measuresRoisList = new ArrayList<ROI2D>();
 		if (sum_in.getLevel2DNPoints() != 0)
-			measuresRoisList.add(sum_in.getROIForImage(spotRoi2D.getName(), spotKymograph_T, imageHeight));
+			measuresRoisList.add(sum_in.getROIForImage(spotRoiOI2D.getName(), spotKymograph_T, imageHeight));
 		if (sum_clean.getLevel2DNPoints() != 0)
-			measuresRoisList.add(sum_clean.getROIForImage(spotRoi2D.getName(), spotKymograph_T, imageHeight));
+			measuresRoisList.add(sum_clean.getROIForImage(spotRoiOI2D.getName(), spotKymograph_T, imageHeight));
 //		if (sum_out.getLevel2DNPoints() != 0)
 //			measuresRoisList.add(sum_out.getROIForImage(spotRoi_in.getName(), spot_Kymograph_T, imageHeight));
 //		if (sum_diff.getLevel2DNPoints() != 0)
 //			measuresRoisList.add(sum_diff.getROIForImage(spotRoi_in.getName(), spot_Kymograph_T, imageHeight));
 		if (flyPresent.getLevel2DNPoints() != 0)
-			measuresRoisList.add(flyPresent.getROIForImage(spotRoi2D.getName(), spotKymograph_T, 10));
+			measuresRoisList.add(flyPresent.getROIForImage(spotRoiOI2D.getName(), spotKymograph_T, 10));
 		return measuresRoisList;
 	}
 
@@ -545,7 +545,7 @@ public class Spot implements Comparable<Spot> {
 
 	public String csvExportMeasures_OneType(EnumSpotMeasures measureType, String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		sbf.append(spotRoi2D.getName() + csvSep + spotArrayIndex + csvSep);
+		sbf.append(spotRoiOI2D.getName() + csvSep + spotArrayIndex + csvSep);
 		switch (measureType) {
 		case AREA_SUM:
 			sum_in.cvsExportYDataToRow(sbf, csvSep);
@@ -573,7 +573,7 @@ public class Spot implements Comparable<Spot> {
 		int i = dummyColumn ? 1 : 0;
 		spotArrayIndex = Integer.valueOf(data[i]);
 		i++;
-		spotRoi2D.setName(data[i]);
+		spotRoiOI2D.setName(data[i]);
 		i++;
 		cageID = Integer.valueOf(data[i]);
 		i++;
