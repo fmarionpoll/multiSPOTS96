@@ -128,7 +128,7 @@ public class Infos extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.zloadXML_MCExperiment();
+					exp.loadMS96_experiment();
 					transferPreviousExperimentInfosToDialog(exp, exp);
 				}
 			}
