@@ -72,7 +72,7 @@ public class LoadSavePositions extends JPanel {
 		if (exp == null)
 			return false;
 		ProgressFrame progress = new ProgressFrame("load fly positions");
-		boolean flag = exp.zload_CagesMeasures();
+		boolean flag = exp.load_MS96_fliesPositions();
 		if (flag) {
 //			parent0.paneCages.tabGraphics.moveCheckbox.setEnabled(true);
 //			parent0.paneCages.tabGraphics.displayResultsButton.setEnabled(true);
@@ -84,7 +84,7 @@ public class LoadSavePositions extends JPanel {
 
 	public void saveMeasures(Experiment exp) {
 		if (exp != null) {
-			exp.zsave_CagesMeasures();
+			exp.save_MS96_fliesPositions();
 		}
 	}
 }

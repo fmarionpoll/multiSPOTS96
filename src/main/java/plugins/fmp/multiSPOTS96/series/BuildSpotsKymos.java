@@ -92,7 +92,7 @@ public class BuildSpotsKymos extends BuildSeries {
 		}
 		waitFuturesCompletion(processor, futuresArray, progressBar);
 		progressBar.close();
-		exp.zsaveXML_MCExperiment();
+		exp.save_MS96_experiment();
 	}
 
 	private boolean buildKymo(Experiment exp) {
@@ -137,7 +137,7 @@ public class BuildSpotsKymos extends BuildSeries {
 					IcyBufferedImage sourceImage = loadImageFromIndex(exp, t);
 					int sizeC = sourceImage.getSizeC();
 					IcyBufferedImageCursor cursorSource = new IcyBufferedImageCursor(sourceImage);
-					for (Cage cage: exp.cagesArray.cagesList) {
+					for (Cage cage : exp.cagesArray.cagesList) {
 						for (Spot spot : cage.spotsArray.spotsList) {
 							analyzeImageWithSpot(cursorSource, spot, t - iiFirst, sizeC);
 						}
@@ -193,15 +193,15 @@ public class BuildSpotsKymos extends BuildSeries {
 		tasks.clear();
 		int vertical_resolution = 512;
 
-		for (Cage cage: exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cagesArray.cagesList) {
 			for (int ispot = 0; ispot < nbspots; ispot++) {
 				final Spot spot = cage.spotsArray.spotsList.get(ispot);
 				final int indexSpot = ispot;
 				tasks.add(processor.submit(new Runnable() {
 					@Override
 					public void run() {
-						IcyBufferedImage kymoImage = IcyBufferedImageUtil.scale(spot.spotImage, spot.spotImage.getWidth(),
-								vertical_resolution);
+						IcyBufferedImage kymoImage = IcyBufferedImageUtil.scale(spot.spotImage,
+								spot.spotImage.getWidth(), vertical_resolution);
 						seqKymo.setImage(indexSpot, 0, kymoImage);
 						spot.spotImage = null;
 					}
@@ -233,15 +233,15 @@ public class BuildSpotsKymos extends BuildSeries {
 		if (dataType.toString().equals("undefined"))
 			dataType = DataType.UBYTE;
 
-		for (Cage cage: exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				int imageHeight = 0;
 				for (ROI2DAlongT roiT : spot.getROIAlongTList()) {
 					roiT.buildMask2DFromRoi_in();
-	
+
 					// TODO transform into ROIT and add to outer
 					// subtract booleanmap from booleantmap of roiT
-	
+
 					int imageHeight_i = roiT.mask2DPoints_in.length;
 					if (imageHeight_i > imageHeight)
 						imageHeight = imageHeight_i;

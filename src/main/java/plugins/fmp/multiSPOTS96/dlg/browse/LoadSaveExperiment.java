@@ -97,7 +97,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	public void closeViewsForCurrentExperiment(Experiment exp) {
 		if (exp != null) {
 			if (exp.seqCamData != null) {
-				exp.zsaveXML_MCExperiment();
+				exp.save_MS96_experiment();
 				exp.zsave_SpotsMeasures();
 			}
 			exp.closeSequences();
@@ -267,7 +267,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 
 	boolean openSelecteExperiment(Experiment exp) {
 		ProgressFrame progressFrame = new ProgressFrame("Load Data");
-		exp.loadMS96_experiment();
+		exp.load_MS96_experiment();
 
 		boolean flag = true;
 		progressFrame.setMessage("Load image");
@@ -282,7 +282,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			exp.zload_SpotsMeasures();
 			exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData.seq);
 
-			exp.zload_Cages();
+			exp.load_MS96_cages();
 			exp.cagesArray.transferCagesToSequenceAsROIs(exp.seqCamData.seq);
 
 			parent0.dlgMeasure.tabGraphs.displayGraphsPanels(exp);

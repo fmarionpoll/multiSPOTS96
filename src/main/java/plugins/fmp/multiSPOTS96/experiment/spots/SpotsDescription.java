@@ -9,15 +9,12 @@ import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
 
-
-
 public class SpotsDescription {
 	public int version = 1;
 
 	public double volume = 5.;
 	public int pixels = 5;
 	public String sourceName = null;
-	//public ExperimentDescriptors expDesc = new ExperimentDescriptors();
 
 	public int grouping2 = 2;
 	public String stimulusR = new String("..");
@@ -73,8 +70,8 @@ public class SpotsDescription {
 		return flag;
 	}
 
-	public boolean xmlSaveSpotsDescription(Document doc) {
-		Node node = XMLUtil.addElement(XMLUtil.getRootElement(doc), IDS_SPOTTRACK);
+	public boolean xmlSaveSpotsDescription(Node nodedoc) {
+		Node node = XMLUtil.addElement(nodedoc, IDS_SPOTTRACK);
 		if (node == null)
 			return false;
 		XMLUtil.setElementIntValue(node, "version", 2);
@@ -168,21 +165,8 @@ public class SpotsDescription {
 	public String csvExportSectionHeader(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("#" + csvSep + "DESCRIPTION" + csvSep + "multiSPOTS96 data\n");
-		List<String> row2 = Arrays.asList(
-				IDS_DESCGROUPING, 
-				IDS_DESCVOLUMEUL, 
-				IDS_DESCNPIXELS, 
-				IDS_STIMR, 
-				IDS_CONCR,
-				IDS_STIML, 
-				IDS_CONCL, 
-				IDS_BOXID, 
-				IDS_EXPT, 
-				IDS_COMMENT1, 
-				IDS_COMMENT2, 
-				IDS_STRAIN, 
-				IDS_SEX, 
-				IDS_COND1, 
+		List<String> row2 = Arrays.asList(IDS_DESCGROUPING, IDS_DESCVOLUMEUL, IDS_DESCNPIXELS, IDS_STIMR, IDS_CONCR,
+				IDS_STIML, IDS_CONCL, IDS_BOXID, IDS_EXPT, IDS_COMMENT1, IDS_COMMENT2, IDS_STRAIN, IDS_SEX, IDS_COND1,
 				IDS_COND2);
 		sbf.append(String.join(csvSep, row2));
 		sbf.append("\n");
@@ -206,17 +190,11 @@ public class SpotsDescription {
 		concentrationL = data[i];
 		i++;
 	}
-	
+
 	public String csvExportSpotsDescriptionData(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		List<String> row3 = Arrays.asList(
-				String.valueOf(grouping2), 
-				String.valueOf(volume), 
-				String.valueOf(pixels), 
-				stimulusR,
-				concentrationR, 
-				stimulusL, 
-				concentrationL);
+		List<String> row3 = Arrays.asList(String.valueOf(grouping2), String.valueOf(volume), String.valueOf(pixels),
+				stimulusR, concentrationR, stimulusL, concentrationL);
 		sbf.append(String.join(csvSep, row3));
 		sbf.append("\n");
 		return sbf.toString();

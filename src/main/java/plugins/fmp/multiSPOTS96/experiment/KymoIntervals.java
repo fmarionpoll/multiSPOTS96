@@ -3,7 +3,6 @@ package plugins.fmp.multiSPOTS96.experiment;
 import java.util.ArrayList;
 
 public class KymoIntervals {
-
 	public ArrayList<Long[]> intervals = new ArrayList<Long[]>();
 
 	public int addIfNew(Long[] interval) {

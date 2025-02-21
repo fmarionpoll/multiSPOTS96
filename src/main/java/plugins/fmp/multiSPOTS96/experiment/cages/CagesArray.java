@@ -54,10 +54,10 @@ public class CagesArray {
 
 	private final String ID_CAGES = "Cages";
 	private final String ID_NCAGES = "n_cages";
-	private final String ID_DROSOTRACK = "drosoTrack";
-	private final String ID_NBITEMS = "nb_items";
-	private final String ID_CAGELIMITS = "Cage_Limits";
-	private final String ID_FLYDETECTED = "Fly_Detected";
+//	private final String ID_DROSOTRACK = "drosoTrack";
+//	private final String ID_NBITEMS = "nb_items";
+//	private final String ID_CAGELIMITS = "Cage_Limits";
+//	private final String ID_FLYDETECTED = "Fly_Detected";
 
 	private final String ID_NCAGESALONGX = "N_cages_along_X";
 	private final String ID_NCAGESALONGY = "N_cages_along_Y";
@@ -102,33 +102,6 @@ public class CagesArray {
 		String tempName = directory + File.separator + ID_MCDROSOTRACK_XML;
 		xmlReadCagesFromFileNoQuestion(tempName);
 		return true;
-	}
-
-	public boolean xmlWriteCagesToFileNoQuestion(String tempname) {
-		if (tempname == null)
-			return false;
-		final Document doc = XMLUtil.createDocument(true);
-		if (doc == null)
-			return false;
-
-		Node node = XMLUtil.addElement(XMLUtil.getRootElement(doc), ID_DROSOTRACK);
-		if (node == null)
-			return false;
-
-		int index = 0;
-		Element xmlVal = XMLUtil.addElement(node, ID_CAGES);
-		int ncages = cagesList.size();
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, ncages);
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
-
-		for (Cage cage : cagesList) {
-			cage.xmlSaveCage(xmlVal, index);
-			index++;
-		}
-		return XMLUtil.saveDocument(doc, tempname);
 	}
 
 	// -----------------------------------------------------
@@ -204,7 +177,7 @@ public class CagesArray {
 		if (doc == null)
 			return false;
 
-		if (xmlLoadCages(doc)) {
+		if (xmlLoadCages(XMLUtil.getRootElement(doc))) {
 			return true;
 		} else {
 			System.out.println("Cages:xmlReadCagesFromFileNoQuestion() failed to load cages from file");
@@ -219,7 +192,7 @@ public class CagesArray {
 		if (doc == null)
 			return false;
 
-		if (xmlLoadCages(doc)) {
+		if (xmlLoadCages(XMLUtil.getRootElement(doc))) {
 			transferCagesToSequenceAsROIs(exp.seqCamData.seq);
 			return true;
 		} else {
@@ -228,34 +201,51 @@ public class CagesArray {
 		}
 	}
 
-	private boolean xmlLoadCages(Document doc) {
-		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_DROSOTRACK);
-		if (node == null)
+	public boolean xmlWriteCagesToFileNoQuestion(String tempname) {
+		if (tempname == null)
+			return false;
+		final Document doc = XMLUtil.createDocument(true);
+		if (doc == null)
 			return false;
 
+		Node node = XMLUtil.getRootElement(doc);
+		xmlSaveCages(node);
+		return XMLUtil.saveDocument(doc, tempname);
+	}
+
+	private boolean xmlSaveCages(Node node) {
+		int index = 0;
+		Element xmlVal = XMLUtil.addElement(node, ID_CAGES);
+		int ncages = cagesList.size();
+		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, ncages);
+		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
+		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
+		XMLUtil.setAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
+		XMLUtil.setAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
+		for (Cage cage : cagesList) {
+			cage.xmlSaveCage(xmlVal, index);
+			index++;
+		}
+		return true;
+	}
+
+	private boolean xmlLoadCages(Node node) {
 		cagesList.clear();
 		Element xmlVal = XMLUtil.getElement(node, ID_CAGES);
-		if (xmlVal != null) {
-			int ncages = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
-			nCagesAlongX = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
-			nCagesAlongY = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
-			nColumnsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
-			nRowsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
+		if (xmlVal == null)
+			return false;
 
-			for (int index = 0; index < ncages; index++) {
-				Cage cage = new Cage();
-				cage.xmlLoadCage(xmlVal, index);
-				cagesList.add(cage);
-			}
-		} else {
-			List<ROI2D> cageLimitROIList = new ArrayList<ROI2D>();
-			if (xmlLoadCagesLimits_v0(node, cageLimitROIList)) {
-				List<FlyPositions> flyPositionsList = new ArrayList<FlyPositions>();
-				xmlLoadFlyPositions_v0(node, flyPositionsList);
-				transferDataToCages_v0(cageLimitROIList, flyPositionsList);
-			} else
-				return false;
+		int ncages = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
+		nCagesAlongX = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
+		nCagesAlongY = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
+		nColumnsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
+		nRowsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
+		for (int index = 0; index < ncages; index++) {
+			Cage cage = new Cage();
+			cage.xmlLoadCage(xmlVal, index);
+			cagesList.add(cage);
 		}
+
 		return true;
 	}
 
@@ -271,54 +261,6 @@ public class CagesArray {
 	}
 
 	// --------------
-
-	private void transferDataToCages_v0(List<ROI2D> cageLimitROIList, List<FlyPositions> flyPositionsList) {
-		cagesList.clear();
-		Collections.sort(cageLimitROIList, new Comparators.ROI2D_Name_Comparator());
-		int ncages = cageLimitROIList.size();
-		for (int index = 0; index < ncages; index++) {
-			Cage cage = new Cage();
-			cage.setRoi((ROI2DShape) cageLimitROIList.get(index));
-			cage.flyPositions = flyPositionsList.get(index);
-			cagesList.add(cage);
-		}
-	}
-
-	private boolean xmlLoadCagesLimits_v0(Node node, List<ROI2D> cageLimitROIList) {
-		if (node == null)
-			return false;
-		Element xmlVal = XMLUtil.getElement(node, ID_CAGELIMITS);
-		if (xmlVal == null)
-			return false;
-		cageLimitROIList.clear();
-		int nb_items = XMLUtil.getAttributeIntValue(xmlVal, ID_NBITEMS, 0);
-		for (int i = 0; i < nb_items; i++) {
-			ROI2DPolygon roi = (ROI2DPolygon) ROI.create("plugins.kernel.roi.roi2d.ROI2DPolygon");
-			Element subnode = XMLUtil.getElement(xmlVal, "cage" + i);
-			roi.loadFromXML(subnode);
-			cageLimitROIList.add((ROI2D) roi);
-		}
-		return true;
-	}
-
-	private boolean xmlLoadFlyPositions_v0(Node node, List<FlyPositions> flyPositionsList) {
-		if (node == null)
-			return false;
-		Element xmlVal = XMLUtil.getElement(node, ID_FLYDETECTED);
-		if (xmlVal == null)
-			return false;
-		flyPositionsList.clear();
-		int nb_items = XMLUtil.getAttributeIntValue(xmlVal, ID_NBITEMS, 0);
-		int ielement = 0;
-		for (int i = 0; i < nb_items; i++) {
-			Element subnode = XMLUtil.getElement(xmlVal, "cage" + ielement);
-			FlyPositions pos = new FlyPositions();
-			pos.loadXYTseriesFromXML(subnode);
-			flyPositionsList.add(pos);
-			ielement++;
-		}
-		return true;
-	}
 
 	private boolean isPresent(Cage cagenew) {
 		boolean flag = false;

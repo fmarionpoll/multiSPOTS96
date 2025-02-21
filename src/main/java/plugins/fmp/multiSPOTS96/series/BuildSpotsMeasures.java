@@ -64,7 +64,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 		exp.cagesArray.transferSumToSumClean();
 		exp.cagesArray.initLevel2DMeasures();
-		exp.zsaveXML_MCExperiment();
+		exp.save_MS96_experiment();
 		exp.zsave_SpotsMeasures();
 	}
 
@@ -140,11 +140,11 @@ public class BuildSpotsMeasures extends BuildSeries {
 					final double final_background = background;
 
 					int ii = t - iiFirst;
-					for (Cage cage: exp.cagesArray.cagesList) {
+					for (Cage cage : exp.cagesArray.cagesList) {
 						for (Spot spot : cage.spotsArray.spotsList) {
 							if (!spot.okToAnalyze)
 								continue;
-	
+
 							ROI2DAlongT roiT = spot.getROIAtT(t);
 							ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly,
 									roiT);
@@ -170,7 +170,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 		ROI2DRectangle roiRect = new ROI2DRectangle(rect);
 		try {
 			BooleanMask2D roiRectMask = roiRect.getBooleanMask(true);
-			for (Cage cage: exp.cagesArray.cagesList) {
+			for (Cage cage : exp.cagesArray.cagesList) {
 				for (Spot spot : cage.spotsArray.spotsList) {
 					BooleanMask2D mask = spot.getROIAtT(t).getMask2D_in();
 					roiRectMask.subtract(mask.bounds, mask.mask);
@@ -190,8 +190,9 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 	Rectangle2D getRectangleEnclosingAllSpots(Experiment exp, int t) {
 
-		Rectangle2D outerRectangle = (Rectangle2D) exp.cagesArray.cagesList.get(0).spotsArray.spotsList.get(0).getROIAtT(t).getRoi_in().getBounds();
-		for (Cage cage: exp.cagesArray.cagesList) {
+		Rectangle2D outerRectangle = (Rectangle2D) exp.cagesArray.cagesList.get(0).spotsArray.spotsList.get(0)
+				.getROIAtT(t).getRoi_in().getBounds();
+		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				Rectangle2D rect = (Rectangle2D) spot.getROIAtT(t).getRoi_in().getBounds();
 				Rectangle2D.union(outerRectangle, rect, outerRectangle);
@@ -244,7 +245,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 	private void initSpotsDataArrays(Experiment exp) {
 		int nFrames = exp.seqCamData.nTotalFrames;
-		for (Cage cage: exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				int i = spot.cagePosition % 2;
 				if (0 == i && !options.detectL)
@@ -262,13 +263,13 @@ public class BuildSpotsMeasures extends BuildSeries {
 		SequenceCamData seqCamData = exp.seqCamData;
 		if (seqCamData.seq == null)
 			seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
-		for (Cage cage: exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-	//			int i = spot.plateIndex % 2;
-	//			if (0 == i && !options.detectL)
-	//				continue;
-	//			if (1 == i && !options.detectR)
-	//				continue;
+				// int i = spot.plateIndex % 2;
+				// if (0 == i && !options.detectL)
+				// continue;
+				// if (1 == i && !options.detectR)
+				// continue;
 				List<ROI2DAlongT> listRoiT = spot.getROIAlongTList();
 				for (ROI2DAlongT roiT : listRoiT) {
 					if (roiT.getMask2D_in() == null)

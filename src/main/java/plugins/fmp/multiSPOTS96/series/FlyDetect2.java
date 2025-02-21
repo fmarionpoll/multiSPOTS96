@@ -18,7 +18,7 @@ public class FlyDetect2 extends BuildSeries {
 	// -----------------------------------------
 
 	void analyzeExperiment(Experiment exp) {
-		if (!loadDrosoTrack(exp))
+		if (!zloadDrosoTrack(exp))
 			return;
 		if (!checkBoundsForCages(exp))
 			return;
@@ -26,7 +26,7 @@ public class FlyDetect2 extends BuildSeries {
 		runFlyDetect2(exp);
 		exp.cagesArray.orderFlyPositions();
 		if (!stopFlag)
-			exp.zsave_CagesMeasures();
+			exp.save_MS96_fliesPositions();
 		exp.seqCamData.closeSequence();
 //		closeSequence(seqNegative);
 	}

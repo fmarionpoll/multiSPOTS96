@@ -70,7 +70,6 @@ public class Experiment {
 
 	private final static String ID_IMAGESDIRECTORY = "imagesDirectory";
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
-//private final static String ID_MCEXPERIMENT_XML = "MCexperiment.xml";
 	private final String ID_MS96_experiment_XML = "MS96_experiment.xml";
 	private final static String ID_MCDROSOTRACK_XML = "MCdrosotrack.xml";
 
@@ -95,7 +94,7 @@ public class Experiment {
 		this.seqSpotKymos = new SequenceKymos();
 		resultsDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
-		zxmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML));
+		load_MS96_experiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML));
 	}
 
 	public Experiment(ExperimentDirectories eADF) {
@@ -104,7 +103,7 @@ public class Experiment {
 		binSubDirectory = eADF.getBinSubDirectory();
 		seqCamData = new SequenceCamData();
 		String fileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
-		zxmlLoadExperiment(fileName);
+		load_MS96_experiment(fileName);
 
 		seqCamData.imagesDirectory = eADF.getCameraImagesDirectory();
 		List<String> imagesList = ExperimentDirectories.getImagesListFromPathV2(seqCamData.imagesDirectory, "jpg");
@@ -213,8 +212,7 @@ public class Experiment {
 	public boolean zopenPositionsMeasures() {
 		if (seqCamData == null)
 			seqCamData = new SequenceCamData();
-		zloadXML_MCExperiment();
-
+		load_MS96_experiment();
 		getFileIntervalsFromSeqCamData();
 
 		if (seqSpotKymos == null)
@@ -253,7 +251,7 @@ public class Experiment {
 	public SequenceCamData openSequenceCamData() {
 		loadImagesForSequenceCamData(camDataImagesDirectory);
 		if (seqCamData != null) {
-			zloadXML_MCExperiment();
+			load_MS96_experiment();
 			getFileIntervalsFromSeqCamData();
 		}
 		return seqCamData;
@@ -371,33 +369,51 @@ public class Experiment {
 	// -------------------------------
 	// -------------------------------
 
-	public boolean loadMS96_experiment() {
+	public boolean load_MS96_experiment() {
 		if (resultsDirectory == null && seqCamData != null) {
 			camDataImagesDirectory = seqCamData.getImagesDirectory();
 			resultsDirectory = camDataImagesDirectory + File.separator + RESULTS;
 		}
-		boolean found = zxmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML));
-		return found;
+		String csFileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
+		return load_MS96_experiment(csFileName);
 	}
 
-	public boolean loadMS96_cages() {
-		return false;
+	private boolean load_MS96_experiment(String csFileName) {
+		final Document doc = XMLUtil.loadDocument(csFileName);
+		if (doc == null)
+			return false;
+		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
+		if (node == null)
+			return false;
+
+		String version = XMLUtil.getElementValue(node, ID_VERSION, ID_VERSIONNUM);
+		if (!version.equals(ID_VERSIONNUM))
+			return false;
+
+		seqCamData.firstImage_ms = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0);
+		seqCamData.lastImage_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0);
+		if (seqCamData.lastImage_ms <= 0) {
+			seqCamData.firstImage_ms = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGE, 0) * 60000;
+			seqCamData.lastImage_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0) * 60000;
+		}
+
+		seqCamData.absoluteIndexFirstImage = XMLUtil.getElementLongValue(node, ID_FRAMEFIRST, -1);
+		if (seqCamData.absoluteIndexFirstImage < 0)
+			seqCamData.absoluteIndexFirstImage = XMLUtil.getElementLongValue(node, ID_BINT0, -1);
+		if (seqCamData.absoluteIndexFirstImage < 0)
+			seqCamData.absoluteIndexFirstImage = 0;
+		seqCamData.fixedNumberOfImages = XMLUtil.getElementLongValue(node, ID_NFRAMES, -1);
+		seqCamData.deltaImage = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
+		seqCamData.binFirst_ms = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
+		seqCamData.binLast_ms = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
+		seqCamData.binDuration_ms = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
+
+		ugly_checkOffsetValues();
+		expDesc.loadXML_Descriptors(node);
+		return true;
 	}
 
-	public boolean loadMS96_spotsMeasures() {
-		return false;
-	}
-
-	public boolean loadMS96_fliesPositions() {
-		return false;
-	}
-
-	public boolean loadMS96_kymographs() {
-		return false;
-	}
-
-	// -------------------------------
-	public boolean saveMSP6_experiment() {
+	public boolean save_MS96_experiment() {
 		final Document doc = XMLUtil.createDocument(true);
 		if (doc != null) {
 			Node xmlRoot = XMLUtil.getRootElement(doc, true);
@@ -429,49 +445,74 @@ public class Experiment {
 		}
 		return false;
 	}
+
+	private void ugly_checkOffsetValues() {
+		if (seqCamData.firstImage_ms < 0)
+			seqCamData.firstImage_ms = 0;
+		if (seqCamData.lastImage_ms < 0)
+			seqCamData.lastImage_ms = 0;
+		if (seqCamData.binFirst_ms < 0)
+			seqCamData.binFirst_ms = 0;
+		if (seqCamData.binLast_ms < 0)
+			seqCamData.binLast_ms = 0;
+		if (seqCamData.binDuration_ms < 0)
+			seqCamData.binDuration_ms = 60000;
+	}
+
 	// -------------------------------
 
-//	public boolean zloadXML_MCExperiment() {
-//		if (resultsDirectory == null && seqCamData != null) {
-//			camDataImagesDirectory = seqCamData.getImagesDirectory();
-//			resultsDirectory = camDataImagesDirectory + File.separator + RESULTS;
-//		}
-//		boolean found = zxmlLoadExperiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML));
-//		return found;
-//	}
+	private String getXML_MS96_cages_Location(String XMLfileName) {
+		String fileName = findFile_3Locations(XMLfileName, EXPT_DIRECTORY, BIN_DIRECTORY, IMG_DIRECTORY);
+		if (fileName == null)
+			fileName = findFile_3Locations(cagesArray.ID_MS96_cages_XML, IMG_DIRECTORY, EXPT_DIRECTORY, BIN_DIRECTORY);
+		return fileName;
+	}
 
-//	public boolean zsaveXML_MCExperiment() {
-//		final Document doc = XMLUtil.createDocument(true);
-//		if (doc != null) {
-//			Node xmlRoot = XMLUtil.getRootElement(doc, true);
-//			Node node = XMLUtil.setElement(xmlRoot, ID_MCEXPERIMENT);
-//			if (node == null)
-//				return false;
-//
-//			XMLUtil.setElementValue(node, ID_VERSION, ID_VERSIONNUM);
-//			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, seqCamData.firstImage_ms);
-//			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, seqCamData.lastImage_ms);
-//
-//			XMLUtil.setElementLongValue(node, ID_FRAMEFIRST, seqCamData.absoluteIndexFirstImage);
-//			XMLUtil.setElementLongValue(node, ID_BINT0, seqCamData.absoluteIndexFirstImage);
-//			XMLUtil.setElementLongValue(node, ID_NFRAMES, seqCamData.fixedNumberOfImages);
-//			XMLUtil.setElementLongValue(node, ID_FRAMEDELTA, seqCamData.deltaImage);
-//
-//			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, seqCamData.binFirst_ms);
-//			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, seqCamData.binLast_ms);
-//			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, seqCamData.binDuration_ms);
-//
-//			expDesc.saveXML_Descriptors(node);
-//
-//			if (camDataImagesDirectory == null)
-//				camDataImagesDirectory = seqCamData.getImagesDirectory();
-//			XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, camDataImagesDirectory);
-//
-//			String tempname = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
-//			return XMLUtil.saveDocument(doc, tempname);
-//		}
-//		return false;
-//	}
+	public boolean load_MS96_cages() {
+		String fileName = getXML_MS96_cages_Location(cagesArray.ID_MS96_cages_XML);
+		return cagesArray.xmlReadCagesFromFileNoQuestion(fileName, this);
+	}
+
+	public boolean save_MS96_cages() {
+		String fileName = getXML_MS96_cages_Location(cagesArray.ID_MS96_cages_XML);
+		return cagesArray.xmlWriteCagesToFileNoQuestion(fileName);
+	}
+
+	// -------------------------------
+
+	public boolean load_MS96_spots() {
+		return load_MS96_cages();
+	}
+
+	public boolean save_MS96_spots() {
+		return save_MS96_cages();
+	}
+
+	public boolean load_MS96_spotsMeasures() {
+		return false;
+	}
+
+	public boolean save_MS96_spotsMeasures() {
+		return false;
+	}
+
+	public boolean load_MS96_fliesPositions() {
+		return false;
+	}
+
+	public boolean save_MS96_fliesPositions() {
+		return false;
+	}
+
+	public boolean load_MS96_kymographs() {
+		return false;
+	}
+
+	public boolean save_MS96_kymographs() {
+		return false;
+	}
+
+	// -------------------------------
 
 	final String csvSep = ";";
 
@@ -503,76 +544,49 @@ public class Experiment {
 	}
 
 	public boolean zloadMCSpots_Only() {
-		String mcSpotsFileName = findFile_3Locations(cagesArray.ID_MS96_cages_XML, EXPT_DIRECTORY, BIN_DIRECTORY,
-				IMG_DIRECTORY);
-		if (mcSpotsFileName == null && seqCamData != null)
-			return false;
-
-		return spotsArray.xmlLoad_MCSpots_Descriptors(mcSpotsFileName);
+		return load_MS96_cages();
+//		String mcSpotsFileName = findFile_3Locations(cagesArray.ID_MS96_cages_XML, EXPT_DIRECTORY, BIN_DIRECTORY,
+//				IMG_DIRECTORY);
+//		if (mcSpotsFileName == null && seqCamData != null)
+//			return false;
+//
+//		return spotsArray.xmlLoad_MCSpots_Descriptors(mcSpotsFileName);
 	}
 
 	public boolean zsave_MCSpots_Only() {
-		String mcSpotsFileName = resultsDirectory + File.separator + spotsArray.getXMLSpotsName();
-		boolean flag = spotsArray.xmlSave_MCSpots_Descriptors(mcSpotsFileName);
-		return flag;
+		return save_MS96_cages();
+//		String mcSpotsFileName = resultsDirectory + File.separator + spotsArray.getXMLSpotsName();
+//		boolean flag = spotsArray.xmlSave_MCSpots_Descriptors(mcSpotsFileName);
+//		return flag;
 	}
 
 	public boolean zsave_Spots() {
-		return spotsArray.save_Spots(resultsDirectory);
+		return save_MS96_cages();
+//		return spotsArray.save_Spots(resultsDirectory);
 	}
 
 	public boolean zload_SpotsMeasures() {
-		return spotsArray.load_Measures(getResultsDirectory());
+		return load_MS96_spotsMeasures();
+//		return spotsArray.load_Measures(getResultsDirectory());
 	}
 
 	public boolean zsave_SpotsMeasures() {
-		return spotsArray.save_Measures(getResultsDirectory());
+		return save_MS96_spotsMeasures();
+//		return spotsArray.save_Measures(getResultsDirectory());
 	}
 
 	public boolean zopenSpotsMeasures() {
 		if (seqCamData == null)
 			seqCamData = new SequenceCamData();
-		zloadXML_MCExperiment();
+		load_MS96_experiment();
 
 		getFileIntervalsFromSeqCamData();
-
-		zloadMCSpots_Only();
-		if (!spotsArray.load_Measures(getKymosBinFullDirectory()))
-			return false;
-
+		load_MS96_cages();
+		load_MS96_spotsMeasures();
 		return true;
 	}
 
 	// ------------------------------------------------
-
-	public boolean zload_Cages() {
-
-		String filename = getXMLDrosoTrackLocation();
-		if (filename == null)
-			return false;
-		return cagesArray.xmlReadCagesFromFileNoQuestion(filename, this);
-
-	}
-
-	/*
-	 * // public void find_which_cage_each_spot_belongs_to() { // for (Spot spot :
-	 * spotsArray.spotsList) { // ROI2D spotRoi = spot.getRoi(); // spot.cageID =
-	 * -1; // for (Cage cage : cagesArray.cagesList) { // ROI2D cageRoi =
-	 * cage.getRoi(); // boolean flag = false; // try { // flag =
-	 * cageRoi.contains(spotRoi); // } catch (InterruptedException e) { // // TODO
-	 * Auto-generated catch block // e.printStackTrace(); // } // if (flag) { //
-	 * spot.cageID = cage.cageID; // break; // } // } // } // }
-	 */
-
-	public boolean zload_CagesMeasures() {
-		return cagesArray.loadCagesMeasures(getResultsDirectory());
-	}
-
-	public boolean zsave_CagesMeasures() {
-		return cagesArray.saveCagesMeasures(getResultsDirectory());
-	}
-
-	// ----------------------------------
 
 	public Experiment getFirstChainedExperiment(boolean globalValue) {
 		Experiment exp = this;
@@ -650,30 +664,6 @@ public class Experiment {
 
 	// --------------------------------------------
 
-//	public void kymosBuildFiltered01(int zChannelSource, int zChannelDestination, ImageTransformEnums transformop1,
-//			int spanDiff) {
-//		int nimages = seqSpotKymos.seq.getSizeT();
-//		seqSpotKymos.seq.beginUpdate();
-//
-//		ImageTransformInterface transform = transformop1.getFunction();
-//		if (transform == null)
-//			return;
-//
-//		for (int t = 0; t < nimages; t++) {
-////			Spot spot = spotsArray.spotsList.get(t);
-////			spot.kymographIndex = t;
-//			IcyBufferedImage img = seqSpotKymos.getSeqImage(t, zChannelSource);
-//			IcyBufferedImage img2 = transform.getTransformedImage(img, null);
-//			if (seqSpotKymos.seq.getSizeZ(0) < (zChannelDestination + 1))
-//				seqSpotKymos.seq.addImage(t, img2);
-//			else
-//				seqSpotKymos.seq.setImage(t, zChannelDestination, img2);
-//		}
-//
-//		seqSpotKymos.seq.dataChanged();
-//		seqSpotKymos.seq.endUpdate();
-//	}
-
 	public boolean loadReferenceImage() {
 		BufferedImage image = null;
 		File inputfile = new File(getReferenceImageFullName());
@@ -742,7 +732,7 @@ public class Experiment {
 
 	private boolean zxmlReadDrosoTrack(String filename) {
 		if (filename == null) {
-			filename = getXMLDrosoTrackLocation();
+			filename = getXML_MS96_cages_Location(cagesArray.ID_MS96_cages_XML);
 			if (filename == null)
 				return false;
 		}
@@ -831,56 +821,6 @@ public class Experiment {
 			return resultsDirectory + File.separator + name;
 	}
 
-	private boolean zxmlLoadExperiment(String csFileName) {
-		final Document doc = XMLUtil.loadDocument(csFileName);
-		if (doc == null)
-			return false;
-		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
-		if (node == null)
-			return false;
-
-		String version = XMLUtil.getElementValue(node, ID_VERSION, ID_VERSIONNUM);
-		if (!version.equals(ID_VERSIONNUM))
-			return false;
-
-		seqCamData.firstImage_ms = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0);
-		seqCamData.lastImage_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0);
-		if (seqCamData.lastImage_ms <= 0) {
-			seqCamData.firstImage_ms = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGE, 0) * 60000;
-			seqCamData.lastImage_ms = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0) * 60000;
-		}
-
-		seqCamData.absoluteIndexFirstImage = XMLUtil.getElementLongValue(node, ID_FRAMEFIRST, -1);
-		if (seqCamData.absoluteIndexFirstImage < 0)
-			seqCamData.absoluteIndexFirstImage = XMLUtil.getElementLongValue(node, ID_BINT0, -1);
-		if (seqCamData.absoluteIndexFirstImage < 0)
-			seqCamData.absoluteIndexFirstImage = 0;
-		seqCamData.fixedNumberOfImages = XMLUtil.getElementLongValue(node, ID_NFRAMES, -1);
-		seqCamData.deltaImage = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
-		seqCamData.binFirst_ms = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
-		seqCamData.binLast_ms = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
-		seqCamData.binDuration_ms = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
-
-		ugly_checkOffsetValues();
-		expDesc.loadXML_Descriptors(node);
-
-		return true;
-	}
-
-	private void ugly_checkOffsetValues() {
-		if (seqCamData.firstImage_ms < 0)
-			seqCamData.firstImage_ms = 0;
-		if (seqCamData.lastImage_ms < 0)
-			seqCamData.lastImage_ms = 0;
-		if (seqCamData.binFirst_ms < 0)
-			seqCamData.binFirst_ms = 0;
-		if (seqCamData.binLast_ms < 0)
-			seqCamData.binLast_ms = 0;
-
-		if (seqCamData.binDuration_ms < 0)
-			seqCamData.binDuration_ms = 60000;
-	}
-
 	private void addSpotsValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
 		if (cagesArray.cagesList.size() == 0)
 			zloadMCSpots_Only();
@@ -908,13 +848,6 @@ public class Experiment {
 
 	private String getReferenceImageFullName() {
 		return resultsDirectory + File.separator + "referenceImage.jpg";
-	}
-
-	private String getXMLDrosoTrackLocation() {
-		String fileName = findFile_3Locations(ID_MCDROSOTRACK_XML, EXPT_DIRECTORY, BIN_DIRECTORY, IMG_DIRECTORY);
-		if (fileName == null)
-			fileName = findFile_3Locations("drosotrack.xml", IMG_DIRECTORY, EXPT_DIRECTORY, BIN_DIRECTORY);
-		return fileName;
 	}
 
 }

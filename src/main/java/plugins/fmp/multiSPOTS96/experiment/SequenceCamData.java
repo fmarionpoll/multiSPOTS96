@@ -53,9 +53,9 @@ public class SequenceCamData {
 	int indexTimePattern = -1;
 	// _________________________________________________
 
-	public long firstImage_ms = -1;
-	public long lastImage_ms = -1;
-	public long binImage_ms = -1;
+	public long firstImage_ms = 0;
+	public long lastImage_ms = 0;
+	public long binImage_ms = 0;
 	public long[] camImages_array_ms = null;
 
 	public long absoluteIndexFirstImage = 0;

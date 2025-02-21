@@ -28,14 +28,10 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 public class SpotsArray {
 	public SpotsDescription spotsDescription = new SpotsDescription();
 	public ArrayList<Spot> spotsList = new ArrayList<Spot>();
-	public int nColumnsPerPlate = 12;
-	public int nRowsPerPlate = 8;
 
 	private KymoIntervals spotsListTimeIntervals = null;
 	private final static String ID_SPOTTRACK = "spotTrack";
 	private final static String ID_NSPOTS = "N_spots";
-	private final static String ID_NCOLUMNSPERPLATE = "N_columns";
-	private final static String ID_NROWSPERPLATE = "N_rows";
 
 	private final static String ID_LISTOFSPOTS = "List_of_spots";
 	private final static String ID_SPOT_ = "spot_";
@@ -86,19 +82,41 @@ public class SpotsArray {
 
 	// ---------------------------------
 
-//	public String getXMLSpotsName() {
-//		return ID_MCSPOTS_XML;
-//	}
+	public boolean xmlSaveSpotsArray(Node node) {
+		Node nodeSpotsArray = XMLUtil.setElement(node, ID_LISTOFSPOTS);
+		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
+		int i = 0;
+		Collections.sort(spotsList);
+		for (Spot spot : spotsList) {
+			Node nodeSpot = XMLUtil.setElement(node, ID_SPOT_ + i);
+			spot.saveToXML_SpotOnly(nodeSpot);
+			i++;
+		}
+		return true;
+	}
 
-	private boolean xmlSave_ListOfSpots(Document doc) {
-		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_SPOTTRACK);
+	public boolean xmlLoadSpotsArray(Node node) {
+		Node nodeSpotsArray = XMLUtil.getElement(node, ID_LISTOFSPOTS);
+		int nitems = XMLUtil.getElementIntValue(nodeSpotsArray, ID_NSPOTS, 0);
+		spotsList = new ArrayList<Spot>(nitems);
+		for (int i = 0; i < nitems; i++) {
+			Node nodespot = XMLUtil.getElement(node, ID_SPOT_ + i);
+			Spot spot = new Spot();
+			spot.loadFromXML_SpotOnly(nodespot);
+			if (!isPresent(spot))
+				spotsList.add(spot);
+		}
+		return true;
+	}
+
+	private boolean xmlSave_ListOfSpots(Node nodedoc) {
+
+		Node node = XMLUtil.getElement(nodedoc, ID_SPOTTRACK);
 		if (node == null)
 			return false;
 		XMLUtil.setElementIntValue(node, "version", 2);
 		Node nodeSpotsArray = XMLUtil.setElement(node, ID_LISTOFSPOTS);
 		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
-		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NCOLUMNSPERPLATE, nColumnsPerPlate);
-		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NROWSPERPLATE, nRowsPerPlate);
 
 		int i = 0;
 		Collections.sort(spotsList);
@@ -114,8 +132,8 @@ public class SpotsArray {
 		if (csFileName != null) {
 			final Document doc = XMLUtil.createDocument(true);
 			if (doc != null) {
-				spotsDescription.xmlSaveSpotsDescription(doc);
-				xmlSave_ListOfSpots(doc);
+				spotsDescription.xmlSaveSpotsDescription(XMLUtil.getRootElement(doc));
+				xmlSave_ListOfSpots(XMLUtil.getRootElement(doc));
 				return XMLUtil.saveDocument(doc, csFileName);
 			}
 		}
@@ -141,8 +159,6 @@ public class SpotsArray {
 			return false;
 		Node nodecaps = XMLUtil.getElement(node, ID_LISTOFSPOTS);
 		int nitems = XMLUtil.getElementIntValue(nodecaps, ID_NSPOTS, 0);
-		nColumnsPerPlate = XMLUtil.getElementIntValue(nodecaps, ID_NCOLUMNSPERPLATE, 12);
-		nRowsPerPlate = XMLUtil.getElementIntValue(nodecaps, ID_NROWSPERPLATE, 8);
 
 		spotsList = new ArrayList<Spot>(nitems);
 		for (int i = 0; i < nitems; i++) {
@@ -217,58 +233,6 @@ public class SpotsArray {
 		}
 		return spotFound;
 	}
-
-//	public void transferROIsFromSequenceToSpots(Sequence seq) {
-//		List<ROI> listROISSpot = ROIUtilities.getROIsContainingString("spot", seq);
-//		Collections.sort(listROISSpot, new Comparators.ROI_Name_Comparator());
-//		for (Spot spot : spotsList) {
-//			spot.valid = false;
-//			String spotName = spot.getRoi().getName();
-//			Iterator<ROI> iterator = listROISSpot.iterator();
-//			while (iterator.hasNext()) {
-//				ROI roi = iterator.next();
-//				String roiName = roi.getName();
-//				if (roiName.equals(spotName) && (roi instanceof ROI2DShape)) {
-//					spot.setRoi((ROI2DShape) roi);
-//					spot.valid = true;
-//				}
-//				if (spot.valid) {
-//					iterator.remove();
-//					break;
-//				}
-//			}
-//		}
-//
-//		Iterator<Spot> iterator = spotsList.iterator();
-//		while (iterator.hasNext()) {
-//			Spot spot = iterator.next();
-//			if (!spot.valid)
-//				iterator.remove();
-//		}
-//		if (listROISSpot.size() > 0) {
-//			for (ROI roi : listROISSpot) {
-//				Spot spot = new Spot((ROI2DShape) roi);
-//				if (!isPresent(spot))
-//					spotsList.add(spot);
-//			}
-//		}
-//		Collections.sort(spotsList);
-//		return;
-//	}
-
-//	public void transferROIsMeasuresFromSequenceToSpots() {
-//		for (Spot spot : spotsList) {
-//			spot.transferROIsMeasuresToLevel2D();
-//		}
-//	}
-//
-//	public void transferSpotsToSequenceAsROIs(Sequence seq) {
-//		List<ROI2D> spotROIList = new ArrayList<ROI2D>(spotsList.size());
-//		for (Spot spot : spotsList)
-//			spotROIList.add(spot.getRoi());
-//		seq.addROIs(spotROIList, true);
-//	}
-//
 
 	// ------------------------------------------------
 

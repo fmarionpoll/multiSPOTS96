@@ -26,7 +26,7 @@ public class BuildBackground extends BuildSeries {
 	// -----------------------------------------
 
 	void analyzeExperiment(Experiment exp) {
-		if (!loadDrosoTrack(exp))
+		if (!zloadDrosoTrack(exp))
 			return;
 		if (!checkBoundsForCages(exp))
 			return;

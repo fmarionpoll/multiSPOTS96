@@ -110,7 +110,7 @@ public class Intervals extends JPanel implements ItemListener {
 					exp.seqCamData.loadImageList(imagesList);
 					long bin_ms = exp.seqCamData.binImage_ms;
 					exp.seqCamData.binFirst_ms = exp.seqCamData.absoluteIndexFirstImage * bin_ms;
-					exp.zsaveXML_MCExperiment();
+					exp.save_MS96_experiment();
 				}
 			}
 		});

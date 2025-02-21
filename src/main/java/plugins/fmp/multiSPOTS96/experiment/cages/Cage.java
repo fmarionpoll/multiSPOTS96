@@ -163,47 +163,6 @@ public class Cage {
 
 	// -------------------------------------
 
-	public boolean xmlSaveCage(Node node, int index) {
-		if (node == null)
-			return false;
-		Element xmlVal = XMLUtil.addElement(node, "Cage" + index);
-		xmlSaveCageLimits(xmlVal);
-		xmlSaveCageParameters(xmlVal);
-		if (cageNFlies > 0)
-			xmlSaveFlyPositions(xmlVal);
-		return true;
-	}
-
-	public boolean xmlSaveCageParameters(Element xmlVal) {
-		XMLUtil.setElementIntValue(xmlVal, ID_CAGEID, cageID);
-		XMLUtil.setElementIntValue(xmlVal, ID_CAGEPOSITION, cagePosition);
-		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYINDEX, arrayIndex);
-		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYCOLUMN, arrayColumn);
-		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYROW, arrayRow);
-		XMLUtil.setElementIntValue(xmlVal, ID_NFLIES, cageNFlies);
-		XMLUtil.setElementIntValue(xmlVal, ID_AGE, cageAge);
-
-		XMLUtil.setElementValue(xmlVal, ID_COMMENT, strCageComment);
-		XMLUtil.setElementValue(xmlVal, ID_SEX, strCageSex);
-		XMLUtil.setElementValue(xmlVal, ID_STRAIN, strCageStrain);
-		return true;
-	}
-
-	public boolean xmlSaveCageLimits(Element xmlVal) {
-		Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_CAGELIMITS);
-		if (cageROI2D != null) {
-			cageROI2D.setSelected(false);
-			cageROI2D.saveToXML(xmlVal2);
-		}
-		return true;
-	}
-
-	public boolean xmlSaveFlyPositions(Element xmlVal) {
-		Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_FLYPOSITIONS);
-		flyPositions.saveXYTseriesToXML(xmlVal2);
-		return true;
-	}
-
 	public boolean xmlLoadCage(Node node, int index) {
 		if (node == null)
 			return false;
@@ -212,16 +171,17 @@ public class Cage {
 			return false;
 		xmlLoadCageLimits(xmlVal);
 		xmlLoadCageParameters(xmlVal);
-		xmlLoadFlyPositions(xmlVal);
+		spotsArray.xmlLoadSpotsArray(xmlVal);
 		return true;
 	}
 
-	public boolean xmlLoadCageLimits(Element xmlVal) {
-		Element xmlVal2 = XMLUtil.getElement(xmlVal, ID_CAGELIMITS);
-		if (xmlVal2 != null) {
-			cageROI2D = (ROI2D) ROI.createFromXML(xmlVal2);
-			cageROI2D.setSelected(false);
-		}
+	public boolean xmlSaveCage(Node node, int index) {
+		if (node == null)
+			return false;
+		Element xmlVal = XMLUtil.addElement(node, "Cage" + index);
+		xmlSaveCageLimits(xmlVal);
+		xmlSaveCageParameters(xmlVal);
+		spotsArray.xmlSaveSpotsArray(xmlVal);
 		return true;
 	}
 
@@ -240,6 +200,39 @@ public class Cage {
 		return true;
 	}
 
+	public boolean xmlSaveCageParameters(Element xmlVal) {
+		XMLUtil.setElementIntValue(xmlVal, ID_CAGEID, cageID);
+		XMLUtil.setElementIntValue(xmlVal, ID_CAGEPOSITION, cagePosition);
+		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYINDEX, arrayIndex);
+		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYCOLUMN, arrayColumn);
+		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYROW, arrayRow);
+		XMLUtil.setElementIntValue(xmlVal, ID_NFLIES, cageNFlies);
+		XMLUtil.setElementIntValue(xmlVal, ID_AGE, cageAge);
+
+		XMLUtil.setElementValue(xmlVal, ID_COMMENT, strCageComment);
+		XMLUtil.setElementValue(xmlVal, ID_SEX, strCageSex);
+		XMLUtil.setElementValue(xmlVal, ID_STRAIN, strCageStrain);
+		return true;
+	}
+
+	public boolean xmlLoadCageLimits(Element xmlVal) {
+		Element xmlVal2 = XMLUtil.getElement(xmlVal, ID_CAGELIMITS);
+		if (xmlVal2 != null) {
+			cageROI2D = (ROI2D) ROI.createFromXML(xmlVal2);
+			cageROI2D.setSelected(false);
+		}
+		return true;
+	}
+
+	public boolean xmlSaveCageLimits(Element xmlVal) {
+		Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_CAGELIMITS);
+		if (cageROI2D != null) {
+			cageROI2D.setSelected(false);
+			cageROI2D.saveToXML(xmlVal2);
+		}
+		return true;
+	}
+
 	public boolean xmlLoadFlyPositions(Element xmlVal) {
 		Element xmlVal2 = XMLUtil.getElement(xmlVal, ID_FLYPOSITIONS);
 		if (xmlVal2 != null) {
@@ -248,6 +241,14 @@ public class Cage {
 		}
 		return false;
 	}
+
+	public boolean xmlSaveFlyPositions(Element xmlVal) {
+		Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_FLYPOSITIONS);
+		flyPositions.saveXYTseriesToXML(xmlVal2);
+		return true;
+	}
+
+	// -----------------------------------------
 
 	public String csvExportCageDescription(String sep) {
 		StringBuffer sbf = new StringBuffer();
