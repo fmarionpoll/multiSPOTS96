@@ -48,7 +48,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
-		boolean flag = exp.zloadMCSpots_Only();
+		boolean flag = exp.load_MS96_cages();
 		exp.seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
 		return flag;
 	}

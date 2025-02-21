@@ -241,7 +241,7 @@ public class Experiment {
 	}
 
 	public boolean loadCamDataSpots() {
-		zloadMCSpots_Only();
+		load_MS96_cages();
 		if (seqCamData != null && seqCamData.seq != null)
 			cagesArray.transferCageSpotsToSequenceAsROIs(seqCamData.seq);
 
@@ -480,14 +480,6 @@ public class Experiment {
 
 	// -------------------------------
 
-	public boolean load_MS96_spots() {
-		return load_MS96_cages();
-	}
-
-	public boolean save_MS96_spots() {
-		return save_MS96_cages();
-	}
-
 	public boolean load_MS96_spotsMeasures() {
 		return false;
 	}
@@ -534,56 +526,6 @@ public class Experiment {
 				.loadListOfPotentialKymographsFromSpots(getKymosBinFullDirectory(), cagesArray);
 		ImageFileDescriptor.getExistingFileNames(myList);
 		return seqSpotKymos.loadKymographImagesFromList(myList, true);
-	}
-
-	// ------------------------------------------------
-
-	public boolean zload_Spots() {
-		boolean flag1 = zloadMCSpots_Only();
-		return flag1 & cagesArray.zzload_Spots(resultsDirectory);
-	}
-
-	public boolean zloadMCSpots_Only() {
-		return load_MS96_cages();
-//		String mcSpotsFileName = findFile_3Locations(cagesArray.ID_MS96_cages_XML, EXPT_DIRECTORY, BIN_DIRECTORY,
-//				IMG_DIRECTORY);
-//		if (mcSpotsFileName == null && seqCamData != null)
-//			return false;
-//
-//		return spotsArray.xmlLoad_MCSpots_Descriptors(mcSpotsFileName);
-	}
-
-	public boolean zsave_MCSpots_Only() {
-		return save_MS96_cages();
-//		String mcSpotsFileName = resultsDirectory + File.separator + spotsArray.getXMLSpotsName();
-//		boolean flag = spotsArray.xmlSave_MCSpots_Descriptors(mcSpotsFileName);
-//		return flag;
-	}
-
-	public boolean zsave_Spots() {
-		return save_MS96_cages();
-//		return spotsArray.save_Spots(resultsDirectory);
-	}
-
-	public boolean zload_SpotsMeasures() {
-		return load_MS96_spotsMeasures();
-//		return spotsArray.load_Measures(getResultsDirectory());
-	}
-
-	public boolean zsave_SpotsMeasures() {
-		return save_MS96_spotsMeasures();
-//		return spotsArray.save_Measures(getResultsDirectory());
-	}
-
-	public boolean zopenSpotsMeasures() {
-		if (seqCamData == null)
-			seqCamData = new SequenceCamData();
-		load_MS96_experiment();
-
-		getFileIntervalsFromSeqCamData();
-		load_MS96_cages();
-		load_MS96_spotsMeasures();
-		return true;
 	}
 
 	// ------------------------------------------------
@@ -655,7 +597,7 @@ public class Experiment {
 		case CAP_STIM:
 		case CAP_CONC:
 			if (replaceSpotsFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue))
-				zsave_MCSpots_Only();
+				save_MS96_cages();
 			break;
 		default:
 			break;
@@ -801,7 +743,7 @@ public class Experiment {
 	private boolean replaceSpotsFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
 		if (cagesArray.cagesList.size() == 0)
-			zloadMCSpots_Only();
+			load_MS96_cages();
 		boolean flag = false;
 		for (Cage cage : cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
@@ -823,7 +765,7 @@ public class Experiment {
 
 	private void addSpotsValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
 		if (cagesArray.cagesList.size() == 0)
-			zloadMCSpots_Only();
+			load_MS96_cages();
 		for (Cage cage : cagesArray.cagesList)
 			for (Spot spot : cage.spotsArray.spotsList)
 				addValue(spot.getSpotField(fieldEnumCode), textList);

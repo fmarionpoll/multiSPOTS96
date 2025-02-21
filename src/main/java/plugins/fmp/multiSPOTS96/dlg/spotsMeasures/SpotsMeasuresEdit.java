@@ -182,7 +182,7 @@ public class SpotsMeasuresEdit extends JPanel implements PropertyChangeListener 
 			buildMedianButton.setText(buildMedianString);
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				exp.zload_SpotsMeasures();
+				exp.load_MS96_spotsMeasures();
 				parent0.dlgMeasure.tabGraphs.displayGraphsPanels(exp);
 			}
 		}

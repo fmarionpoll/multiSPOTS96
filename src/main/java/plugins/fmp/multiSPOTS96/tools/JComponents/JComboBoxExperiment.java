@@ -117,14 +117,22 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 					exp.setBinSubDirectory(stringExpBinSubDirectory);
 					if (stringExpBinSubDirectory == null)
 						exp.checkKymosDirectory(exp.getBinSubDirectory());
-					if (loadSpots)
-						exp.zopenSpotsMeasures();
+					exp.load_MS96_experiment();
+					exp.load_MS96_cages();
+
+					if (loadSpots) {
+//						exp.zopenSpotsMeasures();
+//						if (seqCamData == null)
+//							seqCamData = new SequenceCamData()
+//						getFileIntervalsFromSeqCamData();
+						exp.load_MS96_spotsMeasures();
+					}
 					if (loadDrosoTrack)
 						exp.zopenPositionsMeasures();
 
 					int nCages = exp.cagesArray.cagesList.size();
 					int nSpotsPerCage = exp.cagesArray.nColumnsPerCage * exp.cagesArray.nRowsPerCage;
-					int nMaxSpots = nCages* nSpotsPerCage;
+					int nMaxSpots = nCages * nSpotsPerCage;
 					if (maxSizeOfSpotsArrays < nMaxSpots) {
 						maxSizeOfSpotsArrays = nMaxSpots;
 						if (maxSizeOfSpotsArrays % 2 != 0)
