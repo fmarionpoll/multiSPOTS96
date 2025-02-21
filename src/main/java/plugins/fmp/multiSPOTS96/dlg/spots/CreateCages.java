@@ -235,7 +235,7 @@ public class CreateCages extends JPanel {
 		// erase existing cages
 		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq), false);
 		exp.cagesArray.cagesList.clear();
-		exp.cagesArray = new CagesArray();
+		exp.cagesArray = new CagesArray(n_columns, n_rows);
 		createCagesArrayFromGrid(exp, roiGrid, n_columns, n_rows, width_interval, height_interval);
 	}
 
@@ -243,7 +243,7 @@ public class CreateCages extends JPanel {
 			int width_interval, int height_interval) {
 		Point2D.Double[][] grid = roiGrid.getGridPoints();
 		// test if dimensions are ok
-		if (grid.length != (nrows + 1) || grid[0].length != (ncolumns + 1)) {
+		if (grid.length != (ncolumns + 1) || grid[0].length != (nrows + 1)) {
 			System.out.println("error in the dimensions of grid");
 		}
 		// generate cage frames

@@ -18,8 +18,8 @@ import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 public class ROI2DGrid implements ROIListener {
 
 	private Point2D.Double[][] grid;
-	private ArrayList<ROI2DPolyLine> colRois;
-	private ArrayList<ROI2DPolyLine> rowRois;
+	private ArrayList<ROI2DPolyLine> roisColumnList;
+	private ArrayList<ROI2DPolyLine> roiRowList;
 	private ArrayList<ROI2DPolygonPlus> areaRois;
 	private int grid_n_rows = 0;
 	private int grid_n_columns = 0;
@@ -32,30 +32,30 @@ public class ROI2DGrid implements ROIListener {
 		this.grid_n_rows = n_rows + 1;
 		this.grid_n_columns = n_columns + 1;
 		grid = createGridWithPolygon(polygon, n_columns, n_rows);
-		colRois = new ArrayList<ROI2DPolyLine>(grid_n_columns);
-		rowRois = new ArrayList<ROI2DPolyLine>(grid_n_rows);
+		roisColumnList = new ArrayList<ROI2DPolyLine>(grid_n_columns);
+		roiRowList = new ArrayList<ROI2DPolyLine>(grid_n_rows);
 
 		for (int icol = 0; icol < grid_n_columns; icol++) {
 			ROI2DPolyLine roi = getVerticalROI(icol);
 			roi.setName("col_" + icol);
-			colRois.add(roi);
+			roisColumnList.add(roi);
 			roi.addListener(this);
 		}
 
 		for (int irow = 0; irow < grid_n_rows; irow++) {
 			ROI2DPolyLine roi = getHorizontalROI(irow);
 			roi.setName("row_" + irow);
-			rowRois.add(roi);
+			roiRowList.add(roi);
 			roi.addListener(this);
 		}
 	}
 
 	public ArrayList<ROI2DPolyLine> getHorizontalRois() {
-		return rowRois;
+		return roiRowList;
 	}
 
 	public ArrayList<ROI2DPolyLine> getVerticalRois() {
-		return colRois;
+		return roisColumnList;
 	}
 
 	public ArrayList<ROI2DPolygonPlus> getAreaRois() {
@@ -91,10 +91,10 @@ public class ROI2DGrid implements ROIListener {
 	}
 
 	public void clearGridRois(Sequence seq) {
-		if (rowRois != null && rowRois.size() > 0)
-			seq.removeROIs(rowRois, false);
-		if (colRois != null && colRois.size() > 0)
-			seq.removeROIs(colRois, false);
+		if (roiRowList != null && roiRowList.size() > 0)
+			seq.removeROIs(roiRowList, false);
+		if (roisColumnList != null && roisColumnList.size() > 0)
+			seq.removeROIs(roisColumnList, false);
 		if (areaRois != null && areaRois.size() > 0)
 			seq.removeROIs(areaRois, false);
 	}
@@ -231,12 +231,12 @@ public class ROI2DGrid implements ROIListener {
 	}
 
 	private void updateHorizontalROIFromGridValues(int irow) {
-		ROI2DPolyLine roi = rowRois.get(irow);
+		ROI2DPolyLine roi = roiRowList.get(irow);
 		roi.setPolyline2D(getHorizontalLine(irow));
 	}
 
 	private void updateVerticalROIFromGridValues(int icol) {
-		ROI2DPolyLine roi = colRois.get(icol);
+		ROI2DPolyLine roi = roisColumnList.get(icol);
 		roi.setPolyline2D(getVerticalLine(icol));
 	}
 

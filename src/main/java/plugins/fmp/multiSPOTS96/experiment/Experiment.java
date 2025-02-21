@@ -464,7 +464,7 @@ public class Experiment {
 	private String getXML_MS96_cages_Location(String XMLfileName) {
 		String fileName = findFile_3Locations(XMLfileName, EXPT_DIRECTORY, BIN_DIRECTORY, IMG_DIRECTORY);
 		if (fileName == null)
-			fileName = findFile_3Locations(cagesArray.ID_MS96_cages_XML, IMG_DIRECTORY, EXPT_DIRECTORY, BIN_DIRECTORY);
+			fileName = concatenateExptDirectoryWithSubpathAndName(null, XMLfileName);
 		return fileName;
 	}
 

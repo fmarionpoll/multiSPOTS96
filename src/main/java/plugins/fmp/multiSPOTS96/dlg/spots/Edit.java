@@ -41,9 +41,9 @@ public class Edit extends JPanel {
 	private PositionWithTimePanel editPositionWithTime = null;
 
 	private final String dummyname = "perimeter_enclosing";
-	private ROI2DPolygon spotsFrame = null;
+	private ROI2DPolygon roiFrame = null;
 	private ArrayList<Spot> enclosedSpots = null;
-	private ROI2DPolyLine snakeRoi = null;
+	private ROI2DPolyLine roiSnake = null;
 
 	private JButton erodeButton = new JButton("Contract spots");
 	private JButton dilateButton = new JButton("Dilate spots");
@@ -175,7 +175,8 @@ public class Edit extends JPanel {
 	}
 
 	private void setSpotsFrame(int t, Experiment exp) {
-		if (spotsFrame == null) {
+		removeSpotsFrame(exp);
+		if (roiFrame == null) {
 			ArrayList<ROI2D> listRoisAtT = new ArrayList<ROI2D>();
 			for (Cage cage : exp.cagesArray.cagesList) {
 				for (Spot spot : cage.spotsArray.spotsList) {
@@ -184,58 +185,63 @@ public class Edit extends JPanel {
 					listRoisAtT.add(kymoROI2D.getRoi_in());
 				}
 				Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(listRoisAtT);
-				spotsFrame = new ROI2DPolygon(polygon);
-				spotsFrame.setName(dummyname);
-				spotsFrame.setColor(Color.YELLOW);
+				roiFrame = new ROI2DPolygon(polygon);
+				roiFrame.setName(dummyname);
+				roiFrame.setColor(Color.YELLOW);
 			}
 		}
 
-		exp.seqCamData.seq.removeROI(spotsFrame);
-		exp.seqCamData.seq.addROI(spotsFrame);
-		exp.seqCamData.seq.setSelectedROI(spotsFrame);
+		exp.seqCamData.seq.addROI(roiFrame);
+		exp.seqCamData.seq.setSelectedROI(roiFrame);
 		removeSnake(exp);
 	}
 
 	private void displaySnake(Experiment exp) {
-		enclosedSpots = exp.cagesArray.getSpotsEnclosed(spotsFrame);
+		removeSpotsFrame(exp);
+		removeSnake(exp);
+		enclosedSpots = exp.cagesArray.getSpotsEnclosed(roiFrame);
 		if (enclosedSpots.size() > 0) {
 			ArrayList<Point2D> listPoint = new ArrayList<Point2D>();
 			for (Spot spot : enclosedSpots) {
 				listPoint.add(new Point2D.Double(spot.spotXCoord + spot.spotRadius, spot.spotYCoord + spot.spotRadius));
 			}
-			snakeRoi = new ROI2DPolyLine(listPoint);
-			exp.seqCamData.seq.addROI(snakeRoi);
-			exp.seqCamData.seq.setSelectedROI(snakeRoi);
+			roiSnake = new ROI2DPolyLine(listPoint);
+			exp.seqCamData.seq.addROI(roiSnake);
+			exp.seqCamData.seq.setSelectedROI(roiSnake);
 		}
 	}
 
 	private void removeSnake(Experiment exp) {
-		if (snakeRoi != null)
-			exp.seqCamData.seq.removeROI(snakeRoi);
-		snakeRoi = null;
+		if (roiSnake != null)
+			exp.seqCamData.seq.removeROI(roiSnake);
+		roiSnake = null;
 	}
 
 	private void removeSpotsFrame(Experiment exp) {
-		if (spotsFrame != null)
-			exp.seqCamData.seq.removeROI(spotsFrame);
+		if (roiFrame != null)
+			exp.seqCamData.seq.removeROI(roiFrame);
 	}
 
 	private void updateSpotsFromSnake(Experiment exp) {
-		if (enclosedSpots != null && enclosedSpots.size() > 0 && snakeRoi != null) {
-			Polyline2D snake = snakeRoi.getPolyline2D();
-			int i = 0;
-			for (Spot spot : enclosedSpots) {
-				spot.spotXCoord = (int) snake.xpoints[i];
-				spot.spotYCoord = (int) snake.ypoints[i];
-				spot.getRoi().setPosition2D(
-						new Point2D.Double(snake.xpoints[i] - spot.spotRadius, snake.ypoints[i] - spot.spotRadius));
-				i++;
-			}
+		if (enclosedSpots == null || enclosedSpots.size() < 1 || roiSnake == null)
+			return;
+
+		exp.seqCamData.seq.beginUpdate();
+		Polyline2D snake = roiSnake.getPolyline2D();
+		int i = 0;
+		for (Spot spot : enclosedSpots) {
+			spot.spotXCoord = (int) snake.xpoints[i];
+			spot.spotYCoord = (int) snake.ypoints[i];
+			spot.spotROI2D.setPosition2D(
+					new Point2D.Double(snake.xpoints[i] - spot.spotRadius, snake.ypoints[i] - spot.spotRadius));
+			i++;
 		}
+		exp.seqCamData.seq.endUpdate();
+		exp.seqCamData.seq.removeROI(roiSnake);
 	}
 
 	private void resizeSpots(Experiment exp, int delta) {
-		enclosedSpots = exp.cagesArray.getSpotsEnclosed(spotsFrame);
+		enclosedSpots = exp.cagesArray.getSpotsEnclosed(roiFrame);
 		if (enclosedSpots.size() > 0) {
 			for (Spot spot : enclosedSpots) {
 				ROI2DShape roi = (ROI2DShape) spot.getRoi();

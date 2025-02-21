@@ -69,6 +69,15 @@ public class CagesArray {
 	public final String ID_MS96_spotsMeasures_XML = "MS96_spotsMeasures.xml";
 	public final String ID_MS96_fliesPositions_XML = "MS96_fliesPositions.xml";
 
+	public CagesArray() {
+	}
+
+	public CagesArray(int ncolumns, int nrows) {
+		nCagesAlongX = ncolumns;
+		nCagesAlongY = nrows;
+		cagesList = new ArrayList<Cage>(ncolumns * nrows);
+	}
+
 	public void clearAllMeasures(int option_detectCage) {
 		for (Cage cage : cagesList) {
 			int cagenb = cage.getCageNumberInteger();
@@ -545,12 +554,15 @@ public class CagesArray {
 
 	public void transferCageSpotsToSequenceAsROIs(Sequence seq) {
 		seq.removeROIs(ROIUtilities.getROIsContainingString("spot", seq), false);
-		List<ROI2D> spotROIList = new ArrayList<ROI2D>(cagesList.get(0).spotsArray.spotsList.size() * cagesList.size());
-		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList)
-				spotROIList.add(spot.getRoi());
+		if (cagesList.size() > 0) {
+			List<ROI2D> spotROIList = new ArrayList<ROI2D>(
+					cagesList.get(0).spotsArray.spotsList.size() * cagesList.size());
+			for (Cage cage : cagesList) {
+				for (Spot spot : cage.spotsArray.spotsList)
+					spotROIList.add(spot.getRoi());
+			}
+			seq.addROIs(spotROIList, true);
 		}
-		seq.addROIs(spotROIList, true);
 	}
 
 	public void transferROIsFromSequenceToCageSpots(Sequence seq) {
@@ -600,27 +612,32 @@ public class CagesArray {
 	}
 
 	public ArrayList<Spot> getSpotsEnclosed(ROI2DPolygon envelopeRoi) {
+		if (envelopeRoi == null)
+			return getSpotsSelected();
+
 		ArrayList<Spot> enclosedSpots = new ArrayList<Spot>();
-		if (envelopeRoi != null) {
-			for (Cage cage : cagesList) {
-				for (Spot spot : cage.spotsArray.spotsList) {
-					try {
-						if (envelopeRoi.contains(spot.getRoi())) {
-							spot.getRoi().setSelected(true);
-							enclosedSpots.add(spot);
-						}
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				try {
+					if (envelopeRoi.contains(spot.getRoi())) {
+						spot.getRoi().setSelected(true);
+						enclosedSpots.add(spot);
 					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-		} else {
-			for (Cage cage : cagesList) {
-				for (Spot spot : cage.spotsArray.spotsList) {
-					if (spot.getRoi().isSelected())
-						enclosedSpots.add(spot);
-				}
+		}
+		return enclosedSpots;
+	}
+
+	public ArrayList<Spot> getSpotsSelected() {
+		ArrayList<Spot> enclosedSpots = new ArrayList<Spot>();
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				if (spot.getRoi().isSelected())
+					enclosedSpots.add(spot);
 			}
 		}
 		return enclosedSpots;
