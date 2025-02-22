@@ -27,8 +27,8 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 	JTabbedPane tabbedPane = new JTabbedPane();
 
 //			ThresholdColors colorsThreshold = new ThresholdColors();
-	CreateCages tabCreateCages = new CreateCages();
-	CreateSpots tabCreateSpots = new CreateSpots();
+	Cages tabCreateCages = new Cages();
+	Spots tabCreateSpots = new Spots();
 	Infos tabInfos = new Infos();
 	DetectContours tabShape = new DetectContours();
 	Edit tabEdit = new Edit();

@@ -34,7 +34,7 @@ import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DPolygonPlus;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
-public class CreateSpots extends JPanel {
+public class Spots extends JPanel {
 	/**
 	 * 
 	 */
@@ -79,7 +79,6 @@ public class CreateSpots extends JPanel {
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(duplicateAllButton);
-//		panel2.add(new JLabel("with"));
 		panel2.add(nFliesPerCageJSpinner);
 		panel2.add(flyLabel);
 		nFliesPerCageJSpinner.setPreferredSize(new Dimension(40, 20));
