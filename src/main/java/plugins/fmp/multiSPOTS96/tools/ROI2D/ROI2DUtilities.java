@@ -4,12 +4,16 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.gui.frame.progress.FailedAnnounceFrame;
+import icy.roi.ROI;
 import icy.roi.ROI2D;
+import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
 import icy.util.XMLUtil;
@@ -252,4 +256,41 @@ public class ROI2DUtilities {
 		roiLine.setPoints(pts);
 	}
 
+	public static void mergeROI2DsListNoDuplicate(List<ROI2D> seqList, List<ROI2D> listRois, Sequence seq) {
+		if (seqList.isEmpty()) {
+			for (ROI2D roi : listRois)
+				if (roi != null)
+					seqList.add(roi);
+		}
+
+		for (ROI2D seqRoi : seqList) {
+			Iterator<ROI2D> iterator = listRois.iterator();
+			while (iterator.hasNext()) {
+				ROI2D roi = iterator.next();
+				if (seqRoi == roi)
+					iterator.remove();
+				else if (seqRoi.getName().equals(roi.getName())) {
+					seqRoi.copyFrom(roi);
+					iterator.remove();
+				}
+			}
+		}
+	}
+
+	public static void removeROI2DsMissingChar(List<ROI2D> listRois, char character) {
+		Iterator<ROI2D> iterator = listRois.iterator();
+		while (iterator.hasNext()) {
+			ROI2D roi = iterator.next();
+			if (roi.getName().indexOf(character) < 0)
+				iterator.remove();
+		}
+	}
+
+	public static List<ROI2D> loadROI2DsFromXML(Document doc) {
+		List<ROI> localList = ROI.loadROIsFromXML(XMLUtil.getRootElement(doc));
+		List<ROI2D> finalList = new ArrayList<ROI2D>(localList.size());
+		for (ROI roi : localList)
+			finalList.add((ROI2D) roi);
+		return finalList;
+	}
 }
