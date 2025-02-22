@@ -22,14 +22,12 @@ import javax.swing.event.ChangeListener;
 
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageUtil;
-import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.type.DataType;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
 import plugins.fmp.multiSPOTS96.tools.polyline.Blobs;
@@ -101,11 +99,10 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq),
-							false);
+					exp.seqCamData.removeROIsContainingString("cage");
 					exp.cagesArray.removeCages();
 					createROIsFromSelectedPolygonAndSpots(exp);
-					exp.cagesArray.transferROIsFromSequenceToCages(exp.seqCamData.seq);
+					exp.cagesArray.transferROIsFromSequenceToCages(exp.seqCamData);
 //					if (exp.spotsArray.spotsList.size() > 0)
 //						exp.cagesArray.transferNFliesFromSpotsToCages(exp.spotsArray);
 				}
@@ -181,7 +178,7 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 	}
 
 	private void createROIsFromSelectedPolygonAndSpots(Experiment exp) {
-		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq), false);
+		exp.seqCamData.removeROIsContainingString("cage");
 		exp.cagesArray.removeCages();
 
 		int t = exp.seqCamData.currentFrame;
@@ -233,8 +230,8 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 		if (roiSnip == null)
 			return;
 
-		List<ROI> roiList = ROIUtilities.getROIsContainingString("cage", seqCamData.seq);
-		for (ROI cageRoi : roiList) {
+		List<ROI2D> roiList = seqCamData.getROIsContainingString("cage");
+		for (ROI2D cageRoi : roiList) {
 			if (roiSnip.intersects(cageRoi) && cageRoi instanceof ROI2DPolygon) {
 				Polygon2D oldPolygon = ((ROI2DPolygon) cageRoi).getPolygon2D();
 				if (oldPolygon == null)
@@ -263,16 +260,16 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 //		if (exp.spotsArray.spotsList.size() > 0) {
 //			polygon = exp.spotsArray.get2DPolygonEnclosingSpots();
 //		} else {
-			Rectangle rect = exp.seqCamData.seq.getBounds2D();
-			List<Point2D> points = new ArrayList<Point2D>();
-			int rectleft = rect.x + rect.width / 6;
-			int rectright = rect.x + rect.width * 5 / 6;
-			int recttop = rect.y + rect.height * 2 / 3;
-			points.add(new Point2D.Double(rectleft, recttop));
-			points.add(new Point2D.Double(rectright, recttop));
-			points.add(new Point2D.Double(rectright, rect.y + rect.height - 4));
-			points.add(new Point2D.Double(rectleft, rect.y + rect.height - 4));
-			polygon = new Polygon2D(points);
+		Rectangle rect = exp.seqCamData.seq.getBounds2D();
+		List<Point2D> points = new ArrayList<Point2D>();
+		int rectleft = rect.x + rect.width / 6;
+		int rectright = rect.x + rect.width * 5 / 6;
+		int recttop = rect.y + rect.height * 2 / 3;
+		points.add(new Point2D.Double(rectleft, recttop));
+		points.add(new Point2D.Double(rectright, recttop));
+		points.add(new Point2D.Double(rectright, rect.y + rect.height - 4));
+		points.add(new Point2D.Double(rectleft, rect.y + rect.height - 4));
+		polygon = new Polygon2D(points);
 //		}
 		ROI2DPolygon roi = new ROI2DPolygon(polygon);
 		roi.setName(dummyname);

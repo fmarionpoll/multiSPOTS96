@@ -21,7 +21,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import icy.gui.frame.progress.AnnounceFrame;
-import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
@@ -31,7 +30,6 @@ import plugins.fmp.multiSPOTS96.experiment.ExperimentUtils;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
@@ -191,18 +189,18 @@ public class CreateCages extends JPanel {
 	}
 
 	private void selectRoiEnclosingCages(Experiment exp) {
-		Sequence sequence = exp.seqCamData.seq;
-		List<ROI> listrois = ROIUtilities.getROIsContainingString(cages_perimeter, sequence);
+		Sequence seq = exp.seqCamData.seq;
+		List<ROI2D> listrois = exp.seqCamData.getROIsContainingString(cages_perimeter);
 		ROI2DPolygon roi = null;
 		if (listrois != null && listrois.size() > 0)
 			roi = (ROI2DPolygon) listrois.get(0);
 		else {
 			roi = new ROI2DPolygon(getCagesPolygon(exp));
 			roi.setName(cages_perimeter);
-			sequence.addROI(roi);
+			seq.addROI(roi);
 		}
 		roi.setColor(Color.orange);
-		sequence.setSelectedROI(roi);
+		seq.setSelectedROI(roi);
 	}
 
 	private Polygon2D getCagesPolygon(Experiment exp) {
@@ -233,7 +231,7 @@ public class CreateCages extends JPanel {
 		}
 
 		// erase existing cages
-		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq), false);
+		exp.seqCamData.removeROIsContainingString("cage");
 		exp.cagesArray.cagesList.clear();
 		exp.cagesArray = new CagesArray(n_columns, n_rows);
 		createCagesArrayFromGrid(exp, roiGrid, n_columns, n_rows, width_interval, height_interval);
@@ -296,7 +294,7 @@ public class CreateCages extends JPanel {
 	}
 
 	private void createGrid(Experiment exp) {
-		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq), false);
+		exp.seqCamData.removeROIsContainingString("cage");
 		int n_columns = 6;
 		int n_rows = 8;
 		try {

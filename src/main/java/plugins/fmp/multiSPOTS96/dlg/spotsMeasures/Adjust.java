@@ -18,13 +18,11 @@ import javax.swing.SwingConstants;
 
 import icy.gui.util.GuiUtil;
 import icy.image.IcyBufferedImage;
-import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.type.collection.array.Array1DUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.Line2DPlus;
 import plugins.kernel.roi.roi2d.ROI2DLine;
 
@@ -85,8 +83,8 @@ public class Adjust extends JPanel {
 				vinputImage.isSignedDataType());
 
 		// loop through all lines
-		List<ROI> capillaryRois = ROIUtilities.getROIsContainingString("line", seqCamData.seq);
-		for (ROI roi : capillaryRois) {
+		List<ROI2D> capillaryRois = seqCamData.getROIsContainingString("line");
+		for (ROI2D roi : capillaryRois) {
 			if (roi instanceof ROI2DLine) {
 				Line2D line = roisCenterLinetoCapillary(sourceValues, xwidth, (ROI2DLine) roi, jitter);
 				((ROI2DLine) roi).setLine(line);
@@ -218,9 +216,9 @@ public class Adjust extends JPanel {
 			refLineUpper = new Line2D.Double(0, seqheight / 3, seqwidth, seqheight / 3);
 			refLineLower = new Line2D.Double(0, 2 * seqheight / 3, seqwidth, 2 * seqheight / 3);
 
-			List<ROI> capillaryRois = ROIUtilities.getROIsContainingString("line", seqCamData.seq);
+			List<ROI2D> capillaryRois = seqCamData.getROIsContainingString("line");
 			Rectangle extRect = new Rectangle(((ROI2D) capillaryRois.get(0)).getBounds());
-			for (ROI roi : capillaryRois) {
+			for (ROI2D roi : capillaryRois) {
 				Rectangle rect = ((ROI2D) roi).getBounds();
 				extRect.add(rect);
 			}

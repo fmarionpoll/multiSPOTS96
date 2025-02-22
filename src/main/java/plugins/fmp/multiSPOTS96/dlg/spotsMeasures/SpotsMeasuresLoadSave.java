@@ -71,7 +71,7 @@ public class SpotsMeasuresLoadSave extends JPanel {
 		boolean flag = exp.load_MS96_cages();
 		if (flag) {
 			exp.load_MS96_spotsMeasures();
-			exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData.seq);
+			exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
 			exp.cagesArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqSpotKymos.seq);
 		}
 		return flag;
@@ -80,7 +80,7 @@ public class SpotsMeasuresLoadSave extends JPanel {
 	public boolean saveSpotsArray_file(Experiment exp) {
 		parent0.dlgExperiment.getExperimentInfosFromDialog(exp);
 		boolean flag = exp.save_MS96_experiment();
-		exp.cagesArray.transferROIsFromSequenceToCageSpots(exp.seqCamData.seq);
+		exp.cagesArray.transferROIsFromSequenceToCageSpots(exp.seqCamData);
 		flag &= exp.save_MS96_cages();
 		flag &= exp.save_MS96_spotsMeasures();
 		return flag;

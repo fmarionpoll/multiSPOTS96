@@ -243,7 +243,7 @@ public class Experiment {
 	public boolean loadCamDataSpots() {
 		load_MS96_cages();
 		if (seqCamData != null && seqCamData.seq != null)
-			cagesArray.transferCageSpotsToSequenceAsROIs(seqCamData.seq);
+			cagesArray.transferCageSpotsToSequenceAsROIs(seqCamData);
 
 		return (seqCamData != null && seqCamData.seq != null);
 	}

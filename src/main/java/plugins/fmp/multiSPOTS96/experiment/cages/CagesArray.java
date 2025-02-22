@@ -14,7 +14,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
@@ -202,7 +201,7 @@ public class CagesArray {
 			return false;
 
 		if (xmlLoadCages(XMLUtil.getRootElement(doc))) {
-			transferCagesToSequenceAsROIs(exp.seqCamData.seq);
+			transferCagesToSequenceAsROIs(exp.seqCamData);
 			return true;
 		} else {
 			System.out.println("Cages:xmlReadCagesFromFileNoQuestion() failed to load cages from file");
@@ -323,8 +322,8 @@ public class CagesArray {
 		}
 	}
 
-	public List<ROI2D> getROIsWithCageName(Sequence seq) {
-		List<ROI2D> roiList = seq.getROI2Ds();
+	public List<ROI2D> getROIsWithCageName(SequenceCamData seqCamData) {
+		List<ROI2D> roiList = seqCamData.seq.getROI2Ds();
 		List<ROI2D> roisCageList = new ArrayList<ROI2D>();
 		for (ROI2D roi : roiList) {
 			String csName = roi.getName();
@@ -349,16 +348,16 @@ public class CagesArray {
 
 	// --------------
 
-	public void transferCagesToSequenceAsROIs(Sequence seq) {
-		seq.removeROIs(ROIUtilities.getROIsContainingString("cage", seq), false);
+	public void transferCagesToSequenceAsROIs(SequenceCamData seqCamData) {
+		seqCamData.removeROIsContainingString("cage");
 		List<ROI2D> cageROIList = new ArrayList<ROI2D>(cagesList.size());
 		for (Cage cage : cagesList)
 			cageROIList.add(cage.getRoi());
-		seq.addROIs(cageROIList, true);
+		seqCamData.seq.addROIs(cageROIList, true);
 	}
 
-	public void transferROIsFromSequenceToCages(Sequence seq) {
-		List<ROI2D> roiList = getROIsWithCageName(seq);
+	public void transferROIsFromSequenceToCages(SequenceCamData seqCamData) {
+		List<ROI2D> roiList = seqCamData.getROIsContainingString("cage");
 		Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
 		addMissingCages(roiList);
 		removeOrphanCages(roiList);
@@ -552,8 +551,8 @@ public class CagesArray {
 
 	// --------------------------------------------------------
 
-	public void transferCageSpotsToSequenceAsROIs(Sequence seq) {
-		seq.removeROIs(ROIUtilities.getROIsContainingString("spot", seq), false);
+	public void transferCageSpotsToSequenceAsROIs(SequenceCamData seqCamData) {
+		seqCamData.removeROIsContainingString("spot");
 		if (cagesList.size() > 0) {
 			List<ROI2D> spotROIList = new ArrayList<ROI2D>(
 					cagesList.get(0).spotsArray.spotsList.size() * cagesList.size());
@@ -561,28 +560,24 @@ public class CagesArray {
 				for (Spot spot : cage.spotsArray.spotsList)
 					spotROIList.add(spot.getRoi());
 			}
-			seq.addROIs(spotROIList, true);
+			seqCamData.seq.addROIs(spotROIList, true);
 		}
 	}
 
-	public void transferROIsFromSequenceToCageSpots(Sequence seq) {
-		List<ROI> listROISSpot = ROIUtilities.getROIsContainingString("spot", seq);
+	public void transferROIsFromSequenceToCageSpots(SequenceCamData seqCamData) {
+		List<ROI2D> listROISSpot = seqCamData.getROIsContainingString("spot");
 		Collections.sort(listROISSpot, new Comparators.ROI_Name_Comparator());
-		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				spot.valid = false;
-				String spotName = spot.getRoi().getName();
-				Iterator<ROI> iterator = listROISSpot.iterator();
-				while (iterator.hasNext()) {
-					ROI roi = iterator.next();
-					String roiName = roi.getName();
-					if (roiName.equals(spotName) && (roi instanceof ROI2DShape)) {
-						spot.setRoi((ROI2DShape) roi);
-						spot.valid = true;
-					}
-					if (spot.valid) {
-						iterator.remove();
-						break;
+
+		for (ROI2D roi : listROISSpot) {
+			String roiName = roi.getName();
+			if (roi instanceof ROI2DShape) {
+				for (Cage cage : cagesList) {
+					for (Spot spot : cage.spotsArray.spotsList) {
+						String spotRoiName = spot.getRoi().getName();
+						if (roiName.equals(spotRoiName)) {
+							spot.setRoi((ROI2DShape) roi);
+							spot.valid = true;
+						}
 					}
 				}
 			}

@@ -22,7 +22,6 @@ import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
@@ -90,11 +89,10 @@ public class BuildCagesAsArray extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq),
-							false);
+					exp.seqCamData.removeROIsContainingString("cage");
 					exp.cagesArray.removeCages();
 					createROIsFromSelectedPolygon(exp);
-					exp.cagesArray.transferROIsFromSequenceToCages(exp.seqCamData.seq);
+					exp.cagesArray.transferROIsFromSequenceToCages(exp.seqCamData);
 //					if (exp.spotsArray.spotsList.size() > 0)
 //						exp.cagesArray.transferNFliesFromSpotsToCages(exp.spotsArray);
 				}
@@ -135,16 +133,16 @@ public class BuildCagesAsArray extends JPanel {
 //		if (exp.spotsArray.spotsList.size() > 0) {
 //			polygon = exp.spotsArray.get2DPolygonEnclosingSpots();
 //		} else {
-			Rectangle rect = exp.seqCamData.seq.getBounds2D();
-			List<Point2D> points = new ArrayList<Point2D>();
-			int rectleft = rect.x + rect.width / 6;
-			int rectright = rect.x + rect.width * 5 / 6;
-			int recttop = rect.y + rect.height * 2 / 3;
-			points.add(new Point2D.Double(rectleft, recttop));
-			points.add(new Point2D.Double(rectright, recttop));
-			points.add(new Point2D.Double(rectright, rect.y + rect.height - 4));
-			points.add(new Point2D.Double(rectleft, rect.y + rect.height - 4));
-			polygon = new Polygon2D(points);
+		Rectangle rect = exp.seqCamData.seq.getBounds2D();
+		List<Point2D> points = new ArrayList<Point2D>();
+		int rectleft = rect.x + rect.width / 6;
+		int rectright = rect.x + rect.width * 5 / 6;
+		int recttop = rect.y + rect.height * 2 / 3;
+		points.add(new Point2D.Double(rectleft, recttop));
+		points.add(new Point2D.Double(rectright, recttop));
+		points.add(new Point2D.Double(rectright, rect.y + rect.height - 4));
+		points.add(new Point2D.Double(rectleft, rect.y + rect.height - 4));
+		polygon = new Polygon2D(points);
 //		}
 		ROI2DPolygon roi = new ROI2DPolygon(polygon);
 		roi.setName(dummyname);
@@ -178,7 +176,7 @@ public class BuildCagesAsArray extends JPanel {
 		seqCamData.seq.removeROI(roi);
 
 		// generate cage frames
-		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("cage", exp.seqCamData.seq), false);
+		exp.seqCamData.removeROIsContainingString("cage");
 		int iRoot = 0;
 		String cageRoot = "cage";
 

@@ -31,7 +31,9 @@ import icy.file.SequenceFileImporter;
 import icy.gui.viewer.Viewer;
 import icy.image.IcyBufferedImage;
 import icy.roi.ROI;
+import icy.roi.ROI2D;
 import icy.sequence.Sequence;
+import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
 
 public class SequenceCamData {
@@ -348,6 +350,28 @@ public class SequenceCamData {
 			if (cs.contains(pattern))
 				layer.setVisible(isVisible);
 		}
+	}
+
+	public List<ROI2D> getROIsContainingString(String string) {
+		List<ROI2D> roiList = seq.getROI2Ds();
+		Collections.sort(roiList, new Comparators.ROI_Name_Comparator());
+		List<ROI2D> listROIsMatchingString = new ArrayList<ROI2D>();
+		for (ROI2D roi : roiList) {
+			if (roi.getName().contains(string))
+				listROIsMatchingString.add(roi);
+		}
+		return listROIsMatchingString;
+	}
+
+	public void removeROIsContainingString(String string) {
+		List<ROI> roiList = seq.getROIs();
+		Collections.sort(roiList, new Comparators.ROI_Name_Comparator());
+		List<ROI> listROIsMatchingString = new ArrayList<ROI>();
+		for (ROI roi : roiList) {
+			if (roi.getName().contains(string))
+				listROIsMatchingString.add(roi);
+		}
+		seq.removeROIs(listROIsMatchingString, false);
 	}
 
 }

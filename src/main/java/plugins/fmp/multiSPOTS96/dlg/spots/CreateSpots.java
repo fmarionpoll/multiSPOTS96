@@ -32,7 +32,6 @@ import plugins.fmp.multiSPOTS96.experiment.ExperimentUtils;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DPolygonPlus;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROIUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class CreateSpots extends JPanel {
@@ -108,10 +107,8 @@ public class CreateSpots extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("carre", exp.seqCamData.seq),
-							false);
-					exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("spot", exp.seqCamData.seq),
-							false);
+					exp.seqCamData.removeROIsContainingString("carre");
+					exp.seqCamData.removeROIsContainingString("spot");
 					int cagenb = findSelectedCage(exp);
 					zoomCage(exp, cagenb);
 				}
@@ -143,15 +140,13 @@ public class CreateSpots extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("spot", exp.seqCamData.seq),
-							false);
+					exp.seqCamData.removeROIsContainingString("spot");
 					createSpotsForAllCages(exp, roiGrid, referencePosition);
 
 					ExperimentUtils.transferSpotsToCamDataSequence(exp);
 					int nbFliesPerCage = (int) nFliesPerCageJSpinner.getValue();
 					exp.cagesArray.initCagesAndSpotsWithNFlies(nbFliesPerCage);
-					exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("carre", exp.seqCamData.seq),
-							false);
+					exp.seqCamData.removeROIsContainingString("carre");
 				}
 			}
 		});
@@ -179,7 +174,7 @@ public class CreateSpots extends JPanel {
 	}
 
 	private void restoreAreas(Experiment exp) {
-		exp.seqCamData.seq.removeROIs(ROIUtilities.getROIsContainingString("carre", exp.seqCamData.seq), false);
+		exp.seqCamData.removeROIsContainingString("carre");
 		ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.getAreaRois();
 		for (ROI2DPolygonPlus roi : listCarres) {
 			exp.seqCamData.seq.addROI(roi);
