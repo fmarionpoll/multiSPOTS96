@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.dlg.cages;
+package plugins.fmp.multiSPOTS96.dlg.z_unused_cages;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;

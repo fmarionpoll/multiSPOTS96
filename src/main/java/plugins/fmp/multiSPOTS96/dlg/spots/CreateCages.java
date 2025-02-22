@@ -52,7 +52,7 @@ public class CreateCages extends JPanel {
 
 	private int width_interval = 1;
 	private int height_interval = 1;
-	final String cages_perimeter = "perimeter";
+	final String cages_perimeter = "cages_perimeter";
 	private Polygon2D polygon2D = null;
 	private ROI2DGrid roiGrid = null;
 	private MultiSPOTS96 parent0;

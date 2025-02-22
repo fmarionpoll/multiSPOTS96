@@ -33,8 +33,7 @@ public class Edit extends JPanel {
 	 */
 	private static final long serialVersionUID = -7582410775062671523L;
 
-	private JButton editSpotsButton = new JButton("Change spots position with time");
-	private JCheckBox selectSpotsButton = new JCheckBox("Select spots within frame");
+	private JCheckBox selectSpotsButton = new JCheckBox("Select spots");
 	private JToggleButton displaySnakeButton = new JToggleButton("Display snake over spots");
 	private JButton updateSpotsFromSnakeButton = new JButton("Center spots to snake");
 	private MultiSPOTS96 parent0 = null;
@@ -47,6 +46,9 @@ public class Edit extends JPanel {
 
 	private JButton erodeButton = new JButton("Contract spots");
 	private JButton dilateButton = new JButton("Dilate spots");
+
+	// private JButton editSpotsWithTimeButton = new JButton("Change spots position
+	// with time");
 
 	void init(GridLayout capLayout, MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
@@ -66,7 +68,7 @@ public class Edit extends JPanel {
 		add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(editSpotsButton);
+//		panel2.add(editSpotsWithTimeButton);
 		add(panel2);
 
 		defineActionListeners();
@@ -79,15 +81,6 @@ public class Edit extends JPanel {
 	}
 
 	private void defineActionListeners() {
-		editSpotsButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp == null)
-					return;
-				openDialog();
-			}
-		});
 
 		selectSpotsButton.addActionListener(new ActionListener() {
 			@Override
@@ -143,6 +136,17 @@ public class Edit extends JPanel {
 				resizeSpots(exp, -1);
 			}
 		});
+
+//		editSpotsWithTimeButton.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(final ActionEvent e) {
+//				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+//				if (exp == null)
+//					return;
+//				openDialog();
+//			}
+//		});
+
 	}
 
 	public void openDialog() {
