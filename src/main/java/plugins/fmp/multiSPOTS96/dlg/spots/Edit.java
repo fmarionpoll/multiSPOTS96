@@ -35,7 +35,7 @@ public class Edit extends JPanel {
 
 	private JCheckBox selectSpotsButton = new JCheckBox("Select spots");
 	private JToggleButton displaySnakeButton = new JToggleButton("Display snake over spots");
-	private JButton updateSpotsFromSnakeButton = new JButton("Center spots to snake");
+	private JButton centerSpotsToSnakeButton = new JButton("Center spots to snake");
 	private MultiSPOTS96 parent0 = null;
 	private PositionWithTimePanel editPositionWithTime = null;
 
@@ -59,7 +59,7 @@ public class Edit extends JPanel {
 		JPanel panel0 = new JPanel(flowLayout);
 		panel0.add(selectSpotsButton);
 		panel0.add(displaySnakeButton);
-		panel0.add(updateSpotsFromSnakeButton);
+		panel0.add(centerSpotsToSnakeButton);
 		add(panel0);
 
 		JPanel panel1 = new JPanel(flowLayout);
@@ -77,7 +77,7 @@ public class Edit extends JPanel {
 
 	private void updateButtonsState(boolean isFrameSelected) {
 		displaySnakeButton.setEnabled(isFrameSelected);
-		updateSpotsFromSnakeButton.setEnabled((displaySnakeButton.isSelected()) ? isFrameSelected : false);
+		centerSpotsToSnakeButton.setEnabled((displaySnakeButton.isSelected()) ? isFrameSelected : false);
 	}
 
 	private void defineActionListeners() {
@@ -107,7 +107,7 @@ public class Edit extends JPanel {
 			}
 		});
 
-		updateSpotsFromSnakeButton.addActionListener(new ActionListener() {
+		centerSpotsToSnakeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();

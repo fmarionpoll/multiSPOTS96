@@ -47,7 +47,7 @@ public class Spots extends JPanel {
 	private JButton keepAreasButton = new JButton("(2) Keep selected areas");
 	private JButton restoreAreasButton = new JButton("restore areas");
 
-	private JButton duplicateAllButton = new JButton("(3) Create spots");
+	private JButton createSpotsButton = new JButton("(3) Create spots");
 	private JSpinner nFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
 	private JCheckBox shiftAreasForColumnsAfterMidLine = new JCheckBox("shift right cages", false);
 	private JSpinner shiftAreaJSpinner = new JSpinner(new SpinnerNumberModel(30, -500, 500, 1));
@@ -78,7 +78,7 @@ public class Spots extends JPanel {
 		panel1.add(restoreAreasButton);
 
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(duplicateAllButton);
+		panel2.add(createSpotsButton);
 		panel2.add(nFliesPerCageJSpinner);
 		panel2.add(flyLabel);
 		nFliesPerCageJSpinner.setPreferredSize(new Dimension(40, 20));
@@ -134,7 +134,7 @@ public class Spots extends JPanel {
 			}
 		});
 
-		duplicateAllButton.addActionListener(new ActionListener() {
+		createSpotsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
@@ -182,13 +182,12 @@ public class Spots extends JPanel {
 	}
 
 	private void createSpotsForAllCages(Experiment exp, ROI2DGrid roiGrid, Point2D.Double referenceCagePosition) {
-
 		ArrayList<ROI2DPolygonPlus> listSelectedAreas = roiGrid.getSelectedAreaRois();
 		int spotIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			ROI2D cageRoi = cage.getRoi();
 			ROI2DGrid cageGrid = createGrid(cageRoi);
-
+			cage.spotsArray.spotsList.clear();
 			for (ROI2DPolygonPlus roi : listSelectedAreas) {
 				ROI2DPolygonPlus roiP = cageGrid.getAreaAt(roi.cagePosition);
 				Rectangle2D rect = roiP.getBounds2D();
