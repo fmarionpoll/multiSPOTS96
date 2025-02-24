@@ -352,10 +352,10 @@ public class SequenceCamData {
 		}
 	}
 
-	public List<ROI2D> getROIsContainingString(String string) {
-		List<ROI2D> roiList = seq.getROI2Ds();
+	public ArrayList<ROI2D> getROIsContainingString(String string) {
+		ArrayList<ROI2D> roiList = seq.getROI2Ds();
 		Collections.sort(roiList, new Comparators.ROI_Name_Comparator());
-		List<ROI2D> listROIsMatchingString = new ArrayList<ROI2D>();
+		ArrayList<ROI2D> listROIsMatchingString = new ArrayList<ROI2D>();
 		for (ROI2D roi : roiList) {
 			if (roi.getName().contains(string))
 				listROIsMatchingString.add(roi);

@@ -31,7 +31,7 @@ import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
-public class Cages extends JPanel {
+public class CreateCages extends JPanel {
 	/**
 	 * 
 	 */
@@ -46,10 +46,10 @@ public class Cages extends JPanel {
 	private JSpinner width_intervalTextField = new JSpinner(new SpinnerNumberModel(4, 0, 10000, 1));
 	private JSpinner height_intervalTextField = new JSpinner(new SpinnerNumberModel(4, 0, 10000, 1));
 
-	private final String cages_perimeter = "cages_perimeter";
 	private int width_interval = 1;
 	private int height_interval = 1;
 	private Polygon2D polygon2D = null;
+	ROI2DPolygon roiCagesPerimeter = null;
 	private ROI2DGrid roiGrid = null;
 	private MultiSPOTS96 parent0;
 
@@ -164,17 +164,13 @@ public class Cages extends JPanel {
 
 	private void selectRoiPerimeterEnclosingCages(Experiment exp) {
 		Sequence seq = exp.seqCamData.seq;
-		List<ROI2D> listrois = exp.seqCamData.getROIsContainingString(cages_perimeter);
-		ROI2DPolygon roi = null;
-		if (listrois != null && listrois.size() > 0)
-			roi = (ROI2DPolygon) listrois.get(0);
-		else {
-			roi = new ROI2DPolygon(getPolygonEnclosingAllCages(exp));
-			roi.setName(cages_perimeter);
-			seq.addROI(roi);
+		if (roiCagesPerimeter == null) {
+			roiCagesPerimeter = new ROI2DPolygon(getPolygonEnclosingAllCages(exp));
+			roiCagesPerimeter.setName("cages_perimeter");
+			seq.addROI(roiCagesPerimeter);
 		}
-		roi.setColor(Color.orange);
-		seq.setSelectedROI(roi);
+		roiCagesPerimeter.setColor(Color.orange);
+		seq.setSelectedROI(roiCagesPerimeter);
 	}
 
 	private Polygon2D getPolygonEnclosingAllCages(Experiment exp) {
@@ -287,4 +283,14 @@ public class Cages extends JPanel {
 		exp.seqCamData.seq.addROIs(roiGrid.getVerticalRois(), false);
 	}
 
+	public void clearTemporaryROIs() {
+		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		if (exp != null) {
+			removeGrid(exp);
+			exp.seqCamData.seq.removeROI(roiCagesPerimeter);
+			roiGrid = null;
+			polygon2D = null;
+			roiCagesPerimeter = null;
+		}
+	}
 }

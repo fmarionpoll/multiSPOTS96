@@ -34,7 +34,7 @@ import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DPolygonPlus;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
-public class Spots extends JPanel {
+public class CreateSpots extends JPanel {
 	/**
 	 * 
 	 */

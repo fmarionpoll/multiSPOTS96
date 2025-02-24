@@ -25,7 +25,7 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Spot implements Comparable<Spot> {
 
-	public ROI2DShape spotROI2D = null;
+	private ROI2DShape spotROI2D = null;
 	private ArrayList<ROI2DAlongT> listRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
 

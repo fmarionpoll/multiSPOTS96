@@ -27,16 +27,18 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 	JTabbedPane tabbedPane = new JTabbedPane();
 
 //			ThresholdColors colorsThreshold = new ThresholdColors();
-	Cages tabCreateCages = new Cages();
-	Spots tabCreateSpots = new Spots();
+	CreateCages tabCreateCages = new CreateCages();
+	CreateSpots tabCreateSpots = new CreateSpots();
 	Infos tabInfos = new Infos();
 	DetectContours tabShape = new DetectContours();
-	Edit tabEdit = new Edit();
+	EditSpots tabEditSpots = new EditSpots();
 	public LoadSaveSpots tabFile = new LoadSaveSpots();
 
 	private int id_shape = 1;
 	private int id_infos = 1;
-	private int id_create = 0;
+	private int id_createCages = 0;
+//	private int id_spots = 1;
+	private int id_editSpots = 2;
 	private MultiSPOTS96 parent0 = null;
 
 	public void init(JPanel mainPanel, String string, MultiSPOTS96 parent0) {
@@ -53,22 +55,21 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 		tabCreateCages.init(gridLayout, parent0);
 		tabCreateCages.addPropertyChangeListener(this);
 		tabbedPane.addTab("Cages", null, tabCreateCages, "Create cages");
-		id_create = order;
+		id_createCages = order;
 		order++;
 
 		tabCreateSpots.init(gridLayout, parent0);
 		tabCreateSpots.addPropertyChangeListener(this);
-		tabbedPane.addTab("Spots", null, tabCreateSpots,
-				"Create spots defining drops with reference to cages");
-		id_create = order;
-		order++;
-		
-		tabEdit.init(gridLayout, parent0);
-		tabEdit.addPropertyChangeListener(this);
-		tabbedPane.addTab("Edit", null, tabEdit, "Edit spots position");
+		tabbedPane.addTab("Spots", null, tabCreateSpots, "Create spots defining drops with reference to cages");
+//		id_spots = order;
 		order++;
 
-		
+		tabEditSpots.init(gridLayout, parent0);
+		tabEditSpots.addPropertyChangeListener(this);
+		tabbedPane.addTab("Edit", null, tabEditSpots, "Edit spots position");
+		id_editSpots = order;
+		order++;
+
 		tabShape.init(gridLayout, parent0);
 		tabShape.addPropertyChangeListener(this);
 		tabbedPane.addTab("Shape", null, tabShape, "Edit spots shape");
@@ -80,7 +81,6 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 		tabbedPane.addTab("Infos", null, tabInfos, "Edit infos");
 		id_infos = order;
 		order++;
-
 
 		tabFile.init(gridLayout, parent0);
 		tabFile.addPropertyChangeListener(this);
@@ -136,12 +136,11 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 	public void stateChanged(ChangeEvent e) {
 		JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
 		int selectedIndex = tabbedPane.getSelectedIndex();
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-		if (exp != null) {
-			boolean displayCapillaries = (selectedIndex == id_create);
-			exp.seqCamData.displaySpecificROIs(displayCapillaries, "line");
-			exp.seqCamData.displaySpecificROIs(true, "spots");
-		}
+		if (selectedIndex != id_editSpots)
+			tabEditSpots.clearTemporaryROIs();
+		if (selectedIndex != id_createCages)
+			tabCreateCages.clearTemporaryROIs();
+//		exp.seqCamData.displaySpecificROIs(true, "spots");
 	}
 
 }
