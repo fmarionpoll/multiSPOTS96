@@ -167,8 +167,9 @@ public class CreateCages extends JPanel {
 		if (roiCagesPerimeter == null) {
 			roiCagesPerimeter = new ROI2DPolygon(getPolygonEnclosingAllCages(exp));
 			roiCagesPerimeter.setName("cages_perimeter");
-			seq.addROI(roiCagesPerimeter);
 		}
+		if(!seq.contains(roiCagesPerimeter))
+			seq.addROI(roiCagesPerimeter);
 		roiCagesPerimeter.setColor(Color.orange);
 		seq.setSelectedROI(roiCagesPerimeter);
 	}

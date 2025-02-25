@@ -50,7 +50,7 @@ public class CreateSpots extends JPanel {
 	private JButton createSpotsButton = new JButton("(3) Create spots");
 	private JSpinner nFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
 	private JCheckBox shiftAreasForColumnsAfterMidLine = new JCheckBox("shift right cages", false);
-	private JSpinner shiftAreaJSpinner = new JSpinner(new SpinnerNumberModel(30, -500, 500, 1));
+//	private JSpinner shiftAreaJSpinner = new JSpinner(new SpinnerNumberModel(30, -500, 500, 1));
 
 	private String[] flyString = new String[] { "fly", "flies" };
 	private JLabel flyLabel = new JLabel(flyString[0]);
@@ -83,8 +83,8 @@ public class CreateSpots extends JPanel {
 		panel2.add(flyLabel);
 		nFliesPerCageJSpinner.setPreferredSize(new Dimension(40, 20));
 		panel2.add(shiftAreasForColumnsAfterMidLine);
-		panel2.add(shiftAreaJSpinner);
-		shiftAreaJSpinner.setPreferredSize(new Dimension(40, 20));
+//		panel2.add(shiftAreaJSpinner);
+//		shiftAreaJSpinner.setPreferredSize(new Dimension(40, 20));
 
 		add(panel0);
 		add(panel1);
@@ -93,8 +93,8 @@ public class CreateSpots extends JPanel {
 		nRowsCombo.setSelectedItem(4);
 		nColumnsCombo.setSelectedItem(8);
 
-		shiftAreasForColumnsAfterMidLine.setEnabled(false);
-		shiftAreaJSpinner.setEnabled(false);
+//		shiftAreasForColumnsAfterMidLine.setEnabled(false);
+//		shiftAreaJSpinner.setEnabled(false);
 
 		defineActionListeners();
 		this.parent0 = parent0;
@@ -184,14 +184,21 @@ public class CreateSpots extends JPanel {
 	private void createSpotsForAllCages(Experiment exp, ROI2DGrid roiGrid, Point2D.Double referenceCagePosition) {
 		ArrayList<ROI2DPolygonPlus> listSelectedAreas = roiGrid.getSelectedAreaRois();
 		int spotIndex = 0;
+		int middleColumn = exp.cagesArray.nCagesAlongX/2;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			ROI2D cageRoi = cage.getRoi();
 			ROI2DGrid cageGrid = createGrid(cageRoi);
 			cage.spotsArray.spotsList.clear();
+			int offset = 0;
+			if (cage.arrayColumn >= middleColumn) {
+				Rectangle rect = cage.getRoi().getBounds();
+				offset = rect.width /2;
+			}			
 			for (ROI2DPolygonPlus roi : listSelectedAreas) {
 				ROI2DPolygonPlus roiP = cageGrid.getAreaAt(roi.cagePosition);
 				Rectangle2D rect = roiP.getBounds2D();
 				Point2D.Double center = (Double) roiP.getPosition2D();
+				center.x -= offset; // assume cage is horizontal...
 				int radius = (int) (rect.getHeight() / 2);
 
 				cage.addEllipseSpot(spotIndex, center, radius);
