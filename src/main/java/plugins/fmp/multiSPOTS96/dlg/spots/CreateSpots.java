@@ -193,17 +193,16 @@ public class CreateSpots extends JPanel {
 			if (cage.arrayColumn >= middleColumn) {
 				Rectangle rect = cage.getRoi().getBounds();
 				offset = rect.width /2;
-			}			
+			}		
+			
 			for (ROI2DPolygonPlus roi : listSelectedAreas) {
 				ROI2DPolygonPlus roiP = cageGrid.getAreaAt(roi.cagePosition);
 				Rectangle2D rect = roiP.getBounds2D();
 				Point2D.Double center = (Double) roiP.getPosition2D();
 				center.x -= offset; // assume cage is horizontal...
 				int radius = (int) (rect.getHeight() / 2);
-
 				cage.addEllipseSpot(spotIndex, center, radius);
 				spotIndex++;
-
 			}
 			cage.getRoi().setSelected(false);
 		}
