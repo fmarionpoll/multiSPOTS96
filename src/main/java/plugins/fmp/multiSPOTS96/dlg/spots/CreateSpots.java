@@ -1,7 +1,6 @@
 package plugins.fmp.multiSPOTS96.dlg.spots;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
@@ -13,14 +12,9 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import icy.canvas.Canvas2D;
 import icy.gui.viewer.Viewer;
@@ -40,20 +34,12 @@ public class CreateSpots extends JPanel {
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
 
-	private JButton zoomCageButton = new JButton("(1) Show grid over cage");
+	private JButton cageGridButton = new JButton("(1) Cage grid");
 	private JComboBox<Integer> nRowsCombo = new JComboBox<Integer>(new Integer[] { 1, 2, 4 });
 	private JComboBox<Integer> nColumnsCombo = new JComboBox<Integer>(new Integer[] { 1, 2, 4, 8 });
-
-	private JButton keepAreasButton = new JButton("(2) Keep selected areas");
-	private JButton restoreAreasButton = new JButton("restore areas");
+	private JButton selectButton = new JButton("(2) Select");
 
 	private JButton createSpotsButton = new JButton("(3) Create spots");
-	private JSpinner nFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
-	private JCheckBox shiftAreasForColumnsAfterMidLine = new JCheckBox("shift right cages", false);
-//	private JSpinner shiftAreaJSpinner = new JSpinner(new SpinnerNumberModel(30, -500, 500, 1));
-
-	private String[] flyString = new String[] { "fly", "flies" };
-	private JLabel flyLabel = new JLabel(flyString[0]);
 
 	private MultiSPOTS96 parent0 = null;
 	private ROI2DGrid roiGrid = null;
@@ -67,24 +53,17 @@ public class CreateSpots extends JPanel {
 		flowLayout.setVgap(0);
 
 		JPanel panel0 = new JPanel(flowLayout);
-		panel0.add(zoomCageButton);
+		panel0.add(cageGridButton);
 		panel0.add(new JLabel("cols"));
 		panel0.add(nColumnsCombo);
 		panel0.add(new JLabel("rows"));
 		panel0.add(nRowsCombo);
 
 		JPanel panel1 = new JPanel(flowLayout);
-		panel1.add(keepAreasButton);
-		panel1.add(restoreAreasButton);
+		panel1.add(selectButton);
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(createSpotsButton);
-		panel2.add(nFliesPerCageJSpinner);
-		panel2.add(flyLabel);
-		nFliesPerCageJSpinner.setPreferredSize(new Dimension(40, 20));
-		panel2.add(shiftAreasForColumnsAfterMidLine);
-//		panel2.add(shiftAreaJSpinner);
-//		shiftAreaJSpinner.setPreferredSize(new Dimension(40, 20));
 
 		add(panel0);
 		add(panel1);
@@ -93,15 +72,12 @@ public class CreateSpots extends JPanel {
 		nRowsCombo.setSelectedItem(4);
 		nColumnsCombo.setSelectedItem(8);
 
-//		shiftAreasForColumnsAfterMidLine.setEnabled(false);
-//		shiftAreaJSpinner.setEnabled(false);
-
 		defineActionListeners();
 		this.parent0 = parent0;
 	}
 
 	private void defineActionListeners() {
-		zoomCageButton.addActionListener(new ActionListener() {
+		cageGridButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
@@ -114,22 +90,12 @@ public class CreateSpots extends JPanel {
 			}
 		});
 
-		keepAreasButton.addActionListener(new ActionListener() {
+		selectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					keepSelectedAreas(exp);
-				}
-			}
-		});
-
-		restoreAreasButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) {
-					restoreAreas(exp);
 				}
 			}
 		});
@@ -143,19 +109,8 @@ public class CreateSpots extends JPanel {
 					createSpotsForAllCages(exp, roiGrid, referencePosition);
 
 					ExperimentUtils.transferSpotsToCamDataSequence(exp);
-					int nbFliesPerCage = (int) nFliesPerCageJSpinner.getValue();
-					exp.cagesArray.initCagesAndSpotsWithNFlies(nbFliesPerCage);
 					exp.seqCamData.removeROIsContainingString("carre");
 				}
-			}
-		});
-
-		nFliesPerCageJSpinner.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				int i = (int) nFliesPerCageJSpinner.getValue() > 1 ? 1 : 0;
-				flyLabel.setText(flyString[i]);
-				nFliesPerCageJSpinner.requestFocus();
 			}
 		});
 
@@ -172,34 +127,17 @@ public class CreateSpots extends JPanel {
 		}
 	}
 
-	private void restoreAreas(Experiment exp) {
-		exp.seqCamData.removeROIsContainingString("carre");
-		ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.getAreaRois();
-		for (ROI2DPolygonPlus roi : listCarres) {
-			exp.seqCamData.seq.addROI(roi);
-			roi.isSelected = true;
-		}
-	}
-
 	private void createSpotsForAllCages(Experiment exp, ROI2DGrid roiGrid, Point2D.Double referenceCagePosition) {
 		ArrayList<ROI2DPolygonPlus> listSelectedAreas = roiGrid.getSelectedAreaRois();
 		int spotIndex = 0;
-		int middleColumn = exp.cagesArray.nCagesAlongX/2;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			ROI2D cageRoi = cage.getRoi();
 			ROI2DGrid cageGrid = createGrid(cageRoi);
 			cage.spotsArray.spotsList.clear();
-			int offset = 0;
-			if (cage.arrayColumn >= middleColumn) {
-				Rectangle rect = cage.getRoi().getBounds();
-				offset = rect.width /2;
-			}		
-			
 			for (ROI2DPolygonPlus roi : listSelectedAreas) {
 				ROI2DPolygonPlus roiP = cageGrid.getAreaAt(roi.cagePosition);
 				Rectangle2D rect = roiP.getBounds2D();
 				Point2D.Double center = (Double) roiP.getPosition2D();
-				center.x -= offset; // assume cage is horizontal...
 				int radius = (int) (rect.getHeight() / 2);
 				cage.addEllipseSpot(spotIndex, center, radius);
 				spotIndex++;

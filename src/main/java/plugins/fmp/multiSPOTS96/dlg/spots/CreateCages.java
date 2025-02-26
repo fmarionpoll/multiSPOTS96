@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 
 import icy.gui.frame.progress.AnnounceFrame;
 import icy.roi.ROI2D;
@@ -36,15 +37,13 @@ public class CreateCages extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -5257698990389571518L;
-	private JButton createFrameButton = new JButton("(1) Frame");
-	private JButton createGridButton = new JButton("(2) Grid (from 1)");
-	private JButton createCagesButton = new JButton("(3) Cages (from 2)");
+	private JButton createFrameButton = new JButton("(1) Create frame over all cages");
+	private JButton createGridButton = new JButton("(2) Grid");
+	private JButton createCagesButton = new JButton("(3) Create cages");
 
 	private JSpinner nCagesPerPlateAlongXJSpinner = new JSpinner(new SpinnerNumberModel(6, 0, 10000, 1));
 	private JSpinner nCagesPerPlateAlongYJSpinner = new JSpinner(new SpinnerNumberModel(8, 0, 10000, 1));
-
 	private JSpinner width_intervalTextField = new JSpinner(new SpinnerNumberModel(4, 0, 10000, 1));
-	private JSpinner height_intervalTextField = new JSpinner(new SpinnerNumberModel(4, 0, 10000, 1));
 
 	private int width_interval = 1;
 	private int height_interval = 1;
@@ -64,28 +63,28 @@ public class CreateCages extends JPanel {
 
 		JPanel panel0 = new JPanel(flowLayout);
 		panel0.add(createFrameButton);
-		panel0.add(createGridButton);
-		panel0.add(createCagesButton);
+		createFrameButton.setHorizontalAlignment(SwingConstants.LEFT);
 		add(panel0);
 
 		JPanel panel1 = new JPanel(flowLayout);
-		panel1.add(new JLabel("N columns "));
+		panel1.add(createGridButton);
+		createGridButton.setHorizontalAlignment(SwingConstants.LEFT);
+		panel1.add(new JLabel("with"));
 		panel1.add(nCagesPerPlateAlongXJSpinner);
 		nCagesPerPlateAlongXJSpinner.setPreferredSize(new Dimension(40, 20));
-
-		panel1.add(new JLabel("space"));
-		panel1.add(width_intervalTextField);
-		width_intervalTextField.setPreferredSize(new Dimension(40, 20));
+		panel1.add(new JLabel("cols  x "));
+		panel1.add(nCagesPerPlateAlongYJSpinner);
+		nCagesPerPlateAlongYJSpinner.setPreferredSize(new Dimension(40, 20));
+		panel1.add(new JLabel("rows"));
 		add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(new JLabel("N rows "));
-		panel2.add(nCagesPerPlateAlongYJSpinner);
-		nCagesPerPlateAlongYJSpinner.setPreferredSize(new Dimension(40, 20));
-
-		panel2.add(new JLabel("space"));
-		panel2.add(height_intervalTextField);
-		height_intervalTextField.setPreferredSize(new Dimension(40, 20));
+		panel2.add(createCagesButton);
+		createCagesButton.setHorizontalAlignment(SwingConstants.LEFT);
+		panel2.add(new JLabel("with"));
+		panel2.add(width_intervalTextField);
+		width_intervalTextField.setPreferredSize(new Dimension(40, 20));
+		panel2.add(new JLabel("pixels spacing"));
 		add(panel2);
 
 		defineActionListeners();
@@ -98,6 +97,7 @@ public class CreateCages extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					selectRoiPerimeterEnclosingCages(exp);
+					exp.seqCamData.removeROIsContainingString("cage");
 					removeGrid(exp);
 				}
 			}
@@ -166,9 +166,9 @@ public class CreateCages extends JPanel {
 		Sequence seq = exp.seqCamData.seq;
 		if (roiCagesPerimeter == null) {
 			roiCagesPerimeter = new ROI2DPolygon(getPolygonEnclosingAllCages(exp));
-			roiCagesPerimeter.setName("cages_perimeter");
+			roiCagesPerimeter.setName("perimeter");
 		}
-		if(!seq.contains(roiCagesPerimeter))
+		if (!seq.contains(roiCagesPerimeter))
 			seq.addROI(roiCagesPerimeter);
 		roiCagesPerimeter.setColor(Color.orange);
 		seq.setSelectedROI(roiCagesPerimeter);
@@ -196,7 +196,7 @@ public class CreateCages extends JPanel {
 			n_columns = (int) nCagesPerPlateAlongXJSpinner.getValue();
 			n_rows = (int) nCagesPerPlateAlongYJSpinner.getValue();
 			width_interval = (int) width_intervalTextField.getValue();
-			height_interval = (int) height_intervalTextField.getValue();
+			height_interval = width_interval;
 		} catch (Exception e) {
 			new AnnounceFrame("Can't interpret ROI parameters value");
 		}

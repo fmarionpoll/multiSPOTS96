@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 
 import icy.gui.dialog.ConfirmDialog;
 import icy.roi.ROI2D;
-import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
@@ -111,7 +110,6 @@ public class EditSpots extends JPanel {
 				if (exp == null)
 					return;
 				updateSpotsFromSnake(exp);
-				System.out.println("fini");
 			}
 		});
 
@@ -215,7 +213,6 @@ public class EditSpots extends JPanel {
 	private void updateSpotsFromSnake(Experiment exp) {
 		if (enclosedSpots == null || enclosedSpots.size() < 1 || roiSnake == null)
 			return;
-		Sequence seq = exp.seqCamData.seq;
 
 		ArrayList<ROI2D> listRoisSeq = exp.seqCamData.getROIsContainingString("spot");
 		Polyline2D snake = roiSnake.getPolyline2D();
@@ -227,18 +224,17 @@ public class EditSpots extends JPanel {
 					snake.ypoints[i] - spot.spotRadius);
 			ROI2D roi = spot.getRoi();
 			roi.setPosition2D(point);
-
+//			boolean flag = exp.seqCamData.seq.contains(roi);
+//			if (!flag)
+//				System.out.println("roi not found " + roi.getName());
 			String name = roi.getName();
-			System.out.println("spot: " + name);
 			for (ROI2D roiSeq : listRoisSeq) {
-				System.out.println(roiSeq.getName());
 				if (roiSeq.getName().equals(name)) {
 					listRoisSeq.remove(roiSeq);
 					roiSeq.setPosition2D(point);
 					break;
 				}
 			}
-
 			i++;
 		}
 	}
