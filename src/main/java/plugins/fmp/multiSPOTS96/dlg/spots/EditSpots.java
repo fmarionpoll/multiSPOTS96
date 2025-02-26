@@ -3,6 +3,7 @@ package plugins.fmp.multiSPOTS96.dlg.spots;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -12,7 +13,9 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import icy.canvas.Canvas2D;
 import icy.gui.dialog.ConfirmDialog;
+import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
@@ -110,6 +113,8 @@ public class EditSpots extends JPanel {
 				if (exp == null)
 					return;
 				updateSpotsFromSnake(exp);
+				// update colors
+				// remove snake
 			}
 		});
 
@@ -171,21 +176,18 @@ public class EditSpots extends JPanel {
 	private void setSpotsFrame(Experiment exp) {
 		exp.seqCamData.seq.removeROI(roiPerimeter);
 		showSnake(exp, false);
-		if (roiPerimeter == null) {
-			ArrayList<ROI2D> listSpotsRoisPresent = exp.seqCamData.getROIsContainingString("spot");
-			ArrayList<ROI2D> listSpotsRoisSelected = new ArrayList<ROI2D>();
-			for (ROI2D roi : listSpotsRoisPresent) {
-				if (roi.isSelected())
-					listSpotsRoisSelected.add(roi);
-			}
-			Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(
-					listSpotsRoisSelected.size() > 0 ? listSpotsRoisSelected : listSpotsRoisPresent);
-			roiPerimeter = new ROI2DPolygon(polygon);
-			roiPerimeter.setName("perimeter");
-			roiPerimeter.setColor(Color.YELLOW);
-		}
+		if (roiPerimeter == null)
+			createRoiPerimeterEnclosingSpots(exp);
 		exp.seqCamData.seq.addROI(roiPerimeter);
 		exp.seqCamData.seq.setSelectedROI(roiPerimeter);
+
+		makeSureRectangleIsVisible(exp, roiPerimeter.getBounds());
+	}
+
+	private void makeSureRectangleIsVisible(Experiment exp, Rectangle rect) {
+		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Canvas2D canvas = (Canvas2D) v.getCanvas();
+		canvas.centerOn(rect);
 	}
 
 	private void showSnake(Experiment exp, boolean show) {
@@ -196,18 +198,33 @@ public class EditSpots extends JPanel {
 			if (enclosedSpots.size() > 0) {
 				ArrayList<Point2D> listPoint = new ArrayList<Point2D>();
 				for (Spot spot : enclosedSpots) {
-					listPoint.add(
-							new Point2D.Double(spot.spotXCoord + spot.spotRadius, spot.spotYCoord + spot.spotRadius));
+					listPoint.add(new Point2D.Double(spot.spotXCoord, spot.spotYCoord));
 				}
 				roiSnake = new ROI2DPolyLine(listPoint);
 				roiSnake.setName("snake");
 				exp.seqCamData.seq.addROI(roiSnake);
 				exp.seqCamData.seq.setSelectedROI(roiSnake);
+
+				makeSureRectangleIsVisible(exp, roiSnake.getBounds());
 			}
 		} else {
 			roiSnake = null;
 			exp.seqCamData.seq.addROI(roiPerimeter);
 		}
+	}
+
+	private void createRoiPerimeterEnclosingSpots(Experiment exp) {
+		ArrayList<ROI2D> listSpotsRoisPresent = exp.seqCamData.getROIsContainingString("spot");
+		ArrayList<ROI2D> listSpotsRoisSelected = new ArrayList<ROI2D>();
+		for (ROI2D roi : listSpotsRoisPresent) {
+			if (roi.isSelected())
+				listSpotsRoisSelected.add(roi);
+		}
+		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(
+				listSpotsRoisSelected.size() > 0 ? listSpotsRoisSelected : listSpotsRoisPresent);
+		roiPerimeter = new ROI2DPolygon(polygon);
+		roiPerimeter.setName("perimeter");
+		roiPerimeter.setColor(Color.YELLOW);
 	}
 
 	private void updateSpotsFromSnake(Experiment exp) {
@@ -220,13 +237,15 @@ public class EditSpots extends JPanel {
 		for (Spot spot : enclosedSpots) {
 			spot.spotXCoord = (int) snake.xpoints[i];
 			spot.spotYCoord = (int) snake.ypoints[i];
-			Point2D.Double point = new Point2D.Double(snake.xpoints[i] - spot.spotRadius,
-					snake.ypoints[i] - spot.spotRadius);
 			ROI2D roi = spot.getRoi();
-			roi.setPosition2D(point);
 //			boolean flag = exp.seqCamData.seq.contains(roi);
 //			if (!flag)
 //				System.out.println("roi not found " + roi.getName());
+
+			Point2D.Double point = new Point2D.Double(snake.xpoints[i] - spot.spotRadius,
+					snake.ypoints[i] - spot.spotRadius);
+			roi.setPosition2D(point);
+
 			String name = roi.getName();
 			for (ROI2D roiSeq : listRoisSeq) {
 				if (roiSeq.getName().equals(name)) {
