@@ -100,8 +100,8 @@ public class XLSExport {
 				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_COND1);
 				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_COND2);
 
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, spot.spotVolume);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, spot.spotNPixels);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose, spot.prop.spotVolume);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose, spot.prop.spotNPixels);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose,
 						spot.getCagePosition(xlsExportOption));
 				outputStimAndConc_according_to_DataOption(sheet, xlsExportOption, spot, transpose, x, y);
@@ -109,7 +109,7 @@ public class XLSExport {
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEID.getValue(), transpose, spot.cageID);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
 						charSeries + spot.cageID);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose, spot.spotNFlies);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose, spot.prop.spotNFlies);
 
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
@@ -140,7 +140,7 @@ public class XLSExport {
 			Spot othercap = spotsList.get(t);
 			int otherSide = othercap.cagePosition;
 			if (otherSide != side) {
-				if (spot.spotStim.equals(othercap.spotStim) && spot.spotConc.equals(othercap.spotConc))
+				if (spot.prop.spotStim.equals(othercap.prop.spotStim) && spot.prop.spotConc.equals(othercap.prop.spotConc))
 					choiceText = "no-choice";
 				else
 					choiceText = "choice";
@@ -159,12 +159,12 @@ public class XLSExport {
 			else
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, "(L-R)/(L+R)");
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose,
-					spot.spotStim + ": " + spot.spotConc);
+					spot.prop.spotStim + ": " + spot.prop.spotConc);
 			break;
 
 		default:
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, spot.spotStim);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, spot.spotConc);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, spot.prop.spotStim);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, spot.prop.spotConc);
 			break;
 		}
 	}
@@ -327,10 +327,10 @@ public class XLSExport {
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
 		for (Cage cage : expAll.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				XLSResults rowResults = new XLSResults(spot.getRoi().getName(), spot.spotNFlies, spot.cageID,
+				XLSResults rowResults = new XLSResults(spot.getRoi().getName(), spot.prop.spotNFlies, spot.cageID,
 						spot.cagePosition, xlsOption, nFrames);
-				rowResults.stimulus = spot.spotStim;
-				rowResults.concentration = spot.spotConc;
+				rowResults.stimulus = spot.prop.spotStim;
+				rowResults.concentration = spot.prop.spotConc;
 				rowResults.cageID = spot.cageID;
 				rowListForOneExp.resultsList.add(rowResults);
 			}
@@ -361,10 +361,10 @@ public class XLSExport {
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
 		for (Cage cage : expAll.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				XLSResults rowResults = new XLSResults(spot.getRoi().getName(), spot.spotNFlies, spot.cageID,
+				XLSResults rowResults = new XLSResults(spot.getRoi().getName(), spot.prop.spotNFlies, spot.cageID,
 						spot.cagePosition, xlsOption, nFrames);
-				rowResults.stimulus = spot.spotStim;
-				rowResults.concentration = spot.spotConc;
+				rowResults.stimulus = spot.prop.spotStim;
+				rowResults.concentration = spot.prop.spotConc;
 				rowResults.cageID = spot.cageID;
 				rowListForOneExp.resultsList.add(rowResults);
 			}

@@ -59,11 +59,11 @@ public class XLSResultsArray {
 		if (!sameLR)
 			return;
 		if (stim == null)
-			stim = spot.spotStim;
+			stim = spot.prop.spotStim;
 		if (conc == null)
-			conc = spot.spotConc;
-		sameLR &= stim.equals(spot.spotStim);
-		sameLR &= conc.equals(spot.spotConc);
+			conc = spot.prop.spotConc;
+		sameLR &= stim.equals(spot.prop.spotStim);
+		sameLR &= conc.equals(spot.prop.spotConc);
 	}
 
 	public void subtractEvaporation() {
@@ -167,7 +167,7 @@ public class XLSResultsArray {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
 			for (Spot spot : cage.spotsArray.spotsList) {
 				checkIfSameStimulusAndConcentration(spot);
-				XLSResults results = new XLSResults(spot.getRoi().getName(), spot.spotNFlies, spot.cageID,
+				XLSResults results = new XLSResults(spot.getRoi().getName(), spot.prop.spotNFlies, spot.cageID,
 						spot.cagePosition, xlsExportOptions.exportType, nOutputFrames);
 	
 				results.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,

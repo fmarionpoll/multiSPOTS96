@@ -216,19 +216,19 @@ public class SpotTablePanel extends JPanel {
 	private void copySingleSpotValue(Spot spotFrom, Spot spotTo, int columnIndex) {
 		switch (columnIndex) {
 		case 3:
-			spotTo.spotNFlies = spotFrom.spotNFlies;
+			spotTo.prop.spotNFlies = spotFrom.prop.spotNFlies;
 			break;
 		case 4:
-			spotTo.spotNPixels = spotFrom.spotNPixels;
+			spotTo.prop.spotNPixels = spotFrom.prop.spotNPixels;
 			break;
 		case 5:
-			spotTo.spotVolume = spotFrom.spotVolume;
+			spotTo.prop.spotVolume = spotFrom.prop.spotVolume;
 			break;
 		case 6:
-			spotTo.spotStim = spotFrom.spotStim;
+			spotTo.prop.spotStim = spotFrom.prop.spotStim;
 			break;
 		case 7:
-			spotTo.spotConc = spotFrom.spotConc;
+			spotTo.prop.spotConc = spotFrom.prop.spotConc;
 			break;
 		default:
 			break;
@@ -251,7 +251,7 @@ public class SpotTablePanel extends JPanel {
 		for (Cage cage : exp.cagesArray.cagesList)
 			for (Spot spot : cage.spotsArray.spotsList) {
 				try {
-					spot.spotNPixels = (int) spot.getRoi().getNumberOfPoints();
+					spot.prop.spotNPixels = (int) spot.getRoi().getNumberOfPoints();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -278,19 +278,19 @@ public class SpotTablePanel extends JPanel {
 
 				switch (columnIndex) {
 				case 3:
-					spot.spotNFlies = spot0.spotNFlies;
+					spot.prop.spotNFlies = spot0.prop.spotNFlies;
 					break;
 				case 4:
-					spot.spotNPixels = spot0.spotNPixels;
+					spot.prop.spotNPixels = spot0.prop.spotNPixels;
 					break;
 				case 5:
-					spot.spotVolume = spot0.spotVolume;
+					spot.prop.spotVolume = spot0.prop.spotVolume;
 					break;
 				case 6:
-					spot.spotStim = spot0.spotStim;
+					spot.prop.spotStim = spot.prop.spotStim;
 					break;
 				case 7:
-					spot.spotConc = spot0.spotConc;
+					spot.prop.spotConc = spot0.prop.spotConc;
 					break;
 				default:
 					break;
@@ -312,19 +312,19 @@ public class SpotTablePanel extends JPanel {
 					continue;
 				switch (columnIndex) {
 				case 3:
-					spot.spotNFlies = spotFrom.spotNFlies;
+					spot.prop.spotNFlies = spotFrom.prop.spotNFlies;
 					break;
 				case 4:
-					spot.spotNPixels = spotFrom.spotNPixels;
+					spot.prop.spotNPixels = spotFrom.prop.spotNPixels;
 					break;
 				case 5:
-					spot.spotVolume = spotFrom.spotVolume;
+					spot.prop.spotVolume = spotFrom.prop.spotVolume;
 					break;
 				case 6:
-					spot.spotStim = spotFrom.spotStim;
+					spot.prop.spotStim = spotFrom.prop.spotStim;
 					break;
 				case 7:
-					spot.spotConc = spotFrom.spotConc;
+					spot.prop.spotConc = spotFrom.prop.spotConc;
 					break;
 				default:
 					break;
@@ -366,19 +366,19 @@ public class SpotTablePanel extends JPanel {
 
 				switch (columnIndex) {
 				case 3:
-					spot.spotNFlies = spot0.spotNFlies;
+					spot.prop.spotNFlies = spot0.prop.spotNFlies;
 					break;
 				case 4:
-					spot.spotNPixels = spot0.spotNPixels;
+					spot.prop.spotNPixels = spot0.prop.spotNPixels;
 					break;
 				case 5:
-					spot.spotVolume = spot0.spotVolume;
+					spot.prop.spotVolume = spot0.prop.spotVolume;
 					break;
 				case 6:
-					spot.spotStim = spot0.spotStim;
+					spot.prop.spotStim = spot0.prop.spotStim;
 					break;
 				case 7:
-					spot.spotConc = spot0.spotConc;
+					spot.prop.spotConc = spot0.prop.spotConc;
 					break;
 				default:
 					break;

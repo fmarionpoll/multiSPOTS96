@@ -26,7 +26,7 @@ import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 
 public class SpotsArray {
-	public SpotsDescription spotsDescription = new SpotsDescription();
+	public SpotProperties spotsDescription = new SpotProperties();
 	public ArrayList<Spot> spotsList = new ArrayList<Spot>();
 
 	private KymoIntervals spotsListTimeIntervals = null;
@@ -39,7 +39,7 @@ public class SpotsArray {
 
 	// ---------------------------------
 
-	public boolean load_Measures(String directory) {
+	public boolean load_SpotsMeasures(String directory) {
 		boolean flag = false;
 		try {
 			flag = csvLoadSpots(directory, EnumSpotMeasures.SPOTS_MEASURES);
@@ -50,7 +50,7 @@ public class SpotsArray {
 		return flag;
 	}
 
-	public boolean load_Spots(String directory) {
+	public boolean load_SpotsAll(String directory) {
 		boolean flag = false;
 		try {
 			flag = csvLoadSpots(directory, EnumSpotMeasures.ALL);
@@ -61,7 +61,7 @@ public class SpotsArray {
 		return flag;
 	}
 
-	public boolean save_Spots(String directory) {
+	public boolean save_SpotsAll(String directory) {
 		boolean flag = false;
 		try {
 			flag = csvSaveSpots(directory);
@@ -72,7 +72,7 @@ public class SpotsArray {
 		return flag;
 	}
 
-	public boolean save_Measures(String directory) {
+	public boolean save_SpotsMeasures(String directory) {
 		if (directory == null)
 			return false;
 
@@ -338,7 +338,7 @@ public class SpotsArray {
 			if (data[0].equals("#")) {
 				switch (data[1]) {
 				case "DESCRIPTION":
-					csvLoadDescription(bufferedReader, sep);
+					csvLoadSpotsDescription(bufferedReader, sep);
 					break;
 				case "SPOTS":
 					csvLoadSpotsArray(bufferedReader, sep);
@@ -439,15 +439,15 @@ public class SpotsArray {
 		return true;
 	}
 
-	private String csvLoadDescription(BufferedReader csvReader, String csvSep) {
+	private String csvLoadSpotsDescription(BufferedReader csvReader, String csvSep) {
 		String row;
 		try {
 			row = csvReader.readLine();
 			row = csvReader.readLine();
-			String[] data = row.split(csvSep);
-			spotsDescription.csvImportSpotsDescriptionData(data);
+			spotsDescription.csvImportSpotsDescriptionData(row, csvSep);
+			
 			row = csvReader.readLine();
-			data = row.split(csvSep);
+			String[] data = row.split(csvSep);
 			if (data[0].substring(0, Math.min(data[0].length(), 5)).equals("n spot")) {
 				int nspots = Integer.valueOf(data[1]);
 				if (nspots >= spotsList.size())
@@ -468,7 +468,7 @@ public class SpotsArray {
 
 	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
 		try {
-			csvWriter.append(spotsDescription.csvExportSectionHeader(csvSep));
+			csvWriter.append(spotsDescription.csvExportDescriptionSectionHeader(csvSep));
 			csvWriter.append("n spots=" + csvSep + Integer.toString(spotsList.size()) + "\n");
 			csvWriter.append("#" + csvSep + "#\n");
 

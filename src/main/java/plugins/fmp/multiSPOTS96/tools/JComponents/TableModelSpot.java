@@ -76,15 +76,15 @@ public class TableModelSpot extends AbstractTableModel {
 			case 2:
 				return spot.cagePosition;
 			case 3:
-				return spot.spotNFlies;
+				return spot.prop.spotNFlies;
 			case 4:
-				return spot.spotNPixels;
+				return spot.prop.spotNPixels;
 			case 5:
-				return spot.spotVolume;
+				return spot.prop.spotVolume;
 			case 6:
-				return spot.spotStim;
+				return spot.prop.spotStim;
 			case 7:
-				return spot.spotConc;
+				return spot.prop.spotConc;
 			}
 		}
 		return null;
@@ -115,19 +115,19 @@ public class TableModelSpot extends AbstractTableModel {
 				spot.cagePosition = (int) aValue;
 				break;
 			case 3:
-				spot.spotNFlies = (int) aValue;
+				spot.prop.spotNFlies = (int) aValue;
 				break;
 			case 4:
-				spot.spotNPixels = (int) aValue;
+				spot.prop.spotNPixels = (int) aValue;
 				break;
 			case 5:
-				spot.spotVolume = (double) aValue;
+				spot.prop.spotVolume = (double) aValue;
 				break;
 			case 6:
-				spot.spotStim = aValue.toString();
+				spot.prop.spotStim = aValue.toString();
 				break;
 			case 7:
-				spot.spotConc = aValue.toString();
+				spot.prop.spotConc = aValue.toString();
 				break;
 			}
 		}

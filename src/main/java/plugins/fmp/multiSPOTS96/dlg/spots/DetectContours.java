@@ -320,10 +320,10 @@ public class DetectContours extends JPanel {
 
 				String roiName = roi_in.getName();
 				exp.seqCamData.seq.removeROI(roi_in);
-				Point2D point = new Point2D.Double(spot.spotXCoord, spot.spotYCoord);
-				double x = point.getX() - spot.spotRadius;
-				double y = point.getY() - spot.spotRadius;
-				Ellipse2D ellipse = new Ellipse2D.Double(x, y, 2 * spot.spotRadius, 2 * spot.spotRadius);
+				Point2D point = new Point2D.Double(spot.prop.spotXCoord, spot.prop.spotYCoord);
+				double x = point.getX() - spot.prop.spotRadius;
+				double y = point.getY() - spot.prop.spotRadius;
+				Ellipse2D ellipse = new Ellipse2D.Double(x, y, 2 * spot.prop.spotRadius, 2 * spot.prop.spotRadius);
 				ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
 				roiEllipse.setName(roiName);
 				spot.setRoi(roiEllipse);
@@ -339,7 +339,7 @@ public class DetectContours extends JPanel {
 		roi_new.setColor(roi_old.getColor());
 		spot.setRoi((ROI2DShape) roi_new);
 		try {
-			spot.spotNPixels = (int) roi_new.getNumberOfPoints();
+			spot.prop.spotNPixels = (int) roi_new.getNumberOfPoints();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

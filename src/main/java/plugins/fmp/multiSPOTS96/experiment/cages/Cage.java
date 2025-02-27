@@ -281,7 +281,7 @@ public class Cage {
 	public void setNFlies(int nFlies) {
 		this.cageNFlies = nFlies;
 		for (Spot spot : spotsArray.spotsList) {
-			spot.spotNFlies = nFlies;
+			spot.prop.spotNFlies = nFlies;
 		}
 	}
 
@@ -305,11 +305,11 @@ public class Cage {
 		spot.spotArrayIndex = spotArrayIndex;
 		spot.cageID = cageID;
 		spot.cagePosition = cagePosition;
-		spot.spotRadius = radius;
-		spot.spotXCoord = (int) center.getX();
-		spot.spotYCoord = (int) center.getY();
+		spot.prop.spotRadius = radius;
+		spot.prop.spotXCoord = (int) center.getX();
+		spot.prop.spotYCoord = (int) center.getY();
 		try {
-			spot.spotNPixels = (int) roiEllipse.getNumberOfPoints();
+			spot.prop.spotNPixels = (int) roiEllipse.getNumberOfPoints();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -317,9 +317,19 @@ public class Cage {
 		return spot;
 	}
 
+	public Spot getSpotFromRoiName(String name) {
+		int cagePosition = SpotString.getSpotCagePositionFromSpotName(name);
+		for (Spot spot: spotsArray.spotsList) {
+			if (spot.cagePosition == cagePosition)
+				return spot;
+		}
+		return null;
+	}
+	
 	// --------------------------------------------
 
 	public List<ROI2DAlongT> getROIAlongTList() {
+	
 		if (listRoiAlongT.size() < 1)
 			initROIAlongTList();
 		return listRoiAlongT;

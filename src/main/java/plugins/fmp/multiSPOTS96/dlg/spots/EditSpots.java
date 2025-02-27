@@ -198,7 +198,7 @@ public class EditSpots extends JPanel {
 			if (enclosedSpots.size() > 0) {
 				ArrayList<Point2D> listPoint = new ArrayList<Point2D>();
 				for (Spot spot : enclosedSpots) {
-					listPoint.add(new Point2D.Double(spot.spotXCoord, spot.spotYCoord));
+					listPoint.add(new Point2D.Double(spot.prop.spotXCoord, spot.prop.spotYCoord));
 				}
 				roiSnake = new ROI2DPolyLine(listPoint);
 				roiSnake.setName("snake");
@@ -235,15 +235,15 @@ public class EditSpots extends JPanel {
 		Polyline2D snake = roiSnake.getPolyline2D();
 		int i = 0;
 		for (Spot spot : enclosedSpots) {
-			spot.spotXCoord = (int) snake.xpoints[i];
-			spot.spotYCoord = (int) snake.ypoints[i];
+			spot.prop.spotXCoord = (int) snake.xpoints[i];
+			spot.prop.spotYCoord = (int) snake.ypoints[i];
 			ROI2D roi = spot.getRoi();
 //			boolean flag = exp.seqCamData.seq.contains(roi);
 //			if (!flag)
 //				System.out.println("roi not found " + roi.getName());
 
-			Point2D.Double point = new Point2D.Double(snake.xpoints[i] - spot.spotRadius,
-					snake.ypoints[i] - spot.spotRadius);
+			Point2D.Double point = new Point2D.Double(snake.xpoints[i] - spot.prop.spotRadius,
+					snake.ypoints[i] - spot.prop.spotRadius);
 			roi.setPosition2D(point);
 
 			String name = roi.getName();

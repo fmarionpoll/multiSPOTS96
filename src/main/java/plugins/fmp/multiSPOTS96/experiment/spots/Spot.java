@@ -28,34 +28,19 @@ public class Spot implements Comparable<Spot> {
 	private ROI2DShape spotROI2D = null;
 	private ArrayList<ROI2DAlongT> listRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
-
+	public int spotCamData_T = -1;
+	public int spotKymograph_T = -1;
+	public String spotFilenameTIFF = null;
+	public IcyBufferedImage spotImage = null;
 	public BooleanMask2D mask2DSpot = null;
 
 	public int cageID = -1;
 	public int cagePosition = 0;
 	public int spotArrayIndex = 0;
 
-	public String version = null;
-	public String spotStim = new String("..");
-	public String spotConc = new String("..");
-	public int spotNFlies = 1;
-	public double spotVolume = 1;
-	public int spotNPixels = 1;
-	public int spotRadius = 30;
-
-	public int spotXCoord = -1;
-	public int spotYCoord = -1;
-
-	public boolean descriptionOK = false;
-	public int versionInfos = 0;
-
+	public SpotProperties prop = new SpotProperties();
+	
 	public BuildSeriesOptions limitsOptions = new BuildSeriesOptions();
-
-	public int spotCamData_T = -1;
-	public int spotKymograph_T = -1;
-	public String spotFilenameTIFF = null;
-	public IcyBufferedImage spotImage = null;
-
 	public SpotMeasure sum_in = new SpotMeasure("sum");
 	public SpotMeasure sum_clean = new SpotMeasure("clean");
 	public SpotMeasure flyPresent = new SpotMeasure("flyPresent");
@@ -63,27 +48,19 @@ public class Spot implements Comparable<Spot> {
 	public boolean okToAnalyze = true;
 
 	private final String ID_META = "metaMC";
-	private final String ID_NFLIES = "nflies";
 
 	private final String ID_CAGE = "cage_id";
 	private final String ID_CAGEINDEX = "cage_index";
 	private final String ID_SPOTARRAYINDEX = "spot_array_index";
 
-	private final String ID_SPOTVOLUME = "volume";
-	private final String ID_PIXELS = "pixels";
-	private final String ID_RADIUS = "radius";
-	private final String ID_XCOORD = "spotXCoord";
-	private final String ID_YCOORD = "spotYCoord";
-	private final String ID_STIMULUS = "stimulus";
-	private final String ID_CONCENTRATION = "concentration";
+
 	private final String ID_DESCOK = "descriptionOK";
 	private final String ID_VERSIONINFOS = "versionInfos";
 	private final String ID_INTERVALS = "INTERVALS";
 	private final String ID_NINTERVALS = "nintervals";
 	private final String ID_INTERVAL = "interval_";
 	private final String ID_INDEXIMAGE = "indexImageMC";
-	private final String ID_VERSION = "version";
-	private final String ID_VERSIONNUM = "1.0.0";
+
 
 	private Color[] spotColors = new Color[] { new Color(0xFF, 0x55, 0x55), new Color(0x55, 0x55, 0xFF),
 			new Color(0x55, 0xFF, 0x55), new Color(0xFF, 0xFF, 0x55), new Color(0xFF, 0x55, 0xFF),
@@ -108,22 +85,14 @@ public class Spot implements Comparable<Spot> {
 	// ------------------------------------------
 
 	public void copySpot(Spot spotFrom, boolean bCopyMeasures) {
-		version = spotFrom.version;
+		prop.version = spotFrom.prop.version;
 		spotROI2D = (ROI2DShape) spotFrom.spotROI2D.getCopy();
 
 		spotArrayIndex = spotFrom.spotArrayIndex;
 		cageID = spotFrom.cageID;
 		cagePosition = spotFrom.cagePosition;
 
-		spotNFlies = spotFrom.spotNFlies;
-		spotVolume = spotFrom.spotVolume;
-		spotStim = spotFrom.spotStim;
-		spotConc = spotFrom.spotConc;
 
-		spotNPixels = spotFrom.spotNPixels;
-		spotRadius = spotFrom.spotRadius;
-		spotXCoord = spotFrom.spotXCoord;
-		spotYCoord = spotFrom.spotYCoord;
 		limitsOptions = spotFrom.limitsOptions;
 
 		sum_in.copyLevel2D(spotFrom.sum_in);
@@ -178,10 +147,10 @@ public class Spot implements Comparable<Spot> {
 		String stringValue = null;
 		switch (fieldEnumCode) {
 		case CAP_STIM:
-			stringValue = spotStim;
+			stringValue = prop.spotStim;
 			break;
 		case CAP_CONC:
-			stringValue = spotConc;
+			stringValue = prop.spotConc;
 			break;
 		default:
 			break;
@@ -192,10 +161,10 @@ public class Spot implements Comparable<Spot> {
 	public void setSpotField(EnumXLSColumnHeader fieldEnumCode, String stringValue) {
 		switch (fieldEnumCode) {
 		case CAP_STIM:
-			spotStim = stringValue;
+			prop.spotStim = stringValue;
 			break;
 		case CAP_CONC:
-			spotConc = stringValue;
+			prop.spotConc = stringValue;
 			break;
 		default:
 			break;
@@ -289,30 +258,16 @@ public class Spot implements Comparable<Spot> {
 		final Node nodeMeta = XMLUtil.getElement(node, ID_META);
 		boolean flag = (nodeMeta != null);
 		if (flag) {
-			version = XMLUtil.getElementValue(nodeMeta, ID_VERSION, "0.0.0");
-			cageID = XMLUtil.getElementIntValue(nodeMeta, ID_INDEXIMAGE, cageID);
-
-			descriptionOK = XMLUtil.getElementBooleanValue(nodeMeta, ID_DESCOK, false);
-			versionInfos = XMLUtil.getElementIntValue(nodeMeta, ID_VERSIONINFOS, 0);
-			spotNFlies = XMLUtil.getElementIntValue(nodeMeta, ID_NFLIES, spotNFlies);
-
+			cageID = XMLUtil.getElementIntValue(nodeMeta, ID_INDEXIMAGE, cageID);		
 			cageID = XMLUtil.getElementIntValue(nodeMeta, ID_CAGE, cageID);
 			cagePosition = XMLUtil.getElementIntValue(nodeMeta, ID_CAGEINDEX, cagePosition);
-
 			spotArrayIndex = XMLUtil.getElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, spotArrayIndex);
-			spotVolume = XMLUtil.getElementDoubleValue(nodeMeta, ID_SPOTVOLUME, Double.NaN);
-			spotNPixels = XMLUtil.getElementIntValue(nodeMeta, ID_PIXELS, 5);
-			spotRadius = XMLUtil.getElementIntValue(nodeMeta, ID_RADIUS, 30);
-			spotXCoord = XMLUtil.getElementIntValue(nodeMeta, ID_XCOORD, -1);
-			spotYCoord = XMLUtil.getElementIntValue(nodeMeta, ID_YCOORD, -1);
-			spotStim = XMLUtil.getElementValue(nodeMeta, ID_STIMULUS, ID_STIMULUS);
-			spotConc = XMLUtil.getElementValue(nodeMeta, ID_CONCENTRATION, ID_CONCENTRATION);
-
 			spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
 			setSpotRoi_InColorAccordingToSpotIndex(cagePosition);
 			limitsOptions.loadFromXML(nodeMeta);
 
 			loadFromXML_SpotAlongT(node);
+			prop.loadFromXML(node);
 		}
 		return flag;
 	}
@@ -342,28 +297,18 @@ public class Spot implements Comparable<Spot> {
 		final Node nodeMeta = XMLUtil.setElement(node, ID_META);
 		if (nodeMeta == null)
 			return false;
-		if (version == null)
-			version = ID_VERSIONNUM;
-		XMLUtil.setElementValue(nodeMeta, ID_VERSION, version);
+		
 		XMLUtil.setElementIntValue(nodeMeta, ID_INDEXIMAGE, cageID);
 
-		XMLUtil.setElementBooleanValue(nodeMeta, ID_DESCOK, descriptionOK);
-		XMLUtil.setElementIntValue(nodeMeta, ID_VERSIONINFOS, versionInfos);
-		XMLUtil.setElementIntValue(nodeMeta, ID_NFLIES, spotNFlies);
+		XMLUtil.setElementBooleanValue(nodeMeta, ID_DESCOK, prop.descriptionOK);
+		XMLUtil.setElementIntValue(nodeMeta, ID_VERSIONINFOS, prop.versionInfos);
 
 		XMLUtil.setElementIntValue(nodeMeta, ID_CAGE, cageID);
 		XMLUtil.setElementIntValue(nodeMeta, ID_CAGEINDEX, cagePosition);
-
 		XMLUtil.setElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, spotArrayIndex);
-		XMLUtil.setElementDoubleValue(nodeMeta, ID_SPOTVOLUME, spotVolume);
-		XMLUtil.setElementIntValue(nodeMeta, ID_PIXELS, spotNPixels);
-		XMLUtil.setElementIntValue(nodeMeta, ID_RADIUS, spotRadius);
-		XMLUtil.setElementIntValue(nodeMeta, ID_XCOORD, spotXCoord);
-		XMLUtil.setElementIntValue(nodeMeta, ID_YCOORD, spotYCoord);
-		XMLUtil.setElementValue(nodeMeta, ID_STIMULUS, spotStim);
-		XMLUtil.setElementValue(nodeMeta, ID_CONCENTRATION, spotConc);
-
 		ROI2DUtilities.saveToXML_ROI(nodeMeta, spotROI2D);
+		
+		prop.saveToXML(node);
 
 		boolean flag = saveToXML_SpotAlongT(node);
 		return flag;
@@ -516,8 +461,8 @@ public class Spot implements Comparable<Spot> {
 	public String csvExportDescription(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = Arrays.asList(String.valueOf(spotArrayIndex), getRoi().getName(), String.valueOf(cageID),
-				String.valueOf(spotNFlies), String.valueOf(spotVolume), String.valueOf(spotNPixels),
-				String.valueOf(spotRadius), spotStim.replace(",", "."), spotConc.replace(",", "."),
+				String.valueOf(prop.spotNFlies), String.valueOf(prop.spotVolume), String.valueOf(prop.spotNPixels),
+				String.valueOf(prop.spotRadius), prop.spotStim.replace(",", "."), prop.spotConc.replace(",", "."),
 				String.valueOf(cagePosition));
 		sbf.append(String.join(csvSep, row));
 		sbf.append("\n");
@@ -577,17 +522,17 @@ public class Spot implements Comparable<Spot> {
 		i++;
 		cageID = Integer.valueOf(data[i]);
 		i++;
-		spotNFlies = Integer.valueOf(data[i]);
+		prop.spotNFlies = Integer.valueOf(data[i]);
 		i++;
-		spotVolume = Double.valueOf(data[i]);
+		prop.spotVolume = Double.valueOf(data[i]);
 		i++;
-		spotNPixels = Integer.valueOf(data[i]);
+		prop.spotNPixels = Integer.valueOf(data[i]);
 		i++;
-		spotRadius = Integer.valueOf(data[i]);
+		prop.spotRadius = Integer.valueOf(data[i]);
 		i++;
-		spotStim = data[i];
+		prop.spotStim = data[i];
 		i++;
-		spotConc = data[i];
+		prop.spotConc = data[i];
 		i++;
 		cagePosition = Integer.valueOf(data[i]);
 	}
