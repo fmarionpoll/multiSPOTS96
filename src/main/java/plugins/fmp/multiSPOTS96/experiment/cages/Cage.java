@@ -24,7 +24,7 @@ import plugins.kernel.roi.roi2d.ROI2DRectangle;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Cage {
-	private ROI2D cageROI2D = null;
+	private ROI2D cageXROI2D = null;
 	private ArrayList<ROI2DAlongT> listRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
 	public BooleanMask2D cageMask2D = null;
@@ -43,7 +43,7 @@ public class Cage {
 	// --------------------------------------
 
 	public Cage(ROI2DShape roi) {
-		this.cageROI2D = roi;
+		this.cageXROI2D = roi;
 	}
 
 	public Cage() {
@@ -52,23 +52,23 @@ public class Cage {
 	// ------------------------------------
 
 	public ROI2D getRoi() {
-		return cageROI2D;
+		return cageXROI2D;
 	}
 
 	public void setRoi(ROI2DShape roi) {
-		cageROI2D = roi;
+		cageXROI2D = roi;
 		listRoiAlongT.clear();
 	}
 
-	public String getCageNumber() {
+	public String getCageNumberFromCageRoiName() {
 		if (prop.strCageNumber == null)
-			prop.strCageNumber = cageROI2D.getName().substring(cageROI2D.getName().length() - 3);
+			prop.strCageNumber = cageXROI2D.getName().substring(cageXROI2D.getName().length() - 3);
 		return prop.strCageNumber;
 	}
 
 	public int getCageNumberInteger() {
 		int cagenb = -1;
-		prop.strCageNumber = getCageNumber();
+		prop.strCageNumber = getCageNumberFromCageRoiName();
 		if (prop.strCageNumber != null) {
 			try {
 				return Integer.parseInt(prop.strCageNumber);
@@ -84,14 +84,14 @@ public class Cage {
 	}
 
 	public Point2D getCenterTopCage() {
-		Rectangle2D rect = cageROI2D.getBounds2D();
+		Rectangle2D rect = cageXROI2D.getBounds2D();
 		Point2D pt = new Point2D.Double(rect.getX() + rect.getWidth() / 2, rect.getY());
 		return pt;
 	}
 
 	public void copyCage(Cage cage, boolean bCopyMeasures) {
 		prop.copy(cage.prop);
-		cageROI2D = cage.cageROI2D;
+		cageXROI2D = cage.cageXROI2D;
 		valid = false;
 		if (bCopyMeasures)
 			flyPositions.copyXYTaSeries(cage.flyPositions);
@@ -105,13 +105,13 @@ public class Cage {
 		FlyPosition aValue = flyPositions.flyPositionList.get(t);
 
 		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.rectPosition);
-		flyRoiR.setName("detR" + getCageNumber() + "_" + t);
+		flyRoiR.setName("detR" + getCageNumberFromCageRoiName() + "_" + t);
 		flyRoiR.setT(t);
 		return flyRoiR;
 	}
 
 	public void transferRoisToPositions(List<ROI2D> detectedROIsList) {
-		String filter = "detR" + getCageNumber();
+		String filter = "detR" + getCageNumberFromCageRoiName();
 		for (ROI2D roi : detectedROIsList) {
 			String name = roi.getName();
 			if (!name.contains(filter))
@@ -123,7 +123,7 @@ public class Cage {
 	}
 
 	public void computeCageBooleanMask2D() throws InterruptedException {
-		cageMask2D = cageROI2D.getBooleanMask2D(0, 0, 1, true);
+		cageMask2D = cageXROI2D.getBooleanMask2D(0, 0, 1, true);
 	}
 
 	// -------------------------------------
@@ -153,17 +153,17 @@ public class Cage {
 	public boolean xmlLoadCageLimits(Element xmlVal) {
 		Element xmlVal2 = XMLUtil.getElement(xmlVal, ID_CAGELIMITS);
 		if (xmlVal2 != null) {
-			cageROI2D = (ROI2D) ROI.createFromXML(xmlVal2);
-			cageROI2D.setSelected(false);
+			cageXROI2D = (ROI2D) ROI.createFromXML(xmlVal2);
+			cageXROI2D.setSelected(false);
 		}
 		return true;
 	}
 
 	public boolean xmlSaveCageLimits(Element xmlVal) {
 		Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_CAGELIMITS);
-		if (cageROI2D != null) {
-			cageROI2D.setSelected(false);
-			cageROI2D.saveToXML(xmlVal2);
+		if (cageXROI2D != null) {
+			cageXROI2D.setSelected(false);
+			cageXROI2D.saveToXML(xmlVal2);
 		}
 		return true;
 	}
@@ -189,7 +189,7 @@ public class Cage {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = new ArrayList<String>();
 		row.add(prop.strCageNumber);
-		row.add(cageROI2D.getName());
+		row.add(cageXROI2D.getName());
 		row.add(Integer.toString(prop.cageNFlies));
 		row.add(Integer.toString(prop.cageAge));
 		row.add(prop.strCageComment);
@@ -197,8 +197,8 @@ public class Cage {
 		row.add(prop.strCageSex);
 
 		int npoints = 0;
-		if (cageROI2D != null) {
-			Polygon2D polygon = ((ROI2DPolygon) cageROI2D).getPolygon2D();
+		if (cageXROI2D != null) {
+			Polygon2D polygon = ((ROI2DPolygon) cageXROI2D).getPolygon2D();
 			row.add(Integer.toString(polygon.npoints));
 			for (int i = 0; i < npoints; i++) {
 				row.add(Integer.toString((int) polygon.xpoints[i]));
@@ -295,7 +295,7 @@ public class Cage {
 	}
 
 	private void initROIAlongTList() {
-		listRoiAlongT.add(new ROI2DAlongT(0, cageROI2D));
+		listRoiAlongT.add(new ROI2DAlongT(0, cageXROI2D));
 	}
 
 }

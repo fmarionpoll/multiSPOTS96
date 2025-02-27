@@ -343,7 +343,7 @@ public class CagesArray {
 	public Cage getCageFromRowColCoordinates(int row, int column) {
 		Cage cage_found = null;
 		for (Cage cage : cagesList) {
-			if (cage.arrayColumn == column && cage.arrayRow == row) {
+			if (cage.prop.arrayColumn == column && cage.prop.arrayRow == row) {
 				cage_found = cage;
 				break;
 			}
@@ -384,7 +384,7 @@ public class CagesArray {
 
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				spot.prop.spotNFlies = cage.cageNFlies;
+				spot.prop.spotNFlies = cage.prop.cageNFlies;
 			}
 		}
 	}
@@ -393,9 +393,9 @@ public class CagesArray {
 		for (Cage cage : cagesList) {
 			int cagenb = cage.getCageNumberInteger();
 			for (Spot spot : spotsArray.spotsList) {
-				if (spot.cageID != cagenb)
+				if (spot.prop.cageID != cagenb)
 					continue;
-				cage.cageNFlies = spot.prop.spotNFlies;
+				cage.prop.cageNFlies = spot.prop.spotNFlies;
 			}
 		}
 	}
@@ -414,7 +414,7 @@ public class CagesArray {
 	public Cage getCageFromID(int cageID) {
 		Cage cageFound = null;
 		for (Cage cage : cagesList) {
-			if (cageID == cage.cageID) {
+			if (cageID == cage.prop.cageID) {
 				cageFound = cage;
 				break;
 			}
@@ -443,7 +443,7 @@ public class CagesArray {
 			Cage cage = cagesList.get(i);
 			if (option_cagenumber != -1 && cage.getCageNumberInteger() != option_cagenumber)
 				continue;
-			if (cage.cageNFlies > 0) {
+			if (cage.prop.cageNFlies > 0) {
 				cage.flyPositions = new FlyPositions();
 				cage.flyPositions.ensureCapacity(detect_nframes);
 			}
@@ -522,8 +522,8 @@ public class CagesArray {
 			return null;
 		Polygon2D polygon = getCoordinatesOfROI(cagesList.get(0).getRoi());
 		for (Cage cage : cagesList) {
-			int col = cage.arrayColumn;
-			int row = cage.arrayRow;
+			int col = cage.prop.arrayColumn;
+			int row = cage.prop.arrayRow;
 			Polygon2D n = getCoordinatesOfROI(cage.getRoi());
 			if (col == 0 && row == 0) {
 				transferPointToPolygon(0, polygon, n);
@@ -606,7 +606,7 @@ public class CagesArray {
 
 	public void initCagesAndSpotsWithNFlies(int nflies) {
 		for (Cage cage : cagesList) {
-			cage.cageNFlies = nflies;
+			cage.prop.cageNFlies = nflies;
 			cage.setNFlies(nflies);
 		}
 	}
@@ -673,7 +673,7 @@ public class CagesArray {
 	public void mergeSpotsLists(CagesArray arrayToMerge) {
 		for (Cage cage : cagesList) {
 			for (Cage cageToMerge : arrayToMerge.cagesList) {
-				if (cage.cagePosition != cageToMerge.cagePosition)
+				if (cage.prop.cagePosition != cageToMerge.prop.cagePosition)
 					continue;
 				cage.spotsArray.mergeLists(cageToMerge.spotsArray);
 			}
@@ -812,9 +812,19 @@ public class CagesArray {
 	public boolean save_SpotsMeasures(String directory) {
 		if (directory == null)
 			return false;
-
-		csvSaveSpots(directory);
+		SpotsArray localSpotsArray = getSpotsArrayFromAllCages();
+		localSpotsArray.save_SpotsMeasures(directory);
 		return true;
+	}
+
+	public SpotsArray getSpotsArrayFromAllCages() {
+		SpotsArray spotsArray = new SpotsArray();
+		int nspots = cagesList.size() * cagesList.get(0).spotsArray.spotsList.size();
+		spotsArray.spotsList.ensureCapacity(nspots);
+		for (Cage cage : cagesList) {
+			spotsArray.spotsList.addAll(cage.spotsArray.spotsList);
+		}
+		return spotsArray;
 	}
 
 	private boolean csvLoadSpots(String directory, EnumSpotMeasures option) throws Exception {
@@ -867,7 +877,7 @@ public class CagesArray {
 	public Cage getCageFromSpotRoiName(String name) {
 		int cageID = SpotString.getCageIDFromSpotName(name);
 		for (Cage cage : cagesList) {
-			if (cage.cageID == cageID)
+			if (cage.prop.cageID == cageID)
 				return cage;
 		}
 		return null;

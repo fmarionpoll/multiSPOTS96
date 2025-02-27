@@ -132,7 +132,7 @@ public class Edit extends JPanel {
 		if (findFirst(exp)) {
 			selectImageT(exp, foundT);
 			Cage cage = exp.cagesArray.getCageFromNumber(foundCage);
-			String name = "det" + cage.getCageNumber() + "_" + foundT;
+			String name = "det" + cage.getCageNumberFromCageRoiName() + "_" + foundT;
 			foundCombo.setSelectedItem(name);
 		} else
 			MessageDialog.showDialog("no missed point found", MessageDialog.INFORMATION_MESSAGE);
@@ -171,7 +171,7 @@ public class Edit extends JPanel {
 					continue;
 				Rectangle2D rect = cage.flyPositions.flyPositionList.get(frame).rectPosition;
 				if (rect.getX() == -1 && rect.getY() == -1) {
-					String name = "det" + cage.getCageNumber() + "_"
+					String name = "det" + cage.getCageNumberFromCageRoiName() + "_"
 							+ cage.flyPositions.flyPositionList.get(frame).flyIndexT;
 					foundCombo.addItem(name);
 				}
