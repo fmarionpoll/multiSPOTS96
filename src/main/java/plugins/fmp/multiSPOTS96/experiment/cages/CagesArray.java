@@ -2,9 +2,7 @@ package plugins.fmp.multiSPOTS96.experiment.cages;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +21,6 @@ import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.KymoIntervals;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
-import plugins.fmp.multiSPOTS96.experiment.spots.EnumSpotMeasures;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
@@ -53,8 +50,6 @@ public class CagesArray {
 	public int detect_nframes = 0;
 
 	// ----------------------------
-
-	private final String csvSpotsMeasuresFileName = "SpotsMeasures.csv";
 
 	private final String ID_CAGES = "Cages";
 	private final String ID_NCAGES = "n_cages";
@@ -777,35 +772,18 @@ public class CagesArray {
 
 	// --------------------------------------------------
 	public boolean load_SpotsMeasures(String directory) {
-		boolean flag = false;
-		try {
-			flag = csvLoadSpots(directory, EnumSpotMeasures.SPOTS_MEASURES);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		boolean flag = getSpotsArrayFromAllCages().load_SpotsMeasures(directory);
 		return flag;
 	}
 
 	public boolean load_SpotsAll(String directory) {
-		boolean flag = false;
-		try {
-			flag = csvLoadSpots(directory, EnumSpotMeasures.ALL);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		boolean flag = getSpotsArrayFromAllCages().load_SpotsAll(directory);
 		return flag;
 	}
 
 	public boolean save_SpotsAll(String directory) {
-		boolean flag = false;
-		try {
-			flag = csvSaveSpots(directory);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		boolean flag = getSpotsArrayFromAllCages().save_SpotsAll(directory);
+
 		return flag;
 	}
 
@@ -827,118 +805,11 @@ public class CagesArray {
 		return spotsArray;
 	}
 
-	private boolean csvLoadSpots(String directory, EnumSpotMeasures option) throws Exception {
-		String pathToCsv = directory + File.separator + csvSpotsMeasuresFileName;
-		File csvFile = new File(pathToCsv);
-		if (!csvFile.isFile())
-			return false;
-
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(pathToCsv));
-		String row;
-		String sep = ";";
-		while ((row = bufferedReader.readLine()) != null) {
-			if (row.charAt(0) == '#')
-				sep = String.valueOf(row.charAt(1));
-
-			String[] data = row.split(sep);
-			if (data[0].equals("#")) {
-				switch (data[1]) {
-				case "DESCRIPTION":
-					csvLoadSpotsDescription(bufferedReader, sep);
-					break;
-				case "SPOTS":
-					csvLoadSpotsArray(bufferedReader, sep);
-					break;
-				case "AREA_SUM":
-					csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_SUM, sep);
-					break;
-				case "AREA_OUT":
-					csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_OUT, sep);
-					break;
-				case "AREA_DIFF":
-					csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_DIFF, sep);
-					break;
-				case "AREA_SUMCLEAN":
-					csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_SUMCLEAN, sep);
-					break;
-				case "AREA_FLYPRESENT":
-					csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_FLYPRESENT, sep);
-					break;
-				default:
-					break;
-				}
-			}
-		}
-		bufferedReader.close();
-
-		return true;
-	}
-
 	public Cage getCageFromSpotRoiName(String name) {
 		int cageID = SpotString.getCageIDFromSpotName(name);
 		for (Cage cage : cagesList) {
 			if (cage.prop.cageID == cageID)
 				return cage;
-		}
-		return null;
-	}
-
-	private String csvLoadSpotsArray(BufferedReader csvReader, String csvSep) {
-		String row;
-		try {
-			row = csvReader.readLine();
-			String[] data0 = row.split(csvSep);
-			boolean dummyColumn = data0[0].contains("prefix");
-
-			while ((row = csvReader.readLine()) != null) {
-				String[] data = row.split(csvSep);
-				if (data[0].equals("#"))
-					return data[1];
-
-				String name = data[dummyColumn ? 2 : 1];
-				Cage cage = getCageFromSpotRoiName(name);
-				if (cage == null) {
-					System.out.println("cage not found in csvLoadSpotsArray");
-					continue;
-				}
-
-				Spot spot = cage.getSpotFromRoiName(name);
-				if (spot == null)
-					spot = new Spot();
-				spot.prop.csvImportDescription(data, dummyColumn);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private String csvLoadSpotsDescription(BufferedReader csvReader, String csvSep) {
-		String row;
-		try {
-			row = csvReader.readLine();
-			row = csvReader.readLine();
-
-			spotsDescription.csvImportSpotsDescriptionData(row);
-
-			row = csvReader.readLine();
-			String[] data = row.split(csvSep);
-			if (data[0].substring(0, Math.min(data[0].length(), 5)).equals("n spot")) {
-				int nspots = Integer.valueOf(data[1]);
-				if (nspots >= spotsList.size())
-					spotsList.ensureCapacity(nspots);
-				else
-					spotsList.subList(nspots, spotsList.size()).clear();
-				row = csvReader.readLine();
-				data = row.split(csvSep);
-			}
-
-			if (data[0].equals("#")) {
-				return data[1];
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return null;
 	}
