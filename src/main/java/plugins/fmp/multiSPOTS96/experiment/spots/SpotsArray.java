@@ -26,7 +26,6 @@ import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 
 public class SpotsArray {
-	public SpotProperties spotsDescription = new SpotProperties();
 	public ArrayList<Spot> spotsList = new ArrayList<Spot>();
 
 	private KymoIntervals spotsListTimeIntervals = null;
@@ -132,7 +131,6 @@ public class SpotsArray {
 		if (csFileName != null) {
 			final Document doc = XMLUtil.createDocument(true);
 			if (doc != null) {
-				spotsDescription.xmlSaveSpotsDescription(XMLUtil.getRootElement(doc));
 				xmlSave_ListOfSpots(XMLUtil.getRootElement(doc));
 				return XMLUtil.saveDocument(doc, csFileName);
 			}
@@ -147,7 +145,6 @@ public class SpotsArray {
 
 		final Document doc = XMLUtil.loadDocument(csFileName);
 		if (doc != null) {
-			spotsDescription.xmlLoadSpotsDescription(doc);
 			flag = xmlLoad_Spots_Only_v1(doc);
 		}
 		return flag;
@@ -175,7 +172,6 @@ public class SpotsArray {
 	// ---------------------------------
 
 	public void copy(SpotsArray sourceSpotArray, boolean bCopyMeasures) {
-		spotsDescription.copy(sourceSpotArray.spotsDescription);
 		spotsList.clear();
 		for (Spot sourceSpot : sourceSpotArray.spotsList) {
 			Spot spot = new Spot();
@@ -382,7 +378,7 @@ public class SpotsArray {
 				Spot spot = getSpotFromName(data[dummyColumn ? 2 : 1]);
 				if (spot == null)
 					spot = new Spot();
-				spot.csvImportDescription(data, dummyColumn);
+				spot.prop.csvImportDescription(data, dummyColumn);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -444,8 +440,8 @@ public class SpotsArray {
 		try {
 			row = csvReader.readLine();
 			row = csvReader.readLine();
-			spotsDescription.csvImportSpotsDescriptionData(row, csvSep);
-			
+//			spotsDescription.csvImportSpotsDescriptionData(row, csvSep);
+
 			row = csvReader.readLine();
 			String[] data = row.split(csvSep);
 			if (data[0].substring(0, Math.min(data[0].length(), 5)).equals("n spot")) {
@@ -468,14 +464,14 @@ public class SpotsArray {
 
 	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
 		try {
-			csvWriter.append(spotsDescription.csvExportDescriptionSectionHeader(csvSep));
+			csvWriter.append(SpotProperties.csvExportDescriptionHeader(csvSep));
 			csvWriter.append("n spots=" + csvSep + Integer.toString(spotsList.size()) + "\n");
 			csvWriter.append("#" + csvSep + "#\n");
 
 			if (spotsList.size() > 0) {
 				csvWriter.append(spotsList.get(0).csvExportSpotArrayHeader(csvSep));
 				for (Spot spot : spotsList)
-					csvWriter.append(spot.csvExportDescription(csvSep));
+					csvWriter.append(spot.prop.csvExportDescription(csvSep));
 				csvWriter.append("#" + csvSep + "#\n");
 			}
 		} catch (IOException e) {

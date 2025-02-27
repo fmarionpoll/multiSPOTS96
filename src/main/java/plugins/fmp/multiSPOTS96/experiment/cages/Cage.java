@@ -27,24 +27,10 @@ public class Cage {
 	private ROI2D cageROI2D = null;
 	private ArrayList<ROI2DAlongT> listRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
-
 	public BooleanMask2D cageMask2D = null;
 	public FlyPositions flyPositions = new FlyPositions();
 
-	public int cageID = -1;
-	public int cagePosition = 0;
-
-	public int arrayIndex = 0;
-	public int arrayColumn = -1;
-	public int arrayRow = -1;
-
-	public int cageNFlies = 0;
-	public int cageAge = 5;
-	public String strCageComment = "..";
-	public String strCageSex = "..";
-	public String strCageStrain = "..";
-	private String strCageNumber = null;
-
+	public CageProperties prop = new CageProperties();
 	public SpotsArray spotsArray = new SpotsArray();
 
 	public boolean valid = false;
@@ -53,16 +39,6 @@ public class Cage {
 
 	private final String ID_CAGELIMITS = "CageLimits";
 	private final String ID_FLYPOSITIONS = "FlyPositions";
-	private final String ID_NFLIES = "nflies";
-	private final String ID_AGE = "age";
-	private final String ID_COMMENT = "comment";
-	private final String ID_SEX = "sex";
-	private final String ID_STRAIN = "strain";
-	private final String ID_CAGEID = "ID";
-	private final String ID_CAGEPOSITION = "Pos";
-	private final String ID_ARRAYINDEX = "aIndex";
-	private final String ID_ARRAYCOLUMN = "aCol";
-	private final String ID_ARRAYROW = "aRow";
 
 	// --------------------------------------
 
@@ -85,17 +61,17 @@ public class Cage {
 	}
 
 	public String getCageNumber() {
-		if (strCageNumber == null)
-			strCageNumber = cageROI2D.getName().substring(cageROI2D.getName().length() - 3);
-		return strCageNumber;
+		if (prop.strCageNumber == null)
+			prop.strCageNumber = cageROI2D.getName().substring(cageROI2D.getName().length() - 3);
+		return prop.strCageNumber;
 	}
 
 	public int getCageNumberInteger() {
 		int cagenb = -1;
-		strCageNumber = getCageNumber();
-		if (strCageNumber != null) {
+		prop.strCageNumber = getCageNumber();
+		if (prop.strCageNumber != null) {
 			try {
-				return Integer.parseInt(strCageNumber);
+				return Integer.parseInt(prop.strCageNumber);
 			} catch (NumberFormatException e) {
 				return cagenb;
 			}
@@ -114,19 +90,8 @@ public class Cage {
 	}
 
 	public void copyCage(Cage cage, boolean bCopyMeasures) {
-		arrayIndex = cage.arrayIndex;
-		arrayColumn = cage.arrayColumn;
-		arrayRow = cage.arrayRow;
-		cageID = cage.cageID;
-		cagePosition = cage.cagePosition;
+		prop.copy(cage.prop);
 		cageROI2D = cage.cageROI2D;
-		cageNFlies = cage.cageNFlies;
-		cageAge = cage.cageAge;
-		strCageComment = cage.strCageComment;
-		strCageSex = cage.strCageSex;
-		strCageNumber = cage.strCageNumber;
-		strCageStrain = cage.strCageStrain;
-		strCageNumber = cage.strCageNumber;
 		valid = false;
 		if (bCopyMeasures)
 			flyPositions.copyXYTaSeries(cage.flyPositions);
@@ -170,7 +135,7 @@ public class Cage {
 		if (xmlVal == null)
 			return false;
 		xmlLoadCageLimits(xmlVal);
-		xmlLoadCageParameters(xmlVal);
+		prop.xmlLoadCageParameters(xmlVal);
 		spotsArray.xmlLoadSpotsArray(xmlVal);
 		return true;
 	}
@@ -180,38 +145,8 @@ public class Cage {
 			return false;
 		Element xmlVal = XMLUtil.addElement(node, "Cage" + index);
 		xmlSaveCageLimits(xmlVal);
-		xmlSaveCageParameters(xmlVal);
+		prop.xmlSaveCageParameters(xmlVal);
 		spotsArray.xmlSaveSpotsArray(xmlVal);
-		return true;
-	}
-
-	public boolean xmlLoadCageParameters(Element xmlVal) {
-		cageID = XMLUtil.getElementIntValue(xmlVal, ID_CAGEID, cageID);
-		cagePosition = XMLUtil.getElementIntValue(xmlVal, ID_CAGEPOSITION, cagePosition);
-		arrayIndex = XMLUtil.getElementIntValue(xmlVal, ID_ARRAYINDEX, arrayIndex);
-		arrayColumn = XMLUtil.getElementIntValue(xmlVal, ID_ARRAYCOLUMN, arrayColumn);
-		arrayRow = XMLUtil.getElementIntValue(xmlVal, ID_ARRAYROW, arrayRow);
-		cageNFlies = XMLUtil.getElementIntValue(xmlVal, ID_NFLIES, cageNFlies);
-		cageAge = XMLUtil.getElementIntValue(xmlVal, ID_AGE, cageAge);
-
-		strCageComment = XMLUtil.getElementValue(xmlVal, ID_COMMENT, strCageComment);
-		strCageSex = XMLUtil.getElementValue(xmlVal, ID_SEX, strCageSex);
-		strCageStrain = XMLUtil.getElementValue(xmlVal, ID_STRAIN, strCageStrain);
-		return true;
-	}
-
-	public boolean xmlSaveCageParameters(Element xmlVal) {
-		XMLUtil.setElementIntValue(xmlVal, ID_CAGEID, cageID);
-		XMLUtil.setElementIntValue(xmlVal, ID_CAGEPOSITION, cagePosition);
-		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYINDEX, arrayIndex);
-		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYCOLUMN, arrayColumn);
-		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYROW, arrayRow);
-		XMLUtil.setElementIntValue(xmlVal, ID_NFLIES, cageNFlies);
-		XMLUtil.setElementIntValue(xmlVal, ID_AGE, cageAge);
-
-		XMLUtil.setElementValue(xmlVal, ID_COMMENT, strCageComment);
-		XMLUtil.setElementValue(xmlVal, ID_SEX, strCageSex);
-		XMLUtil.setElementValue(xmlVal, ID_STRAIN, strCageStrain);
 		return true;
 	}
 
@@ -253,13 +188,13 @@ public class Cage {
 	public String csvExportCageDescription(String sep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = new ArrayList<String>();
-		row.add(strCageNumber);
+		row.add(prop.strCageNumber);
 		row.add(cageROI2D.getName());
-		row.add(Integer.toString(cageNFlies));
-		row.add(Integer.toString(cageAge));
-		row.add(strCageComment);
-		row.add(strCageStrain);
-		row.add(strCageSex);
+		row.add(Integer.toString(prop.cageNFlies));
+		row.add(Integer.toString(prop.cageAge));
+		row.add(prop.strCageComment);
+		row.add(prop.strCageStrain);
+		row.add(prop.strCageSex);
 
 		int npoints = 0;
 		if (cageROI2D != null) {
@@ -279,7 +214,7 @@ public class Cage {
 	// --------------------------------------------------------
 
 	public void setNFlies(int nFlies) {
-		this.cageNFlies = nFlies;
+		this.prop.cageNFlies = nFlies;
 		for (Spot spot : spotsArray.spotsList) {
 			spot.prop.spotNFlies = nFlies;
 		}
@@ -291,7 +226,7 @@ public class Cage {
 			spotsArray.spotsList = new ArrayList<Spot>(1);
 		int carreIndex = spotsArray.spotsList.size();
 		Spot spot = createEllipseSpot(spotIndex, carreIndex, center, radius);
-		spot.cagePosition = spotsArray.spotsList.size();
+		spot.prop.cagePosition = spotsArray.spotsList.size();
 		spotsArray.spotsList.add(spot);
 		return spotsArray.spotsList.size();
 	}
@@ -299,12 +234,12 @@ public class Cage {
 	private Spot createEllipseSpot(int spotArrayIndex, int cagePosition, Point2D.Double center, int radius) {
 		Ellipse2D ellipse = new Ellipse2D.Double(center.x, center.y, 2 * radius, 2 * radius);
 		ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
-		roiEllipse.setName(SpotString.createSpotString(cageID, cagePosition, spotArrayIndex));
+		roiEllipse.setName(SpotString.createSpotString(prop.cageID, cagePosition, spotArrayIndex));
 
 		Spot spot = new Spot(roiEllipse);
-		spot.spotArrayIndex = spotArrayIndex;
-		spot.cageID = cageID;
-		spot.cagePosition = cagePosition;
+		spot.prop.spotArrayIndex = spotArrayIndex;
+		spot.prop.cageID = prop.cageID;
+		spot.prop.cagePosition = cagePosition;
 		spot.prop.spotRadius = radius;
 		spot.prop.spotXCoord = (int) center.getX();
 		spot.prop.spotYCoord = (int) center.getY();
@@ -319,17 +254,17 @@ public class Cage {
 
 	public Spot getSpotFromRoiName(String name) {
 		int cagePosition = SpotString.getSpotCagePositionFromSpotName(name);
-		for (Spot spot: spotsArray.spotsList) {
-			if (spot.cagePosition == cagePosition)
+		for (Spot spot : spotsArray.spotsList) {
+			if (spot.prop.cagePosition == cagePosition)
 				return spot;
 		}
 		return null;
 	}
-	
+
 	// --------------------------------------------
 
 	public List<ROI2DAlongT> getROIAlongTList() {
-	
+
 		if (listRoiAlongT.size() < 1)
 			initROIAlongTList();
 		return listRoiAlongT;

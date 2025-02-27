@@ -482,12 +482,10 @@ public class Experiment {
 
 	public boolean load_MS96_spotsMeasures() {
 		return cagesArray.load_SpotsMeasures(getResultsDirectory());
-		return false;
 	}
 
 	public boolean save_MS96_spotsMeasures() {
 		return cagesArray.save_SpotsMeasures(getResultsDirectory());
-		return false;
 	}
 
 	public boolean load_MS96_fliesPositions() {

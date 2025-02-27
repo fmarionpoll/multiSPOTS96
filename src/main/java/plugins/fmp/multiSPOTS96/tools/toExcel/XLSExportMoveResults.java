@@ -116,7 +116,7 @@ public class XLSExportMoveResults extends XLSExport {
 		for (int i = 0; i < ncages; i++) {
 			Cage cage = expAll.cagesArray.cagesList.get(i);
 			FlyPositions row = new FlyPositions(cage.getRoi().getName(), xlsOption, nFrames, options.buildExcelStepMs);
-			row.nflies = cage.cageNFlies;
+			row.nflies = cage.prop.cageNFlies;
 			rowsForOneExp.add(row);
 		}
 		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name_Comparator());
@@ -137,7 +137,7 @@ public class XLSExportMoveResults extends XLSExport {
 			for (Cage cage : expi.cagesArray.cagesList) {
 				FlyPositions results = new FlyPositions(cage.getRoi().getName(), xlsOption, len,
 						options.buildExcelStepMs);
-				results.nflies = cage.cageNFlies;
+				results.nflies = cage.prop.cageNFlies;
 				if (results.nflies > 0) {
 					results.setPixelSize(pixelsize);
 
@@ -282,7 +282,7 @@ public class XLSExportMoveResults extends XLSExport {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			int cagenumber = Integer.valueOf(cage.getRoi().getName().substring(4));
 			int ilastalive = 0;
-			if (cage.cageNFlies > 0) {
+			if (cage.prop.cageNFlies > 0) {
 				Experiment expi = exp;
 				while (expi.chainToNextExperiment != null
 						&& expi.chainToNextExperiment.cagesArray.isFlyAlive(cagenumber)) {

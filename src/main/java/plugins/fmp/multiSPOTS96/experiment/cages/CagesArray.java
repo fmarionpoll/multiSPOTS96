@@ -53,7 +53,7 @@ public class CagesArray {
 	public int detect_nframes = 0;
 
 	// ----------------------------
-	
+
 	private final String csvSpotsMeasuresFileName = "SpotsMeasures.csv";
 
 	private final String ID_CAGES = "Cages";
@@ -774,7 +774,7 @@ public class CagesArray {
 		for (Cage cage : cagesList)
 			cage.removeROIAlongTListItem(start);
 	}
-	
+
 	// --------------------------------------------------
 	public boolean load_SpotsMeasures(String directory) {
 		boolean flag = false;
@@ -866,13 +866,13 @@ public class CagesArray {
 
 	public Cage getCageFromSpotRoiName(String name) {
 		int cageID = SpotString.getCageIDFromSpotName(name);
-		for (Cage cage: cagesList) {
+		for (Cage cage : cagesList) {
 			if (cage.cageID == cageID)
 				return cage;
 		}
 		return null;
 	}
-	
+
 	private String csvLoadSpotsArray(BufferedReader csvReader, String csvSep) {
 		String row;
 		try {
@@ -884,18 +884,18 @@ public class CagesArray {
 				String[] data = row.split(csvSep);
 				if (data[0].equals("#"))
 					return data[1];
-				
+
 				String name = data[dummyColumn ? 2 : 1];
 				Cage cage = getCageFromSpotRoiName(name);
 				if (cage == null) {
 					System.out.println("cage not found in csvLoadSpotsArray");
 					continue;
 				}
-					
+
 				Spot spot = cage.getSpotFromRoiName(name);
 				if (spot == null)
 					spot = new Spot();
-				spot.csvImportDescription(data, dummyColumn);
+				spot.prop.csvImportDescription(data, dummyColumn);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -903,15 +903,15 @@ public class CagesArray {
 		}
 		return null;
 	}
-	
+
 	private String csvLoadSpotsDescription(BufferedReader csvReader, String csvSep) {
 		String row;
 		try {
 			row = csvReader.readLine();
 			row = csvReader.readLine();
-			
+
 			spotsDescription.csvImportSpotsDescriptionData(row);
-			
+
 			row = csvReader.readLine();
 			String[] data = row.split(csvSep);
 			if (data[0].substring(0, Math.min(data[0].length(), 5)).equals("n spot")) {
@@ -923,7 +923,7 @@ public class CagesArray {
 				row = csvReader.readLine();
 				data = row.split(csvSep);
 			}
-			
+
 			if (data[0].equals("#")) {
 				return data[1];
 			}

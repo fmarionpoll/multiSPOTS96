@@ -72,9 +72,9 @@ public class TableModelSpot extends AbstractTableModel {
 			case 0:
 				return spot.getRoi().getName();
 			case 1:
-				return spot.cageID;
+				return spot.prop.cageID;
 			case 2:
-				return spot.cagePosition;
+				return spot.prop.cagePosition;
 			case 3:
 				return spot.prop.spotNFlies;
 			case 4:
@@ -109,10 +109,10 @@ public class TableModelSpot extends AbstractTableModel {
 				spot.getRoi().setName(aValue.toString());
 				break;
 			case 1:
-				spot.cageID = (int) aValue;
+				spot.prop.cageID = (int) aValue;
 				break;
 			case 2:
-				spot.cagePosition = (int) aValue;
+				spot.prop.cagePosition = (int) aValue;
 				break;
 			case 3:
 				spot.prop.spotNFlies = (int) aValue;

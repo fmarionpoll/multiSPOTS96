@@ -34,12 +34,8 @@ public class Spot implements Comparable<Spot> {
 	public IcyBufferedImage spotImage = null;
 	public BooleanMask2D mask2DSpot = null;
 
-	public int cageID = -1;
-	public int cagePosition = 0;
-	public int spotArrayIndex = 0;
-
 	public SpotProperties prop = new SpotProperties();
-	
+
 	public BuildSeriesOptions limitsOptions = new BuildSeriesOptions();
 	public SpotMeasure sum_in = new SpotMeasure("sum");
 	public SpotMeasure sum_clean = new SpotMeasure("clean");
@@ -53,14 +49,12 @@ public class Spot implements Comparable<Spot> {
 	private final String ID_CAGEINDEX = "cage_index";
 	private final String ID_SPOTARRAYINDEX = "spot_array_index";
 
-
 	private final String ID_DESCOK = "descriptionOK";
 	private final String ID_VERSIONINFOS = "versionInfos";
 	private final String ID_INTERVALS = "INTERVALS";
 	private final String ID_NINTERVALS = "nintervals";
 	private final String ID_INTERVAL = "interval_";
 	private final String ID_INDEXIMAGE = "indexImageMC";
-
 
 	private Color[] spotColors = new Color[] { new Color(0xFF, 0x55, 0x55), new Color(0x55, 0x55, 0xFF),
 			new Color(0x55, 0xFF, 0x55), new Color(0xFF, 0xFF, 0x55), new Color(0xFF, 0x55, 0xFF),
@@ -88,10 +82,9 @@ public class Spot implements Comparable<Spot> {
 		prop.version = spotFrom.prop.version;
 		spotROI2D = (ROI2DShape) spotFrom.spotROI2D.getCopy();
 
-		spotArrayIndex = spotFrom.spotArrayIndex;
-		cageID = spotFrom.cageID;
-		cagePosition = spotFrom.cagePosition;
-
+		prop.spotArrayIndex = spotFrom.prop.spotArrayIndex;
+		prop.cageID = spotFrom.prop.cageID;
+		prop.cagePosition = spotFrom.prop.cagePosition;
 
 		limitsOptions = spotFrom.limitsOptions;
 
@@ -119,25 +112,25 @@ public class Spot implements Comparable<Spot> {
 		switch (xlsExportOption) {
 		case DISTANCE:
 		case ISALIVE:
-			value = String.valueOf(cagePosition) + "(T=B)";
+			value = String.valueOf(prop.cagePosition) + "(T=B)";
 			break;
 		case TOPLEVELDELTA_LR:
 		case TOPLEVEL_LR:
-			if (cagePosition == 0)
+			if (prop.cagePosition == 0)
 				value = "sum";
-			else if (cagePosition == 1)
+			else if (prop.cagePosition == 1)
 				value = "PI";
 			break;
 		case XYIMAGE:
 		case XYTOPCAGE:
 		case XYTIPCAPS:
-			if (cagePosition == 0)
+			if (prop.cagePosition == 0)
 				value = "x";
 			else
 				value = "y";
 			break;
 		default:
-			value = String.valueOf(cagePosition);
+			value = String.valueOf(prop.cagePosition);
 			break;
 		}
 		return value;
@@ -198,7 +191,7 @@ public class Spot implements Comparable<Spot> {
 			return true;
 
 		for (int i : selectedIndexes) {
-			if (i == spotArrayIndex) {
+			if (i == prop.spotArrayIndex) {
 				return true;
 			}
 		}
@@ -258,12 +251,12 @@ public class Spot implements Comparable<Spot> {
 		final Node nodeMeta = XMLUtil.getElement(node, ID_META);
 		boolean flag = (nodeMeta != null);
 		if (flag) {
-			cageID = XMLUtil.getElementIntValue(nodeMeta, ID_INDEXIMAGE, cageID);		
-			cageID = XMLUtil.getElementIntValue(nodeMeta, ID_CAGE, cageID);
-			cagePosition = XMLUtil.getElementIntValue(nodeMeta, ID_CAGEINDEX, cagePosition);
-			spotArrayIndex = XMLUtil.getElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, spotArrayIndex);
+			prop.cageID = XMLUtil.getElementIntValue(nodeMeta, ID_INDEXIMAGE, prop.cageID);
+			prop.cageID = XMLUtil.getElementIntValue(nodeMeta, ID_CAGE, prop.cageID);
+			prop.cagePosition = XMLUtil.getElementIntValue(nodeMeta, ID_CAGEINDEX, prop.cagePosition);
+			prop.spotArrayIndex = XMLUtil.getElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, prop.spotArrayIndex);
 			spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
-			setSpotRoi_InColorAccordingToSpotIndex(cagePosition);
+			setSpotRoi_InColorAccordingToSpotIndex(prop.cagePosition);
 			limitsOptions.loadFromXML(nodeMeta);
 
 			loadFromXML_SpotAlongT(node);
@@ -297,17 +290,17 @@ public class Spot implements Comparable<Spot> {
 		final Node nodeMeta = XMLUtil.setElement(node, ID_META);
 		if (nodeMeta == null)
 			return false;
-		
-		XMLUtil.setElementIntValue(nodeMeta, ID_INDEXIMAGE, cageID);
+
+		XMLUtil.setElementIntValue(nodeMeta, ID_INDEXIMAGE, prop.cageID);
 
 		XMLUtil.setElementBooleanValue(nodeMeta, ID_DESCOK, prop.descriptionOK);
 		XMLUtil.setElementIntValue(nodeMeta, ID_VERSIONINFOS, prop.versionInfos);
 
-		XMLUtil.setElementIntValue(nodeMeta, ID_CAGE, cageID);
-		XMLUtil.setElementIntValue(nodeMeta, ID_CAGEINDEX, cagePosition);
-		XMLUtil.setElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, spotArrayIndex);
+		XMLUtil.setElementIntValue(nodeMeta, ID_CAGE, prop.cageID);
+		XMLUtil.setElementIntValue(nodeMeta, ID_CAGEINDEX, prop.cagePosition);
+		XMLUtil.setElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, prop.spotArrayIndex);
 		ROI2DUtilities.saveToXML_ROI(nodeMeta, spotROI2D);
-		
+
 		prop.saveToXML(node);
 
 		boolean flag = saveToXML_SpotAlongT(node);
@@ -370,24 +363,18 @@ public class Spot implements Comparable<Spot> {
 	public void adjustLevel2DMeasuresToImageWidth(int imageWidth) {
 		sum_in.adjustLevel2DToImageWidth(imageWidth);
 		sum_clean.adjustLevel2DToImageWidth(imageWidth);
-//		sum_out.adjustLevel2DToImageWidth(imageWidth);
-//		sum_diff.adjustLevel2DToImageWidth(imageWidth);
 		flyPresent.adjustLevel2DToImageWidth(imageWidth);
 	}
 
 	public void cropLevel2DMeasuresToImageWidth(int imageWidth) {
 		sum_in.cropLevel2DToNPoints(imageWidth);
 		sum_clean.cropLevel2DToNPoints(imageWidth);
-//		sum_out.cropLevel2DToNPoints(imageWidth);
-//		sum_diff.cropLevel2DToNPoints(imageWidth);
 		flyPresent.cropLevel2DToNPoints(imageWidth);
 	}
 
 	public void initLevel2DMeasures() {
 		sum_in.initLevel2D_fromMeasureValues(getRoi().getName());
 		sum_clean.initLevel2D_fromMeasureValues(getRoi().getName());
-//		sum_out.initLevel2D_fromMeasureValues(getRoi_in().getName());
-//		sum_diff.initLevel2D_fromMeasureValues(getRoi_in().getName());
 		flyPresent.initLevel2D_fromBooleans(getRoi().getName());
 	}
 
@@ -406,10 +393,6 @@ public class Spot implements Comparable<Spot> {
 			measuresRoisList.add(sum_in.getROIForImage(spotROI2D.getName(), spotKymograph_T, imageHeight));
 		if (sum_clean.getLevel2DNPoints() != 0)
 			measuresRoisList.add(sum_clean.getROIForImage(spotROI2D.getName(), spotKymograph_T, imageHeight));
-//		if (sum_out.getLevel2DNPoints() != 0)
-//			measuresRoisList.add(sum_out.getROIForImage(spotRoi_in.getName(), spot_Kymograph_T, imageHeight));
-//		if (sum_diff.getLevel2DNPoints() != 0)
-//			measuresRoisList.add(sum_diff.getROIForImage(spotRoi_in.getName(), spot_Kymograph_T, imageHeight));
 		if (flyPresent.getLevel2DNPoints() != 0)
 			measuresRoisList.add(flyPresent.getROIForImage(spotROI2D.getName(), spotKymograph_T, 10));
 		return measuresRoisList;
@@ -421,10 +404,6 @@ public class Spot implements Comparable<Spot> {
 			transferROItoMeasureValue(roi, imageHeight, sum_in);
 		} else if (name.contains(sum_clean.getName())) {
 			transferROItoMeasureValue(roi, imageHeight, sum_clean);
-//		} else if (name.contains(sum_out.getName())) {
-//			transferROItoMeasureValue(roi, imageHeight, sum_out);
-//		} else if (name.contains(sum_diff.getName())) {
-//			transferROItoMeasureValue(roi, imageHeight, sum_diff);
 		} else if (name.contains(flyPresent.getName())) {
 			transferROItoMeasureBoolean(roi, flyPresent);
 		}
@@ -458,17 +437,6 @@ public class Spot implements Comparable<Spot> {
 		return sbf.toString();
 	}
 
-	public String csvExportDescription(String csvSep) {
-		StringBuffer sbf = new StringBuffer();
-		List<String> row = Arrays.asList(String.valueOf(spotArrayIndex), getRoi().getName(), String.valueOf(cageID),
-				String.valueOf(prop.spotNFlies), String.valueOf(prop.spotVolume), String.valueOf(prop.spotNPixels),
-				String.valueOf(prop.spotRadius), prop.spotStim.replace(",", "."), prop.spotConc.replace(",", "."),
-				String.valueOf(cagePosition));
-		sbf.append(String.join(csvSep, row));
-		sbf.append("\n");
-		return sbf.toString();
-	}
-
 	public String csvExportMeasures_SectionHeader(EnumSpotMeasures measureType, String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> listExplanation1 = Arrays.asList("\n name", "index", "npts", "yi", "\n");
@@ -490,7 +458,7 @@ public class Spot implements Comparable<Spot> {
 
 	public String csvExportMeasures_OneType(EnumSpotMeasures measureType, String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		sbf.append(spotROI2D.getName() + csvSep + spotArrayIndex + csvSep);
+		sbf.append(spotROI2D.getName() + csvSep + prop.spotArrayIndex + csvSep);
 		switch (measureType) {
 		case AREA_SUM:
 			sum_in.cvsExportYDataToRow(sbf, csvSep);
@@ -498,12 +466,6 @@ public class Spot implements Comparable<Spot> {
 		case AREA_SUMCLEAN:
 			sum_clean.cvsExportYDataToRow(sbf, csvSep);
 			break;
-//		case AREA_OUT:
-//			sum_out.cvsExportYDataToRow(sbf, csvSep);
-//			break;
-//		case AREA_DIFF:
-//			sum_diff.cvsExportYDataToRow(sbf, csvSep);
-//			break;
 		case AREA_FLYPRESENT:
 			flyPresent.cvsExportYDataToRow(sbf, csvSep);
 			break;
@@ -512,29 +474,6 @@ public class Spot implements Comparable<Spot> {
 		}
 		sbf.append("\n");
 		return sbf.toString();
-	}
-
-	public void csvImportDescription(String[] data, boolean dummyColumn) {
-		int i = dummyColumn ? 1 : 0;
-		spotArrayIndex = Integer.valueOf(data[i]);
-		i++;
-		spotROI2D.setName(data[i]);
-		i++;
-		cageID = Integer.valueOf(data[i]);
-		i++;
-		prop.spotNFlies = Integer.valueOf(data[i]);
-		i++;
-		prop.spotVolume = Double.valueOf(data[i]);
-		i++;
-		prop.spotNPixels = Integer.valueOf(data[i]);
-		i++;
-		prop.spotRadius = Integer.valueOf(data[i]);
-		i++;
-		prop.spotStim = data[i];
-		i++;
-		prop.spotConc = data[i];
-		i++;
-		cagePosition = Integer.valueOf(data[i]);
 	}
 
 	public void csvImportMeasures_OneType(EnumSpotMeasures measureType, String[] data, boolean x, boolean y) {
@@ -546,12 +485,6 @@ public class Spot implements Comparable<Spot> {
 			case AREA_SUMCLEAN:
 				sum_clean.csvImportXYDataFromRow(data, 2);
 				break;
-//			case AREA_OUT:
-//				sum_out.csvImportXYDataFromRow(data, 2);
-//				break;
-//			case AREA_DIFF:
-//				sum_diff.csvImportXYDataFromRow(data, 2);
-//				break;
 			case AREA_FLYPRESENT:
 				flyPresent.csvImportXYDataFromRow(data, 2);
 				break;
@@ -566,12 +499,6 @@ public class Spot implements Comparable<Spot> {
 			case AREA_SUMCLEAN:
 				sum_clean.csvImportYDataFromRow(data, 2);
 				break;
-//			case AREA_OUT:
-//				sum_out.csvImportYDataFromRow(data, 2);
-//				break;
-//			case AREA_DIFF:
-//				sum_diff.csvImportYDataFromRow(data, 2);
-//				break;
 			case AREA_FLYPRESENT:
 				flyPresent.csvImportYDataFromRow(data, 2);
 				break;

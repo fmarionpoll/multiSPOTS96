@@ -247,7 +247,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 		int nFrames = exp.seqCamData.nTotalFrames;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				int i = spot.cagePosition % 2;
+				int i = spot.prop.cagePosition % 2;
 				if (0 == i && !options.detectL)
 					continue;
 				if (1 == i && !options.detectR)

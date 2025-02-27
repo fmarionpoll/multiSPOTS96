@@ -197,7 +197,7 @@ public class SpotTablePanel extends JPanel {
 		if (columnIndex < 0)
 			columnIndex = 5;
 		for (Cage cage : exp.cagesArray.cagesList) {
-			int side0 = cage.spotsArray.spotsList.get(0).cagePosition;
+			int side0 = cage.spotsArray.spotsList.get(0).prop.cagePosition;
 			Spot spot0 = new Spot();
 			spot0.copySpot(cage.spotsArray.spotsList.get(0), false);
 
@@ -205,7 +205,7 @@ public class SpotTablePanel extends JPanel {
 			spot1.copySpot(cage.spotsArray.spotsList.get(1), false);
 
 			for (Spot spot : cage.spotsArray.spotsList) {
-				if ((spot.cagePosition == side0))
+				if ((spot.prop.cagePosition == side0))
 					copySingleSpotValue(spot1, spot, columnIndex);
 				else
 					copySingleSpotValue(spot0, spot, columnIndex);
@@ -267,13 +267,13 @@ public class SpotTablePanel extends JPanel {
 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			Spot spot0 = cage.spotsArray.spotsList.get(rowIndex);
-			int cageIndex = spot0.cagePosition;
+			int cageIndex = spot0.prop.cagePosition;
 
 			for (Spot spot : cage.spotsArray.spotsList) {
 				if (spot.getRoi().getName().equals(spot0.getRoi().getName()))
 					continue;
 
-				if (spot.cagePosition != cageIndex)
+				if (spot.prop.cagePosition != cageIndex)
 					continue;
 
 				switch (columnIndex) {
@@ -340,7 +340,7 @@ public class SpotTablePanel extends JPanel {
 			return;
 
 		Spot spotFrom = exp.cagesArray.getSpotAtGlobalIndex(rowIndex);
-		int cageFrom = spotFrom.cageID;
+		int cageFrom = spotFrom.prop.cageID;
 		int cageTo = -1;
 
 		int nSpotsPerCage = getCageNSpots(exp, cageFrom);
@@ -350,15 +350,15 @@ public class SpotTablePanel extends JPanel {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (int i = 0; i < cage.spotsArray.spotsList.size(); i++) {
 				Spot spot = cage.spotsArray.spotsList.get(i);
-				if (spot.cageID == cageFrom)
+				if (spot.prop.cageID == cageFrom)
 					continue;
 
-				if (spot.cageID != cageTo) {
-					cageTo = spot.cageID;
+				if (spot.prop.cageID != cageTo) {
+					cageTo = spot.prop.cageID;
 					indexFirstSpotOfCageTo = getIndexFirstSpotOfCage(exp, cageTo);
 				}
 
-				if (getCageNSpots(exp, spot.cageID) != nSpotsPerCage)
+				if (getCageNSpots(exp, spot.prop.cageID) != nSpotsPerCage)
 					continue;
 
 				int indexFrom = i - indexFirstSpotOfCageTo + indexFirstSpotOfCageFrom;
@@ -401,7 +401,7 @@ public class SpotTablePanel extends JPanel {
 		Cage cage = exp.cagesArray.getCageFromID(cageID);
 		if (cage != null) {
 			Spot spot = cage.spotsArray.spotsList.get(0);
-			index = spot.spotArrayIndex;
+			index = spot.prop.spotArrayIndex;
 		}
 		return index;
 	}

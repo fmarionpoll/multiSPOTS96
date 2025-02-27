@@ -97,7 +97,7 @@ public class FlyDetectTools {
 		for (Cage cage : cages.cagesList) {
 			if (options.detectCage != -1 && cage.getCageNumberInteger() != options.detectCage)
 				continue;
-			if (cage.cageNFlies < 1)
+			if (cage.prop.cageNFlies < 1)
 				continue;
 
 			futures.add(processor.submit(new Runnable() {
@@ -167,7 +167,7 @@ public class FlyDetectTools {
 		cages.computeBooleanMasksForCages();
 		rectangleAllCages = null;
 		for (Cage cage : cages.cagesList) {
-			if (cage.cageNFlies < 1)
+			if (cage.prop.cageNFlies < 1)
 				continue;
 			Rectangle rect = cage.getRoi().getBounds();
 			if (rectangleAllCages == null)

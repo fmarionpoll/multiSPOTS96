@@ -81,15 +81,15 @@ public class TableModelCage extends AbstractTableModel {
 			case 0:
 				return cage.getRoi().getName();
 			case 1:
-				return cage.cageNFlies;
+				return cage.prop.cageNFlies;
 			case 2:
-				return cage.strCageStrain;
+				return cage.prop.strCageStrain;
 			case 3:
-				return cage.strCageSex;
+				return cage.prop.strCageSex;
 			case 4:
-				return cage.cageAge;
+				return cage.prop.cageAge;
 			case 5:
-				return cage.strCageComment;
+				return cage.prop.strCageComment;
 			}
 		}
 		return null;
@@ -118,19 +118,19 @@ public class TableModelCage extends AbstractTableModel {
 				cage.getRoi().setName(aValue.toString());
 				break;
 			case 1:
-				cage.cageNFlies = (int) aValue;
+				cage.prop.cageNFlies = (int) aValue;
 				break;
 			case 2:
-				cage.strCageStrain = aValue.toString();
+				cage.prop.strCageStrain = aValue.toString();
 				break;
 			case 3:
-				cage.strCageSex = aValue.toString();
+				cage.prop.strCageSex = aValue.toString();
 				break;
 			case 4:
-				cage.cageAge = (int) aValue;
+				cage.prop.cageAge = (int) aValue;
 				break;
 			case 5:
-				cage.strCageComment = aValue.toString();
+				cage.prop.strCageComment = aValue.toString();
 				break;
 			}
 		}
