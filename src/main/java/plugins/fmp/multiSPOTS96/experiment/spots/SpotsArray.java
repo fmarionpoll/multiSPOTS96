@@ -368,17 +368,14 @@ public class SpotsArray {
 		String row;
 		try {
 			row = csvReader.readLine();
-			String[] data0 = row.split(csvSep);
-			boolean dummyColumn = data0[0].contains("prefix");
-
 			while ((row = csvReader.readLine()) != null) {
 				String[] data = row.split(csvSep);
 				if (data[0].equals("#"))
 					return data[1];
-				Spot spot = getSpotFromName(data[dummyColumn ? 2 : 1]);
+				Spot spot = getSpotFromName(data[0]);
 				if (spot == null)
 					spot = new Spot();
-				spot.prop.csvImportProperties(data, dummyColumn);
+				spot.prop.csvImportProperties(data);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

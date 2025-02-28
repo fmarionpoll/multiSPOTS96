@@ -102,8 +102,8 @@ public class SpotProperties {
 
 	// --------------------------------------
 
-	public void csvImportProperties(String[] data, boolean dummyColumn) {
-		int i = dummyColumn ? 1 : 0;
+	public void csvImportProperties(String[] data) {
+		int i = 0;
 		sourceName = data[i];
 		i++;
 		spotArrayIndex = Integer.valueOf(data[i]);
