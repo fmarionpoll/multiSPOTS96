@@ -112,7 +112,7 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 	}
 
 	private void updateParametersCurrentExperiment(Experiment exp) {
-		parent0.dlgExperiment.tabInfos.getExperimentInfosFromDialog(exp.expDesc);
+		parent0.dlgExperiment.tabInfos.getExperimentInfosFromDialog(exp.expProperties);
 	}
 
 	// TODO _CAGES private XLSExportOptions getMoveOptions() {

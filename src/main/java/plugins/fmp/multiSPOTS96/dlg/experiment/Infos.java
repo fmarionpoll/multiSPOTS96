@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.ExperimentDescriptors;
+import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxModelSorted;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
@@ -139,7 +139,7 @@ public class Infos extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					ExperimentDescriptors expDesc = exp.expDesc;
+					ExperimentProperties expDesc = exp.expProperties;
 					getExperimentInfosFromDialog(expDesc);
 					exp.save_MS96_experiment();
 				}
@@ -167,16 +167,16 @@ public class Infos extends JPanel {
 
 	private void setInfoCombo(Experiment exp_dest, Experiment exp_source, JComboBox<String> combo,
 			EnumXLSColumnHeader field) {
-		String altText = exp_source.expDesc.getExperimentField(field);
-		String text = exp_dest.expDesc.getExperimentField(field);
+		String altText = exp_source.expProperties.getExperimentField(field);
+		String text = exp_dest.expProperties.getExperimentField(field);
 		if (text.equals(".."))
-			exp_dest.expDesc.setExperimentFieldNoTest(field, altText);
-		text = exp_dest.expDesc.getExperimentField(field);
+			exp_dest.expProperties.setExperimentFieldNoTest(field, altText);
+		text = exp_dest.expProperties.getExperimentField(field);
 		addItemToComboIfNew(text, combo);
 		combo.setSelectedItem(text);
 	}
 
-	public void getExperimentInfosFromDialog(ExperimentDescriptors expDesc) {
+	public void getExperimentInfosFromDialog(ExperimentProperties expDesc) {
 		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_BOXID, (String) boxIDCombo.getSelectedItem());
 		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_EXPT, (String) exptCombo.getSelectedItem());
 		expDesc.setExperimentFieldNoTest(EnumXLSColumnHeader.EXP_STIM, (String) stimCombo.getSelectedItem());

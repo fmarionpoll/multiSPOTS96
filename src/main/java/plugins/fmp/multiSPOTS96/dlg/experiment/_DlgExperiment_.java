@@ -90,7 +90,7 @@ public class _DlgExperiment_ extends JPanel implements ViewerListener, ChangeLis
 	}
 
 	public void getExperimentInfosFromDialog(Experiment exp) {
-		tabInfos.getExperimentInfosFromDialog(exp.expDesc);
+		tabInfos.getExperimentInfosFromDialog(exp.expProperties);
 	}
 
 	public void updateViewerForSequenceCam(Experiment exp) {

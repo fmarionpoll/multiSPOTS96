@@ -43,9 +43,7 @@ public class Experiment {
 	public FileTime firstImage_FileTime;
 	public FileTime lastImage_FileTime;
 
-	// __________________________________________________
-
-	public ExperimentDescriptors expDesc = new ExperimentDescriptors();
+	public ExperimentProperties expProperties = new ExperimentProperties();
 	public int col = -1;
 	public Experiment chainToPreviousExperiment = null;
 	public Experiment chainToNextExperiment = null;
@@ -409,7 +407,7 @@ public class Experiment {
 		seqCamData.binDuration_ms = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
 
 		ugly_checkOffsetValues();
-		expDesc.loadXML_Descriptors(node);
+		expProperties.loadXML_Properties(node);
 		return true;
 	}
 
@@ -434,7 +432,7 @@ public class Experiment {
 			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, seqCamData.binLast_ms);
 			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, seqCamData.binDuration_ms);
 
-			expDesc.saveXML_Descriptors(node);
+			expProperties.saveXML_Properties(node);
 
 			if (camDataImagesDirectory == null)
 				camDataImagesDirectory = seqCamData.getImagesDirectory();
@@ -510,8 +508,8 @@ public class Experiment {
 
 	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
 		try {
-			csvWriter.append(expDesc.csvExportExperimentSectionHeader(csvSep));
-			csvWriter.append(expDesc.csvExportExperimentDescriptors(csvSep));
+			csvWriter.append(expProperties.csvExportExperimentSectionHeader(csvSep));
+			csvWriter.append(expProperties.csvExportExperimentProperties(csvSep));
 			csvWriter.append("#" + csvSep + "#\n");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -562,7 +560,7 @@ public class Experiment {
 		case EXP_SEX:
 		case EXP_COND1:
 		case EXP_COND2:
-			addValue(expDesc.getExperimentField(fieldEnumCode), textList);
+			addValue(expProperties.getExperimentField(fieldEnumCode), textList);
 			break;
 		case CAP_STIM:
 		case CAP_CONC:
@@ -575,9 +573,9 @@ public class Experiment {
 
 	public boolean replaceExperimentFieldIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
-		boolean flag = expDesc.getExperimentField(fieldEnumCode).equals(oldValue);
+		boolean flag = expProperties.getExperimentField(fieldEnumCode).equals(oldValue);
 		if (flag) {
-			expDesc.setExperimentFieldNoTest(fieldEnumCode, newValue);
+			expProperties.setExperimentFieldNoTest(fieldEnumCode, newValue);
 		}
 		return flag;
 	}

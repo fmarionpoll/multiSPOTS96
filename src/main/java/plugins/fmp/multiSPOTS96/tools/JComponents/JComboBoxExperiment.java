@@ -193,7 +193,7 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 				if (i == j)
 					continue;
 				Experiment expj = getItemAt(j);
-				if (!expi.expDesc.isSameDescriptors(expj.expDesc))
+				if (!expi.expProperties.isSameProperties(expj.expProperties))
 					continue;
 
 				// same exp series: if before, insert eventually
@@ -244,7 +244,7 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 				if (i == j)
 					continue;
 				Experiment expj = getItemAt(j);
-				if (!expi.expDesc.isSameDescriptors(expj.expDesc))
+				if (!expi.expProperties.isSameProperties(expj.expProperties))
 					continue;
 				if (expj.chainToNextExperiment != null || expj.chainToPreviousExperiment != null)
 					continue;

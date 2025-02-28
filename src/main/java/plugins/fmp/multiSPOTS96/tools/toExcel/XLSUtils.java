@@ -6,7 +6,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import plugins.fmp.multiSPOTS96.experiment.ExperimentDescriptors;
+import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
 
 public class XLSUtils {
 	public static void setValue(XSSFSheet sheet, Point pt, boolean transpose, int ivalue) {
@@ -76,7 +76,7 @@ public class XLSUtils {
 		return getCell(sheet, pt.y, pt.x);
 	}
 	
-	public static void setFieldValue(XSSFSheet sheet, int x, int y, boolean transpose, ExperimentDescriptors expDesc, EnumXLSColumnHeader field) {
+	public static void setFieldValue(XSSFSheet sheet, int x, int y, boolean transpose, ExperimentProperties expDesc, EnumXLSColumnHeader field) {
 		setValue(sheet, x, y + field.getValue(), transpose, expDesc.getExperimentField(field));
 	}
 

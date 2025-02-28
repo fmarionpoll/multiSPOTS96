@@ -8,7 +8,7 @@ import org.w3c.dom.Node;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
-public class ExperimentDescriptors {
+public class ExperimentProperties {
 
 	public String ffield_boxID = new String("..");
 	public String ffield_experiment = new String("..");
@@ -33,7 +33,7 @@ public class ExperimentDescriptors {
 	private final static String ID_COND1 = "cond1";
 	private final static String ID_COND2 = "cond2";
 
-	public void saveXML_Descriptors(Node node) {
+	public void saveXML_Properties(Node node) {
 		XMLUtil.setElementValue(node, ID_BOXID, ffield_boxID);
 		XMLUtil.setElementValue(node, ID_EXPERIMENT, ffield_experiment);
 		XMLUtil.setElementValue(node, ID_STIM, ffield_stim);
@@ -47,7 +47,7 @@ public class ExperimentDescriptors {
 		XMLUtil.setElementValue(node, ID_COND2, field_cond2);
 	}
 
-	public void loadXML_Descriptors(Node node) {
+	public void loadXML_Properties(Node node) {
 		ffield_boxID = XMLUtil.getElementValue(node, ID_BOXID, "..");
 		ffield_experiment = XMLUtil.getElementValue(node, ID_EXPERIMENT, "..");
 		ffield_stim = XMLUtil.getElementValue(node, ID_STIM, "..");
@@ -125,7 +125,7 @@ public class ExperimentDescriptors {
 		}
 	}
 
-	public void copyExperimentFieldsFrom(ExperimentDescriptors expSource) {
+	public void copyExperimentFieldsFrom(ExperimentProperties expSource) {
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_EXPT);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_BOXID);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STIM);
@@ -136,12 +136,12 @@ public class ExperimentDescriptors {
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_COND2);
 	}
 	
-	private void copyExperimentalField(ExperimentDescriptors expSource, EnumXLSColumnHeader fieldEnumCode) {
+	private void copyExperimentalField(ExperimentProperties expSource, EnumXLSColumnHeader fieldEnumCode) {
 		String newValue = expSource.getExperimentField(fieldEnumCode);
 		setExperimentFieldNoTest(fieldEnumCode, newValue);
 	}
 
-	public boolean isSameDescriptors(ExperimentDescriptors expi) {
+	public boolean isSameProperties(ExperimentProperties expi) {
 		boolean flag = true;
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_EXPT);
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_BOXID);
@@ -154,7 +154,7 @@ public class ExperimentDescriptors {
 		return flag;
 	}
 	
-	private boolean isFieldEqual(ExperimentDescriptors expi, EnumXLSColumnHeader fieldEnumCode) {
+	private boolean isFieldEqual(ExperimentProperties expi, EnumXLSColumnHeader fieldEnumCode) {
 		return expi.getExperimentField(fieldEnumCode) .equals(this.getExperimentField(fieldEnumCode));
 	}
 	
@@ -177,7 +177,7 @@ public class ExperimentDescriptors {
 		return sbf.toString();
 	}
 	
-	public String csvExportExperimentDescriptors(String csvSep) {
+	public String csvExportExperimentProperties(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row3 = Arrays.asList(
 				ffield_boxID, 
@@ -195,7 +195,7 @@ public class ExperimentDescriptors {
 		return sbf.toString();
 	}
 	
-	public void csvImporteExperimentDescriptionData(String[] data) {
+	public void csvImportExperimentProperties(String[] data) {
 		int i = 0;
 		ffield_boxID = data[i];
 		i++;

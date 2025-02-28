@@ -91,14 +91,14 @@ public class XLSExport {
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
 
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_BOXID);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_EXPT);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_STIM);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_CONC);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_STRAIN);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_SEX);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_COND1);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expDesc, EnumXLSColumnHeader.EXP_COND2);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_BOXID);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_EXPT);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_STIM);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_CONC);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_STRAIN);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_SEX);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_COND1);
+				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_COND2);
 
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose,
 						spot.prop.spotVolume);
@@ -318,7 +318,7 @@ public class XLSExport {
 		// loop to get all spots into expAll and init rows for this experiment
 		expAll.cagesArray.copy(exp.cagesArray.cagesList, false);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
-		expAll.expDesc.copyExperimentFieldsFrom(exp.expDesc);
+		expAll.expProperties.copyExperimentFieldsFrom(exp.expProperties);
 		expAll.setResultsDirectory(exp.getResultsDirectory());
 
 		Experiment expi = exp.chainToNextExperiment;
@@ -352,7 +352,7 @@ public class XLSExport {
 		// loop to get all spots into expAll and init rows for this experiment
 		expAll.cagesArray.copy(exp.cagesArray.cagesList, false);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
-		expAll.expDesc.copyExperimentFieldsFrom(exp.expDesc);
+		expAll.expProperties.copyExperimentFieldsFrom(exp.expProperties);
 		expAll.setResultsDirectory(exp.getResultsDirectory());
 
 		Experiment expi = exp.chainToNextExperiment;

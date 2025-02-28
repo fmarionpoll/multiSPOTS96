@@ -39,20 +39,19 @@ public class SpotsArray {
 	// ---------------------------------
 
 	public boolean load_SpotsMeasures(String directory) {
-		boolean flag = false;
-		try {
-			flag = csvLoadSpots(directory, EnumSpotMeasures.SPOTS_MEASURES);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return flag;
+		return load_Spots(directory, EnumSpotMeasures.SPOTS_MEASURES);
 	}
 
 	public boolean load_SpotsAll(String directory) {
+		return load_Spots(directory, EnumSpotMeasures.ALL);
+	}
+	
+	private boolean load_Spots(String directory,  EnumSpotMeasures option) {
 		boolean flag = false;
+		if (directory == null)
+			return flag;
 		try {
-			flag = csvLoadSpots(directory, EnumSpotMeasures.ALL);
+			flag = csvLoadSpots(directory, option);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -61,14 +60,10 @@ public class SpotsArray {
 	}
 
 	public boolean save_SpotsAll(String directory) {
-		boolean flag = false;
-		try {
-			flag = csvSaveSpots(directory);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return flag;
+		if (directory == null)
+			return false;
+		
+		return csvSaveSpots(directory);
 	}
 
 	public boolean save_SpotsMeasures(String directory) {
@@ -360,7 +355,6 @@ public class SpotsArray {
 			}
 		}
 		bufferedReader.close();
-
 		return true;
 	}
 
