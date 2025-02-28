@@ -115,43 +115,6 @@ public class XLSResults {
 		}
 	}
 
-//	public List<Double> relativeToT(int t) {
-//		if (dataValues == null || dataValues.size() < 1)
-//			return null;
-//
-//		double value0 = dataValues.get(t);
-//		if (value0 == 0.) {
-//			for (int index = 0; index < dataValues.size(); index++) {
-//				if (dataValues.get(index) > 0) {
-//					value0 = dataValues.get(index);
-//					break;
-//				}
-//			}
-//		}
-//
-//		relativeToValue(value0);
-//		return dataValues;
-//	}
-//	
-//
-//	public List<Double> relativeToMedianT(int t, int npoints) {
-//		if (dataValues == null || dataValues.size() < 1)
-//			return null;
-//
-//		double value0 = median(t, npoints);
-//		if (value0 == 0.) {
-//			for (int index = 0; index < dataValues.size(); index++) {
-//				if (dataValues.get(index) > 0) {
-//					value0 = dataValues.get(index);
-//					break;
-//				}
-//			}
-//		}
-//
-//		relativeToValue(value0);
-//		return dataValues;
-//	}
-
 	private double median(int t, int npoints) {
 		double[] numArray = new double[npoints];
 		for (int i = 0; i < npoints; i++) {

@@ -50,10 +50,9 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 		tabsPane.addTab("Spots", null, tabAreas, "Export measures made on spots to file");
 		tabAreas.addPropertyChangeListener(this);
 
-		// TODO _CAGES tabMove.init(capLayout);
-		// TODO _CAGES tabsPane.addTab("Move", null, tabMove, "Export fly positions to
-		// file");
-		// TODO _CAGES tabMove.addPropertyChangeListener(this);
+// TODO _CAGES tabMove.init(capLayout);
+// TODO _CAGES tabsPane.addTab("Move", null, tabMove, "Export fly positions to file");
+// TODO _CAGES tabMove.addPropertyChangeListener(this);
 
 		capPanel.add(tabsPane);
 		tabsPane.setSelectedIndex(0);
@@ -74,19 +73,19 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 		if (exp == null)
 			return;
 
-		// TODO _CAGES if (evt.getPropertyName().equals("EXPORT_MOVEDATA")) {
-		// TODO _CAGES String file = defineXlsFileName(exp, "_move.xlsx");
-		// TODO _CAGES if (file == null)
-		// TODO _CAGES return;
-		// TODO _CAGES updateParametersCurrentExperiment(exp);
-		// TODO _CAGES ThreadUtil.bgRun(new Runnable() {
-		// TODO _CAGES @Override
-		// TODO _CAGES public void run() {
-		// TODO _CAGES XLSExportMoveResults xlsExport = new XLSExportMoveResults();
-		// TODO _CAGES xlsExport.exportToFile(file, getMoveOptions());
-		// TODO _CAGES }
-		// TODO _CAGES });
-		// TODO _CAGES } else
+// TODO _CAGES if (evt.getPropertyName().equals("EXPORT_MOVEDATA")) {
+// TODO _CAGES String file = defineXlsFileName(exp, "_move.xlsx");
+// TODO _CAGES if (file == null)
+// TODO _CAGES return;
+// TODO _CAGES updateParametersCurrentExperiment(exp);
+// TODO _CAGES ThreadUtil.bgRun(new Runnable() {
+// TODO _CAGES @Override
+// TODO _CAGES public void run() {
+// TODO _CAGES XLSExportMoveResults xlsExport = new XLSExportMoveResults();
+// TODO _CAGES xlsExport.exportToFile(file, getMoveOptions());
+// TODO _CAGES }
+// TODO _CAGES });
+// TODO _CAGES } else
 
 		if (evt.getPropertyName().equals("EXPORT_SPOTSMEASURES")) {
 			String file = defineXlsFileName(exp, "_spotsareas.xlsx");

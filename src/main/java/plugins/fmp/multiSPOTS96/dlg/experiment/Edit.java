@@ -27,7 +27,7 @@ public class Edit extends JPanel {
 			new EnumXLSColumnHeader[] { EnumXLSColumnHeader.EXP_EXPT, EnumXLSColumnHeader.EXP_BOXID,
 					EnumXLSColumnHeader.EXP_STIM, EnumXLSColumnHeader.EXP_CONC, EnumXLSColumnHeader.EXP_STRAIN,
 					EnumXLSColumnHeader.EXP_SEX, EnumXLSColumnHeader.EXP_COND1, EnumXLSColumnHeader.EXP_COND2,
-					EnumXLSColumnHeader.CAP_STIM, EnumXLSColumnHeader.CAP_CONC });
+					EnumXLSColumnHeader.SPOT_STIM, EnumXLSColumnHeader.SPOT_CONC });
 
 	private JComboBox<String> fieldOldValuesCombo = new JComboBox<String>();
 	private JTextField newValueTextField = new JTextField(10);

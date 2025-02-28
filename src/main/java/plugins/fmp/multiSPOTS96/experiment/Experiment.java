@@ -506,16 +506,16 @@ public class Experiment {
 
 	final String csvSep = ";";
 
-	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
-		try {
-			csvWriter.append(expProperties.csvExportExperimentSectionHeader(csvSep));
-			csvWriter.append(expProperties.csvExportExperimentProperties(csvSep));
-			csvWriter.append("#" + csvSep + "#\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
+//	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
+//		try {
+//			csvWriter.append(expProperties.csvExportExperimentSectionHeader(csvSep));
+//			csvWriter.append(expProperties.csvExportExperimentProperties(csvSep));
+//			csvWriter.append("#" + csvSep + "#\n");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return true;
+//	}
 
 	public boolean zloadKymographs() {
 		if (seqSpotKymos == null)
@@ -562,8 +562,8 @@ public class Experiment {
 		case EXP_COND2:
 			addValue(expProperties.getExperimentField(fieldEnumCode), textList);
 			break;
-		case CAP_STIM:
-		case CAP_CONC:
+		case SPOT_STIM:
+		case SPOT_CONC:
 			addSpotsValues(fieldEnumCode, textList);
 			break;
 		default:
@@ -592,8 +592,8 @@ public class Experiment {
 		case EXP_COND2:
 			replaceExperimentFieldIfEqualOld(fieldEnumCode, oldValue, newValue);
 			break;
-		case CAP_STIM:
-		case CAP_CONC:
+		case SPOT_STIM:
+		case SPOT_CONC:
 			if (replaceSpotsFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue))
 				save_MS96_cages();
 			break;

@@ -306,7 +306,7 @@ public class XLSExportMoveResults extends XLSExport {
 	private int xlsExportResultsArrayToSheet(XSSFSheet sheet, EnumXLSExportType xlsExportOption, int col0,
 			String charSeries) {
 		Point pt = new Point(col0, 0);
-		writeExperiment_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
+		writeExperiment_properties(expAll, charSeries, sheet, pt, xlsExportOption);
 		pt = writeData2(sheet, xlsExportOption, pt);
 		return pt.x;
 	}

@@ -139,10 +139,10 @@ public class Spot implements Comparable<Spot> {
 	public String getSpotField(EnumXLSColumnHeader fieldEnumCode) {
 		String stringValue = null;
 		switch (fieldEnumCode) {
-		case CAP_STIM:
+		case SPOT_STIM:
 			stringValue = prop.spotStim;
 			break;
-		case CAP_CONC:
+		case SPOT_CONC:
 			stringValue = prop.spotConc;
 			break;
 		default:
@@ -153,10 +153,10 @@ public class Spot implements Comparable<Spot> {
 
 	public void setSpotField(EnumXLSColumnHeader fieldEnumCode, String stringValue) {
 		switch (fieldEnumCode) {
-		case CAP_STIM:
+		case SPOT_STIM:
 			prop.spotStim = stringValue;
 			break;
-		case CAP_CONC:
+		case SPOT_CONC:
 			prop.spotConc = stringValue;
 			break;
 		default:

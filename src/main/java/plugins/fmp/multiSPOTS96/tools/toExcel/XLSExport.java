@@ -35,7 +35,7 @@ public class XLSExport {
 
 	// ------------------------------------------------
 
-	protected Point writeExperiment_descriptors(Experiment exp, String charSeries, XSSFSheet sheet, Point pt,
+	protected Point writeExperiment_properties(Experiment exp, String charSeries, XSSFSheet sheet, Point pt,
 			EnumXLSExportType xlsExportOption) {
 		boolean transpose = options.transpose;
 		int row = pt.y;
@@ -83,7 +83,6 @@ public class XLSExport {
 			for (int t = 0; t < spotsList.size(); t++) {
 				Spot spot = spotsList.get(t);
 				String name = spot.getRoi().getName();
-//				int col = getRowIndexFromSpotName(name);
 				int col = SpotString.getSpotArrayIndexFromSpotName(name);
 				if (col >= 0)
 					pt.x = colseries + col;
@@ -163,16 +162,16 @@ public class XLSExport {
 		case TOPLEVEL_LR:
 		case TOPLEVELDELTA_LR:
 			if (spot.prop.cagePosition == 0)
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, "L+R");
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, "L+R");
 			else
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, "(L-R)/(L+R)");
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose,
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, "(L-R)/(L+R)");
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose,
 					spot.prop.spotStim + ": " + spot.prop.spotConc);
 			break;
 
 		default:
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_STIM.getValue(), transpose, spot.prop.spotStim);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_CONC.getValue(), transpose, spot.prop.spotConc);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.prop.spotStim);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.prop.spotConc);
 			break;
 		}
 	}
@@ -238,17 +237,6 @@ public class XLSExport {
 		return numFromName;
 	}
 
-//	protected int getRowIndexFromSpotName(String name) {
-//		if (!name.contains("spot"))
-//			return -1;
-//		String num = name.substring(4, 6);
-//		int numFromName = Integer.valueOf(num);
-//		String num2 = name.substring(7, 9);
-//		int numFromName2 = Integer.valueOf(num2);
-//		numFromName = numFromName * 2 + numFromName2;
-//		return numFromName;
-//	}
-
 	protected int getRowIndexFromCageName(String name) {
 		if (!name.contains("cage"))
 			return -1;
@@ -258,7 +246,6 @@ public class XLSExport {
 	}
 
 	protected Point getCellXCoordinateFromDataName(XLSResults xlsResults, Point pt_main, int colseries) {
-//		int col = getRowIndexFromSpotName(xlsResults.name);
 		int col = SpotString.getSpotArrayIndexFromSpotName(xlsResults.name);
 		if (col >= 0)
 			pt_main.x = colseries + col;
@@ -300,16 +287,16 @@ public class XLSExport {
 		options.exportType = exportType;
 		XLSResultsArray rowListForOneExp = getSpotsDataFromOneExperimentSeries_v2parms(exp, options);
 		XSSFSheet sheet = xlsInitSheet(exportType.toString(), exportType);
-		int colmax = xlsExportResultsArrayToSheet(rowListForOneExp, sheet, exportType, col0, charSeries);
+		int colmax = xlsExportResultsArrayToSheet(exp, rowListForOneExp, sheet, exportType, col0, charSeries);
 		if (options.onlyalive) {
 			trimDeadsFromArrayList(rowListForOneExp, exp);
 			sheet = xlsInitSheet(exportType.toString() + "_alive", exportType);
-			xlsExportResultsArrayToSheet(rowListForOneExp, sheet, exportType, col0, charSeries);
+			xlsExportResultsArrayToSheet(exp, rowListForOneExp, sheet, exportType, col0, charSeries);
 		}
 		if (options.sumPerCage) {
 			combineDataForOneCage(rowListForOneExp, exp);
 			sheet = xlsInitSheet(exportType.toString() + "_cage", exportType);
-			xlsExportResultsArrayToSheet(rowListForOneExp, sheet, exportType, col0, charSeries);
+			xlsExportResultsArrayToSheet(exp, rowListForOneExp, sheet, exportType, col0, charSeries);
 		}
 		return colmax;
 	}
@@ -629,10 +616,10 @@ public class XLSExport {
 		}
 	}
 
-	private int xlsExportResultsArrayToSheet(XLSResultsArray rowListForOneExp, XSSFSheet sheet,
+	private int xlsExportResultsArrayToSheet(Experiment exp, XLSResultsArray rowListForOneExp, XSSFSheet sheet,
 			EnumXLSExportType xlsExportOption, int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
-		writeExperiment_descriptors(expAll, charSeries, sheet, pt, xlsExportOption);
+		writeExperiment_properties(exp, charSeries, sheet, pt, xlsExportOption);
 		pt = writeExperiment_data(rowListForOneExp, sheet, pt);
 		return pt.x;
 	}
@@ -658,7 +645,6 @@ public class XLSExport {
 	private void writeRow(XSSFSheet sheet, int column_dataArea, int rowSeries, Point pt, XLSResults row) {
 		boolean transpose = options.transpose;
 		pt.y = column_dataArea;
-//		int col = getRowIndexFromSpotName(row.name);
 		int col = SpotString.getSpotArrayIndexFromSpotName(row.name);
 		pt.x = rowSeries + col;
 		if (row.valuesOut == null)

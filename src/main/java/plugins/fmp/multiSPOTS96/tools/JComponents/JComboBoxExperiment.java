@@ -119,14 +119,9 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 						exp.checkKymosDirectory(exp.getBinSubDirectory());
 					exp.load_MS96_experiment();
 					exp.load_MS96_cages();
-
-					if (loadSpots) {
-//						exp.zopenSpotsMeasures();
-//						if (seqCamData == null)
-//							seqCamData = new SequenceCamData()
-//						getFileIntervalsFromSeqCamData();
+					if (loadSpots) 
 						exp.load_MS96_spotsMeasures();
-					}
+					
 					if (loadDrosoTrack)
 						exp.zopenPositionsMeasures();
 
