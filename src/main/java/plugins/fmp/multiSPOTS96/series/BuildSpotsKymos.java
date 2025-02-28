@@ -24,6 +24,7 @@ import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.tools.GaspardRigidRegistration;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
@@ -194,9 +195,8 @@ public class BuildSpotsKymos extends BuildSeries {
 		int vertical_resolution = 512;
 
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (int ispot = 0; ispot < nbspots; ispot++) {
-				final Spot spot = cage.spotsArray.spotsList.get(ispot);
-				final int indexSpot = ispot;
+			for (Spot spot: cage.spotsArray.spotsList) {
+				final int indexSpot = SpotString.getSpotArrayIndexFromSpotName(spot.getRoi().getName());
 				tasks.add(processor.submit(new Runnable() {
 					@Override
 					public void run() {

@@ -17,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
@@ -82,7 +83,8 @@ public class XLSExport {
 			for (int t = 0; t < spotsList.size(); t++) {
 				Spot spot = spotsList.get(t);
 				String name = spot.getRoi().getName();
-				int col = getRowIndexFromSpotName(name);
+//				int col = getRowIndexFromSpotName(name);
+				int col = SpotString.getSpotArrayIndexFromSpotName(name);
 				if (col >= 0)
 					pt.x = colseries + col;
 				int x = pt.x;
@@ -236,16 +238,16 @@ public class XLSExport {
 		return numFromName;
 	}
 
-	protected int getRowIndexFromSpotName(String name) {
-		if (!name.contains("spot"))
-			return -1;
-		String num = name.substring(4, 6);
-		int numFromName = Integer.valueOf(num);
-		String num2 = name.substring(7, 9);
-		int numFromName2 = Integer.valueOf(num2);
-		numFromName = numFromName * 2 + numFromName2;
-		return numFromName;
-	}
+//	protected int getRowIndexFromSpotName(String name) {
+//		if (!name.contains("spot"))
+//			return -1;
+//		String num = name.substring(4, 6);
+//		int numFromName = Integer.valueOf(num);
+//		String num2 = name.substring(7, 9);
+//		int numFromName2 = Integer.valueOf(num2);
+//		numFromName = numFromName * 2 + numFromName2;
+//		return numFromName;
+//	}
 
 	protected int getRowIndexFromCageName(String name) {
 		if (!name.contains("cage"))
@@ -256,7 +258,8 @@ public class XLSExport {
 	}
 
 	protected Point getCellXCoordinateFromDataName(XLSResults xlsResults, Point pt_main, int colseries) {
-		int col = getRowIndexFromSpotName(xlsResults.name);
+//		int col = getRowIndexFromSpotName(xlsResults.name);
+		int col = SpotString.getSpotArrayIndexFromSpotName(xlsResults.name);
 		if (col >= 0)
 			pt_main.x = colseries + col;
 		return pt_main;
@@ -655,7 +658,8 @@ public class XLSExport {
 	private void writeRow(XSSFSheet sheet, int column_dataArea, int rowSeries, Point pt, XLSResults row) {
 		boolean transpose = options.transpose;
 		pt.y = column_dataArea;
-		int col = getRowIndexFromSpotName(row.name);
+//		int col = getRowIndexFromSpotName(row.name);
+		int col = SpotString.getSpotArrayIndexFromSpotName(row.name);
 		pt.x = rowSeries + col;
 		if (row.valuesOut == null)
 			return;
