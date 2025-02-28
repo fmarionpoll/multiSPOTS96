@@ -581,18 +581,13 @@ public class CagesArray {
 	}
 
 	public Spot getSpotFromROIName(String name) {
-		Spot spotFound = null;
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				if (spot.getRoi().getName().contains(name)) {
-					spotFound = spot;
-					break;
-				}
+				if (spot.getRoi().getName().contains(name)) 
+					return spot;
 			}
-			if (spotFound != null)
-				break;
 		}
-		return spotFound;
+		return null;
 	}
 
 	public void initCagesAndSpotsWithNFlies(int nflies) {
@@ -646,7 +641,7 @@ public class CagesArray {
 		}
 		return null;
 	}
-
+	
 	public int getTotalNumberOfSpots() {
 		int nspots = 0;
 		for (Cage cage : cagesList) {

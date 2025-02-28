@@ -78,7 +78,7 @@
 <key name="lastUpdateCheckTime" value="1740734605968"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
-<key name="loaderFolder" value="C:\Users\fred\Desktop\2025-01-24  4gouttes 0.5 micro litre"/>
+<key name="loaderFolder" value="\\comportement-egce.ideev.universite-paris-saclay.fr\MultiCAFE\2025 Beatrice\essai multispots  plaques 96\2025-01-31"/>
 </section>
 <section name="canvas">
 <section name="Canvas2D">
@@ -152,21 +152,21 @@
 <section name="plugins"/>
 <section name="frame">
 <section name="main">
-<key name="XE" value="2928"/>
-<key name="YE" value="76"/>
-<key name="WidthE" value="1795"/>
-<key name="HeightE" value="1133"/>
+<key name="XE" value="2679"/>
+<key name="YE" value="97"/>
+<key name="WidthE" value="2219"/>
+<key name="HeightE" value="1277"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1487"/>
+<key name="XC" value="1911"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="300"/>
-<key name="HeightC" value="971"/>
+<key name="HeightC" value="1115"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -184,7 +184,7 @@
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="881"/>
+<key name="HeightC" value="1025"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -202,7 +202,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="881"/>
+<key name="HeightC" value="1025"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>

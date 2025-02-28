@@ -26,6 +26,7 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelSpot;
 
+
 public class SpotTablePanel extends JPanel {
 	/**
 	 * 
@@ -36,10 +37,8 @@ public class SpotTablePanel extends JPanel {
 	private TableModelSpot spotTableModel = null;
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
-	private JButton duplicateLRButton = new JButton("Duplicate cell to pos");
-	private JButton duplicateCageStimButton = new JButton("Duplicate cage stim");
-
-	private JButton exchangeLRButton = new JButton("Exchg L/R");
+	private JButton duplicatePosButton = new JButton("Duplicate row at cage pos");
+	private JButton duplicateCageButton = new JButton("Duplicate cage");
 
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
 	private JButton getNfliesButton = new JButton("Get n flies from cage");
@@ -78,15 +77,15 @@ public class SpotTablePanel extends JPanel {
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(copyButton);
 		panel1.add(pasteButton);
-		panel1.add(duplicateLRButton);
+		panel1.add(duplicatePosButton);
 		panel1.add(duplicateAllButton);
-		panel1.add(exchangeLRButton);
+		panel1.add(duplicateCageButton);
 		topPanel.add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(getNfliesButton);
 		panel2.add(nPixelsButton);
-		panel2.add(duplicateCageStimButton);
+		
 		topPanel.add(panel2);
 
 		JPanel tablePanel = new JPanel();
@@ -137,31 +136,21 @@ public class SpotTablePanel extends JPanel {
 			}
 		});
 
-		duplicateLRButton.addActionListener(new ActionListener() {
+		duplicatePosButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
-					duplicateLR(exp);
+					duplicatePos(exp);
 			}
 		});
 
-		duplicateCageStimButton.addActionListener(new ActionListener() {
+		duplicateCageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
 					duplicateCage(exp);
-			}
-		});
-
-		exchangeLRButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp == null || (exp.cagesArray.nColumnsPerCage * exp.cagesArray.nRowsPerCage) != 2)
-					return;
-				exchangeLR(exp);
 			}
 		});
 
@@ -192,50 +181,6 @@ public class SpotTablePanel extends JPanel {
 		dialogFrame.close();
 	}
 
-	private void exchangeLR(Experiment exp) {
-		int columnIndex = jTable.getSelectedColumn();
-		if (columnIndex < 0)
-			columnIndex = 5;
-		for (Cage cage : exp.cagesArray.cagesList) {
-			int side0 = cage.spotsArray.spotsList.get(0).prop.cagePosition;
-			Spot spot0 = new Spot();
-			spot0.copySpot(cage.spotsArray.spotsList.get(0), false);
-
-			Spot spot1 = new Spot();
-			spot1.copySpot(cage.spotsArray.spotsList.get(1), false);
-
-			for (Spot spot : cage.spotsArray.spotsList) {
-				if ((spot.prop.cagePosition == side0))
-					copySingleSpotValue(spot1, spot, columnIndex);
-				else
-					copySingleSpotValue(spot0, spot, columnIndex);
-			}
-		}
-	}
-
-	private void copySingleSpotValue(Spot spotFrom, Spot spotTo, int columnIndex) {
-		switch (columnIndex) {
-		case 3:
-			spotTo.prop.spotNFlies = spotFrom.prop.spotNFlies;
-			break;
-		case 4:
-			spotTo.prop.spotNPixels = spotFrom.prop.spotNPixels;
-			break;
-		case 5:
-			spotTo.prop.spotVolume = spotFrom.prop.spotVolume;
-			break;
-		case 6:
-			spotTo.prop.spotStim = spotFrom.prop.spotStim;
-			break;
-		case 7:
-			spotTo.prop.spotConc = spotFrom.prop.spotConc;
-			break;
-		default:
-			break;
-		}
-
-	}
-
 	private void copyInfos(Experiment exp) {
 		cagesArrayCopy.clear();
 		for (Cage cage : exp.cagesArray.cagesList)
@@ -259,42 +204,30 @@ public class SpotTablePanel extends JPanel {
 			}
 	}
 
-	private void duplicateLR(Experiment exp) {
+	private void duplicatePos(Experiment exp) {
 		int rowIndex = jTable.getSelectedRow();
-		int columnIndex = jTable.getSelectedColumn();
 		if (rowIndex < 0)
 			return;
+		
+		String spotName = (String) jTable.getValueAt(rowIndex, 0);
+		Spot spotFrom = exp.cagesArray.getSpotFromROIName(spotName);
+		if (spotFrom == null) {
+			System.out.println("spot not found: "+spotName);
+			return;
+		}
+		int cagePosition = spotFrom.prop.cagePosition;
+		int cageID = spotFrom.prop.cageID;
 
 		for (Cage cage : exp.cagesArray.cagesList) {
-			Spot spot0 = cage.spotsArray.spotsList.get(rowIndex);
-			int cageIndex = spot0.prop.cagePosition;
-
+			if (cage.prop.cageID == cageID)
+				continue;
 			for (Spot spot : cage.spotsArray.spotsList) {
-				if (spot.getRoi().getName().equals(spot0.getRoi().getName()))
+				if (spot.prop.cagePosition != cagePosition)
 					continue;
-
-				if (spot.prop.cagePosition != cageIndex)
-					continue;
-
-				switch (columnIndex) {
-				case 3:
-					spot.prop.spotNFlies = spot0.prop.spotNFlies;
-					break;
-				case 4:
-					spot.prop.spotNPixels = spot0.prop.spotNPixels;
-					break;
-				case 5:
-					spot.prop.spotVolume = spot0.prop.spotVolume;
-					break;
-				case 6:
-					spot.prop.spotStim = spot.prop.spotStim;
-					break;
-				case 7:
-					spot.prop.spotConc = spot0.prop.spotConc;
-					break;
-				default:
-					break;
-				}
+				spot.prop.spotNFlies = spotFrom.prop.spotNFlies;
+				spot.prop.spotVolume = spotFrom.prop.spotVolume;
+				spot.prop.spotStim = spotFrom.prop.spotStim;
+				spot.prop.spotConc = spotFrom.prop.spotConc;
 			}
 		}
 	}
@@ -334,75 +267,28 @@ public class SpotTablePanel extends JPanel {
 	}
 
 	private void duplicateCage(Experiment exp) {
-		int columnIndex = jTable.getSelectedColumn();
 		int rowIndex = jTable.getSelectedRow();
 		if (rowIndex < 0)
 			return;
 
-		Spot spotFrom = exp.cagesArray.getSpotAtGlobalIndex(rowIndex);
-		int cageFrom = spotFrom.prop.cageID;
-		int cageTo = -1;
-
-		int nSpotsPerCage = getCageNSpots(exp, cageFrom);
-		int indexFirstSpotOfCageFrom = getIndexFirstSpotOfCage(exp, cageFrom);
-		int indexFirstSpotOfCageTo = -1;
+		Spot spotFromSelectedRow = exp.cagesArray.getSpotAtGlobalIndex(rowIndex);
+		int cageIDFrom = spotFromSelectedRow.prop.cageID;
+		Cage cageFrom = exp.cagesArray.getCageFromSpotRoiName(spotFromSelectedRow.getRoi().getName());
 
 		for (Cage cage : exp.cagesArray.cagesList) {
+			if (cage.prop.cageID == cageIDFrom)
+				continue;
+			
 			for (int i = 0; i < cage.spotsArray.spotsList.size(); i++) {
 				Spot spot = cage.spotsArray.spotsList.get(i);
-				if (spot.prop.cageID == cageFrom)
-					continue;
-
-				if (spot.prop.cageID != cageTo) {
-					cageTo = spot.prop.cageID;
-					indexFirstSpotOfCageTo = getIndexFirstSpotOfCage(exp, cageTo);
-				}
-
-				if (getCageNSpots(exp, spot.prop.cageID) != nSpotsPerCage)
-					continue;
-
-				int indexFrom = i - indexFirstSpotOfCageTo + indexFirstSpotOfCageFrom;
-				Spot spot0 = cage.spotsArray.spotsList.get(indexFrom);
-
-				switch (columnIndex) {
-				case 3:
-					spot.prop.spotNFlies = spot0.prop.spotNFlies;
-					break;
-				case 4:
-					spot.prop.spotNPixels = spot0.prop.spotNPixels;
-					break;
-				case 5:
-					spot.prop.spotVolume = spot0.prop.spotVolume;
-					break;
-				case 6:
-					spot.prop.spotStim = spot0.prop.spotStim;
-					break;
-				case 7:
-					spot.prop.spotConc = spot0.prop.spotConc;
-					break;
-				default:
-					break;
-				}
+				Spot spotFrom = cageFrom.spotsArray.spotsList.get(i);
+				spot.prop.spotNFlies = spotFrom.prop.spotNFlies;
+				spot.prop.spotVolume = spotFrom.prop.spotVolume;
+				spot.prop.spotStim = spotFrom.prop.spotStim;
+				spot.prop.spotConc = spotFrom.prop.spotConc;
 			}
 		}
 
 	}
 
-	private int getCageNSpots(Experiment exp, int cageID) {
-		int nSpots = 0;
-		Cage cage = exp.cagesArray.getCageFromID(cageID);
-		if (cage != null)
-			nSpots = cage.spotsArray.spotsList.size();
-		return nSpots;
-	}
-
-	private int getIndexFirstSpotOfCage(Experiment exp, int cageID) {
-		int index = -1;
-		Cage cage = exp.cagesArray.getCageFromID(cageID);
-		if (cage != null) {
-			Spot spot = cage.spotsArray.spotsList.get(0);
-			index = spot.prop.spotArrayIndex;
-		}
-		return index;
-	}
 }
