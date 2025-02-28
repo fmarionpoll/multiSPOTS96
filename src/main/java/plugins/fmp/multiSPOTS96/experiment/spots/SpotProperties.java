@@ -12,11 +12,11 @@ import icy.util.XMLUtil;
 public class SpotProperties {
 	public int version = 1;
 
+	public String sourceName = null;
 	public int cageID = -1;
 	public int cagePosition = 0;
 	public int spotArrayIndex = 0;
 
-	public String sourceName = null;
 	public int spotNFlies = 1;
 	public String spotStim = new String("..");
 	public String spotConc = new String("..");
@@ -102,8 +102,10 @@ public class SpotProperties {
 
 	// --------------------------------------
 
-	public void csvImportDescription(String[] data, boolean dummyColumn) {
+	public void csvImportProperties(String[] data, boolean dummyColumn) {
 		int i = dummyColumn ? 1 : 0;
+		sourceName = data[i];
+		i++;
 		spotArrayIndex = Integer.valueOf(data[i]);
 		i++;
 		cageID = Integer.valueOf(data[i]);
@@ -123,19 +125,20 @@ public class SpotProperties {
 		spotConc = data[i];
 	}
 
-	static public String csvExportDescriptionHeader(String csvSep) {
+	static public String csvExportPropertiesHeader(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		sbf.append("#" + csvSep + "DESCRIPTION" + csvSep + "multiSPOTS data\n");
-		List<String> row2 = Arrays.asList("spotArrayIndex", "cageID", "cagePos", "nflies", "volume", "npixels",
-				"radius", "stim", "conc");
+		sbf.append("#" + csvSep + "#\n");
+		sbf.append("#" + csvSep + "SPOTS" + csvSep + "multiSPOTS data\n");
+		List<String> row2 = Arrays.asList("name", "index", "cageID", "cagePos", "nflies", "volume", "npixels", "radius",
+				"stim", "conc");
 		sbf.append(String.join(csvSep, row2));
 		sbf.append("\n");
 		return sbf.toString();
 	}
 
-	public String csvExportDescription(String csvSep) {
+	public String csvExportProperties(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		List<String> row = Arrays.asList(String.valueOf(spotArrayIndex), String.valueOf(cageID),
+		List<String> row = Arrays.asList(sourceName, String.valueOf(spotArrayIndex), String.valueOf(cageID),
 				String.valueOf(cagePosition), String.valueOf(spotNFlies), String.valueOf(spotVolume),
 				String.valueOf(spotNPixels), String.valueOf(spotRadius), spotStim.replace(",", "."),
 				spotConc.replace(",", "."));

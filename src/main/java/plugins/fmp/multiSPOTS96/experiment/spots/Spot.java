@@ -427,16 +427,6 @@ public class Spot implements Comparable<Spot> {
 
 	// -----------------------------------------------------------------------------
 
-	public String csvExportSpotArrayHeader(String csvSep) {
-		StringBuffer sbf = new StringBuffer();
-		sbf.append("#" + csvSep + "SPOTS" + csvSep + "describe each spot\n");
-		List<String> row2 = Arrays.asList("index", "name", "cage", "nflies", "volume", "npixel", "radius", "stim",
-				"conc", "side");
-		sbf.append(String.join(csvSep, row2));
-		sbf.append("\n");
-		return sbf.toString();
-	}
-
 	public String csvExportMeasures_SectionHeader(EnumSpotMeasures measureType, String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> listExplanation1 = Arrays.asList("\n name", "index", "npts", "yi", "\n");

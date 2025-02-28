@@ -333,7 +333,7 @@ public class SpotsArray {
 			String[] data = row.split(sep);
 			if (data[0].equals("#")) {
 				switch (data[1]) {
-				case "DESCRIPTION":
+				case "SPOTS_ARRAY":
 					csvLoadSpotsDescription(bufferedReader, sep);
 					break;
 				case "SPOTS":
@@ -378,7 +378,7 @@ public class SpotsArray {
 				Spot spot = getSpotFromName(data[dummyColumn ? 2 : 1]);
 				if (spot == null)
 					spot = new Spot();
-				spot.prop.csvImportDescription(data, dummyColumn);
+				spot.prop.csvImportProperties(data, dummyColumn);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -418,15 +418,16 @@ public class SpotsArray {
 			return false;
 
 		try {
-			FileWriter csvWriter = new FileWriter(directory + File.separator + csvFileName);
-			csvSave_DescriptionSection(csvWriter);
-			csvSave_MeasuresSection(csvWriter, EnumSpotMeasures.AREA_SUM);
-			csvSave_MeasuresSection(csvWriter, EnumSpotMeasures.AREA_SUMCLEAN);
-			csvSave_MeasuresSection(csvWriter, EnumSpotMeasures.AREA_OUT);
-			csvSave_MeasuresSection(csvWriter, EnumSpotMeasures.AREA_DIFF);
-			csvSave_MeasuresSection(csvWriter, EnumSpotMeasures.AREA_FLYPRESENT);
-			csvWriter.flush();
-			csvWriter.close();
+			FileWriter fileWriter = new FileWriter(directory + File.separator + csvFileName);
+			csvSave_SpotsArraySection(fileWriter);
+			csvSave_DescriptionSection(fileWriter);
+			csvSave_MeasuresSection(fileWriter, EnumSpotMeasures.AREA_SUM);
+			csvSave_MeasuresSection(fileWriter, EnumSpotMeasures.AREA_SUMCLEAN);
+			csvSave_MeasuresSection(fileWriter, EnumSpotMeasures.AREA_OUT);
+			csvSave_MeasuresSection(fileWriter, EnumSpotMeasures.AREA_DIFF);
+			csvSave_MeasuresSection(fileWriter, EnumSpotMeasures.AREA_FLYPRESENT);
+			fileWriter.flush();
+			fileWriter.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -439,12 +440,9 @@ public class SpotsArray {
 		String row;
 		try {
 			row = csvReader.readLine();
-			row = csvReader.readLine();
-//			spotsDescription.csvImportSpotsDescriptionData(row, csvSep);
-
-			row = csvReader.readLine();
 			String[] data = row.split(csvSep);
-			if (data[0].substring(0, Math.min(data[0].length(), 5)).equals("n spot")) {
+			String motif = data[0].substring(0, Math.min(data[0].length(), 6));
+			if (motif.equals("n spot")) {
 				int nspots = Integer.valueOf(data[1]);
 				if (nspots >= spotsList.size())
 					spotsList.ensureCapacity(nspots);
@@ -462,16 +460,25 @@ public class SpotsArray {
 		return null;
 	}
 
+	private boolean csvSave_SpotsArraySection(FileWriter csvWriter) {
+		try {
+			csvWriter.append("#" + csvSep + "#\n");
+			csvWriter.append("#" + csvSep + "SPOTS_ARRAY" + csvSep + "multiSPOTS data\n");
+			csvWriter.append("n spots=" + csvSep + Integer.toString(spotsList.size()) + "\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
 	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
 		try {
-			csvWriter.append(SpotProperties.csvExportDescriptionHeader(csvSep));
-			csvWriter.append("n spots=" + csvSep + Integer.toString(spotsList.size()) + "\n");
-			csvWriter.append("#" + csvSep + "#\n");
-
 			if (spotsList.size() > 0) {
-				csvWriter.append(spotsList.get(0).csvExportSpotArrayHeader(csvSep));
-				for (Spot spot : spotsList)
-					csvWriter.append(spot.prop.csvExportDescription(csvSep));
+				csvWriter.append(SpotProperties.csvExportPropertiesHeader(csvSep));
+				for (Spot spot : spotsList) {
+					spot.prop.sourceName = spot.getRoi().getName();
+					csvWriter.append(spot.prop.csvExportProperties(csvSep));
+				}
 				csvWriter.append("#" + csvSep + "#\n");
 			}
 		} catch (IOException e) {

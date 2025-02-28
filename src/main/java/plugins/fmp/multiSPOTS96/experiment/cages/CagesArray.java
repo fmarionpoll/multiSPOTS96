@@ -53,10 +53,6 @@ public class CagesArray {
 
 	private final String ID_CAGES = "Cages";
 	private final String ID_NCAGES = "n_cages";
-//	private final String ID_DROSOTRACK = "drosoTrack";
-//	private final String ID_NBITEMS = "nb_items";
-//	private final String ID_CAGELIMITS = "Cage_Limits";
-//	private final String ID_FLYDETECTED = "Fly_Detected";
 
 	private final String ID_NCAGESALONGX = "N_cages_along_X";
 	private final String ID_NCAGESALONGY = "N_cages_along_Y";
@@ -797,10 +793,12 @@ public class CagesArray {
 
 	public SpotsArray getSpotsArrayFromAllCages() {
 		SpotsArray spotsArray = new SpotsArray();
-		int nspots = cagesList.size() * cagesList.get(0).spotsArray.spotsList.size();
-		spotsArray.spotsList.ensureCapacity(nspots);
-		for (Cage cage : cagesList) {
-			spotsArray.spotsList.addAll(cage.spotsArray.spotsList);
+		if (cagesList.size() > 0) {
+			int nspots = cagesList.size() * cagesList.get(0).spotsArray.spotsList.size();
+			spotsArray.spotsList.ensureCapacity(nspots);
+			for (Cage cage : cagesList) {
+				spotsArray.spotsList.addAll(cage.spotsArray.spotsList);
+			}
 		}
 		return spotsArray;
 	}
