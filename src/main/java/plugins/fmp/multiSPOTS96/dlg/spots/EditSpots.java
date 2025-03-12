@@ -198,7 +198,9 @@ public class EditSpots extends JPanel {
 			if (enclosedSpots.size() > 0) {
 				ArrayList<Point2D> listPoint = new ArrayList<Point2D>();
 				for (Spot spot : enclosedSpots) {
-					listPoint.add(new Point2D.Double(spot.prop.spotXCoord, spot.prop.spotYCoord));
+					Point2D.Double point = new Point2D.Double(spot.prop.spotXCoord + spot.prop.spotRadius,
+							spot.prop.spotYCoord + spot.prop.spotRadius);
+					listPoint.add(point);
 				}
 				roiSnake = new ROI2DPolyLine(listPoint);
 				roiSnake.setName("snake");
