@@ -43,6 +43,7 @@ public class EditSpots extends JPanel {
 	public ROI2DPolyLine roiSnake = null;
 	private ArrayList<Spot> enclosedSpots = null;
 
+	private JButton deleteSelectedButton = new JButton("Delete selected spots");
 	private JButton erodeButton = new JButton("Contract spots");
 	private JButton dilateButton = new JButton("Dilate spots");
 
@@ -62,11 +63,12 @@ public class EditSpots extends JPanel {
 		add(panel0);
 
 		JPanel panel1 = new JPanel(flowLayout);
-		panel1.add(dilateButton);
-		panel1.add(erodeButton);
+		panel1.add(deleteSelectedButton);
 		add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
+		panel2.add(dilateButton);
+		panel2.add(erodeButton);
 //		panel2.add(editSpotsWithTimeButton);
 		add(panel2);
 
@@ -118,6 +120,16 @@ public class EditSpots extends JPanel {
 			}
 		});
 
+		deleteSelectedButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp == null)
+					return;
+				deleteSelectedSpots(exp);
+			}
+		});
+		
 		dilateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {

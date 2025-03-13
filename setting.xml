@@ -98,10 +98,10 @@
 </section>
 <section name="online"/>
 </section>
-<key name="id" value="85002213"/>
+<key name="id" value="147762634"/>
 <key name="os" value="win64"/>
-<key name="clientCpuNumber" value="16"/>
-<key name="clientTotalMemory" value="67880230912"/>
+<key name="clientCpuNumber" value="8"/>
+<key name="clientTotalMemory" value="34160988160"/>
 <key name="appFolder" value="C:/Users/fred/.m2/repository/org/bioimageanalysis/icy/icy-kernel/2.5.1"/>
 <section name="loader">
 <section name="entry0">
@@ -162,21 +162,21 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="402"/>
-<key name="YE" value="79"/>
-<key name="WidthE" value="2878"/>
-<key name="HeightE" value="1318"/>
+<key name="XE" value="19"/>
+<key name="YE" value="65"/>
+<key name="WidthE" value="1313"/>
+<key name="HeightE" value="1012"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="2570"/>
+<key name="XC" value="1005"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="300"/>
-<key name="HeightC" value="1156"/>
+<key name="HeightC" value="850"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -194,7 +194,7 @@
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="1066"/>
+<key name="HeightC" value="760"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -212,7 +212,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="1066"/>
+<key name="HeightC" value="760"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>
