@@ -75,10 +75,10 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1740734605968"/>
+<key name="lastUpdateCheckTime" value="1741877906103"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
-<key name="loaderFolder" value="\\comportement-egce.ideev.universite-paris-saclay.fr\MultiCAFE\2025 Beatrice\essai multispots  plaques 96\2025-01-30"/>
+<key name="loaderFolder" value="C:\Users\fred\Desktop\2025-03-13"/>
 </section>
 <section name="canvas">
 <section name="Canvas2D">
@@ -98,10 +98,10 @@
 </section>
 <section name="online"/>
 </section>
-<key name="id" value="120986277"/>
+<key name="id" value="85002213"/>
 <key name="os" value="win64"/>
-<key name="clientCpuNumber" value="20"/>
-<key name="clientTotalMemory" value="34078789632"/>
+<key name="clientCpuNumber" value="16"/>
+<key name="clientTotalMemory" value="67880230912"/>
 <key name="appFolder" value="C:/Users/fred/.m2/repository/org/bioimageanalysis/icy/icy-kernel/2.5.1"/>
 <section name="loader">
 <section name="entry0">
@@ -147,26 +147,36 @@
 <section name="gui.histo">
 <key name="logView" value="true"/>
 </section>
-<key name="lastUploadDate" value="1740738179302"/>
+<key name="lastUploadDate" value="1741886737794"/>
 </section>
-<section name="plugins"/>
+<section name="plugins">
+<section name="fmp">
+<section name="multiSPOTS96">
+<section name="MultiSPOTS96">
+<section name="gui">
+<key name="lastUsedPath" value="C:\Users\fred\Desktop\2025-03-13"/>
+</section>
+</section>
+</section>
+</section>
+</section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="2679"/>
-<key name="YE" value="97"/>
-<key name="WidthE" value="2219"/>
-<key name="HeightE" value="1277"/>
+<key name="XE" value="402"/>
+<key name="YE" value="79"/>
+<key name="WidthE" value="2878"/>
+<key name="HeightE" value="1318"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1911"/>
+<key name="XC" value="2570"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="300"/>
-<key name="HeightC" value="1115"/>
+<key name="HeightC" value="1156"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -184,7 +194,7 @@
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="1025"/>
+<key name="HeightC" value="1066"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -202,7 +212,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="1025"/>
+<key name="HeightC" value="1066"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>

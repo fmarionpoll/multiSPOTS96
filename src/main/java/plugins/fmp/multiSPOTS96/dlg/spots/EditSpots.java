@@ -207,11 +207,13 @@ public class EditSpots extends JPanel {
 				exp.seqCamData.seq.addROI(roiSnake);
 				exp.seqCamData.seq.setSelectedROI(roiSnake);
 
+				exp.seqCamData.displaySpecificROIs(false, "spot");
 				makeSureRectangleIsVisible(exp, roiSnake.getBounds());
 			}
 		} else {
 			roiSnake = null;
 			exp.seqCamData.seq.addROI(roiPerimeter);
+			exp.seqCamData.displaySpecificROIs(true, "spot");
 		}
 	}
 
@@ -258,6 +260,8 @@ public class EditSpots extends JPanel {
 			}
 			i++;
 		}
+
+		exp.seqCamData.displaySpecificROIs(true, "spot");
 	}
 
 	private void resizeSpots(Experiment exp, int delta) {

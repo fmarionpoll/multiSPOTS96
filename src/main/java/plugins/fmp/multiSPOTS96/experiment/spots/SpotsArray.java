@@ -45,8 +45,8 @@ public class SpotsArray {
 	public boolean load_SpotsAll(String directory) {
 		return load_Spots(directory, EnumSpotMeasures.ALL);
 	}
-	
-	private boolean load_Spots(String directory,  EnumSpotMeasures option) {
+
+	private boolean load_Spots(String directory, EnumSpotMeasures option) {
 		boolean flag = false;
 		if (directory == null)
 			return flag;
@@ -62,7 +62,7 @@ public class SpotsArray {
 	public boolean save_SpotsAll(String directory) {
 		if (directory == null)
 			return false;
-		
+
 		return csvSaveSpots(directory);
 	}
 
@@ -440,7 +440,8 @@ public class SpotsArray {
 				else
 					spotsList.subList(nspots, spotsList.size()).clear();
 				row = csvReader.readLine();
-				data = row.split(csvSep);
+				if (row != null)
+					data = row.split(csvSep);
 			}
 			if (data[0].equals("#")) {
 				return data[1];

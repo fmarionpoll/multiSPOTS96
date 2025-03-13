@@ -68,7 +68,11 @@ public class SequenceKymos extends SequenceCamData {
 	public List<ImageFileDescriptor> loadListOfPotentialKymographsFromSpots(String dir, CagesArray cagesArray) {
 		String directoryFull = dir + File.separator;
 		int ncages = cagesArray.cagesList.size();
-		int nspots = cagesArray.cagesList.get(0).spotsArray.spotsList.size();
+		Cage cage0 = cagesArray.cagesList.get(0);
+		if (cage0.spotsArray == null)
+			return null;
+
+		int nspots = cage0.spotsArray.spotsList.size();
 		nspots = nspots * ncages;
 
 		List<ImageFileDescriptor> myListOfFiles = new ArrayList<ImageFileDescriptor>(nspots);
