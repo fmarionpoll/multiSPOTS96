@@ -73,6 +73,14 @@ public class CagesArray {
 		cagesList = new ArrayList<Cage>(ncolumns * nrows);
 	}
 
+	public CagesArray(CagesArray from) {
+		nCagesAlongX = from.nCagesAlongX;
+		nCagesAlongY = from.nCagesAlongY;
+		nColumnsPerCage = from.nColumnsPerCage;
+		nRowsPerCage = from.nRowsPerCage;
+		copyCagesList(from.cagesList);
+	}
+
 	public void clearAllMeasures(int option_detectCage) {
 		for (Cage cage : cagesList) {
 			int cagenb = cage.getCageNumberInteger();
@@ -256,11 +264,21 @@ public class CagesArray {
 	// --------------
 
 	public void copyCagesInfos(ArrayList<Cage> cagesListFrom) {
-		cagesList.clear();
 		for (Cage cageFrom : cagesListFrom) {
-			Cage cageTo = new Cage();
-			cageTo.copyCageInfo(cageFrom);
-			cagesList.add(cageTo);
+			for (Cage cage : cagesList) {
+				if (cage.prop.cageID == cageFrom.prop.cageID)
+					cage.copyCageInfo(cageFrom);
+			}
+		}
+	}
+
+	public void copyCagesList(ArrayList<Cage> cagesListFrom) {
+		int ncages = cagesListFrom.size();
+		cagesList = new ArrayList<Cage>(ncages);
+		for (int i = 0; i < ncages; i++) {
+			Cage cageFrom = cagesListFrom.get(i);
+			Cage cage = new Cage(cageFrom);
+			cagesList.add(cage);
 		}
 	}
 

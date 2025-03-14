@@ -38,6 +38,13 @@ public class SpotsArray {
 
 	// ---------------------------------
 
+	public SpotsArray() {
+	}
+
+	public SpotsArray(SpotsArray source) {
+		copySpots(source.spotsList);
+	}
+
 	public boolean load_SpotsMeasures(String directory) {
 		return load_Spots(directory, EnumSpotMeasures.SPOTS_MEASURES);
 	}
@@ -69,7 +76,6 @@ public class SpotsArray {
 	public boolean save_SpotsMeasures(String directory) {
 		if (directory == null)
 			return false;
-
 		csvSaveSpots(directory);
 		return true;
 	}
@@ -165,6 +171,15 @@ public class SpotsArray {
 	}
 
 	// ---------------------------------
+
+	public void copySpots(ArrayList<Spot> spotsListFrom) {
+		int nspots = spotsListFrom.size();
+		spotsList = new ArrayList<Spot>(nspots);
+		for (int i = 0; i < nspots; i++) {
+			Spot spot = new Spot(spotsList.get(i));
+			spotsList.add(spot);
+		}
+	}
 
 	public void copySpotsInfos(SpotsArray fromSpotArray) {
 		for (Spot fromSpot : fromSpotArray.spotsList) {

@@ -36,7 +36,7 @@ public class Spot implements Comparable<Spot> {
 
 	public SpotProperties prop = new SpotProperties();
 
-	public BuildSeriesOptions limitsOptions = new BuildSeriesOptions();
+	public BuildSeriesOptions limitsOptions = new BuildSeriesOptions(); // TODO: check if necessarry?
 	public SpotMeasure sum_in = new SpotMeasure("sum");
 	public SpotMeasure sum_clean = new SpotMeasure("clean");
 	public SpotMeasure flyPresent = new SpotMeasure("flyPresent");
@@ -69,6 +69,14 @@ public class Spot implements Comparable<Spot> {
 	public Spot() {
 	}
 
+	public Spot(Spot spotFrom) {
+		spotROI2D = spotFrom.spotROI2D;
+		prop.copy(spotFrom.prop);
+		sum_in = spotFrom.sum_in;
+		sum_clean = spotFrom.sum_clean;
+		flyPresent = spotFrom.flyPresent;
+	}
+
 	@Override
 	public int compareTo(Spot o) {
 		if (o != null)
@@ -98,7 +106,7 @@ public class Spot implements Comparable<Spot> {
 		prop.cageID = spotFrom.prop.cageID;
 		prop.cagePosition = spotFrom.prop.cagePosition;
 		limitsOptions = spotFrom.limitsOptions;
-		prop = spotFrom.prop;
+		prop.copy(spotFrom.prop);
 
 	}
 

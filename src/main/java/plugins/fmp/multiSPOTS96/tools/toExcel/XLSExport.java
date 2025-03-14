@@ -16,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
@@ -340,7 +341,7 @@ public class XLSExport {
 			return null;
 
 		// loop to get all spots into expAll and init rows for this experiment
-		expAll.cagesArray.copyCagesInfos(exp.cagesArray.cagesList);
+		expAll.cagesArray = new CagesArray(exp.cagesArray); // TODO culprit
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
 		expAll.expProperties.copyExperimentFieldsFrom(exp.expProperties);
 		expAll.setResultsDirectory(exp.getResultsDirectory());
