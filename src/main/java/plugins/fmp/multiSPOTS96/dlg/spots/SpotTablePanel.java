@@ -26,7 +26,6 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelSpot;
 
-
 public class SpotTablePanel extends JPanel {
 	/**
 	 * 
@@ -85,7 +84,7 @@ public class SpotTablePanel extends JPanel {
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(getNfliesButton);
 		panel2.add(nPixelsButton);
-		
+
 		topPanel.add(panel2);
 
 		JPanel tablePanel = new JPanel();
@@ -189,7 +188,8 @@ public class SpotTablePanel extends JPanel {
 	}
 
 	private void pasteInfos(Experiment exp) {
-		exp.cagesArray.copy(cagesArrayCopy, false);
+		exp.cagesArray.copyCagesInfos(cagesArrayCopy, false);
+		// TODO change procedure to copy spotsinfos
 	}
 
 	private void setSpotsNPixels(Experiment exp) {
@@ -208,11 +208,11 @@ public class SpotTablePanel extends JPanel {
 		int rowIndex = jTable.getSelectedRow();
 		if (rowIndex < 0)
 			return;
-		
+
 		String spotName = (String) jTable.getValueAt(rowIndex, 0);
 		Spot spotFrom = exp.cagesArray.getSpotFromROIName(spotName);
 		if (spotFrom == null) {
-			System.out.println("spot not found: "+spotName);
+			System.out.println("spot not found: " + spotName);
 			return;
 		}
 		int cagePosition = spotFrom.prop.cagePosition;
@@ -278,7 +278,7 @@ public class SpotTablePanel extends JPanel {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			if (cage.prop.cageID == cageIDFrom)
 				continue;
-			
+
 			for (int i = 0; i < cage.spotsArray.spotsList.size(); i++) {
 				Spot spot = cage.spotsArray.spotsList.get(i);
 				Spot spotFrom = cageFrom.spotsArray.spotsList.get(i);

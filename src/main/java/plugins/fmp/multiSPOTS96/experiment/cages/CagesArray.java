@@ -255,11 +255,11 @@ public class CagesArray {
 
 	// --------------
 
-	public void copy(ArrayList<Cage> cagesListFrom, boolean bCopyMeasures) {
+	public void copyCagesInfos(ArrayList<Cage> cagesListFrom, boolean bCopyMeasures) {
 		cagesList.clear();
 		for (Cage cageFrom : cagesListFrom) {
 			Cage cageTo = new Cage();
-			cageTo.copyCage(cageFrom, bCopyMeasures);
+			cageTo.copyCageInfo(cageFrom, bCopyMeasures);
 			cagesList.add(cageTo);
 		}
 	}
