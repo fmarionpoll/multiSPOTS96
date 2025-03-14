@@ -306,7 +306,7 @@ public class XLSExport {
 			return null;
 
 		// loop to get all spots into expAll and init rows for this experiment
-		expAll.cagesArray.copyCagesInfos(exp.cagesArray.cagesList, false);
+		expAll.cagesArray.copyCagesInfos(exp.cagesArray.cagesList);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
 		expAll.expProperties.copyExperimentFieldsFrom(exp.expProperties);
 		expAll.setResultsDirectory(exp.getResultsDirectory());
@@ -340,7 +340,7 @@ public class XLSExport {
 			return null;
 
 		// loop to get all spots into expAll and init rows for this experiment
-		expAll.cagesArray.copyCagesInfos(exp.cagesArray.cagesList, false);
+		expAll.cagesArray.copyCagesInfos(exp.cagesArray.cagesList);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
 		expAll.expProperties.copyExperimentFieldsFrom(exp.expProperties);
 		expAll.setResultsDirectory(exp.getResultsDirectory());

@@ -89,13 +89,11 @@ public class Cage {
 		return pt;
 	}
 
-	public void copyCageInfo(Cage cageFrom, boolean bCopyMeasures) {
+	public void copyCageInfo(Cage cageFrom) {
 		prop.copy(cageFrom.prop);
 		cageXROI2D = cageFrom.cageXROI2D;
 		valid = false;
-		if (bCopyMeasures)
-			flyPositions.copyXYTaSeries(cageFrom.flyPositions);
-		spotsArray.copySpotsInfos(cageFrom.spotsArray, bCopyMeasures);
+		spotsArray.copySpotsInfos(cageFrom.spotsArray);
 	}
 
 	public ROI2DRectangle getRoiRectangleFromPositionAtT(int t) {

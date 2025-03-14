@@ -24,6 +24,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelSpot;
 
 public class SpotTablePanel extends JPanel {
@@ -43,11 +44,20 @@ public class SpotTablePanel extends JPanel {
 	private JButton getNfliesButton = new JButton("Get n flies from cage");
 	private JButton nPixelsButton = new JButton("Get n pixels");
 	private MultiSPOTS96 parent0 = null;
-	private ArrayList<Cage> cagesArrayCopy = null;
 
-	public void initialize(MultiSPOTS96 parent0, ArrayList<Cage> cageCopy) {
+	private SpotsArray spotsArrayCopy = null;
+
+	public void initialize(MultiSPOTS96 parent0, ArrayList<Cage> cageListCopy) {
 		this.parent0 = parent0;
-		cagesArrayCopy = cageCopy;
+		spotsArrayCopy = new SpotsArray();
+		if (cageListCopy.size() > 0) {
+			int nspots = cageListCopy.size() * cageListCopy.get(0).spotsArray.spotsList.size();
+			spotsArrayCopy.spotsList.ensureCapacity(nspots);
+			for (Cage cage : cageListCopy) {
+				spotsArrayCopy.spotsList.addAll(cage.spotsArray.spotsList);
+			}
+		}
+//		cagesArrayCopy = cageCopy;
 
 		spotTableModel = new TableModelSpot(parent0.expListCombo);
 		jTable.setModel(spotTableModel);
@@ -101,7 +111,7 @@ public class SpotTablePanel extends JPanel {
 		dialogFrame.setVisible(true);
 		defineActionListeners();
 
-		pasteButton.setEnabled(cagesArrayCopy.size() > 0);
+		pasteButton.setEnabled(spotsArrayCopy.spotsList.size() > 0);
 	}
 
 	private void defineActionListeners() {
@@ -181,15 +191,13 @@ public class SpotTablePanel extends JPanel {
 	}
 
 	private void copyInfos(Experiment exp) {
-		cagesArrayCopy.clear();
-		for (Cage cage : exp.cagesArray.cagesList)
-			cagesArrayCopy.add(cage);
+		spotsArrayCopy.spotsList.clear();
+		spotsArrayCopy = exp.cagesArray.getSpotsArrayFromAllCages();
 		pasteButton.setEnabled(true);
 	}
 
 	private void pasteInfos(Experiment exp) {
-		exp.cagesArray.copyCagesInfos(cagesArrayCopy, false);
-		// TODO change procedure to copy spotsinfos
+		exp.cagesArray.pasteSpotsInfosFromSpotsArray(spotsArrayCopy);
 	}
 
 	private void setSpotsNPixels(Experiment exp) {
