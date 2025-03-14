@@ -117,6 +117,9 @@ public class ChartSpots extends IcyFrame {
 				Cage cage = exp.cagesArray.getCageFromRowColCoordinates(row, col);
 				if (cage == null)
 					continue;
+				if (cage.spotsArray.spotsList.size() < 1)
+					continue;
+
 				int cageID = cage.prop.cageID;
 				if (xlsExportOptions.cageIndexFirst >= 0
 						&& (cageID < xlsExportOptions.cageIndexFirst || cageID > xlsExportOptions.cageIndexLast)) {
@@ -297,12 +300,12 @@ public class ChartSpots extends IcyFrame {
 	}
 
 	private void addXYSeriesCollection(XYSeriesCollection destination, XYSeriesCollection source) {
-
+		if (source == null)
+			return;
 		for (int j = 0; j < source.getSeriesCount(); j++) {
 			XYSeries xySeries = source.getSeries(j);
 			destination.addSeries(xySeries);
 		}
-
 	}
 
 	private Spot getClickedSpot(ChartMouseEvent e) {

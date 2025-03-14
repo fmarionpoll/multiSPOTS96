@@ -583,7 +583,7 @@ public class CagesArray {
 	public Spot getSpotFromROIName(String name) {
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				if (spot.getRoi().getName().contains(name)) 
+				if (spot.getRoi().getName().contains(name))
 					return spot;
 			}
 		}
@@ -641,7 +641,7 @@ public class CagesArray {
 		}
 		return null;
 	}
-	
+
 	public int getTotalNumberOfSpots() {
 		int nspots = 0;
 		for (Cage cage : cagesList) {
@@ -762,6 +762,7 @@ public class CagesArray {
 	}
 
 	// --------------------------------------------------
+
 	public boolean load_SpotsMeasures(String directory) {
 		boolean flag = getSpotsArrayFromAllCages().load_SpotsMeasures(directory);
 		return flag;
@@ -800,6 +801,10 @@ public class CagesArray {
 
 	public Cage getCageFromSpotRoiName(String name) {
 		int cageID = SpotString.getCageIDFromSpotName(name);
+		return getCageFromSpotCageID(cageID);
+	}
+
+	public Cage getCageFromSpotCageID(int cageID) {
 		for (Cage cage : cagesList) {
 			if (cage.prop.cageID == cageID)
 				return cage;

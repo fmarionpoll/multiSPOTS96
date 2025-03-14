@@ -21,6 +21,7 @@ import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
@@ -42,6 +43,7 @@ public class EditSpots extends JPanel {
 	public ROI2DPolygon roiPerimeter = null;
 	public ROI2DPolyLine roiSnake = null;
 	private ArrayList<Spot> enclosedSpots = null;
+	private ArrayList<Spot> deleteEnclosedSpots = null;
 
 	private JButton deleteSelectedButton = new JButton("Delete selected spots");
 	private JButton erodeButton = new JButton("Contract spots");
@@ -129,7 +131,7 @@ public class EditSpots extends JPanel {
 				deleteSelectedSpots(exp);
 			}
 		});
-		
+
 		dilateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -226,6 +228,19 @@ public class EditSpots extends JPanel {
 			roiSnake = null;
 			exp.seqCamData.seq.addROI(roiPerimeter);
 			exp.seqCamData.displaySpecificROIs(true, "spot");
+		}
+	}
+
+	private void deleteSelectedSpots(Experiment exp) {
+		deleteEnclosedSpots = exp.cagesArray.getSpotsEnclosed(roiPerimeter);
+		if (deleteEnclosedSpots.size() > 0) {
+			for (Spot spot : deleteEnclosedSpots) {
+				ROI2D roi = spot.getRoi();
+				exp.seqCamData.seq.removeROI(roi);
+				int cageID = spot.prop.cageID;
+				Cage cage = exp.cagesArray.getCageFromSpotCageID(cageID);
+				cage.spotsArray.removeSpotFromArray(spot);
+			}
 		}
 	}
 

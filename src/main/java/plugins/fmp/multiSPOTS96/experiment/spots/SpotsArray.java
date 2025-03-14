@@ -175,10 +175,10 @@ public class SpotsArray {
 		}
 	}
 
-	public boolean isPresent(Spot capNew) {
+	public boolean isPresent(Spot spotNew) {
 		boolean flag = false;
 		for (Spot spot : spotsList) {
-			if (spot.getRoi().getName().contentEquals(capNew.getRoi().getName())) {
+			if (spot.getRoi().getName().contentEquals(spotNew.getRoi().getName())) {
 				flag = true;
 				break;
 			}
@@ -223,6 +223,17 @@ public class SpotsArray {
 			}
 		}
 		return spotFound;
+	}
+
+	public boolean removeSpotFromArray(Spot spotToRemove) {
+		for (int i = 0; i < spotsList.size(); i++) {
+			Spot spot = spotsList.get(i);
+			if (spot.equals(spotToRemove)) {
+				spotsList.remove(i);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// ------------------------------------------------
