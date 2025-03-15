@@ -166,14 +166,12 @@ public class SpotsArray {
 
 	// ---------------------------------
 
-	public void copySpotsInfos(SpotsArray fromSpotArray) {
+	public void copySpotsInfos(SpotsArray fromSpotArray, boolean bCopyMeasures) {
+		spotsList.clear();
 		for (Spot fromSpot : fromSpotArray.spotsList) {
-			for (Spot spot : spotsList) {
-				if (fromSpot.equals(spot)) {
-					spot.copySpotInfos(fromSpot);
-					break;
-				}
-			}
+			Spot spot = new Spot();
+			spot.copySpot(fromSpot, bCopyMeasures);
+			spotsList.add(spot);
 		}
 	}
 

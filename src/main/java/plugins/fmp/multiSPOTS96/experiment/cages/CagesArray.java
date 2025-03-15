@@ -255,11 +255,11 @@ public class CagesArray {
 
 	// --------------
 
-	public void copyCagesInfos(ArrayList<Cage> cagesListFrom) {
+	public void copyCagesInfos(ArrayList<Cage> cagesListFrom, boolean bCopyMeasures) {
 		cagesList.clear();
 		for (Cage cageFrom : cagesListFrom) {
 			Cage cageTo = new Cage();
-			cageTo.copyCageInfo(cageFrom);
+			cageTo.copyCageInfo(cageFrom, bCopyMeasures);
 			cagesList.add(cageTo);
 		}
 	}
@@ -342,41 +342,6 @@ public class CagesArray {
 		return cage_found;
 	}
 
-	public Cage getCageFromSpotRoiName(String name) {
-		int cageID = SpotString.getCageIDFromSpotName(name);
-		return getCageFromSpotCageID(cageID);
-	}
-
-	public Cage getCageFromSpotCageID(int cageID) {
-		for (Cage cage : cagesList) {
-			if (cage.prop.cageID == cageID)
-				return cage;
-		}
-		return null;
-	}
-
-	public Cage getCageFromNumber(int number) {
-		Cage cageFound = null;
-		for (Cage cage : cagesList) {
-			if (number == cage.getCageNumberInteger()) {
-				cageFound = cage;
-				break;
-			}
-		}
-		return cageFound;
-	}
-
-	public Cage getCageFromID(int cageID) {
-		Cage cageFound = null;
-		for (Cage cage : cagesList) {
-			if (cageID == cage.prop.cageID) {
-				cageFound = cage;
-				break;
-			}
-		}
-		return cageFound;
-	}
-
 	// --------------
 
 	public void transferCagesToSequenceAsROIs(SequenceCamData seqCamData) {
@@ -424,6 +389,28 @@ public class CagesArray {
 				cage.prop.cageNFlies = spot.prop.spotNFlies;
 			}
 		}
+	}
+
+	public Cage getCageFromNumber(int number) {
+		Cage cageFound = null;
+		for (Cage cage : cagesList) {
+			if (number == cage.getCageNumberInteger()) {
+				cageFound = cage;
+				break;
+			}
+		}
+		return cageFound;
+	}
+
+	public Cage getCageFromID(int cageID) {
+		Cage cageFound = null;
+		for (Cage cage : cagesList) {
+			if (cageID == cage.prop.cageID) {
+				cageFound = cage;
+				break;
+			}
+		}
+		return cageFound;
 	}
 
 	public List<ROI2D> getPositionsAsListOfROI2DRectanglesAtT(int t) {
@@ -642,18 +629,6 @@ public class CagesArray {
 		return enclosedSpots;
 	}
 
-	public SpotsArray getSpotsArrayFromAllCages() {
-		SpotsArray spotsArray = new SpotsArray();
-		if (cagesList.size() > 0) {
-			int nspots = cagesList.size() * cagesList.get(0).spotsArray.spotsList.size();
-			spotsArray.spotsList.ensureCapacity(nspots);
-			for (Cage cage : cagesList) {
-				spotsArray.spotsList.addAll(cage.spotsArray.spotsList);
-			}
-		}
-		return spotsArray;
-	}
-
 	public Spot getSpotAtGlobalIndex(int indexT) {
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
@@ -675,11 +650,10 @@ public class CagesArray {
 		return nspots;
 	}
 
-	public void pasteSpotsInfosFromSpotsArray(SpotsArray spotsArrayCopy) {
-		for (Cage cage : cagesList) {
-			cage.spotsArray.copySpotsInfos(spotsArrayCopy);
-		}
-
+	public KymoIntervals getKymoIntervalsFromSpotsOFCage0() {
+		Cage cage = cagesList.get(0);
+		KymoIntervals intervals = cage.spotsArray.getKymoIntervalsFromSpots();
+		return intervals;
 	}
 
 	public void mergeSpotsLists(CagesArray arrayToMerge) {
@@ -690,14 +664,6 @@ public class CagesArray {
 				cage.spotsArray.mergeLists(cageToMerge.spotsArray);
 			}
 		}
-	}
-
-	// -------------------------------------------------
-
-	public KymoIntervals getKymoIntervalsFromSpotsOFCage0() {
-		Cage cage = cagesList.get(0);
-		KymoIntervals intervals = cage.spotsArray.getKymoIntervalsFromSpots();
-		return intervals;
 	}
 
 	public void setFilterOfSpotsToAnalyze(boolean setFilter, BuildSeriesOptions options) {
@@ -819,6 +785,31 @@ public class CagesArray {
 		SpotsArray localSpotsArray = getSpotsArrayFromAllCages();
 		localSpotsArray.save_SpotsMeasures(directory);
 		return true;
+	}
+
+	public SpotsArray getSpotsArrayFromAllCages() {
+		SpotsArray spotsArray = new SpotsArray();
+		if (cagesList.size() > 0) {
+			int nspots = cagesList.size() * cagesList.get(0).spotsArray.spotsList.size();
+			spotsArray.spotsList.ensureCapacity(nspots);
+			for (Cage cage : cagesList) {
+				spotsArray.spotsList.addAll(cage.spotsArray.spotsList);
+			}
+		}
+		return spotsArray;
+	}
+
+	public Cage getCageFromSpotRoiName(String name) {
+		int cageID = SpotString.getCageIDFromSpotName(name);
+		return getCageFromSpotCageID(cageID);
+	}
+
+	public Cage getCageFromSpotCageID(int cageID) {
+		for (Cage cage : cagesList) {
+			if (cage.prop.cageID == cageID)
+				return cage;
+		}
+		return null;
 	}
 
 }
