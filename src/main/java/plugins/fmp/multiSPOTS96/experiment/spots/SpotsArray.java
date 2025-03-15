@@ -175,6 +175,20 @@ public class SpotsArray {
 		}
 	}
 
+	public void pasteSpotsInfos(SpotsArray fromSpotArray) {
+//		spotsList.clear();
+		for (Spot fromSpot : fromSpotArray.spotsList) {
+//			Spot spot = new Spot();
+			for (Spot spot : spotsList) {
+				if (spot.equals(fromSpot)) {
+					spot.pasteSpotInfos(fromSpot);
+					break;
+				}
+//			spotsList.add(spot);
+			}
+		}
+	}
+
 	public boolean isPresent(Spot spotNew) {
 		boolean flag = false;
 		for (Spot spot : spotsList) {

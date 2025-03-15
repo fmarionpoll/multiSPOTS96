@@ -93,6 +93,21 @@ public class Spot implements Comparable<Spot> {
 		flyPresent.copyLevel2D(spotFrom.flyPresent);
 	}
 
+	public void pasteSpotInfos(Spot spotFrom) {
+		prop.version = spotFrom.prop.version;
+		spotROI2D = (ROI2DShape) spotFrom.spotROI2D.getCopy();
+
+		prop.spotArrayIndex = spotFrom.prop.spotArrayIndex;
+		prop.cageID = spotFrom.prop.cageID;
+		prop.cagePosition = spotFrom.prop.cagePosition;
+
+		limitsOptions = spotFrom.limitsOptions;
+
+//		sum_in.copyLevel2D(spotFrom.sum_in);
+//		sum_clean.copyLevel2D(spotFrom.sum_clean);
+//		flyPresent.copyLevel2D(spotFrom.flyPresent);
+	}
+
 	public ROI2D getRoi() {
 		return spotROI2D;
 	}

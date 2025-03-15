@@ -119,7 +119,7 @@ public class SpotTablePanel extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
-					pasteInfos(exp);
+					exp.cagesArray.pasteCagesInfos(cagesArrayCopy);
 				spotTableModel.fireTableDataChanged();
 			}
 		});
@@ -185,11 +185,6 @@ public class SpotTablePanel extends JPanel {
 		for (Cage cage : exp.cagesArray.cagesList)
 			cagesArrayCopy.add(cage);
 		pasteButton.setEnabled(true);
-	}
-
-	private void pasteInfos(Experiment exp) {
-		exp.cagesArray.copyCagesInfos(cagesArrayCopy, false);
-		// TODO change procedure to copy spotsinfos
 	}
 
 	private void setSpotsNPixels(Experiment exp) {

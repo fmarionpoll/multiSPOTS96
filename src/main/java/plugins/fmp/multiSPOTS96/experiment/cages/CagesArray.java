@@ -264,6 +264,19 @@ public class CagesArray {
 		}
 	}
 
+	public void pasteCagesInfos(ArrayList<Cage> cagesListFrom) {
+		for (Cage cageFrom : cagesListFrom) {
+			int fromID = cageFrom.prop.cageID;
+			for (Cage cage : cagesList) {
+				if (cage.prop.cageID == fromID) {
+					cage.pasteCageInfo(cageFrom);
+					break;
+				}
+			}
+
+		}
+	}
+
 	// --------------
 
 	private boolean isPresent(Cage cagenew) {
