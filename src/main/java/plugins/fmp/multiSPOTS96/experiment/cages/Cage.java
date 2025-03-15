@@ -49,13 +49,6 @@ public class Cage {
 	public Cage() {
 	}
 
-	public Cage(Cage cageSource) {
-		kymographIndex = cageSource.kymographIndex;
-		flyPositions = cageSource.flyPositions;
-		prop.copy(cageSource.prop);
-		spotsArray = new SpotsArray(spotsArray);
-	}
-
 	// ------------------------------------
 
 	public ROI2D getRoi() {

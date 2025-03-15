@@ -94,7 +94,7 @@ public class XLSExportMoveResults extends XLSExport {
 	}
 
 	private void getMoveDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
-		// loop to get all stack into expAll and init rows for this experiment
+		// loop to get all capillaries into expAll and init rows for this experiment
 		expAll.cagesArray.copyCagesInfos(exp.cagesArray.cagesList);
 		expAll.firstImage_FileTime = exp.firstImage_FileTime;
 		expAll.lastImage_FileTime = exp.lastImage_FileTime;
