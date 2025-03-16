@@ -67,6 +67,10 @@ public class CagesArray {
 	public CagesArray() {
 	}
 
+	public CagesArray(ArrayList<Cage> cagesListFrom) {
+		copyCagesInfos(cagesListFrom);
+	}
+
 	public CagesArray(int ncolumns, int nrows) {
 		nCagesAlongX = ncolumns;
 		nCagesAlongY = nrows;
@@ -85,10 +89,45 @@ public class CagesArray {
 		cagesList.clear();
 	}
 
-	public void mergeLists(CagesArray cagesm) {
-		for (Cage cagem : cagesm.cagesList) {
-			if (!isPresent(cagem))
-				cagesList.add(cagem);
+	public void mergeLists(CagesArray cageArrayToMerge) {
+		for (Cage cageAdded : cageArrayToMerge.cagesList) {
+			if (!isPresent(cageAdded))
+				cagesList.add(cageAdded);
+		}
+	}
+
+	public void copyCagesInfos(ArrayList<Cage> cagesListFrom) {
+		copyCages(cagesListFrom, false);
+	}
+
+	public void copyCages(ArrayList<Cage> cagesListFrom, boolean bMeasures) {
+		cagesList.clear();
+		nCagesAlongX = 0;
+		nCagesAlongY = 0;
+		for (Cage cageFrom : cagesListFrom) {
+			Cage cage = new Cage();
+			cage.copyCage(cageFrom, bMeasures);
+			cagesList.add(cage);
+			if (nCagesAlongX < cageFrom.prop.arrayColumn)
+				nCagesAlongX = cageFrom.prop.arrayColumn;
+			if (nCagesAlongY < cageFrom.prop.arrayRow)
+				nCagesAlongY = cageFrom.prop.arrayRow;
+		}
+	}
+
+	public void pasteCagesInfos(ArrayList<Cage> cagesListTo) {
+		pasteCages(cagesListTo, false);
+	}
+
+	public void pasteCages(ArrayList<Cage> cagesListTo, boolean bMeasures) {
+		for (Cage cageTo : cagesListTo) {
+			int fromID = cageTo.prop.cageID;
+			for (Cage cage : cagesList) {
+				if (cage.prop.cageID == fromID) {
+					cage.pasteCage(cageTo, bMeasures);
+					break;
+				}
+			}
 		}
 	}
 
@@ -251,30 +290,6 @@ public class CagesArray {
 		}
 
 		return true;
-	}
-
-	// --------------
-
-	public void copyCagesInfos(ArrayList<Cage> cagesListFrom, boolean bCopyMeasures) {
-		cagesList.clear();
-		for (Cage cageFrom : cagesListFrom) {
-			Cage cageTo = new Cage();
-			cageTo.copyCageInfo(cageFrom, bCopyMeasures);
-			cagesList.add(cageTo);
-		}
-	}
-
-	public void pasteCagesInfos(ArrayList<Cage> cagesListFrom) {
-		for (Cage cageFrom : cagesListFrom) {
-			int fromID = cageFrom.prop.cageID;
-			for (Cage cage : cagesList) {
-				if (cage.prop.cageID == fromID) {
-					cage.pasteCageInfo(cageFrom);
-					break;
-				}
-			}
-
-		}
 	}
 
 	// --------------

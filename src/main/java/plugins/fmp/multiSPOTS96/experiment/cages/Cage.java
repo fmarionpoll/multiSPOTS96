@@ -89,20 +89,31 @@ public class Cage {
 		return pt;
 	}
 
-	public void copyCageInfo(Cage cageFrom, boolean bCopyMeasures) {
-		prop.copy(cageFrom.prop);
-		cageXROI2D = cageFrom.cageXROI2D;
-		valid = false;
-		if (bCopyMeasures)
-			flyPositions.copyXYTaSeries(cageFrom.flyPositions);
-		spotsArray.copySpotsInfos(cageFrom.spotsArray, bCopyMeasures);
+	public void copyCageInfo(Cage cageFrom) {
+		copyCage(cageFrom, false);
 	}
 
-	public void pasteCageInfo(Cage cageFrom) {
+	public void copyCage(Cage cageFrom, boolean bMeasures) {
 		prop.copy(cageFrom.prop);
-		cageXROI2D = cageFrom.cageXROI2D;
+		cageXROI2D = (ROI2D) cageFrom.cageXROI2D.getCopy();
 		valid = false;
-		spotsArray.pasteSpotsInfos(cageFrom.spotsArray);
+		if (bMeasures)
+			flyPositions.copyXYTaSeries(cageFrom.flyPositions);
+		spotsArray.copySpotsInfos(cageFrom.spotsArray);
+	}
+
+	public void pasteCageInfo(Cage cageTo) {
+		prop.paste(cageTo.prop);
+		cageTo.cageXROI2D = (ROI2D) cageXROI2D.getCopy();
+		spotsArray.pasteSpotsInfos(cageTo.spotsArray);
+	}
+
+	public void pasteCage(Cage cageTo, boolean bMeasures) {
+		prop.paste(cageTo.prop);
+		cageTo.cageXROI2D = (ROI2D) cageXROI2D.getCopy();
+		spotsArray.pasteSpots(cageTo.spotsArray, bMeasures);
+		if (bMeasures)
+			flyPositions.copyXYTaSeries(cageTo.flyPositions);
 	}
 
 	public ROI2DRectangle getRoiRectangleFromPositionAtT(int t) {

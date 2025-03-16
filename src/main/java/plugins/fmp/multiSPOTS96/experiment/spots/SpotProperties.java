@@ -39,10 +39,23 @@ public class SpotProperties {
 	private final String ID_CONCENTRATION = "concentration";
 	private final String ID_DESCOK = "descriptionOK";
 
-	public void copy(SpotProperties desc) {
-		spotVolume = desc.spotVolume;
-		spotStim = desc.spotStim;
-		spotConc = desc.spotConc;
+	public void copy(SpotProperties propFrom) {
+		spotVolume = propFrom.spotVolume;
+		spotStim = propFrom.spotStim;
+		spotConc = propFrom.spotConc;
+		spotArrayIndex = propFrom.spotArrayIndex;
+		cageID = propFrom.cageID;
+		cagePosition = propFrom.cagePosition;
+	}
+
+	public void paste(SpotProperties propTo) {
+		propTo.spotVolume = spotVolume;
+		propTo.spotStim = spotStim;
+		propTo.spotConc = spotConc;
+		propTo.spotArrayIndex = spotArrayIndex;
+		propTo.cageID = cageID;
+		propTo.cagePosition = cagePosition;
+		System.out.println("paste spot stim =" + spotStim);
 	}
 
 	public boolean isChanged(SpotProperties desc) {

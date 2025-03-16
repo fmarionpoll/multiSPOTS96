@@ -10,10 +10,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DMeasures;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
+import plugins.kernel.roi.roi2d.ROI2DArea;
 
 public class FlyPositions {
 	public Double moveThreshold = 50.;
@@ -93,15 +93,26 @@ public class FlyPositions {
 		flyPositionList.add(pos);
 	}
 
-	public void copyXYTaSeries(FlyPositions xySer) {
-		moveThreshold = xySer.moveThreshold;
-		sleepThreshold = xySer.sleepThreshold;
-		lastTimeAlive = xySer.lastIntervalAlive;
-		flyPositionList = new ArrayList<FlyPosition>(xySer.flyPositionList.size());
+	public void copyXYTaSeries(FlyPositions xySeriesFrom) {
+		moveThreshold = xySeriesFrom.moveThreshold;
+		sleepThreshold = xySeriesFrom.sleepThreshold;
+		lastTimeAlive = xySeriesFrom.lastIntervalAlive;
+		flyPositionList = new ArrayList<FlyPosition>(xySeriesFrom.flyPositionList.size());
 		flyPositionList.addAll(flyPositionList);
-		name = xySer.name;
-		exportType = xySer.exportType;
-		binsize = xySer.binsize;
+		name = xySeriesFrom.name;
+		exportType = xySeriesFrom.exportType;
+		binsize = xySeriesFrom.binsize;
+	}
+
+	public void pasteXYTaSeries(FlyPositions xySeriesTo) {
+		xySeriesTo.moveThreshold = moveThreshold;
+		xySeriesTo.sleepThreshold = sleepThreshold;
+		xySeriesTo.lastTimeAlive = lastIntervalAlive;
+		xySeriesTo.flyPositionList = new ArrayList<FlyPosition>(flyPositionList.size());
+		xySeriesTo.flyPositionList.addAll(flyPositionList);
+		xySeriesTo.name = name;
+		xySeriesTo.exportType = exportType;
+		xySeriesTo.binsize = binsize;
 	}
 
 	// -----------------------------------------------

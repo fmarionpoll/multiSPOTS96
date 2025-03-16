@@ -32,20 +32,34 @@ public class CageProperties {
 	private final String ID_ARRAYCOLUMN = "aCol";
 	private final String ID_ARRAYROW = "aRow";
 
-	public void copy(CageProperties prop) {
-		arrayIndex = prop.arrayIndex;
-		arrayColumn = prop.arrayColumn;
-		arrayRow = prop.arrayRow;
-		cageID = prop.cageID;
-		cagePosition = prop.cagePosition;
+	public void copy(CageProperties propFrom) {
+		arrayIndex = propFrom.arrayIndex;
+		arrayColumn = propFrom.arrayColumn;
+		arrayRow = propFrom.arrayRow;
+		cageID = propFrom.cageID;
+		cagePosition = propFrom.cagePosition;
 
-		cageNFlies = prop.cageNFlies;
-		cageAge = prop.cageAge;
-		strCageComment = prop.strCageComment;
-		strCageSex = prop.strCageSex;
-		strCageNumber = prop.strCageNumber;
-		strCageStrain = prop.strCageStrain;
-		strCageNumber = prop.strCageNumber;
+		cageNFlies = propFrom.cageNFlies;
+		cageAge = propFrom.cageAge;
+		strCageComment = propFrom.strCageComment;
+		strCageSex = propFrom.strCageSex;
+		strCageNumber = propFrom.strCageNumber;
+		strCageStrain = propFrom.strCageStrain;
+	}
+
+	public void paste(CageProperties propTo) {
+		propTo.arrayIndex = arrayIndex;
+		propTo.arrayColumn = propTo.arrayColumn;
+		propTo.arrayRow = propTo.arrayRow;
+		propTo.cageID = propTo.cageID;
+		propTo.cagePosition = propTo.cagePosition;
+
+		propTo.cageNFlies = cageNFlies;
+		propTo.cageAge = cageAge;
+		propTo.strCageComment = strCageComment;
+		propTo.strCageSex = strCageSex;
+		propTo.strCageNumber = strCageNumber;
+		propTo.strCageStrain = strCageStrain;
 	}
 
 	public boolean xmlLoadCageParameters(Element xmlVal) {

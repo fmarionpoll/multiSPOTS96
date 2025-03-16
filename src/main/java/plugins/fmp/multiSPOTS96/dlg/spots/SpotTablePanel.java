@@ -23,6 +23,7 @@ import icy.gui.frame.IcyFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelSpot;
 
@@ -43,11 +44,11 @@ public class SpotTablePanel extends JPanel {
 	private JButton getNfliesButton = new JButton("Get n flies from cage");
 	private JButton nPixelsButton = new JButton("Get n pixels");
 	private MultiSPOTS96 parent0 = null;
-	private ArrayList<Cage> cagesArrayCopy = null;
+	private CagesArray cagesArrayCopy = null;
 
-	public void initialize(MultiSPOTS96 parent0, ArrayList<Cage> cageCopy) {
+	public void initialize(MultiSPOTS96 parent0, ArrayList<Cage> cagesList) {
 		this.parent0 = parent0;
-		cagesArrayCopy = cageCopy;
+		cagesArrayCopy = new CagesArray(cagesList);
 
 		spotTableModel = new TableModelSpot(parent0.expListCombo);
 		jTable.setModel(spotTableModel);
@@ -101,7 +102,7 @@ public class SpotTablePanel extends JPanel {
 		dialogFrame.setVisible(true);
 		defineActionListeners();
 
-		pasteButton.setEnabled(cagesArrayCopy.size() > 0);
+		pasteButton.setEnabled(cagesArrayCopy.cagesList.size() > 0);
 	}
 
 	private void defineActionListeners() {
@@ -109,8 +110,10 @@ public class SpotTablePanel extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null)
-					copyInfos(exp);
+				if (exp != null) {
+					cagesArrayCopy = new CagesArray(exp.cagesArray.cagesList);
+					pasteButton.setEnabled(true);
+				}
 			}
 		});
 
@@ -119,7 +122,7 @@ public class SpotTablePanel extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
-					exp.cagesArray.pasteCagesInfos(cagesArrayCopy);
+					cagesArrayCopy.pasteCagesInfos(exp.cagesArray.cagesList);
 				spotTableModel.fireTableDataChanged();
 			}
 		});
@@ -178,13 +181,6 @@ public class SpotTablePanel extends JPanel {
 
 	void close() {
 		dialogFrame.close();
-	}
-
-	private void copyInfos(Experiment exp) {
-		cagesArrayCopy.clear();
-		for (Cage cage : exp.cagesArray.cagesList)
-			cagesArrayCopy.add(cage);
-		pasteButton.setEnabled(true);
 	}
 
 	private void setSpotsNPixels(Experiment exp) {

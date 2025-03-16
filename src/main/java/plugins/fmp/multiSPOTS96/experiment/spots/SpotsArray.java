@@ -166,25 +166,31 @@ public class SpotsArray {
 
 	// ---------------------------------
 
-	public void copySpotsInfos(SpotsArray fromSpotArray, boolean bCopyMeasures) {
+	public void copySpotsInfos(SpotsArray fromSpotsArray) {
+		copySpots(fromSpotsArray, false);
+	}
+
+	public void copySpots(SpotsArray fromSpotsArray, boolean bMeasures) {
 		spotsList.clear();
-		for (Spot fromSpot : fromSpotArray.spotsList) {
+		spotsList.ensureCapacity(fromSpotsArray.spotsList.size());
+		for (Spot fromSpot : fromSpotsArray.spotsList) {
 			Spot spot = new Spot();
-			spot.copySpot(fromSpot, bCopyMeasures);
+			spot.copySpot(fromSpot, bMeasures);
 			spotsList.add(spot);
 		}
 	}
 
-	public void pasteSpotsInfos(SpotsArray fromSpotArray) {
-//		spotsList.clear();
-		for (Spot fromSpot : fromSpotArray.spotsList) {
-//			Spot spot = new Spot();
+	public void pasteSpotsInfos(SpotsArray toSpotsArray) {
+		pasteSpots(toSpotsArray, false);
+	}
+
+	public void pasteSpots(SpotsArray toSpotsArray, boolean bMeasures) {
+		for (Spot toSpot : toSpotsArray.spotsList) {
 			for (Spot spot : spotsList) {
-				if (spot.equals(fromSpot)) {
-					spot.pasteSpotInfos(fromSpot);
+				if (spot.equals(toSpot)) {
+					spot.pasteSpot(toSpot, bMeasures);
 					break;
 				}
-//			spotsList.add(spot);
 			}
 		}
 	}
