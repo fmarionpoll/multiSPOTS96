@@ -27,8 +27,8 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 
 public class SpotsArray {
 	public ArrayList<Spot> spotsList = new ArrayList<Spot>();
-
 	private KymoIntervals spotsListTimeIntervals = null;
+
 	private final static String ID_SPOTTRACK = "spotTrack";
 	private final static String ID_NSPOTS = "N_spots";
 
@@ -187,7 +187,7 @@ public class SpotsArray {
 	public void pasteSpots(SpotsArray toSpotsArray, boolean bMeasures) {
 		for (Spot toSpot : toSpotsArray.spotsList) {
 			for (Spot spot : spotsList) {
-				if (spot.equals(toSpot)) {
+				if (spot.compareTo(toSpot) == 0) {
 					spot.pasteSpot(toSpot, bMeasures);
 					break;
 				}

@@ -7,7 +7,6 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -23,8 +22,8 @@ import icy.gui.frame.IcyFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
-import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelSpot;
 
 public class SpotTablePanel extends JPanel {
@@ -44,11 +43,10 @@ public class SpotTablePanel extends JPanel {
 	private JButton getNfliesButton = new JButton("Get n flies from cage");
 	private JButton nPixelsButton = new JButton("Get n pixels");
 	private MultiSPOTS96 parent0 = null;
-	private CagesArray cagesArrayCopy = null;
+	private SpotsArray allSpotsCopy = null;
 
-	public void initialize(MultiSPOTS96 parent0, ArrayList<Cage> cagesList) {
+	public void initialize(MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
-		cagesArrayCopy = new CagesArray(cagesList);
 
 		spotTableModel = new TableModelSpot(parent0.expListCombo);
 		jTable.setModel(spotTableModel);
@@ -102,7 +100,7 @@ public class SpotTablePanel extends JPanel {
 		dialogFrame.setVisible(true);
 		defineActionListeners();
 
-		pasteButton.setEnabled(cagesArrayCopy.cagesList.size() > 0);
+		pasteButton.setEnabled(false);
 	}
 
 	private void defineActionListeners() {
@@ -111,7 +109,7 @@ public class SpotTablePanel extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					cagesArrayCopy = new CagesArray(exp.cagesArray.cagesList);
+					allSpotsCopy = exp.cagesArray.getAllSpotsArray();
 					pasteButton.setEnabled(true);
 				}
 			}
@@ -121,8 +119,10 @@ public class SpotTablePanel extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null)
-					cagesArrayCopy.pasteCagesInfos(exp.cagesArray.cagesList);
+				if (exp != null) {
+					SpotsArray spotsArray = exp.cagesArray.getAllSpotsArray();
+					allSpotsCopy.pasteSpotsInfos(spotsArray);
+				}
 				spotTableModel.fireTableDataChanged();
 			}
 		});

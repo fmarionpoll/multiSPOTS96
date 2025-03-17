@@ -9,6 +9,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.FlyPosition;
 import plugins.fmp.multiSPOTS96.experiment.cages.FlyPositions;
+import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResults;
 
 public class Comparators {
@@ -57,6 +58,13 @@ public class Comparators {
 	public static class Cage_Name_Comparator implements Comparator<Cage> {
 		@Override
 		public int compare(Cage o1, Cage o2) {
+			return o1.getRoi().getName().compareTo(o2.getRoi().getName());
+		}
+	}
+
+	public static class Spot_Name_Comparator implements Comparator<Spot> {
+		@Override
+		public int compare(Spot o1, Spot o2) {
 			return o1.getRoi().getName().compareTo(o2.getRoi().getName());
 		}
 	}

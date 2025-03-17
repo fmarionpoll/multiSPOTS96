@@ -5,7 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,7 +16,6 @@ import javax.swing.event.ChangeListener;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 
 public class Infos extends JPanel {
 	/**
@@ -27,7 +25,6 @@ public class Infos extends JPanel {
 
 	private JButton editSpotsButton = new JButton("Edit spots infos...");
 	private SpotTablePanel infosSpotTable = null;
-	private ArrayList<Cage> cagesArrayCopy = new ArrayList<Cage>();
 	private JSpinner nFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
 	private String[] flyString = new String[] { "fly", "flies" };
 	private JLabel flyLabel = new JLabel(flyString[0]);
@@ -76,12 +73,11 @@ public class Infos extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-//					exp.spotsArray.transferDescriptionToSpots();
 					if (infosSpotTable != null) {
 						infosSpotTable.close();
 					}
 					infosSpotTable = new SpotTablePanel();
-					infosSpotTable.initialize(parent0, cagesArrayCopy);
+					infosSpotTable.initialize(parent0);
 					infosSpotTable.requestFocus();
 				}
 			}

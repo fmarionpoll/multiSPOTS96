@@ -23,7 +23,7 @@ import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
-public class Cage {
+public class Cage implements Comparable<Cage> {
 	private ROI2D cageXROI2D = null;
 	private ArrayList<ROI2DAlongT> listRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
@@ -47,6 +47,13 @@ public class Cage {
 	}
 
 	public Cage() {
+	}
+
+	@Override
+	public int compareTo(Cage o) {
+		if (o != null)
+			return (this.cageXROI2D.getName()).compareTo(o.cageXROI2D.getName());
+		return 1;
 	}
 
 	// ------------------------------------

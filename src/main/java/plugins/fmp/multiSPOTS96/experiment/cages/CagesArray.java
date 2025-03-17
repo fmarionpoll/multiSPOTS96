@@ -657,6 +657,17 @@ public class CagesArray {
 		return enclosedSpots;
 	}
 
+	public SpotsArray getAllSpotsArray() {
+		SpotsArray spotsArray = new SpotsArray();
+		spotsArray.spotsList = new ArrayList<Spot>();
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				spotsArray.spotsList.add(spot);
+			}
+		}
+		return spotsArray;
+	}
+
 	public Spot getSpotAtGlobalIndex(int indexT) {
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {

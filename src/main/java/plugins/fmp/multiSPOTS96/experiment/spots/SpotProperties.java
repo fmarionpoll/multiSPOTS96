@@ -55,7 +55,6 @@ public class SpotProperties {
 		propTo.spotArrayIndex = spotArrayIndex;
 		propTo.cageID = cageID;
 		propTo.cagePosition = cagePosition;
-		System.out.println("paste spot stim =" + spotStim);
 	}
 
 	public boolean isChanged(SpotProperties desc) {
