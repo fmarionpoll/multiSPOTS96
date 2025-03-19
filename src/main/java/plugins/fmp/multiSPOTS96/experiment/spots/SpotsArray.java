@@ -198,7 +198,7 @@ public class SpotsArray {
 	public boolean isPresent(Spot spotNew) {
 		boolean flag = false;
 		for (Spot spot : spotsList) {
-			if (spot.getRoi().getName().contentEquals(spotNew.getRoi().getName())) {
+			if (spot.compareTo(spotNew) == 0) {
 				flag = true;
 				break;
 			}
