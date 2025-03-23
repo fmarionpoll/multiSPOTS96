@@ -15,14 +15,15 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import icy.gui.viewer.Viewer;
+import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.cages.CageString;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.tools.chart.ChartSpots;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
@@ -140,9 +141,6 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 	private ChartSpots plotToChart(Experiment exp, EnumXLSExportType exportType, ChartSpots iChart, Rectangle rectv) {
 		if (iChart != null)
 			iChart.mainChartFrame.dispose();
-		iChart = new ChartSpots();
-		iChart.createSpotsChartPanel2("Spots measures", exp);
-		iChart.setUpperLeftLocation(rectv);
 
 		XLSExportOptions xlsExportOptions = new XLSExportOptions();
 		xlsExportOptions.buildExcelStepMs = 60000;
@@ -154,15 +152,31 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 		if (displayAllButton.isSelected()) {
 			xlsExportOptions.cageIndexFirst = -1;
 		} else {
-			String kymoName = (String) parent0.dlgKymos.tabDisplay.kymographsCombo.getSelectedItem();
-			xlsExportOptions.cageIndexFirst = SpotString.getCageIDFromSpotName(kymoName);
+			String cageName = findSelectedCage(exp);
+			if (cageName == null)
+				return null;
+			String cageNumber = CageString.getCageNumberFromCageRoiName(cageName);
+			xlsExportOptions.cageIndexFirst = Integer.parseInt(cageNumber);
 			xlsExportOptions.cageIndexLast = xlsExportOptions.cageIndexFirst;
 		}
+
+		iChart = new ChartSpots();
+		iChart.createSpotsChartPanel2("Spots measures", exp, xlsExportOptions);
+		iChart.setUpperLeftLocation(rectv);
 
 		iChart.displayData(exp, xlsExportOptions);
 		iChart.mainChartFrame.toFront();
 		iChart.mainChartFrame.requestFocus();
 		return iChart;
+	}
+
+	private String findSelectedCage(Experiment exp) {
+		for (Cage cage : exp.cagesArray.cagesList) {
+			ROI2D roi = cage.getRoi();
+			if (roi.isSelected())
+				return roi.getName();
+		}
+		return null;
 	}
 
 	public void closeAllCharts() {

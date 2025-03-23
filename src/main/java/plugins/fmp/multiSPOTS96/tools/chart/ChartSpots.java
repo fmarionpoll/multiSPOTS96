@@ -66,7 +66,7 @@ public class ChartSpots extends IcyFrame {
 
 	// ----------------------------------------
 
-	public void createSpotsChartPanel2(String title, Experiment exp) {
+	public void createSpotsChartPanel2(String title, Experiment exp, XLSExportOptions xlsExportOptions) {
 		mainChartPanel = new JPanel();
 		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(), new Dimension(300, 70), true, true, true,
 				true);
@@ -74,7 +74,11 @@ public class ChartSpots extends IcyFrame {
 
 		nCagesAlongX = exp.cagesArray.nCagesAlongX;
 		nCagesAlongY = exp.cagesArray.nCagesAlongY;
-		panelHolder = new ChartPanel[nCagesAlongY][nCagesAlongX];
+		if (xlsExportOptions.cageIndexFirst >= 0) {
+			nCagesAlongX = 1;
+			nCagesAlongY = 1;
+		}
+		panelHolder = new ChartPanel[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
 		mainChartPanel.setLayout(new GridLayout(nCagesAlongY, nCagesAlongX));
 	}
 
@@ -115,9 +119,7 @@ public class ChartSpots extends IcyFrame {
 		for (int row = 0; row < nCagesAlongY; row++) {
 			for (int col = 0; col < nCagesAlongX; col++) {
 				Cage cage = exp.cagesArray.getCageFromRowColCoordinates(row, col);
-				if (cage == null)
-					continue;
-				if (cage.spotsArray.spotsList.size() < 1)
+				if (cage == null || cage.spotsArray.spotsList.size() < 1)
 					continue;
 
 				int cageID = cage.prop.cageID;
@@ -162,7 +164,22 @@ public class ChartSpots extends IcyFrame {
 				});
 
 				panelHolder[row][col] = panel;
-				mainChartPanel.add(panel);
+			}
+		}
+
+		if (xlsExportOptions.cageIndexFirst >= 0) {
+			int indexCage = xlsExportOptions.cageIndexFirst;
+			int irow = indexCage / exp.cagesArray.nCagesAlongX;
+			int icol = indexCage % exp.cagesArray.nCagesAlongX;
+			mainChartPanel.add(panelHolder[irow][icol]);
+		} else {
+			for (int row = 0; row < nCagesAlongY; row++) {
+				for (int col = 0; col < nCagesAlongX; col++) {
+					JPanel chartPanel = panelHolder[row][col];
+					if (chartPanel == null)
+						chartPanel = new JPanel();
+					mainChartPanel.add(chartPanel);
+				}
 			}
 		}
 

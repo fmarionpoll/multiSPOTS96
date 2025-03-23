@@ -75,10 +75,10 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1742193230684"/>
+<key name="lastUpdateCheckTime" value="1742723204756"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
-<key name="loaderFolder" value="C:\Users\fred\Desktop\2025-03-13"/>
+<key name="loaderFolder" value="\\comportement-egce.ideev.universite-paris-saclay.fr\MultiCAFE\2025 Beatrice\essai multispots  plaques 96\2025-03-20"/>
 </section>
 <section name="canvas">
 <section name="Canvas2D">
@@ -147,14 +147,14 @@
 <section name="gui.histo">
 <key name="logView" value="true"/>
 </section>
-<key name="lastUploadDate" value="1742110954758"/>
+<key name="lastUploadDate" value="1742723200750"/>
 </section>
 <section name="plugins">
 <section name="fmp">
 <section name="multiSPOTS96">
 <section name="MultiSPOTS96">
 <section name="gui">
-<key name="lastUsedPath" value="C:\Users\fred\Desktop\2025-03-13_fred"/>
+<key name="lastUsedPath" value="D:\Comportement\MultiCAFE\2025 Beatrice\essai multispots  plaques 96"/>
 </section>
 </section>
 </section>
@@ -162,21 +162,21 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="3699"/>
-<key name="YE" value="21"/>
-<key name="WidthE" value="1549"/>
-<key name="HeightE" value="1087"/>
+<key name="XE" value="3478"/>
+<key name="YE" value="14"/>
+<key name="WidthE" value="1868"/>
+<key name="HeightE" value="1123"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1241"/>
+<key name="XC" value="1560"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="300"/>
-<key name="HeightC" value="925"/>
+<key name="HeightC" value="961"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -194,7 +194,7 @@
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="835"/>
+<key name="HeightC" value="871"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -212,7 +212,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="835"/>
+<key name="HeightC" value="871"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>
