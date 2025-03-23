@@ -58,8 +58,8 @@ public class ChartSpots extends IcyFrame {
 	private double ymin = 0;
 	private double xmax = 0;
 
-	int nCagesAlongX = 1;
-	int nCagesAlongY = 1;
+	int nPanelsAlongX = 1;
+	int nPanelsAlongY = 1;
 
 	ChartPanel[][] panelHolder = null;
 	Experiment exp = null;
@@ -72,14 +72,15 @@ public class ChartSpots extends IcyFrame {
 				true);
 		mainChartFrame.add(mainChartPanel);
 
-		nCagesAlongX = exp.cagesArray.nCagesAlongX;
-		nCagesAlongY = exp.cagesArray.nCagesAlongY;
-		if (xlsExportOptions.cageIndexFirst >= 0) {
-			nCagesAlongX = 1;
-			nCagesAlongY = 1;
-		}
 		panelHolder = new ChartPanel[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
-		mainChartPanel.setLayout(new GridLayout(nCagesAlongY, nCagesAlongX));
+
+		nPanelsAlongX = exp.cagesArray.nCagesAlongX;
+		nPanelsAlongY = exp.cagesArray.nCagesAlongY;
+		if (xlsExportOptions.cageIndexFirst == xlsExportOptions.cageIndexLast) {
+			nPanelsAlongX = 1;
+			nPanelsAlongY = 1;
+		}
+		mainChartPanel.setLayout(new GridLayout(nPanelsAlongY, nPanelsAlongX));
 	}
 
 	private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions xlsExportOptions) {
@@ -115,9 +116,13 @@ public class ChartSpots extends IcyFrame {
 		}
 
 		// ---------------------------
-
-		for (int row = 0; row < nCagesAlongY; row++) {
-			for (int col = 0; col < nCagesAlongX; col++) {
+		int index_cage = 0;
+		for (int row = 0; row < exp.cagesArray.nCagesAlongY; row++) {
+			for (int col = 0; col < exp.cagesArray.nCagesAlongX; col++) {
+				if (index_cage < xlsExportOptions.cageIndexFirst || index_cage > xlsExportOptions.cageIndexLast) {
+					index_cage++;
+					continue;
+				}
 				Cage cage = exp.cagesArray.getCageFromRowColCoordinates(row, col);
 				if (cage == null || cage.spotsArray.spotsList.size() < 1)
 					continue;
@@ -164,17 +169,18 @@ public class ChartSpots extends IcyFrame {
 				});
 
 				panelHolder[row][col] = panel;
+				index_cage++;
 			}
 		}
 
-		if (xlsExportOptions.cageIndexFirst >= 0) {
+		if (xlsExportOptions.cageIndexFirst == xlsExportOptions.cageIndexLast) {
 			int indexCage = xlsExportOptions.cageIndexFirst;
 			int irow = indexCage / exp.cagesArray.nCagesAlongX;
 			int icol = indexCage % exp.cagesArray.nCagesAlongX;
 			mainChartPanel.add(panelHolder[irow][icol]);
 		} else {
-			for (int row = 0; row < nCagesAlongY; row++) {
-				for (int col = 0; col < nCagesAlongX; col++) {
+			for (int row = 0; row < nPanelsAlongY; row++) {
+				for (int col = 0; col < nPanelsAlongX; col++) {
 					JPanel chartPanel = panelHolder[row][col];
 					if (chartPanel == null)
 						chartPanel = new JPanel();

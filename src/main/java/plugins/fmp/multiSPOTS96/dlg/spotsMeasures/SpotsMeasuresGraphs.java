@@ -150,7 +150,8 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 		xlsExportOptions.exportType = exportType;
 
 		if (displayAllButton.isSelected()) {
-			xlsExportOptions.cageIndexFirst = -1;
+			xlsExportOptions.cageIndexFirst = 0;
+			xlsExportOptions.cageIndexLast = exp.cagesArray.cagesList.size() - 1;
 		} else {
 			String cageName = findSelectedCage(exp);
 			if (cageName == null)
