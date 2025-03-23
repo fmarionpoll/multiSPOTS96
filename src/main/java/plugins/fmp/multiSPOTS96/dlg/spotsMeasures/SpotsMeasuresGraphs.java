@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import icy.canvas.Canvas2D;
 import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
@@ -33,7 +34,7 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 	 * 
 	 */
 	private static final long serialVersionUID = -7079184380174992501L;
-	private ChartSpots plotAreaPixels = null;
+	private ChartSpots chartSpots = null;
 	private MultiSPOTS96 parent0 = null;
 	private JButton displayResultsButton = new JButton("Display results");
 	private EnumXLSExportType[] measures = new EnumXLSExportType[] { EnumXLSExportType.AREA_SUM,
@@ -98,8 +99,9 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null)
+				if (exp != null) {
 					displayGraphsPanels(exp);
+				}
 			}
 		});
 
@@ -127,15 +129,16 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 	}
 
 	public void displayGraphsPanels(Experiment exp) {
+		exp.seqCamData.seq.removeListener(this);
 		Rectangle rectv = getInitialUpperLeftPosition(exp);
 		int dx = 5;
 		int dy = 10;
-		exp.seqCamData.seq.addListener(this);
 		EnumXLSExportType exportType = (EnumXLSExportType) exportTypeComboBox.getSelectedItem();
 		if (isThereAnyDataToDisplay(exp, exportType)) {
 			rectv.translate(dx, dy);
-			plotAreaPixels = plotToChart(exp, exportType, plotAreaPixels, rectv);
+			chartSpots = plotToChart(exp, exportType, chartSpots, rectv);
 		}
+		exp.seqCamData.seq.addListener(this);
 	}
 
 	private ChartSpots plotToChart(Experiment exp, EnumXLSExportType exportType, ChartSpots iChart, Rectangle rectv) {
@@ -174,21 +177,25 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 	private String findSelectedCage(Experiment exp) {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			ROI2D roi = cage.getRoi();
-			if (roi.isSelected())
+			if (roi.isSelected()) {
+				centerViewOnSelectedRoi(exp, roi);
 				return roi.getName();
+			}
 		}
 		return null;
 	}
 
-	public void closeAllCharts() {
-		plotAreaPixels = closeChart(plotAreaPixels);
+	private void centerViewOnSelectedRoi(Experiment exp, ROI2D roi) {
+		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Canvas2D canvas = (Canvas2D) v.getCanvas();
+		Rectangle rect = roi.getBounds();
+		canvas.centerOn(rect);
 	}
 
-	private ChartSpots closeChart(ChartSpots chart) {
-		if (chart != null)
-			chart.mainChartFrame.dispose();
-		chart = null;
-		return chart;
+	public void closeAllCharts() {
+		if (chartSpots != null)
+			chartSpots.mainChartFrame.dispose();
+		chartSpots = null;
 	}
 
 	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExportType option) {
