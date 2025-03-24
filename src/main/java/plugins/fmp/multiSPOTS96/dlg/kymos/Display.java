@@ -38,7 +38,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.Directories;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
-import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_2Transforms;
+import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 
 public class Display extends JPanel implements ViewerListener {
@@ -230,7 +230,7 @@ public class Display extends JPanel implements ViewerListener {
 				v.addListener(this);
 
 				JToolBar toolBar = v.getToolBar();
-				Canvas2D_2Transforms canvas = (Canvas2D_2Transforms) v.getCanvas();
+				Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) v.getCanvas();
 				canvas.customizeToolbarStep2(toolBar);
 
 				placeKymoViewerNextToCamViewer(exp);
@@ -444,7 +444,7 @@ public class Display extends JPanel implements ViewerListener {
 		if (spotsViewButton.isSelected()) {
 			updateTransformFunctionsOfCanvas(exp);
 		} else {
-			Canvas2D_2Transforms canvas = (Canvas2D_2Transforms) exp.seqSpotKymos.seq.getFirstViewer().getCanvas();
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqSpotKymos.seq.getFirstViewer().getCanvas();
 			canvas.transformsComboStep2.setSelectedIndex(0);
 		}
 	}
@@ -452,7 +452,7 @@ public class Display extends JPanel implements ViewerListener {
 	private void updateTransformFunctionsOfCanvas(Experiment exp) {
 		Viewer viewer = exp.seqSpotKymos.seq.getFirstViewer();
 		if (viewer != null) {
-			Canvas2D_2Transforms canvas = (Canvas2D_2Transforms) viewer.getCanvas();
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) viewer.getCanvas();
 			canvas.updateTransformsComboStep2(transforms);
 			int index = spotsTransformsComboBox.getSelectedIndex();
 			canvas.selectImageTransformFunctionStep2(index + 1);

@@ -486,7 +486,7 @@ public class SpotsArray {
 	private boolean csvSave_SpotsArraySection(FileWriter csvWriter) {
 		try {
 			csvWriter.append("#" + csvSep + "#\n");
-			csvWriter.append("#" + csvSep + "SPOTS_ARRAY" + csvSep + "multiSPOTS data\n");
+			csvWriter.append("#" + csvSep + "SPOTS_ARRAY" + csvSep + "multiSPOTS96 data\n");
 			csvWriter.append("n spots=" + csvSep + Integer.toString(spotsList.size()) + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();

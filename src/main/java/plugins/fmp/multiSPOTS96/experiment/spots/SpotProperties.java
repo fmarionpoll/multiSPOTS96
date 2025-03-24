@@ -140,7 +140,7 @@ public class SpotProperties {
 	static public String csvExportPropertiesHeader(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("#" + csvSep + "#\n");
-		sbf.append("#" + csvSep + "SPOTS" + csvSep + "multiSPOTS data\n");
+		sbf.append("#" + csvSep + "SPOTS" + csvSep + "multiSPOTS96 data\n");
 		List<String> row2 = Arrays.asList("name", "index", "cageID", "cagePos", "nflies", "volume", "npixels", "radius",
 				"stim", "conc");
 		sbf.append(String.join(csvSep, row2));

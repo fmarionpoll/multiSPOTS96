@@ -19,7 +19,7 @@ import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 
-public class Canvas2D_2Transforms extends Canvas2D {
+public class Canvas2D_3Transforms extends Canvas2D {
 	/**
 	 * 
 	 */
@@ -42,7 +42,7 @@ public class Canvas2D_2Transforms extends Canvas2D {
 			imageTransformStep2);
 	ImageTransformInterface transformStep2 = ImageTransformEnums.NONE.getFunction();
 
-	public Canvas2D_2Transforms(Viewer viewer) {
+	public Canvas2D_3Transforms(Viewer viewer) {
 		super(viewer);
 	}
 

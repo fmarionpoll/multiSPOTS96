@@ -105,7 +105,7 @@ public class _DlgExperiment_ extends JPanel implements ViewerListener, ChangeLis
 				if (v == null) {
 					v = new ViewerFMP(exp.seqCamData.seq, true, true);
 					List<String> list = IcyCanvas.getCanvasPluginNames();
-					String pluginName = list.stream().filter(s -> s.contains("Canvas2D_2Transforms")).findFirst()
+					String pluginName = list.stream().filter(s -> s.contains("Canvas2D_3Transforms")).findFirst()
 							.orElse(null);
 					v.setCanvas(pluginName);
 				}

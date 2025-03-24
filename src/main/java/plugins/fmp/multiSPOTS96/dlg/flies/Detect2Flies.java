@@ -30,7 +30,7 @@ import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.series.FlyDetect2;
-import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_2Transforms;
+import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
 
@@ -204,7 +204,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 	}
 
 	private void updateTransformFunctionsOfCanvas(Experiment exp, boolean display) {
-		Canvas2D_2Transforms canvas = (Canvas2D_2Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
 		if (display) {
 			canvas.updateTransformsComboStep1(transforms);
 			canvas.selectImageTransformFunctionStep1(1);
