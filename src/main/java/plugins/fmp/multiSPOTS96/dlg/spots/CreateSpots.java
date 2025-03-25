@@ -44,6 +44,8 @@ public class CreateSpots extends JPanel {
 	private MultiSPOTS96 parent0 = null;
 	private ROI2DGrid roiGrid = null;
 	private Point2D.Double referencePosition = null;
+	
+	private SpotsDefinitionArrayPanel spotsPanel = null;
 
 	// ----------------------------------------------------------
 
@@ -86,6 +88,14 @@ public class CreateSpots extends JPanel {
 					exp.seqCamData.removeROIsContainingString("spot");
 					int cagenb = findSelectedCage(exp);
 					zoomCage(exp, cagenb);
+					
+					if (spotsPanel == null) {
+						spotsPanel = new SpotsDefinitionArrayPanel();
+						int n_columns = (int) nColumnsCombo.getSelectedItem();
+						int n_rows = (int) nRowsCombo.getSelectedItem();
+						spotsPanel.initialize(parent0, n_columns, n_rows);
+						spotsPanel.requestFocus();
+					}
 				}
 			}
 		});
