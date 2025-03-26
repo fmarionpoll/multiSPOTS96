@@ -773,10 +773,14 @@ public class CagesArray {
 	}
 
 	public int findKymoROI2DIntervalStart(long intervalT) {
+		if (cagesListTimeIntervals == null)
+			addKymoROI2DInterval(0);
 		return cagesListTimeIntervals.findStartItem(intervalT);
 	}
 
 	public long getKymoROI2DIntervalsStartAt(int selectedItem) {
+		if (cagesListTimeIntervals == null)
+			addKymoROI2DInterval(0);
 		return cagesListTimeIntervals.get(selectedItem)[0];
 	}
 

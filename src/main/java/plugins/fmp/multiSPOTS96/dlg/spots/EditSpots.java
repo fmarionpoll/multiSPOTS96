@@ -49,8 +49,7 @@ public class EditSpots extends JPanel {
 	private JButton erodeButton = new JButton("Contract spots");
 	private JButton dilateButton = new JButton("Dilate spots");
 
-	// private JButton editSpotsWithTimeButton = new JButton("Change spots position
-	// with time");
+	private JButton editSpotsWithTimeButton = new JButton("Change spots position with time");
 
 	void init(GridLayout capLayout, MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
@@ -71,7 +70,7 @@ public class EditSpots extends JPanel {
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(dilateButton);
 		panel2.add(erodeButton);
-//		panel2.add(editSpotsWithTimeButton);
+		panel2.add(editSpotsWithTimeButton);
 		add(panel2);
 
 		defineActionListeners();
@@ -152,15 +151,15 @@ public class EditSpots extends JPanel {
 			}
 		});
 
-//		editSpotsWithTimeButton.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(final ActionEvent e) {
-//				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-//				if (exp == null)
-//					return;
-//				openDialog();
-//			}
-//		});
+		editSpotsWithTimeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp == null)
+					return;
+				openDialog();
+			}
+		});
 
 	}
 

@@ -174,7 +174,7 @@ public class Display extends JPanel implements ViewerListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				kymographsCombo.removeAllItems();
-				for (Cage cage: exp.cagesArray.cagesList) {
+				for (Cage cage : exp.cagesArray.cagesList) {
 					Collections.sort(cage.spotsArray.spotsList);
 					int nspotsArray = cage.spotsArray.spotsList.size();
 					for (int i = 0; i < nspotsArray; i++) {
@@ -223,7 +223,7 @@ public class Display extends JPanel implements ViewerListener {
 			if (vList.size() == 0) {
 				ViewerFMP v = new ViewerFMP(seqKymographs.seq, true, true);
 				List<String> list = IcyCanvas.getCanvasPluginNames();
-				String pluginName = list.stream().filter(s -> s.contains("Canvas2D_2Transforms")).findFirst()
+				String pluginName = list.stream().filter(s -> s.contains("Canvas2D_3Transforms")).findFirst()
 						.orElse(null);
 				v.setCanvas(pluginName);
 				v.setRepeat(false);
@@ -368,17 +368,15 @@ public class Display extends JPanel implements ViewerListener {
 
 	private void selectSpot(Experiment exp, int isel) {
 		int i = 0;
-		for (Cage cage: exp.cagesArray.cagesList) {
+		for (Cage cage : exp.cagesArray.cagesList) {
 			SpotsArray spotsArray = cage.spotsArray;
 			for (Spot spot : spotsArray.spotsList) {
 				spot.getRoi().setSelected(isel == i);
 				spot.getRoi().setFocused(isel == i);
 				i++;
-			}			
+			}
 		}
 	}
-		
-
 
 	@Override
 	public void viewerChanged(ViewerEvent event) {
