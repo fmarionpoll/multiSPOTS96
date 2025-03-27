@@ -56,9 +56,7 @@ public class Spot implements Comparable<Spot> {
 	private final String ID_INTERVAL = "interval_";
 	private final String ID_INDEXIMAGE = "indexImageMC";
 
-	private Color[] spotColors = new Color[] { new Color(0xFF, 0x55, 0x55), new Color(0x55, 0x55, 0xFF),
-			new Color(0x55, 0xFF, 0x55), new Color(0xFF, 0xFF, 0x55), new Color(0xFF, 0x55, 0xFF),
-			new Color(0x55, 0xFF, 0xFF), Color.pink, Color.gray };
+	
 
 	// ----------------------------------------------------
 
@@ -109,8 +107,8 @@ public class Spot implements Comparable<Spot> {
 		listRoiAlongT.clear();
 	}
 
-	public void setSpotRoi_InColorAccordingToSpotIndex(int index) {
-		Color value = spotColors[index % 8];
+	public void setRoi_ColorAccordingToSpotIndex(int index) {
+		Color value = SpotProperties.spotColors[index % 8];
 		spotROI2D.setColor(value);
 	}
 
@@ -263,7 +261,8 @@ public class Spot implements Comparable<Spot> {
 			prop.cagePosition = XMLUtil.getElementIntValue(nodeMeta, ID_CAGEINDEX, prop.cagePosition);
 			prop.spotArrayIndex = XMLUtil.getElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, prop.spotArrayIndex);
 			spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
-			setSpotRoi_InColorAccordingToSpotIndex(prop.cagePosition);
+			//setRoi_ColorAccordingToSpotIndex(prop.cagePosition);
+			spotROI2D.setColor(prop.spotColor);
 			limitsOptions.loadFromXML(nodeMeta);
 
 			loadFromXML_SpotAlongT(node);

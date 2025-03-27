@@ -1,5 +1,6 @@
 package plugins.fmp.multiSPOTS96.experiment.spots;
 
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class SpotProperties {
 	public int cageID = -1;
 	public int cagePosition = 0;
 	public int spotArrayIndex = 0;
+	public Color spotColor = spotColors[0];
 
 	public int spotNFlies = 1;
 	public String spotStim = new String("..");
@@ -35,9 +37,17 @@ public class SpotProperties {
 	private final String ID_RADIUS = "radius";
 	private final String ID_XCOORD = "spotXCoord";
 	private final String ID_YCOORD = "spotYCoord";
-	private final String ID_STIMULUS = "stimulus";
+	private final String ID_SPOTSTIMULUS = "stimulus";
 	private final String ID_CONCENTRATION = "concentration";
 	private final String ID_DESCOK = "descriptionOK";
+	private final String ID_COLOR_R = "spotColor_R";
+	private final String ID_COLOR_G = "spotColor_G";
+	private final String ID_COLOR_B = "spotColor_B";
+	
+	static final Color[] spotColors = new Color[] { new Color(0xFF, 0x55, 0x55), new Color(0x55, 0x55, 0xFF),
+			new Color(0x55, 0xFF, 0x55), new Color(0xFF, 0xFF, 0x55), new Color(0xFF, 0x55, 0xFF),
+			new Color(0x55, 0xFF, 0xFF), Color.pink, Color.gray };
+	
 
 	public void copy(SpotProperties propFrom) {
 		spotVolume = propFrom.spotVolume;
@@ -92,8 +102,12 @@ public class SpotProperties {
 		spotRadius = XMLUtil.getElementIntValue(nodeParameters, ID_RADIUS, 30);
 		spotXCoord = XMLUtil.getElementIntValue(nodeParameters, ID_XCOORD, -1);
 		spotYCoord = XMLUtil.getElementIntValue(nodeParameters, ID_YCOORD, -1);
-		spotStim = XMLUtil.getElementValue(nodeParameters, ID_STIMULUS, ID_STIMULUS);
+		spotStim = XMLUtil.getElementValue(nodeParameters, ID_SPOTSTIMULUS, ID_SPOTSTIMULUS);
 		spotConc = XMLUtil.getElementValue(nodeParameters, ID_CONCENTRATION, ID_CONCENTRATION);
+		int r = XMLUtil.getElementIntValue(nodeParameters, ID_COLOR_R, spotColor.getRed());
+		int g = XMLUtil.getElementIntValue(nodeParameters, ID_COLOR_G, spotColor.getGreen());
+		int b = XMLUtil.getElementIntValue(nodeParameters, ID_COLOR_B, spotColor.getBlue());
+		spotColor = new Color(r, g, b);
 		return true;
 	}
 
@@ -107,8 +121,11 @@ public class SpotProperties {
 		XMLUtil.setElementIntValue(nodeParameters, ID_RADIUS, spotRadius);
 		XMLUtil.setElementIntValue(nodeParameters, ID_XCOORD, spotXCoord);
 		XMLUtil.setElementIntValue(nodeParameters, ID_YCOORD, spotYCoord);
-		XMLUtil.setElementValue(nodeParameters, ID_STIMULUS, spotStim);
+		XMLUtil.setElementValue(nodeParameters, ID_SPOTSTIMULUS, spotStim);
 		XMLUtil.setElementValue(nodeParameters, ID_CONCENTRATION, spotConc);
+		XMLUtil.setElementIntValue(nodeParameters, ID_COLOR_R, spotColor.getRed());
+		XMLUtil.setElementIntValue(nodeParameters, ID_COLOR_G, spotColor.getGreen());
+		XMLUtil.setElementIntValue(nodeParameters, ID_COLOR_B, spotColor.getBlue());
 		return true;
 	}
 
