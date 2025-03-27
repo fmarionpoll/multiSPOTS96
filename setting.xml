@@ -75,7 +75,7 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1743003031690"/>
+<key name="lastUpdateCheckTime" value="1743097864039"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
 <key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\2025-03-13_fred\cam96_C02\grabs"/>
@@ -98,93 +98,20 @@
 </section>
 <section name="online"/>
 </section>
-<key name="id" value="223427054"/>
+<key name="id" value="176614372"/>
 <key name="os" value="win64"/>
-<key name="clientCpuNumber" value="16"/>
-<key name="clientTotalMemory" value="67880230912"/>
-<key name="appFolder" value="C:/Users/fred/git/icy/build/classes"/>
+<key name="clientCpuNumber" value="20"/>
+<key name="clientTotalMemory" value="34078789632"/>
+<key name="appFolder" value="C:/Users/fred/.m2/repository/org/bioimageanalysis/icy/icy-kernel/2.5.1"/>
 <section name="loader">
 <section name="entry0">
-<key name="nbFile" value="1"/>
-<key name="file0" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/cam96_c02.avi"/>
+<key name="nbFile" value="0"/>
 </section>
 <section name="entry1">
-<key name="nbFile" value="1"/>
-<key name="file0" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/Frame_2025-03-13_10.avi"/>
+<key name="nbFile" value="0"/>
 </section>
 <section name="entry2">
-<key name="nbFile" value="71"/>
-<key name="file0" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-29-29.jpg"/>
-<key name="file1" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-29-50.jpg"/>
-<key name="file2" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-30-11.jpg"/>
-<key name="file3" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-30-32.jpg"/>
-<key name="file4" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-30-53.jpg"/>
-<key name="file5" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-31-13.jpg"/>
-<key name="file6" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-31-34.jpg"/>
-<key name="file7" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-31-55.jpg"/>
-<key name="file8" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-32-16.jpg"/>
-<key name="file9" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-32-36.jpg"/>
-<key name="file10" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-32-57.jpg"/>
-<key name="file11" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-33-18.jpg"/>
-<key name="file12" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-33-39.jpg"/>
-<key name="file13" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-33-59.jpg"/>
-<key name="file14" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-34-20.jpg"/>
-<key name="file15" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-34-41.jpg"/>
-<key name="file16" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-35-02.jpg"/>
-<key name="file17" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-35-23.jpg"/>
-<key name="file18" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-35-43.jpg"/>
-<key name="file19" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-36-04.jpg"/>
-<key name="file20" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-36-25.jpg"/>
-<key name="file21" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-36-46.jpg"/>
-<key name="file22" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-37-06.jpg"/>
-<key name="file23" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-37-27.jpg"/>
-<key name="file24" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-37-48.jpg"/>
-<key name="file25" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-38-08.jpg"/>
-<key name="file26" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-38-29.jpg"/>
-<key name="file27" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-38-50.jpg"/>
-<key name="file28" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-39-11.jpg"/>
-<key name="file29" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-39-31.jpg"/>
-<key name="file30" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-39-52.jpg"/>
-<key name="file31" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-40-13.jpg"/>
-<key name="file32" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-40-33.jpg"/>
-<key name="file33" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-40-54.jpg"/>
-<key name="file34" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-41-15.jpg"/>
-<key name="file35" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-41-35.jpg"/>
-<key name="file36" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-41-56.jpg"/>
-<key name="file37" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-42-17.jpg"/>
-<key name="file38" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-42-38.jpg"/>
-<key name="file39" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-42-58.jpg"/>
-<key name="file40" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-43-19.jpg"/>
-<key name="file41" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-43-40.jpg"/>
-<key name="file42" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-44-00.jpg"/>
-<key name="file43" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-44-21.jpg"/>
-<key name="file44" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-44-42.jpg"/>
-<key name="file45" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-45-02.jpg"/>
-<key name="file46" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-45-23.jpg"/>
-<key name="file47" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-45-44.jpg"/>
-<key name="file48" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-46-04.jpg"/>
-<key name="file49" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-46-25.jpg"/>
-<key name="file50" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-46-46.jpg"/>
-<key name="file51" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-47-07.jpg"/>
-<key name="file52" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-47-27.jpg"/>
-<key name="file53" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-47-48.jpg"/>
-<key name="file54" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-48-08.jpg"/>
-<key name="file55" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-48-29.jpg"/>
-<key name="file56" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-48-50.jpg"/>
-<key name="file57" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-49-10.jpg"/>
-<key name="file58" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-49-31.jpg"/>
-<key name="file59" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-49-52.jpg"/>
-<key name="file60" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-50-13.jpg"/>
-<key name="file61" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-50-33.jpg"/>
-<key name="file62" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-50-54.jpg"/>
-<key name="file63" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-51-15.jpg"/>
-<key name="file64" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-51-35.jpg"/>
-<key name="file65" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-51-56.jpg"/>
-<key name="file66" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-52-17.jpg"/>
-<key name="file67" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-52-37.jpg"/>
-<key name="file68" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-52-58.jpg"/>
-<key name="file69" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-53-19.jpg"/>
-<key name="file70" value="C:/Users/fred/Desktop/essai multispots plaques 96/2025-03-13_fred/cam96_C02/grabs/Frame_2025-03-13_10-53-39.jpg"/>
+<key name="nbFile" value="0"/>
 </section>
 <section name="entry3">
 <key name="nbFile" value="0"/>
@@ -208,7 +135,7 @@
 <key name="nbFile" value="0"/>
 </section>
 </section>
-<key name="version" value="2.5.2.0"/>
+<key name="version" value="2.5.1.0"/>
 <section name="frame">
 <section name="imageLoader">
 <key name="width" value="764"/>
@@ -243,8 +170,8 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="652"/>
-<key name="YE" value="108"/>
+<key name="XE" value="2650"/>
+<key name="YE" value="48"/>
 <key name="WidthE" value="2314"/>
 <key name="HeightE" value="1237"/>
 <key name="MaximizedE" value="false"/>
