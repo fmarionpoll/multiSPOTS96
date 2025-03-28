@@ -43,11 +43,9 @@ public class SpotProperties {
 	private final String ID_COLOR_R = "spotColor_R";
 	private final String ID_COLOR_G = "spotColor_G";
 	private final String ID_COLOR_B = "spotColor_B";
-	
-	static final Color[] spotColors = new Color[] { new Color(0xFF, 0x55, 0x55), new Color(0x55, 0x55, 0xFF),
-			new Color(0x55, 0xFF, 0x55), new Color(0xFF, 0xFF, 0x55), new Color(0xFF, 0x55, 0xFF),
-			new Color(0x55, 0xFF, 0xFF), Color.pink, Color.gray };
-	
+
+	static final Color[] spotColors = new Color[] { Color.GREEN, Color.RED, Color.CYAN, Color.YELLOW, Color.MAGENTA,
+			Color.ORANGE, Color.PINK, Color.GRAY };
 
 	public void copy(SpotProperties propFrom) {
 		spotVolume = propFrom.spotVolume;
