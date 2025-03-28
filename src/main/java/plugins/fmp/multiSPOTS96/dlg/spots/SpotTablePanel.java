@@ -26,6 +26,13 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelSpot;
 
+
+// look at these pages:
+// https://www.codejava.net/java-se/swing/how-to-create-jcombobox-cell-editor-for-jtable
+// https://stackoverflow.com/questions/14355712/adding-jcombobox-to-a-jtable-cell
+// https://forums.oracle.com/ords/apexds/post/make-a-combobox-appear-in-just-one-cell-in-a-jtable-column-9798
+
+
 public class SpotTablePanel extends JPanel {
 	/**
 	 * 
