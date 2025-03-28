@@ -1,14 +1,20 @@
 package plugins.fmp.multiSPOTS96.experiment;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
+import plugins.fmp.multiSPOTS96.experiment.descriptor.Concentration;
+import plugins.fmp.multiSPOTS96.experiment.descriptor.Stimulus;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
 public class ExperimentProperties {
+	
+	public ArrayList<Stimulus> arrayStimulus = new ArrayList<Stimulus>();
+	public ArrayList<Concentration> arrayConcentration = new ArrayList<Concentration>();
 
 	public String ffield_boxID = new String("..");
 	public String ffield_experiment = new String("..");
