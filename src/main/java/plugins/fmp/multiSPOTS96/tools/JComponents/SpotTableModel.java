@@ -1,23 +1,22 @@
 package plugins.fmp.multiSPOTS96.tools.JComponents;
 
+import java.awt.Color;
+
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
-public class TableModelSpot extends AbstractTableModel {
+public class SpotTableModel extends AbstractTableModel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6325792669154093747L;
 	private JComboBoxExperiment expList = null;
-	String columnNames[] = { "Name", "IDCage", "PosCage", "N flies", "N pixels", "Volume", "Stimulus",
-			"Concentration" };
+	String columnNames[] = { "Name", "IDCage", "PosCage", "N flies", "N pixels", "Volume", "Stimulus", "Concentration",
+			"Color" };
 
-	// "O-Name", "1-CageID", "2-CageIndex", "3-N flies", "4-N pixels", "5-Volume",
-	// "6-Stimulus",
-//	"7-Concentration"
-	public TableModelSpot(JComboBoxExperiment expList) {
+	public SpotTableModel(JComboBoxExperiment expList) {
 		super();
 		this.expList = expList;
 	}
@@ -46,6 +45,8 @@ public class TableModelSpot extends AbstractTableModel {
 			return String.class;
 		case 7:
 			return String.class;
+		case 8:
+			return Color.class;
 		}
 		return String.class;
 	}
@@ -85,6 +86,8 @@ public class TableModelSpot extends AbstractTableModel {
 				return spot.prop.spotStim;
 			case 7:
 				return spot.prop.spotConc;
+			case 8:
+				return spot.prop.spotColor;
 			}
 		}
 		return null;
@@ -94,6 +97,7 @@ public class TableModelSpot extends AbstractTableModel {
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		switch (columnIndex) {
 		case 0:
+		case 8:
 			return false;
 		default:
 			return true;
@@ -129,6 +133,8 @@ public class TableModelSpot extends AbstractTableModel {
 			case 7:
 				spot.prop.spotConc = aValue.toString();
 				break;
+			case 8:
+				spot.prop.spotColor = (Color) aValue;
 			}
 		}
 	}

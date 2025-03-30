@@ -1,20 +1,17 @@
 package plugins.fmp.multiSPOTS96.experiment;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multiSPOTS96.experiment.descriptor.Concentration;
-import plugins.fmp.multiSPOTS96.experiment.descriptor.Stimulus;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
 public class ExperimentProperties {
-	
-	public ArrayList<Stimulus> arrayStimulus = new ArrayList<Stimulus>();
-	public ArrayList<Concentration> arrayConcentration = new ArrayList<Concentration>();
+
+//	public ArrayList<Stimulus> arrayStimulus = new ArrayList<Stimulus>();
+//	public ArrayList<Concentration> arrayConcentration = new ArrayList<Concentration>();
 
 	public String ffield_boxID = new String("..");
 	public String ffield_experiment = new String("..");
@@ -26,12 +23,12 @@ public class ExperimentProperties {
 	public String field_sex = new String("..");
 	public String field_cond1 = new String("..");
 	public String field_cond2 = new String("..");
-	
+
 	private final static String ID_BOXID = "boxID";
 	private final static String ID_EXPERIMENT = "experiment";
 	private final static String ID_STIM = "stim";
 	private final static String ID_CONC = "conc";
-	
+
 	private final static String ID_COMMENT1 = "comment";
 	private final static String ID_COMMENT2 = "comment2";
 	private final static String ID_STRAIN = "strain";
@@ -44,7 +41,7 @@ public class ExperimentProperties {
 		XMLUtil.setElementValue(node, ID_EXPERIMENT, ffield_experiment);
 		XMLUtil.setElementValue(node, ID_STIM, ffield_stim);
 		XMLUtil.setElementValue(node, ID_CONC, ffield_conc);
-		
+
 		XMLUtil.setElementValue(node, ID_COMMENT1, field_comment1);
 		XMLUtil.setElementValue(node, ID_COMMENT2, field_comment2);
 		XMLUtil.setElementValue(node, ID_STRAIN, field_strain);
@@ -58,7 +55,7 @@ public class ExperimentProperties {
 		ffield_experiment = XMLUtil.getElementValue(node, ID_EXPERIMENT, "..");
 		ffield_stim = XMLUtil.getElementValue(node, ID_STIM, "..");
 		ffield_conc = XMLUtil.getElementValue(node, ID_CONC, "..");
-		
+
 		field_comment1 = XMLUtil.getElementValue(node, ID_COMMENT1, "..");
 		field_comment2 = XMLUtil.getElementValue(node, ID_COMMENT2, "..");
 		field_strain = XMLUtil.getElementValue(node, ID_STRAIN, "..");
@@ -141,7 +138,7 @@ public class ExperimentProperties {
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_COND1);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_COND2);
 	}
-	
+
 	private void copyExperimentalField(ExperimentProperties expSource, EnumXLSColumnHeader fieldEnumCode) {
 		String newValue = expSource.getExperimentField(fieldEnumCode);
 		setExperimentFieldNoTest(fieldEnumCode, newValue);
@@ -159,48 +156,30 @@ public class ExperimentProperties {
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_COND2);
 		return flag;
 	}
-	
+
 	private boolean isFieldEqual(ExperimentProperties expi, EnumXLSColumnHeader fieldEnumCode) {
-		return expi.getExperimentField(fieldEnumCode) .equals(this.getExperimentField(fieldEnumCode));
+		return expi.getExperimentField(fieldEnumCode).equals(this.getExperimentField(fieldEnumCode));
 	}
-	
+
 	public String csvExportExperimentSectionHeader(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("#" + csvSep + "DESCRIPTION" + csvSep + "multiSPOTS96 data\n");
-		List<String> row2 = Arrays.asList(
-				ID_BOXID,
-				ID_EXPERIMENT,
-				ID_STIM,
-				ID_CONC,
-				ID_COMMENT1,
-				ID_COMMENT2,
-				ID_STRAIN,
-				ID_SEX,
-				ID_COND1,
-				ID_COND2);
+		List<String> row2 = Arrays.asList(ID_BOXID, ID_EXPERIMENT, ID_STIM, ID_CONC, ID_COMMENT1, ID_COMMENT2,
+				ID_STRAIN, ID_SEX, ID_COND1, ID_COND2);
 		sbf.append(String.join(csvSep, row2));
 		sbf.append("\n");
 		return sbf.toString();
 	}
-	
+
 	public String csvExportExperimentProperties(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		List<String> row3 = Arrays.asList(
-				ffield_boxID, 
-				ffield_experiment,
-				ffield_stim,
-				ffield_conc,
-				field_comment1, 
-				field_comment2,
-				field_strain, 
-				field_sex, 
-				field_cond1, 
-				field_cond2);
+		List<String> row3 = Arrays.asList(ffield_boxID, ffield_experiment, ffield_stim, ffield_conc, field_comment1,
+				field_comment2, field_strain, field_sex, field_cond1, field_cond2);
 		sbf.append(String.join(csvSep, row3));
 		sbf.append("\n");
 		return sbf.toString();
 	}
-	
+
 	public void csvImportExperimentProperties(String[] data) {
 		int i = 0;
 		ffield_boxID = data[i];

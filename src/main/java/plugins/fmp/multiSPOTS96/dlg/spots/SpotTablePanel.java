@@ -1,7 +1,6 @@
 package plugins.fmp.multiSPOTS96.dlg.spots;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -9,14 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
@@ -24,14 +17,6 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
-import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelSpot;
-
-
-// look at these pages:
-// https://www.codejava.net/java-se/swing/how-to-create-jcombobox-cell-editor-for-jtable
-// https://stackoverflow.com/questions/14355712/adding-jcombobox-to-a-jtable-cell
-// https://forums.oracle.com/ords/apexds/post/make-a-combobox-appear-in-just-one-cell-in-a-jtable-column-9798
-
 
 public class SpotTablePanel extends JPanel {
 	/**
@@ -39,8 +24,8 @@ public class SpotTablePanel extends JPanel {
 	 */
 	private static final long serialVersionUID = -8611587540329642259L;
 	IcyFrame dialogFrame = null;
-	private JTable jTable = new JTable();
-	private TableModelSpot spotTableModel = null;
+	private SpotTable jTable = null;
+
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicatePosButton = new JButton("Duplicate row at cage pos");
@@ -54,27 +39,7 @@ public class SpotTablePanel extends JPanel {
 
 	public void initialize(MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
-
-		spotTableModel = new TableModelSpot(parent0.expListCombo);
-		jTable.setModel(spotTableModel);
-		jTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jTable.setPreferredScrollableViewportSize(new Dimension(500, 400));
-		jTable.setFillsViewportHeight(true);
-		TableColumnModel columnModel = jTable.getColumnModel();
-
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-		for (int i = 0; i < spotTableModel.getColumnCount(); i++) {
-			TableColumn col = columnModel.getColumn(i);
-			col.setCellRenderer(centerRenderer);
-		}
-		columnModel.getColumn(0).setPreferredWidth(25);
-		columnModel.getColumn(1).setPreferredWidth(15);
-		columnModel.getColumn(2).setPreferredWidth(15);
-		columnModel.getColumn(3).setPreferredWidth(15);
-		columnModel.getColumn(4).setPreferredWidth(25);
-		columnModel.getColumn(5).setPreferredWidth(15);
-
+		jTable = new SpotTable(parent0);
 		JScrollPane scrollPane = new JScrollPane(jTable);
 
 		JPanel topPanel = new JPanel(new GridLayout(2, 1));
@@ -130,7 +95,7 @@ public class SpotTablePanel extends JPanel {
 					SpotsArray spotsArray = exp.cagesArray.getAllSpotsArray();
 					allSpotsCopy.pasteSpotsInfos(spotsArray);
 				}
-				spotTableModel.fireTableDataChanged();
+				jTable.spotTableModel.fireTableDataChanged();
 			}
 		});
 
@@ -140,7 +105,7 @@ public class SpotTablePanel extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					setSpotsNPixels(exp);
-					spotTableModel.fireTableDataChanged();
+					jTable.spotTableModel.fireTableDataChanged();
 				}
 			}
 		});
@@ -179,7 +144,7 @@ public class SpotTablePanel extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null && exp.cagesArray.cagesList.size() > 0) {
 					exp.cagesArray.transferNFliesFromCagesToSpots();
-					spotTableModel.fireTableDataChanged();
+					jTable.spotTableModel.fireTableDataChanged();
 				}
 			}
 		});
@@ -226,6 +191,7 @@ public class SpotTablePanel extends JPanel {
 				spot.prop.spotVolume = spotFrom.prop.spotVolume;
 				spot.prop.spotStim = spotFrom.prop.spotStim;
 				spot.prop.spotConc = spotFrom.prop.spotConc;
+				spot.prop.spotColor = spotFrom.prop.spotColor;
 			}
 		}
 	}
@@ -257,6 +223,9 @@ public class SpotTablePanel extends JPanel {
 				case 7:
 					spot.prop.spotConc = spotFrom.prop.spotConc;
 					break;
+				case 8:
+					spot.prop.spotColor = spotFrom.prop.spotColor;
+					break;
 				default:
 					break;
 				}
@@ -284,6 +253,7 @@ public class SpotTablePanel extends JPanel {
 				spot.prop.spotVolume = spotFrom.prop.spotVolume;
 				spot.prop.spotStim = spotFrom.prop.spotStim;
 				spot.prop.spotConc = spotFrom.prop.spotConc;
+				spot.prop.spotColor = spotFrom.prop.spotColor;
 			}
 		}
 
