@@ -1,20 +1,17 @@
 package plugins.fmp.multiSPOTS96.dlg.spots;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
-import plugins.fmp.multiSPOTS96.tools.JComponents.ButtonColumn;
+import plugins.fmp.multiSPOTS96.tools.JComponents.ButtonColumnRenderer;
 import plugins.fmp.multiSPOTS96.tools.JComponents.SpotTableModel;
 
 //look at these pages:
@@ -45,13 +42,10 @@ public class SpotTable extends JTable {
 		TableColumnModel columnModel = getColumnModel();
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-		// look here:
-		// https://stackoverflow.com/questions/58598303/jtable-cell-render-based-on-content
-		ButtonColumn colorButton = new ButtonColumn(this, null, 8);
+		ButtonColumnRenderer colorButton = new ButtonColumnRenderer();
 
 		for (int i = 0; i < spotTableModel.getColumnCount(); i++) {
 			TableColumn col = columnModel.getColumn(i);
-//			col.setCellRenderer(centerRenderer);
 			if (i != 8)
 				col.setCellRenderer(centerRenderer);
 			else
@@ -65,22 +59,23 @@ public class SpotTable extends JTable {
 		columnModel.getColumn(4).setPreferredWidth(25);
 		columnModel.getColumn(5).setPreferredWidth(15);
 		// columnModel.getColumn(6).setPreferredWidth(15);
+		columnModel.getColumn(8).setPreferredWidth(15);
 	}
 
-	@Override
-	public Component prepareRenderer(TableCellRenderer renderer, int rowIndex, int columnIndex) {
-		Color cellBackColor = cellsOrigBackColor;
-		Color cellForeColor = cellsOrigForeColor;
-		JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);
-
-		if (columnIndex == 8) {
-			cellBackColor = (Color) getValueAt(rowIndex, 8);
-			cellForeColor = properTextColor(cellBackColor);
-		}
-		component.setBackground(cellBackColor);
-		component.setForeground(cellForeColor);
-		return component;
-	}
+//	@Override
+//	public Component prepareRenderer(TableCellRenderer renderer, int rowIndex, int columnIndex) {
+//		Color cellBackColor = cellsOrigBackColor;
+//		Color cellForeColor = cellsOrigForeColor;
+//		JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);
+//
+//		if (columnIndex == 8) {
+//			cellBackColor = (Color) getValueAt(rowIndex, 8);
+//			cellForeColor = properTextColor(cellBackColor);
+//		}
+//		component.setBackground(cellBackColor);
+//		component.setForeground(cellForeColor);
+//		return component;
+//	}
 
 	/**
 	 * Returns either the Color WHITE or the Color BLACK dependent upon the
@@ -95,24 +90,24 @@ public class SpotTable extends JTable {
 	 * @return (Color Object) The color WHITE or the Color BLACK.
 	 */
 
-	public static Color properTextColor(Color currentBackgroundColor) {
-		double L; // Holds the brightness value for the supplied color
-		Color determinedColor; // Default
-
-		// Calculate color brightness from supplied color.
-		int r = currentBackgroundColor.getRed();
-		int g = currentBackgroundColor.getGreen();
-		int b = currentBackgroundColor.getBlue();
-		L = (int) Math.sqrt((r * r * .241) + (g * g * .691) + (b * b * .068));
-
-		// Return the required text color to suit the
-		// supplied background color.
-		if (L > 129) {
-			determinedColor = Color.decode("#000000"); // White
-		} else {
-			determinedColor = Color.decode("#FFFFFF"); // Black
-		}
-		return determinedColor;
-	}
+//	public static Color properTextColor(Color currentBackgroundColor) {
+//		double L; // Holds the brightness value for the supplied color
+//		Color determinedColor; // Default
+//
+//		// Calculate color brightness from supplied color.
+//		int r = currentBackgroundColor.getRed();
+//		int g = currentBackgroundColor.getGreen();
+//		int b = currentBackgroundColor.getBlue();
+//		L = (int) Math.sqrt((r * r * .241) + (g * g * .691) + (b * b * .068));
+//
+//		// Return the required text color to suit the
+//		// supplied background color.
+//		if (L > 129) {
+//			determinedColor = Color.decode("#000000"); // White
+//		} else {
+//			determinedColor = Color.decode("#FFFFFF"); // Black
+//		}
+//		return determinedColor;
+//	}
 
 }
