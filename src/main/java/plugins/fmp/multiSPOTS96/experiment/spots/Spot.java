@@ -45,18 +45,9 @@ public class Spot implements Comparable<Spot> {
 
 	private final String ID_META = "metaMC";
 
-	private final String ID_CAGE = "cage_id";
-	private final String ID_CAGEINDEX = "cage_index";
-	private final String ID_SPOTARRAYINDEX = "spot_array_index";
-
-	private final String ID_DESCOK = "descriptionOK";
-	private final String ID_VERSIONINFOS = "versionInfos";
 	private final String ID_INTERVALS = "INTERVALS";
 	private final String ID_NINTERVALS = "nintervals";
 	private final String ID_INTERVAL = "interval_";
-	private final String ID_INDEXIMAGE = "indexImageMC";
-
-	
 
 	// ----------------------------------------------------
 
@@ -256,17 +247,13 @@ public class Spot implements Comparable<Spot> {
 		final Node nodeMeta = XMLUtil.getElement(node, ID_META);
 		boolean flag = (nodeMeta != null);
 		if (flag) {
-			prop.cageID = XMLUtil.getElementIntValue(nodeMeta, ID_INDEXIMAGE, prop.cageID);
-			prop.cageID = XMLUtil.getElementIntValue(nodeMeta, ID_CAGE, prop.cageID);
-			prop.cagePosition = XMLUtil.getElementIntValue(nodeMeta, ID_CAGEINDEX, prop.cagePosition);
-			prop.spotArrayIndex = XMLUtil.getElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, prop.spotArrayIndex);
+			prop.loadFromXML(node);
 			spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
-			//setRoi_ColorAccordingToSpotIndex(prop.cagePosition);
+			// setRoi_ColorAccordingToSpotIndex(prop.cagePosition);
 			spotROI2D.setColor(prop.spotColor);
 			limitsOptions.loadFromXML(nodeMeta);
 
 			loadFromXML_SpotAlongT(node);
-			prop.loadFromXML(node);
 		}
 		return flag;
 	}
@@ -297,17 +284,8 @@ public class Spot implements Comparable<Spot> {
 		if (nodeMeta == null)
 			return false;
 
-		XMLUtil.setElementIntValue(nodeMeta, ID_INDEXIMAGE, prop.cageID);
-
-		XMLUtil.setElementBooleanValue(nodeMeta, ID_DESCOK, prop.descriptionOK);
-		XMLUtil.setElementIntValue(nodeMeta, ID_VERSIONINFOS, prop.versionInfos);
-
-		XMLUtil.setElementIntValue(nodeMeta, ID_CAGE, prop.cageID);
-		XMLUtil.setElementIntValue(nodeMeta, ID_CAGEINDEX, prop.cagePosition);
-		XMLUtil.setElementIntValue(nodeMeta, ID_SPOTARRAYINDEX, prop.spotArrayIndex);
-		ROI2DUtilities.saveToXML_ROI(nodeMeta, spotROI2D);
-
 		prop.saveToXML(node);
+		ROI2DUtilities.saveToXML_ROI(nodeMeta, spotROI2D);
 
 		boolean flag = saveToXML_SpotAlongT(node);
 		return flag;

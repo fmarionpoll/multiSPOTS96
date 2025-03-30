@@ -32,6 +32,8 @@ public class SpotProperties {
 	public int versionInfos = 0;
 
 	private final static String IDS_SPOTPROPS = "spotProperties";
+	private final String ID_DESCOK = "descriptionOK";
+	private final String ID_VERSIONINFOS = "versionInfos";
 	private final String ID_SPOTVOLUME = "volume";
 	private final String ID_PIXELS = "pixels";
 	private final String ID_RADIUS = "radius";
@@ -39,7 +41,9 @@ public class SpotProperties {
 	private final String ID_YCOORD = "spotYCoord";
 	private final String ID_SPOTSTIMULUS = "stimulus";
 	private final String ID_CONCENTRATION = "concentration";
-	private final String ID_DESCOK = "descriptionOK";
+	private final String ID_CAGEID = "cageID";
+	private final String ID_CAGEPOSITION = "cagePosition";
+	private final String ID_SPOTARRAYINDEX = "spotArrayIndex";
 	private final String ID_COLOR_R = "spotColor_R";
 	private final String ID_COLOR_G = "spotColor_G";
 	private final String ID_COLOR_B = "spotColor_B";
@@ -51,6 +55,7 @@ public class SpotProperties {
 		spotVolume = propFrom.spotVolume;
 		spotStim = propFrom.spotStim;
 		spotConc = propFrom.spotConc;
+		spotColor = propFrom.spotColor;
 		spotArrayIndex = propFrom.spotArrayIndex;
 		cageID = propFrom.cageID;
 		cagePosition = propFrom.cagePosition;
@@ -60,6 +65,7 @@ public class SpotProperties {
 		propTo.spotVolume = spotVolume;
 		propTo.spotStim = spotStim;
 		propTo.spotConc = spotConc;
+		propTo.spotColor = spotColor;
 		propTo.spotArrayIndex = spotArrayIndex;
 		propTo.cageID = cageID;
 		propTo.cagePosition = cagePosition;
@@ -94,6 +100,11 @@ public class SpotProperties {
 		Element nodeParameters = XMLUtil.getElement(node, IDS_SPOTPROPS);
 		if (nodeParameters == null)
 			return false;
+		spotArrayIndex = XMLUtil.getElementIntValue(nodeParameters, ID_SPOTARRAYINDEX, spotArrayIndex);
+		cageID = XMLUtil.getElementIntValue(nodeParameters, ID_CAGEID, cageID);
+		cagePosition = XMLUtil.getElementIntValue(nodeParameters, ID_CAGEPOSITION, cagePosition);
+//		int version = XMLUtil.getElementIntValue(nodeParameters, ID_VERSIONINFOS, versionInfos);
+
 		descriptionOK = XMLUtil.getElementBooleanValue(nodeParameters, ID_DESCOK, false);
 		spotVolume = XMLUtil.getElementDoubleValue(nodeParameters, ID_SPOTVOLUME, Double.NaN);
 		spotNPixels = XMLUtil.getElementIntValue(nodeParameters, ID_PIXELS, 5);
@@ -113,6 +124,11 @@ public class SpotProperties {
 		final Node nodeParameters = XMLUtil.setElement(node, IDS_SPOTPROPS);
 		if (nodeParameters == null)
 			return false;
+		XMLUtil.setElementIntValue(nodeParameters, ID_SPOTARRAYINDEX, spotArrayIndex);
+		XMLUtil.setElementIntValue(nodeParameters, ID_CAGEID, cageID);
+		XMLUtil.setElementIntValue(nodeParameters, ID_CAGEPOSITION, cagePosition);
+		XMLUtil.setElementIntValue(nodeParameters, ID_VERSIONINFOS, versionInfos);
+
 		XMLUtil.setElementBooleanValue(nodeParameters, ID_DESCOK, descriptionOK);
 		XMLUtil.setElementDoubleValue(nodeParameters, ID_SPOTVOLUME, spotVolume);
 		XMLUtil.setElementIntValue(nodeParameters, ID_PIXELS, spotNPixels);
