@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.tools.JComponents;
+package plugins.fmp.mutliSPOTS96.tools.JComponents.sample;
 
 import java.awt.Color;
 
