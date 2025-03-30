@@ -7,7 +7,7 @@ import javax.swing.table.AbstractTableModel;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
-public class SpotTableModel extends AbstractTableModel {
+public class TableModelSpot extends AbstractTableModel {
 	/**
 	 * 
 	 */
@@ -16,7 +16,7 @@ public class SpotTableModel extends AbstractTableModel {
 	String columnNames[] = { "Name", "IDCage", "PosCage", "N flies", "N pixels", "Volume", "Stimulus", "Concentration",
 			"Color" };
 
-	public SpotTableModel(JComboBoxExperiment expList) {
+	public TableModelSpot(JComboBoxExperiment expList) {
 		super();
 		this.expList = expList;
 	}

@@ -12,7 +12,7 @@ import javax.swing.table.TableColumnModel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.tools.JComponents.ButtonColumnRenderer;
-import plugins.fmp.multiSPOTS96.tools.JComponents.SpotTableModel;
+import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelSpot;
 
 //look at these pages:
 //https://www.codejava.net/java-se/swing/how-to-create-jcombobox-cell-editor-for-jtable
@@ -24,7 +24,7 @@ public class SpotTable extends JTable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public SpotTableModel spotTableModel = null;
+	public TableModelSpot spotTableModel = null;
 	// Table Default Colors
 	Color cellsOrigBackColor;
 	Color cellsOrigForeColor;
@@ -32,7 +32,7 @@ public class SpotTable extends JTable {
 	public SpotTable(MultiSPOTS96 parent0) {
 		cellsOrigBackColor = this.getBackground();
 		cellsOrigForeColor = this.getForeground();
-		spotTableModel = new SpotTableModel(parent0.expListCombo);
+		spotTableModel = new TableModelSpot(parent0.expListCombo);
 		setModel(spotTableModel);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
