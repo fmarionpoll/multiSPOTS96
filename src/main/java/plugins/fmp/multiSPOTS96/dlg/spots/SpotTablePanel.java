@@ -17,6 +17,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
+import plugins.fmp.multiSPOTS96.tools.JComponents.SpotTable;
 
 public class SpotTablePanel extends JPanel {
 	/**
@@ -39,8 +40,6 @@ public class SpotTablePanel extends JPanel {
 
 	public void initialize(MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
-		jTable = new SpotTable(parent0);
-		JScrollPane scrollPane = new JScrollPane(jTable);
 
 		JPanel topPanel = new JPanel(new GridLayout(2, 1));
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
@@ -59,6 +58,8 @@ public class SpotTablePanel extends JPanel {
 		topPanel.add(panel2);
 
 		JPanel tablePanel = new JPanel();
+		jTable = new SpotTable(parent0);
+		JScrollPane scrollPane = new JScrollPane(jTable);
 		tablePanel.add(scrollPane);
 
 		dialogFrame = new IcyFrame("Spots properties", true, true);
@@ -95,7 +96,7 @@ public class SpotTablePanel extends JPanel {
 					SpotsArray spotsArray = exp.cagesArray.getAllSpotsArray();
 					allSpotsCopy.pasteSpotsInfos(spotsArray);
 				}
-				jTable.spotTableModel.fireTableDataChanged();
+				jTable.tableModelSpot.fireTableDataChanged();
 			}
 		});
 
@@ -105,7 +106,7 @@ public class SpotTablePanel extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					setSpotsNPixels(exp);
-					jTable.spotTableModel.fireTableDataChanged();
+					jTable.tableModelSpot.fireTableDataChanged();
 				}
 			}
 		});
@@ -144,7 +145,7 @@ public class SpotTablePanel extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null && exp.cagesArray.cagesList.size() > 0) {
 					exp.cagesArray.transferNFliesFromCagesToSpots();
-					jTable.spotTableModel.fireTableDataChanged();
+					jTable.tableModelSpot.fireTableDataChanged();
 				}
 			}
 		});

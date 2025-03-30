@@ -7,7 +7,7 @@ import javax.swing.table.AbstractTableModel;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
-public class TableModelSpot extends AbstractTableModel {
+public class SpotTableModel extends AbstractTableModel {
 	/**
 	 * 
 	 */
@@ -16,7 +16,7 @@ public class TableModelSpot extends AbstractTableModel {
 	String columnNames[] = { "Name", "IDCage", "PosCage", "N flies", "N pixels", "Volume", "Stimulus", "Concentration",
 			"Color" };
 
-	public TableModelSpot(JComboBoxExperiment expList) {
+	public SpotTableModel(JComboBoxExperiment expList) {
 		super();
 		this.expList = expList;
 	}
@@ -27,42 +27,17 @@ public class TableModelSpot extends AbstractTableModel {
 	}
 
 	@Override
-	public Class<?> getColumnClass(int columnIndex) {
-		switch (columnIndex) {
-		case 0:
-			return String.class;
-		case 1:
-			return Integer.class;
-		case 2:
-			return Integer.class;
-		case 3:
-			return Integer.class;
-		case 4:
-			return Integer.class;
-		case 5:
-			return Double.class;
-		case 6:
-			return String.class;
-		case 7:
-			return String.class;
-		case 8:
-			return Color.class;
-		}
-		return String.class;
-	}
-
-	@Override
-	public String getColumnName(int column) {
-		return columnNames[column];
-	}
-
-	@Override
 	public int getRowCount() {
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
 			return exp.cagesArray.cagesList.size() * (exp.cagesArray.nColumnsPerCage * exp.cagesArray.nRowsPerCage);
 		}
 		return 0;
+	}
+
+	@Override
+	public String getColumnName(int column) {
+		return columnNames[column];
 	}
 
 	@Override
@@ -94,12 +69,30 @@ public class TableModelSpot extends AbstractTableModel {
 	}
 
 	@Override
-	public boolean isCellEditable(int rowIndex, int columnIndex) {
+	public Class<?> getColumnClass(int columnIndex) {
 		switch (columnIndex) {
 		case 0:
-//		case 8:
+		case 6:
+		case 7:
+			return String.class;
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+			return Integer.class;
+		case 5:
+			return Double.class;
+		case 8:
+			return Color.class;
+		}
+		return String.class;
+	}
+
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		if (columnIndex < 1) {
 			return false;
-		default:
+		} else {
 			return true;
 		}
 	}
