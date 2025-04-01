@@ -115,6 +115,10 @@ public class Create extends JPanel implements PropertyChangeListener {
 
 	public void getExptParms(Experiment exp) {
 		long bin_ms = exp.seqCamData.binImage_ms;
+		if (bin_ms == 0) {
+			exp.loadFileIntervalsFromSeqCamData();
+			bin_ms = exp.seqCamData.binImage_ms;
+		}
 		if (exp.seqSpotKymos == null) {
 			exp.seqSpotKymos = new SequenceKymos();
 		}

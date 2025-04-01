@@ -16,7 +16,7 @@ public class SpotProperties {
 	public String sourceName = null;
 	public int cageID = -1;
 	public int cagePosition = 0;
-	public int spotArrayIndex = 0;
+	public int spotArrayIndex = -1;
 	public Color spotColor = spotColors[0];
 
 	public int spotNFlies = 1;
@@ -152,6 +152,9 @@ public class SpotProperties {
 		spotArrayIndex = Integer.valueOf(data[i]);
 		i++;
 		cageID = Integer.valueOf(data[i]);
+		if (cageID < 0) {
+			cageID = SpotString.getCageIDFromSpotName(sourceName);
+		}
 		i++;
 		cagePosition = Integer.valueOf(data[i]);
 		i++;

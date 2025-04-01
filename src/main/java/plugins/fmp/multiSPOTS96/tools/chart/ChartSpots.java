@@ -68,12 +68,6 @@ public class ChartSpots extends IcyFrame {
 
 	public void createSpotsChartPanel2(String title, Experiment exp, XLSExportOptions xlsExportOptions) {
 		mainChartPanel = new JPanel();
-		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(), new Dimension(300, 70), true, true, true,
-				true);
-		mainChartFrame.add(mainChartPanel);
-
-		panelHolder = new ChartPanel[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
-
 		nPanelsAlongX = exp.cagesArray.nCagesAlongX;
 		nPanelsAlongY = exp.cagesArray.nCagesAlongY;
 		if (xlsExportOptions.cageIndexFirst == xlsExportOptions.cageIndexLast) {
@@ -81,6 +75,10 @@ public class ChartSpots extends IcyFrame {
 			nPanelsAlongY = 1;
 		}
 		mainChartPanel.setLayout(new GridLayout(nPanelsAlongY, nPanelsAlongX));
+		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(), new Dimension(300, 70), true, true, true,
+				true);
+		mainChartFrame.add(mainChartPanel);
+		panelHolder = new ChartPanel[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
 	}
 
 	private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions xlsExportOptions) {
@@ -204,9 +202,27 @@ public class ChartSpots extends IcyFrame {
 		pt = new Point(rectv.x, rectv.y);
 	}
 
+	private XYPlot buildSubPlot(XYSeriesCollection xySeriesCollection, Paint[] chartColor) {
+		String[] description = xySeriesCollection.getSeries(0).getDescription().split(":");
+		XYLineAndShapeRenderer subPlotRenderer = getSubPlotRenderer(xySeriesCollection, chartColor);
+		NumberAxis xAxis = new NumberAxis(); // description[1]);
+		final XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, null, subPlotRenderer);
+
+		int nflies = Integer.valueOf(description[5]);
+		if (nflies > 0) {
+			subplot.setBackgroundPaint(Color.WHITE);
+			subplot.setDomainGridlinePaint(Color.GRAY);
+			subplot.setRangeGridlinePaint(Color.GRAY);
+		} else {
+			subplot.setBackgroundPaint(Color.LIGHT_GRAY);
+			subplot.setDomainGridlinePaint(Color.WHITE);
+			subplot.setRangeGridlinePaint(Color.WHITE);
+		}
+		return subplot;
+	}
+
 	private XYLineAndShapeRenderer getSubPlotRenderer(XYSeriesCollection xySeriesCollection, Paint[] chartColor) {
 		XYLineAndShapeRenderer subPlotRenderer = new XYLineAndShapeRenderer(true, false);
-
 		int maxcolor = chartColor.length;
 		Stroke stroke = new BasicStroke(0.5f, // width = width of the stroke
 				BasicStroke.CAP_ROUND, // cap = decoration of the ends of the stroke
@@ -226,25 +242,6 @@ public class ChartSpots extends IcyFrame {
 			subPlotRenderer.setSeriesPaint(i, chartColor[icolor]);
 		}
 		return subPlotRenderer;
-	}
-
-	private XYPlot buildSubPlot(XYSeriesCollection xySeriesCollection, Paint[] chartColor) {
-		String[] description = xySeriesCollection.getSeries(0).getDescription().split(":");
-		XYLineAndShapeRenderer subPlotRenderer = getSubPlotRenderer(xySeriesCollection, chartColor);
-		NumberAxis xAxis = new NumberAxis(); // description[1]);
-		final XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, null, subPlotRenderer);
-
-		int nflies = Integer.valueOf(description[5]);
-		if (nflies > 0) {
-			subplot.setBackgroundPaint(Color.WHITE);
-			subplot.setDomainGridlinePaint(Color.GRAY);
-			subplot.setRangeGridlinePaint(Color.GRAY);
-		} else {
-			subplot.setBackgroundPaint(Color.LIGHT_GRAY);
-			subplot.setDomainGridlinePaint(Color.WHITE);
-			subplot.setRangeGridlinePaint(Color.WHITE);
-		}
-		return subplot;
 	}
 
 	private XLSResultsArray getDataAsResultsArray(Experiment exp, XLSExportOptions xlsExportOptions) {

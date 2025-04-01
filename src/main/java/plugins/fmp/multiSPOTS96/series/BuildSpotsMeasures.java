@@ -245,16 +245,18 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 	private void initSpotsDataArrays(Experiment exp) {
 		int nFrames = exp.seqCamData.nTotalFrames;
+		int spotArrayGlobalIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
+			int spotPosition = 0;
 			for (Spot spot : cage.spotsArray.spotsList) {
-				int i = spot.prop.cagePosition % 2;
-				if (0 == i && !options.detectL)
-					continue;
-				if (1 == i && !options.detectR)
-					continue;
+				spot.prop.cagePosition = spotPosition;
 				spot.sum_in.values = new double[nFrames];
 				spot.sum_clean.values = new double[nFrames];
 				spot.flyPresent.isPresent = new int[nFrames];
+				spot.prop.cageID = cage.prop.cageID;
+				spot.prop.spotArrayIndex = spotArrayGlobalIndex;
+				spotArrayGlobalIndex++;
+				spotPosition++;
 			}
 		}
 	}
