@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.dlg.z_unused_cages;
+package plugins.fmp.multiSPOTS96.dlg.spots;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -6,7 +6,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -19,9 +18,10 @@ import icy.gui.frame.IcyFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.experiment.cages.TableModelCage;
 
-public class InfosTable extends JPanel {
+public class CageTablePanel extends JPanel {
 	/**
 	 * 
 	 */
@@ -33,13 +33,12 @@ public class InfosTable extends JPanel {
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
 	private MultiSPOTS96 parent0 = null;
-	private List<Cage> cageArrayCopy = null;
+	private CagesArray cagesArrayCopy = null;
 
 	// -------------------------
 
-	public void initialize(MultiSPOTS96 parent0, List<Cage> cageCopy) {
+	public void initialize(MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
-		cageArrayCopy = cageCopy;
 
 		viewModel = new TableModelCage(parent0.expListCombo);
 		tableView.setModel(viewModel);
@@ -74,7 +73,7 @@ public class InfosTable extends JPanel {
 		dialogFrame.center();
 		dialogFrame.setVisible(true);
 		defineActionListeners();
-		pasteButton.setEnabled(cageArrayCopy.size() > 0);
+		pasteButton.setEnabled(cagesArrayCopy != null);
 	}
 
 	private void defineActionListeners() {
@@ -83,10 +82,7 @@ public class InfosTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					cageArrayCopy.clear();
-					for (Cage cage : exp.cagesArray.cagesList) {
-						cageArrayCopy.add(cage);
-					}
+					cagesArrayCopy = exp.cagesArray;
 					pasteButton.setEnabled(true);
 				}
 			}
@@ -97,7 +93,7 @@ public class InfosTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					for (Cage cageFrom : cageArrayCopy) {
+					for (Cage cageFrom : cagesArrayCopy.cagesList) {
 						cageFrom.valid = false;
 						for (Cage cageTo : exp.cagesArray.cagesList) {
 							if (!cageFrom.getRoi().getName().equals(cageTo.getRoi().getName()))
@@ -157,7 +153,7 @@ public class InfosTable extends JPanel {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-//			exp.cagesArray.transferNFliesFromCagesToSpots(exp.spotsArray);
+			exp.cagesArray.transferNFliesFromCagesToSpots();
 			parent0.dlgSpots.tabFile.saveSpotsArray_file(exp);
 		}
 	}

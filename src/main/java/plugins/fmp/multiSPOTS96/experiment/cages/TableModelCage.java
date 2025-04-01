@@ -1,9 +1,9 @@
-package plugins.fmp.multiSPOTS96.tools.JComponents;
+package plugins.fmp.multiSPOTS96.experiment.cages;
 
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
 public class TableModelCage extends AbstractTableModel {
 	/**

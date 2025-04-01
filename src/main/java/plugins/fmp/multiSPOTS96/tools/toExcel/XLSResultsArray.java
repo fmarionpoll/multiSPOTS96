@@ -167,9 +167,7 @@ public class XLSResultsArray {
 					.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
 			for (Spot spot : cage.spotsArray.spotsList) {
 				checkIfSameStimulusAndConcentration(spot);
-				XLSResults results = new XLSResults(spot.getRoi().getName(), spot.prop.spotNFlies, spot.prop.cageID,
-						spot.prop.cagePosition, xlsExportOptions.exportType, nOutputFrames);
-
+				XLSResults results = new XLSResults(spot, xlsExportOptions.exportType, nOutputFrames);
 				results.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
 						xlsExportOptions.buildExcelStepMs);
 				if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExportType.AREA_FLYPRESENT)

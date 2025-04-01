@@ -1,6 +1,5 @@
 package plugins.fmp.multiSPOTS96.dlg.spots;
 
-
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -18,7 +17,9 @@ public class Infos extends JPanel {
 	 */
 	private static final long serialVersionUID = 4950182090521600937L;
 
+	private JButton editCagesButton = new JButton("Edit cages infos...");
 	private JButton editSpotsButton = new JButton("Edit spots infos...");
+	private CageTablePanel infosCageTable = null;
 	private SpotTablePanel infosSpotTable = null;
 //	private JSpinner nFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
 //	private String[] flyString = new String[] { "fly", "flies" };
@@ -34,8 +35,12 @@ public class Infos extends JPanel {
 		layoutLeft.setVgap(0);
 
 		JPanel panel01 = new JPanel(layoutLeft);
-		panel01.add(editSpotsButton);
+		panel01.add(editCagesButton);
 		add(panel01);
+
+		JPanel panel02 = new JPanel(layoutLeft);
+		panel02.add(editSpotsButton);
+		add(panel02);
 
 //		JPanel panel2 = new JPanel(layoutLeft);
 //		panel2.add(nFliesPerCageJSpinner);
@@ -63,6 +68,21 @@ public class Infos extends JPanel {
 	}
 
 	private void declareListeners() {
+		editCagesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					if (infosCageTable != null) {
+						infosCageTable.close();
+					}
+					infosCageTable = new CageTablePanel();
+					infosCageTable.initialize(parent0);
+					infosCageTable.requestFocus();
+				}
+			}
+		});
+
 		editSpotsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {

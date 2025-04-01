@@ -1,8 +1,11 @@
 package plugins.fmp.multiSPOTS96.tools.toExcel;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
 public class XLSResults {
 	public String name = null;
@@ -15,6 +18,7 @@ public class XLSResults {
 	public int nflies = 1;
 	public int cageID = 0;
 	public int cagePosition = 0;
+	public Color color;
 	public EnumXLSExportType exportType = null;
 	public ArrayList<Double> dataValues = null;
 	public double[] valuesOut = null;
@@ -32,6 +36,16 @@ public class XLSResults {
 		this.nflies = nflies;
 		this.cageID = cageID;
 		this.cagePosition = cagePos;
+		this.exportType = exportType;
+		initValuesArray(nFrames);
+	}
+
+	public XLSResults(Spot spot, EnumXLSExportType exportType, int nFrames) {
+		this.name = spot.getRoi().getName();
+		this.nflies = spot.prop.spotNFlies;
+		this.cageID = spot.prop.cageID;
+		this.cagePosition = spot.prop.cagePosition;
+		this.color = spot.getRoi().getColor();
 		this.exportType = exportType;
 		initValuesArray(nFrames);
 	}
