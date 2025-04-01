@@ -2,9 +2,9 @@ package plugins.fmp.multiSPOTS96.tools.chart;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Paint;
 import java.awt.Stroke;
 
+import org.jfree.chart.ChartColor;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -38,8 +38,8 @@ public class ChartCageSpots {
 		return xyDataSetList;
 	}
 
-	XYPlot buildCageXYPlot(XYSeriesCollection xySeriesCollection, Paint[] chartColor) {
-		XYLineAndShapeRenderer subPlotRenderer = getSubPlotRenderer(xySeriesCollection, chartColor);
+	XYPlot buildCageXYPlot(XYSeriesCollection xySeriesCollection) {
+		XYLineAndShapeRenderer subPlotRenderer = getSubPlotRenderer(xySeriesCollection);
 		NumberAxis xAxis = new NumberAxis(); // description[1]);
 		XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, null, subPlotRenderer);
 		updatePlotBackgroundAccordingToNFlies(xySeriesCollection, subplot);
@@ -74,8 +74,9 @@ public class ChartCageSpots {
 			}
 			XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.name + token);
 			// System.out.println(xlsResults.name + token);
-			seriesXY.setDescription(
-					"ID:" + xlsResults.cageID + ":Pos:" + xlsResults.cagePosition + ":nflies:" + cage.prop.cageNFlies);
+			seriesXY.setDescription("ID:" + xlsResults.cageID + ":Pos:" + xlsResults.cagePosition + ":nflies:"
+					+ cage.prop.cageNFlies + ":R:" + xlsResults.color.getRed() + ":G:" + xlsResults.color.getGreen()
+					+ ":B:" + xlsResults.color.getBlue());
 			xySeriesCollection.addSeries(seriesXY);
 			updateGlobalMaxMin();
 		}
@@ -132,9 +133,8 @@ public class ChartCageSpots {
 		}
 	}
 
-	private XYLineAndShapeRenderer getSubPlotRenderer(XYSeriesCollection xySeriesCollection, Paint[] chartColor) {
+	private XYLineAndShapeRenderer getSubPlotRenderer(XYSeriesCollection xySeriesCollection) {
 		XYLineAndShapeRenderer subPlotRenderer = new XYLineAndShapeRenderer(true, false);
-		int maxcolor = chartColor.length;
 		Stroke stroke = new BasicStroke(0.5f, // width = width of the stroke
 				BasicStroke.CAP_ROUND, // cap = decoration of the ends of the stroke
 				BasicStroke.JOIN_ROUND, // join = decoration applied where paths segments meet
@@ -144,13 +144,18 @@ public class ChartCageSpots {
 
 		for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
 			String[] description = xySeriesCollection.getSeries(i).getDescription().split(":");
-			int icolor = Integer.valueOf(description[3]);
+//			int icolor = Integer.valueOf(description[3]);
+//			icolor = icolor % maxcolor;
+//			subPlotRenderer.setSeriesPaint(i, chartColor[icolor]);
+			int r = Integer.valueOf(description[7]);
+			int g = Integer.valueOf(description[9]);
+			int b = Integer.valueOf(description[11]);
+			subPlotRenderer.setSeriesPaint(i, new ChartColor(r, g, b));
 			String key = (String) xySeriesCollection.getSeriesKey(i);
 			// get description to get
 			if (key.contains("*"))
 				subPlotRenderer.setSeriesStroke(i, stroke);
-			icolor = icolor % maxcolor;
-			subPlotRenderer.setSeriesPaint(i, chartColor[icolor]);
+
 		}
 		return subPlotRenderer;
 	}

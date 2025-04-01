@@ -2,7 +2,6 @@ package plugins.fmp.multiSPOTS96.tools.chart;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -11,7 +10,6 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -89,8 +87,6 @@ public class ChartSpots extends IcyFrame {
 		ChartCageSpots chartCage = new ChartCageSpots();
 		chartCage.initMaxMin();
 
-		Paint[] chartColor = ChartColor.createDefaultPaintArray();
-
 		XLSResultsArray xlsResultsArray = getDataAsResultsArray(exp, xlsExportOptions);
 		XLSResultsArray xlsResultsArray2 = null;
 		if (xlsExportOptions.exportType == EnumXLSExportType.AREA_SUMCLEAN) {
@@ -119,7 +115,7 @@ public class ChartSpots extends IcyFrame {
 				}
 
 				XYSeriesCollection xyDataSetList = chartCage.combineCageCurves(cage, xlsResultsArray, xlsResultsArray2);
-				XYPlot cagePlot = chartCage.buildCageXYPlot(xyDataSetList, chartColor);
+				XYPlot cagePlot = chartCage.buildCageXYPlot(xyDataSetList);
 				NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
 				CombinedRangeXYPlot combinedXYPlot = new CombinedRangeXYPlot(yAxis);
 				combinedXYPlot.add(cagePlot);

@@ -31,21 +31,12 @@ public class XLSResults {
 		this.exportType = exportType;
 	}
 
-	public XLSResults(String name, int nflies, int cageID, int cagePos, EnumXLSExportType exportType, int nFrames) {
-		this.name = name;
-		this.nflies = nflies;
-		this.cageID = cageID;
-		this.cagePosition = cagePos;
-		this.exportType = exportType;
-		initValuesArray(nFrames);
-	}
-
 	public XLSResults(Spot spot, EnumXLSExportType exportType, int nFrames) {
 		this.name = spot.getRoi().getName();
+		this.color = spot.prop.spotColor;
 		this.nflies = spot.prop.spotNFlies;
 		this.cageID = spot.prop.cageID;
 		this.cagePosition = spot.prop.cagePosition;
-		this.color = spot.getRoi().getColor();
 		this.exportType = exportType;
 		initValuesArray(nFrames);
 	}

@@ -323,8 +323,7 @@ public class XLSExport {
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
 		for (Cage cage : expAll.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				XLSResults rowResults = new XLSResults(spot.getRoi().getName(), spot.prop.spotNFlies, spot.prop.cageID,
-						spot.prop.cagePosition, xlsOption, nFrames);
+				XLSResults rowResults = new XLSResults(spot, xlsOption, nFrames);
 				rowResults.stimulus = spot.prop.spotStim;
 				rowResults.concentration = spot.prop.spotConc;
 				rowResults.cageID = spot.prop.cageID;
@@ -357,8 +356,7 @@ public class XLSExport {
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
 		for (Cage cage : expAll.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				XLSResults rowResults = new XLSResults(spot.getRoi().getName(), spot.prop.spotNFlies, spot.prop.cageID,
-						spot.prop.cagePosition, xlsOption, nFrames);
+				XLSResults rowResults = new XLSResults(spot, xlsOption, nFrames);
 				rowResults.stimulus = spot.prop.spotStim;
 				rowResults.concentration = spot.prop.spotConc;
 				rowResults.cageID = spot.prop.cageID;
