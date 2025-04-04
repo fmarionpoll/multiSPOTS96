@@ -19,8 +19,9 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.TIntervals;
+import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
+import plugins.fmp.multiSPOTS96.experiment.TInterval;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
@@ -35,7 +36,7 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class CagesArray {
 	public ArrayList<Cage> cagesList = new ArrayList<Cage>();
-	private TIntervals cagesListTimeIntervals = null;
+	private TIntervalsArray cagesListTimeIntervals = null;
 
 	public int nCagesAlongX = 6;
 	public int nCagesAlongY = 8;
@@ -699,9 +700,9 @@ public class CagesArray {
 		return nspots;
 	}
 
-	public TIntervals getKymoIntervalsFromSpotsOFCage0() {
+	public TIntervalsArray getKymoIntervalsFromSpotsOFCage0() {
 		Cage cage = cagesList.get(0);
-		TIntervals intervals = cage.spotsArray.getKymoIntervalsFromSpots();
+		TIntervalsArray intervals = cage.spotsArray.getKymoIntervalsFromSpots();
 		return intervals;
 	}
 
@@ -769,12 +770,12 @@ public class CagesArray {
 
 	// ------------------------------------------------
 
-	public TIntervals getTIntervalsFromSpots() {
+	public TIntervalsArray getTIntervalsFromSpots() {
 		if (cagesListTimeIntervals == null) {
-			cagesListTimeIntervals = new TIntervals();
+			cagesListTimeIntervals = new TIntervalsArray();
 			for (Cage cage : cagesList) {
 				for (ROI2DAlongT roiFK : cage.getROIAlongTList()) {
-					Long[] interval = { roiFK.getT(), (long) -1 };
+					TInterval interval = new TInterval(roiFK.getT(), (long) -1);
 					cagesListTimeIntervals.addIfNew(interval);
 				}
 			}
@@ -783,19 +784,22 @@ public class CagesArray {
 	}
 
 	public int findROI2DTIntervalStart(long intervalT) {
-		if (cagesListTimeIntervals == null)
+		if (cagesListTimeIntervals == null) {
+			cagesListTimeIntervals = new TIntervalsArray();
 			addROI2DTInterval(0);
+		}
 		return cagesListTimeIntervals.findStartItem(intervalT);
 	}
 
 	public long getROI2DTIntervalsStartAt(int selectedItem) {
 		if (cagesListTimeIntervals == null)
 			addROI2DTInterval(0);
-		return cagesListTimeIntervals.get(selectedItem)[0];
+		return cagesListTimeIntervals.getTIntervalAt(selectedItem).start;
 	}
 
 	public int addROI2DTInterval(long start) {
-		Long[] interval = { start, (long) -1 };
+		long end = -1;
+		TInterval interval = new TInterval( start, end);
 		int item = cagesListTimeIntervals.addIfNew(interval);
 
 		for (Cage cage : cagesList) {

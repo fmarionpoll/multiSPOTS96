@@ -2,14 +2,14 @@ package plugins.fmp.multiSPOTS96.experiment;
 
 import java.util.ArrayList;
 
-public class TIntervals {
-	public ArrayList<Long[]> intervals = new ArrayList<Long[]>();
+public class TIntervalsArray {
+	public ArrayList<TInterval> intervals = new ArrayList<TInterval>();
 
-	public int addIfNew(Long[] interval) {
+	public int addIfNew(TInterval interval) {
 		for (int i = 0; i < intervals.size(); i++) {
-			if (interval[0] == intervals.get(i)[0])
+			if (interval.start == intervals.get(i).start)
 				return i;
-			if (interval[0] < intervals.get(i)[0]) {
+			if (interval.start < intervals.get(i).start) {
 				intervals.add(i, interval);
 				return i;
 			}
@@ -32,13 +32,13 @@ public class TIntervals {
 
 	public int findStartItem(long start) {
 		for (int i = 0; i < intervals.size(); i++) {
-			if (start == intervals.get(i)[0])
+			if (start == intervals.get(i).start)
 				return i;
 		}
 		return -1;
 	}
 
-	public Long[] get(int i) {
+	public TInterval getTIntervalAt(int i) {
 		return intervals.get(i);
 	}
 

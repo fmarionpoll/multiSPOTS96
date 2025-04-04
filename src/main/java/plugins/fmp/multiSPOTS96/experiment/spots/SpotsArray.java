@@ -19,7 +19,8 @@ import org.w3c.dom.Node;
 import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multiSPOTS96.experiment.TIntervals;
+import plugins.fmp.multiSPOTS96.experiment.TInterval;
+import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
@@ -27,7 +28,7 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 
 public class SpotsArray {
 	public ArrayList<Spot> spotsList = new ArrayList<Spot>();
-	private TIntervals spotsListTimeIntervals = null;
+	private TIntervalsArray spotsListTimeIntervals = null;
 
 	private final static String ID_SPOTTRACK = "spotTrack";
 	private final static String ID_NSPOTS = "N_spots";
@@ -298,12 +299,12 @@ public class SpotsArray {
 
 	// ------------------------------------------------
 
-	public TIntervals getKymoIntervalsFromSpots() {
+	public TIntervalsArray getKymoIntervalsFromSpots() {
 		if (spotsListTimeIntervals == null) {
-			spotsListTimeIntervals = new TIntervals();
+			spotsListTimeIntervals = new TIntervalsArray();
 			for (Spot spot : spotsList) {
 				for (ROI2DAlongT roiFK : spot.getROIAlongTList()) {
-					Long[] interval = { roiFK.getT(), (long) -1 };
+					TInterval interval = new TInterval(roiFK.getT(), (long) -1);
 					spotsListTimeIntervals.addIfNew(interval);
 				}
 			}
@@ -316,11 +317,11 @@ public class SpotsArray {
 	}
 
 	public long getKymoROI2DIntervalsStartAt(int selectedItem) {
-		return spotsListTimeIntervals.get(selectedItem)[0];
+		return spotsListTimeIntervals.getTIntervalAt(selectedItem).start;
 	}
 
 	public int addKymoROI2DInterval(long start) {
-		Long[] interval = { start, (long) -1 };
+		TInterval interval = new TInterval( start, (long) -1);
 		int item = spotsListTimeIntervals.addIfNew(interval);
 
 		for (Spot spot : spotsList) {

@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.TInterval;
 
-public class TableModelSpotWithTime extends AbstractTableModel {
+public class TableModelTIntervals extends AbstractTableModel {
 
 	/**
 	 * 
@@ -14,9 +15,9 @@ public class TableModelSpotWithTime extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private JComboBoxExperiment expList = null;
 	private final String columnNames[] = { "Starting at frame", "End frame" };
-	private ArrayList<Long[]> intervals = null;
+	private ArrayList<TInterval> intervals = null;
 
-	public TableModelSpotWithTime(JComboBoxExperiment expList) {
+	public TableModelTIntervals(JComboBoxExperiment expList) {
 		super();
 		this.expList = expList;
 	}
@@ -33,17 +34,12 @@ public class TableModelSpotWithTime extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 1;
-//		return columnNames.length;
+		return columnNames.length;
 	}
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-//    	switch (columnIndex) {
-//    	case 0: return Integer.class;
-//    	case 1: return Integer.class;
-//        }
-		return Integer.class;
+		return Long.class;
 	}
 
 	@Override
@@ -53,8 +49,13 @@ public class TableModelSpotWithTime extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Long[] interval = intervals.get(rowIndex);
-		return interval[columnIndex];
+		TInterval interval = intervals.get(rowIndex);
+		Long value;
+		if (columnIndex == 1) 
+			value = interval.end;
+		else
+			value = interval.start;
+		return value;
 	}
 
 	@Override
@@ -64,13 +65,11 @@ public class TableModelSpotWithTime extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		Long[] interval = intervals.get(rowIndex);
-//		switch (columnIndex) {
-//		case 0:  
-//		case 1: 
-		interval[columnIndex] = (long) aValue;
-//			break;
-//	    }
+		TInterval interval = intervals.get(rowIndex);
+		if (columnIndex == 1)
+			interval.end = (long) aValue;
+		else
+			interval.start = (long) aValue;
 	}
 
 }

@@ -31,7 +31,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelSpotWithTime;
+import plugins.fmp.multiSPOTS96.tools.JComponents.TableModelTIntervals;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -47,9 +47,9 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 
 	private JButton addItemButton = new JButton("Add");
 	private JButton deleteItemButton = new JButton("Delete");
-	private JButton saveSpotsButton = new JButton("Save spots");
+	private JButton saveSpotsButton = new JButton("Save ROIs positions");
 	private JCheckBox showFrameButton = new JCheckBox("Show frame");
-	private JButton fitToFrameButton = new JButton("Fit spots to frame");
+	private JButton fitToFrameButton = new JButton("Fit ROIs to frame");
 	private JTable tableView = new JTable();
 
 	private final String dummyname = "perimeter_enclosing";
@@ -57,11 +57,11 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 	private ROI2DPolygon envelopeRoi_initial = null;
 	private MultiSPOTS96 parent0 = null;
 
-	private TableModelSpotWithTime spotsWithTimeTablemodel = null;
+	private TableModelTIntervals tableModelTIntervals = null;
 
 	public void initialize(MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
-		spotsWithTimeTablemodel = new TableModelSpotWithTime(parent0.expListCombo);
+		tableModelTIntervals = new TableModelTIntervals(parent0.expListCombo);
 
 		JPanel topPanel = new JPanel(new GridLayout(3, 1));
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
@@ -82,7 +82,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		panel3.add(saveSpotsButton);
 		topPanel.add(panel3);
 
-		tableView.setModel(spotsWithTimeTablemodel);
+		tableView.setModel(tableModelTIntervals);
 		tableView.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tableView.setPreferredScrollableViewportSize(new Dimension(180, 300));
 		tableView.setFillsViewportHeight(true);
