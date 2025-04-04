@@ -153,7 +153,6 @@ public class CageTablePanel extends JPanel {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			exp.cagesArray.transferNFliesFromCagesToSpots();
 			parent0.dlgSpots.tabFile.saveSpotsArray_file(exp);
 		}
 	}

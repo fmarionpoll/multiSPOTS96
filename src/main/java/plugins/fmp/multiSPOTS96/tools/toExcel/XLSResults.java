@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
 public class XLSResults {
@@ -31,11 +32,11 @@ public class XLSResults {
 		this.exportType = exportType;
 	}
 
-	public XLSResults(Spot spot, EnumXLSExportType exportType, int nFrames) {
+	public XLSResults(Cage cage, Spot spot, EnumXLSExportType exportType, int nFrames) {
 		this.name = spot.getRoi().getName();
 		this.color = spot.prop.spotColor;
-		this.nflies = spot.prop.spotNFlies;
-		this.cageID = spot.prop.cageID;
+		this.nflies = cage.prop.cageNFlies;
+		this.cageID = cage.prop.cageID;
 		this.cagePosition = spot.prop.cagePosition;
 		this.exportType = exportType;
 		initValuesArray(nFrames);

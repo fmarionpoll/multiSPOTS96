@@ -77,8 +77,6 @@ public class Infos extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-//					exp.spotsArray.transferDescriptionToSpots();
-//					exp.cagesArray.transferNFliesFromSpotsToCages(exp.spotsArray);
 					dialog = new InfosTable();
 					dialog.initialize(parent0, cagesArrayCopy);
 				}

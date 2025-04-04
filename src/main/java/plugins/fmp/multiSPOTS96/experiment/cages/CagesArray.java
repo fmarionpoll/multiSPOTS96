@@ -19,9 +19,9 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.TInterval;
+import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
@@ -400,26 +400,6 @@ public class CagesArray {
 		}
 	}
 
-	public void transferNFliesFromCagesToSpots() {
-
-		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				spot.prop.spotNFlies = cage.prop.cageNFlies;
-			}
-		}
-	}
-
-	public void transferNFliesFromSpotsToCages(SpotsArray spotsArray) {
-		for (Cage cage : cagesList) {
-			int cagenb = cage.getCageNumberInteger();
-			for (Spot spot : spotsArray.spotsList) {
-				if (spot.prop.cageID != cagenb)
-					continue;
-				cage.prop.cageNFlies = spot.prop.spotNFlies;
-			}
-		}
-	}
-
 	public Cage getCageFromNumber(int number) {
 		Cage cageFound = null;
 		for (Cage cage : cagesList) {
@@ -618,7 +598,7 @@ public class CagesArray {
 		}
 		return null;
 	}
-	
+
 	public Cage getCageFromSpotROIName(String name) {
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
@@ -799,7 +779,7 @@ public class CagesArray {
 
 	public int addROI2DTInterval(long start) {
 		long end = -1;
-		TInterval interval = new TInterval( start, end);
+		TInterval interval = new TInterval(start, end);
 		int item = cagesListTimeIntervals.addIfNew(interval);
 
 		for (Cage cage : cagesList) {

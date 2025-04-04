@@ -103,8 +103,6 @@ public class BuildCagesFromContours extends JPanel implements ChangeListener {
 					exp.cagesArray.removeCages();
 					createROIsFromSelectedPolygonAndSpots(exp);
 					exp.cagesArray.transferROIsFromSequenceToCages(exp.seqCamData);
-//					if (exp.spotsArray.spotsList.size() > 0)
-//						exp.cagesArray.transferNFliesFromSpotsToCages(exp.spotsArray);
 				}
 			}
 		});

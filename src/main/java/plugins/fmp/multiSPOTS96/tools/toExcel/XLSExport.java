@@ -114,7 +114,7 @@ public class XLSExport {
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
 						charSeries + spot.prop.cageID);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose,
-						spot.prop.spotNFlies);
+						cage.prop.cageNFlies);
 
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
@@ -323,7 +323,7 @@ public class XLSExport {
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
 		for (Cage cage : expAll.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				XLSResults rowResults = new XLSResults(spot, xlsOption, nFrames);
+				XLSResults rowResults = new XLSResults(cage, spot, xlsOption, nFrames);
 				rowResults.stimulus = spot.prop.spotStim;
 				rowResults.concentration = spot.prop.spotConc;
 				rowResults.cageID = spot.prop.cageID;
@@ -356,7 +356,7 @@ public class XLSExport {
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
 		for (Cage cage : expAll.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				XLSResults rowResults = new XLSResults(spot, xlsOption, nFrames);
+				XLSResults rowResults = new XLSResults(cage, spot, xlsOption, nFrames);
 				rowResults.stimulus = spot.prop.spotStim;
 				rowResults.concentration = spot.prop.spotConc;
 				rowResults.cageID = spot.prop.cageID;

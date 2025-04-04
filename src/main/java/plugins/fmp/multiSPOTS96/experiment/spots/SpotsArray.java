@@ -498,10 +498,10 @@ public class SpotsArray {
 	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
 		try {
 			if (spotsList.size() > 0) {
-				csvWriter.append(SpotProperties.csvExportPropertiesHeader(csvSep));
+				csvWriter.append(SpotProperties.csvExportSpotPropertiesHeader(csvSep));
 				for (Spot spot : spotsList) {
 					spot.prop.sourceName = spot.getRoi().getName();
-					csvWriter.append(spot.prop.csvExportProperties(csvSep));
+					csvWriter.append(spot.prop.csvExportSpotProperties(csvSep));
 				}
 				csvWriter.append("#" + csvSep + "#\n");
 			}

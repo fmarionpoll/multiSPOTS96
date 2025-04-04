@@ -240,9 +240,6 @@ public class Cage implements Comparable<Cage> {
 
 	public void setNFlies(int nFlies) {
 		this.prop.cageNFlies = nFlies;
-		for (Spot spot : spotsArray.spotsList) {
-			spot.prop.spotNFlies = nFlies;
-		}
 	}
 
 	public int addEllipseSpot(int spotIndex, Point2D.Double center, int radius) {

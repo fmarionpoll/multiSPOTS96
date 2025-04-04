@@ -19,7 +19,7 @@ public class SpotProperties {
 	public int spotArrayIndex = -1;
 	public Color spotColor = spotColors[0];
 
-	public int spotNFlies = 1;
+	// public int spotNFlies = 1;
 	public String spotStim = new String("..");
 	public String spotConc = new String("..");
 
@@ -158,8 +158,6 @@ public class SpotProperties {
 		i++;
 		cagePosition = Integer.valueOf(data[i]);
 		i++;
-		spotNFlies = Integer.valueOf(data[i]);
-		i++;
 		spotVolume = Double.valueOf(data[i]);
 		i++;
 		spotNPixels = Integer.valueOf(data[i]);
@@ -171,23 +169,22 @@ public class SpotProperties {
 		spotConc = data[i];
 	}
 
-	static public String csvExportPropertiesHeader(String csvSep) {
+	static public String csvExportSpotPropertiesHeader(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("#" + csvSep + "#\n");
 		sbf.append("#" + csvSep + "SPOTS" + csvSep + "multiSPOTS96 data\n");
-		List<String> row2 = Arrays.asList("name", "index", "cageID", "cagePos", "nflies", "volume", "npixels", "radius",
-				"stim", "conc");
+		List<String> row2 = Arrays.asList("name", "index", "cageID", "cagePos", "volume", "npixels", "radius", "stim",
+				"conc");
 		sbf.append(String.join(csvSep, row2));
 		sbf.append("\n");
 		return sbf.toString();
 	}
 
-	public String csvExportProperties(String csvSep) {
+	public String csvExportSpotProperties(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = Arrays.asList(sourceName, String.valueOf(spotArrayIndex), String.valueOf(cageID),
-				String.valueOf(cagePosition), String.valueOf(spotNFlies), String.valueOf(spotVolume),
-				String.valueOf(spotNPixels), String.valueOf(spotRadius), spotStim.replace(",", "."),
-				spotConc.replace(",", "."));
+				String.valueOf(cagePosition), String.valueOf(spotVolume), String.valueOf(spotNPixels),
+				String.valueOf(spotRadius), spotStim.replace(",", "."), spotConc.replace(",", "."));
 		sbf.append(String.join(csvSep, row));
 		sbf.append("\n");
 		return sbf.toString();

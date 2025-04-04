@@ -157,7 +157,6 @@ public class InfosTable extends JPanel {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-//			exp.cagesArray.transferNFliesFromCagesToSpots(exp.spotsArray);
 			parent0.dlgSpots.tabFile.saveSpotsArray_file(exp);
 		}
 	}
