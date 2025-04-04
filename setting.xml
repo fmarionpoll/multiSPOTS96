@@ -78,7 +78,7 @@
 <key name="lastUpdateCheckTime" value="1743490956021"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
-<key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\2025-03-20"/>
+<key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\2025-03-20_fred"/>
 </section>
 <section name="canvas">
 <section name="Canvas2D">
@@ -170,21 +170,21 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="3543"/>
-<key name="YE" value="33"/>
-<key name="WidthE" value="1820"/>
-<key name="HeightE" value="1143"/>
+<key name="XE" value="83"/>
+<key name="YE" value="66"/>
+<key name="WidthE" value="1795"/>
+<key name="HeightE" value="1033"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1512"/>
+<key name="XC" value="1487"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="300"/>
-<key name="HeightC" value="981"/>
+<key name="HeightC" value="871"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -202,7 +202,7 @@
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="891"/>
+<key name="HeightC" value="781"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -220,7 +220,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="891"/>
+<key name="HeightC" value="781"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>
