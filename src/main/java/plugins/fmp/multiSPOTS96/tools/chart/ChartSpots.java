@@ -23,6 +23,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import icy.canvas.Canvas2D;
 import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
@@ -221,16 +222,14 @@ public class ChartSpots extends IcyFrame {
 			XYItemEntity xyItemEntity = (XYItemEntity) chartEntity;
 			int isel = xyItemEntity.getSeriesIndex();
 			XYDataset xyDataset = xyItemEntity.getDataset();
-			description = (String) xyDataset.getSeriesKey(isel); // TODO check
-
-			spotFound = exp.cagesArray.getSpotFromROIName(description.substring(0, 5));
+			description = (String) xyDataset.getSeriesKey(isel); 
+			spotFound = exp.cagesArray.getSpotFromROIName(description);
 			spotFound.spotCamData_T = xyItemEntity.getItem();
 
 		} else if (subplotindex >= 0) {
 			XYDataset xyDataset = subplots.get(subplotindex).getDataset(0);
 			description = (String) xyDataset.getSeriesKey(0); // TODO check
-			spotFound = exp.cagesArray.getSpotFromROIName(description.substring(0, 5));
-
+			spotFound = exp.cagesArray.getSpotFromROIName(description);		
 		} else {
 			System.out.println("Graph clicked but source not found");
 			return null;
@@ -238,6 +237,14 @@ public class ChartSpots extends IcyFrame {
 
 		int index = SpotString.getSpotArrayIndexFromSpotName(description);
 		spotFound.spotKymograph_T = index;
+		String spotName = spotFound.getRoi().getName();
+		Cage cage = exp.cagesArray.getCageFromSpotROIName(spotName);
+		System.out.println(description + "-- spot:" + spotName + " cage:"+ cage.getRoi().getName());
+		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Canvas2D canvas = (Canvas2D) v.getCanvas();
+		canvas.centerOn(cage.getRoi().getBounds());
+		exp.seqCamData.seq.setSelectedROI(spotFound.getRoi());
+		
 		return spotFound;
 	}
 

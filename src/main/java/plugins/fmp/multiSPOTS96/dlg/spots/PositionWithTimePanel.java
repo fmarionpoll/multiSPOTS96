@@ -226,8 +226,8 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		long intervalT = v.getPositionT();
 
-		if (exp.cagesArray.findKymoROI2DIntervalStart(intervalT) < 0) {
-			exp.cagesArray.addKymoROI2DInterval(intervalT);
+		if (exp.cagesArray.findROI2DTIntervalStart(intervalT) < 0) {
+			exp.cagesArray.addROI2DTInterval(intervalT);
 		}
 	}
 
@@ -239,8 +239,8 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		long intervalT = v.getPositionT();
 
-		if (exp.cagesArray.findKymoROI2DIntervalStart(intervalT) >= 0) {
-			exp.cagesArray.deleteKymoROI2DInterval(intervalT);
+		if (exp.cagesArray.findROI2DTIntervalStart(intervalT) >= 0) {
+			exp.cagesArray.deleteROI2DTInterval(intervalT);
 		}
 	}
 
@@ -250,7 +250,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 			return;
 		Sequence seq = exp.seqCamData.seq;
 
-		int intervalT = (int) exp.cagesArray.getKymoROI2DIntervalsStartAt(selectedRow);
+		int intervalT = (int) exp.cagesArray.getROI2DTIntervalsStartAt(selectedRow);
 		seq.removeAllROI();
 		List<ROI2D> listRois = new ArrayList<ROI2D>();
 		for (Cage cage : exp.cagesArray.cagesList)
@@ -268,7 +268,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 			return;
 		Sequence seq = exp.seqCamData.seq;
 
-		int intervalT = (int) exp.cagesArray.getKymoROI2DIntervalsStartAt(selectedRow);
+		int intervalT = (int) exp.cagesArray.getROI2DTIntervalsStartAt(selectedRow);
 		List<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!roi.getName().contains("line"))

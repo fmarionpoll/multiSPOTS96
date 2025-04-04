@@ -144,18 +144,13 @@ public class ChartCageSpots {
 
 		for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
 			String[] description = xySeriesCollection.getSeries(i).getDescription().split(":");
-//			int icolor = Integer.valueOf(description[3]);
-//			icolor = icolor % maxcolor;
-//			subPlotRenderer.setSeriesPaint(i, chartColor[icolor]);
 			int r = Integer.valueOf(description[7]);
 			int g = Integer.valueOf(description[9]);
 			int b = Integer.valueOf(description[11]);
 			subPlotRenderer.setSeriesPaint(i, new ChartColor(r, g, b));
 			String key = (String) xySeriesCollection.getSeriesKey(i);
-			// get description to get
 			if (key.contains("*"))
 				subPlotRenderer.setSeriesStroke(i, stroke);
-
 		}
 		return subPlotRenderer;
 	}

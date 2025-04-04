@@ -19,7 +19,7 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.KymoIntervals;
+import plugins.fmp.multiSPOTS96.experiment.TIntervals;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
@@ -35,7 +35,7 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class CagesArray {
 	public ArrayList<Cage> cagesList = new ArrayList<Cage>();
-	private KymoIntervals cagesListTimeIntervals = null;
+	private TIntervals cagesListTimeIntervals = null;
 
 	public int nCagesAlongX = 6;
 	public int nCagesAlongY = 8;
@@ -617,6 +617,16 @@ public class CagesArray {
 		}
 		return null;
 	}
+	
+	public Cage getCageFromSpotROIName(String name) {
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				if (spot.getRoi().getName().contains(name))
+					return cage;
+			}
+		}
+		return null;
+	}
 
 	public void initCagesAndSpotsWithNFlies(int nflies) {
 		for (Cage cage : cagesList) {
@@ -689,9 +699,9 @@ public class CagesArray {
 		return nspots;
 	}
 
-	public KymoIntervals getKymoIntervalsFromSpotsOFCage0() {
+	public TIntervals getKymoIntervalsFromSpotsOFCage0() {
 		Cage cage = cagesList.get(0);
-		KymoIntervals intervals = cage.spotsArray.getKymoIntervalsFromSpots();
+		TIntervals intervals = cage.spotsArray.getKymoIntervalsFromSpots();
 		return intervals;
 	}
 
@@ -759,9 +769,9 @@ public class CagesArray {
 
 	// ------------------------------------------------
 
-	public KymoIntervals getKymoIntervalsFromSpots() {
+	public TIntervals getTIntervalsFromSpots() {
 		if (cagesListTimeIntervals == null) {
-			cagesListTimeIntervals = new KymoIntervals();
+			cagesListTimeIntervals = new TIntervals();
 			for (Cage cage : cagesList) {
 				for (ROI2DAlongT roiFK : cage.getROIAlongTList()) {
 					Long[] interval = { roiFK.getT(), (long) -1 };
@@ -772,19 +782,19 @@ public class CagesArray {
 		return cagesListTimeIntervals;
 	}
 
-	public int findKymoROI2DIntervalStart(long intervalT) {
+	public int findROI2DTIntervalStart(long intervalT) {
 		if (cagesListTimeIntervals == null)
-			addKymoROI2DInterval(0);
+			addROI2DTInterval(0);
 		return cagesListTimeIntervals.findStartItem(intervalT);
 	}
 
-	public long getKymoROI2DIntervalsStartAt(int selectedItem) {
+	public long getROI2DTIntervalsStartAt(int selectedItem) {
 		if (cagesListTimeIntervals == null)
-			addKymoROI2DInterval(0);
+			addROI2DTInterval(0);
 		return cagesListTimeIntervals.get(selectedItem)[0];
 	}
 
-	public int addKymoROI2DInterval(long start) {
+	public int addROI2DTInterval(long start) {
 		Long[] interval = { start, (long) -1 };
 		int item = cagesListTimeIntervals.addIfNew(interval);
 
@@ -798,7 +808,7 @@ public class CagesArray {
 		return item;
 	}
 
-	public void deleteKymoROI2DInterval(long start) {
+	public void deleteROI2DTInterval(long start) {
 		cagesListTimeIntervals.deleteIntervalStartingAt(start);
 		for (Cage cage : cagesList)
 			cage.removeROIAlongTListItem(start);

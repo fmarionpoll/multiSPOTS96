@@ -19,7 +19,7 @@ import org.w3c.dom.Node;
 import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multiSPOTS96.experiment.KymoIntervals;
+import plugins.fmp.multiSPOTS96.experiment.TIntervals;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
@@ -27,7 +27,7 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 
 public class SpotsArray {
 	public ArrayList<Spot> spotsList = new ArrayList<Spot>();
-	private KymoIntervals spotsListTimeIntervals = null;
+	private TIntervals spotsListTimeIntervals = null;
 
 	private final static String ID_SPOTTRACK = "spotTrack";
 	private final static String ID_NSPOTS = "N_spots";
@@ -298,9 +298,9 @@ public class SpotsArray {
 
 	// ------------------------------------------------
 
-	public KymoIntervals getKymoIntervalsFromSpots() {
+	public TIntervals getKymoIntervalsFromSpots() {
 		if (spotsListTimeIntervals == null) {
-			spotsListTimeIntervals = new KymoIntervals();
+			spotsListTimeIntervals = new TIntervals();
 			for (Spot spot : spotsList) {
 				for (ROI2DAlongT roiFK : spot.getROIAlongTList()) {
 					Long[] interval = { roiFK.getT(), (long) -1 };
