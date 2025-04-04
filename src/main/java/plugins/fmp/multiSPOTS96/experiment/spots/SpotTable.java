@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.tools.JComponents;
+package plugins.fmp.multiSPOTS96.experiment.spots;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,6 +8,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
+import plugins.fmp.multiSPOTS96.tools.JComponents.SpotColorEditor;
+import plugins.fmp.multiSPOTS96.tools.JComponents.SpotColorRenderer;
 
 public class SpotTable extends JTable {
 	/**

@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.tools.JComponents;
+package plugins.fmp.multiSPOTS96.experiment.cages;
 
 import java.util.ArrayList;
 
@@ -7,6 +7,7 @@ import javax.swing.table.AbstractTableModel;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.TInterval;
 import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
+import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
 public class TableModelTIntervals extends AbstractTableModel {
 
@@ -55,7 +56,7 @@ public class TableModelTIntervals extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		TInterval interval = intervals.get(rowIndex);
 		Long value;
-		if (columnIndex == 1) 
+		if (columnIndex == 1)
 			value = interval.end;
 		else
 			value = interval.start;

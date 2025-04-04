@@ -16,8 +16,8 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotTable;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
-import plugins.fmp.multiSPOTS96.tools.JComponents.SpotTable;
 
 public class SpotTablePanel extends JPanel {
 	/**
