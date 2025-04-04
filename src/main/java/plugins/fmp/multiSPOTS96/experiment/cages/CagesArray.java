@@ -700,10 +700,10 @@ public class CagesArray {
 		return nspots;
 	}
 
-	public TIntervalsArray getKymoIntervalsFromSpotsOFCage0() {
-		Cage cage = cagesList.get(0);
-		TIntervalsArray intervals = cage.spotsArray.getKymoIntervalsFromSpots();
-		return intervals;
+	public TIntervalsArray getCagesListTimeIntervals() {
+//		Cage cage = cagesList.get(0);
+//		TIntervalsArray intervals = cage.spotsArray.getKymoIntervalsFromSpots();
+		return cagesListTimeIntervals;
 	}
 
 	public void mergeSpotsLists(CagesArray arrayToMerge) {

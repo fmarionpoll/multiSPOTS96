@@ -17,8 +17,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -44,13 +48,20 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 	private static final long serialVersionUID = 1L;
 
 	IcyFrame dialogFrame = null;
-
+	int val = 0; // set your own value, I used to check if it works
+	int min = 0;
+	int max = 10000;
+	int step = 1;
+	int maxLast = 99999999;
+	JSpinner indexCurrentFrameJSpinner = new JSpinner(new SpinnerNumberModel(val, min, max, step));
+	
 	private JButton addItemButton = new JButton("Add");
 	private JButton deleteItemButton = new JButton("Delete");
 	private JButton saveSpotsButton = new JButton("Save ROIs positions");
 	private JCheckBox showFrameButton = new JCheckBox("Show frame");
 	private JButton fitToFrameButton = new JButton("Fit ROIs to frame");
 	private JTable tableView = new JTable();
+	
 
 	private final String dummyname = "perimeter_enclosing";
 	private ROI2DPolygon envelopeRoi = null;
@@ -66,8 +77,16 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		JPanel topPanel = new JPanel(new GridLayout(3, 1));
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
 
+		JPanel panel0 = new JPanel(flowLayout);
+		panel0.add(new JLabel("Viewer frame T:"));
+		int bWidth = 50;
+		int bHeight = 21;
+		Dimension dimension = new Dimension(bWidth, bHeight);
+		indexCurrentFrameJSpinner.setPreferredSize(dimension);
+		panel0.add(indexCurrentFrameJSpinner);
+		topPanel.add(panel0);
+		
 		JPanel panel1 = new JPanel(flowLayout);
-		panel1.add(new JLabel("Viewer frame T:"));
 		panel1.add(addItemButton);
 		panel1.add(deleteItemButton);
 		topPanel.add(panel1);
@@ -90,7 +109,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		JPanel tablePanel = new JPanel();
 		tablePanel.add(scrollPane);
 
-		dialogFrame = new IcyFrame("Edit spots position", true, true);
+		dialogFrame = new IcyFrame("Edit ROIs position with time", true, true);
 		dialogFrame.add(topPanel, BorderLayout.NORTH);
 		dialogFrame.add(tablePanel, BorderLayout.CENTER);
 		dialogFrame.setLocation(new Point(5, 5));
@@ -108,6 +127,20 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 
 	private void defineActionListeners() {
 
+		indexCurrentFrameJSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int newValue = (int) indexCurrentFrameJSpinner.getValue();
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Viewer v = exp.seqCamData.seq.getFirstViewer();
+				if (v != null) {
+					int icurrent = v.getPositionT();
+					if (icurrent != newValue)
+						v.setPositionT(newValue);
+					exp.seqCamData.currentFrame = newValue;
+				}
+			}
+		});
+		
 		fitToFrameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {

@@ -6,6 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.TInterval;
+import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
 
 public class TableModelTIntervals extends AbstractTableModel {
 
@@ -26,7 +27,10 @@ public class TableModelTIntervals extends AbstractTableModel {
 	public int getRowCount() {
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-			intervals = exp.cagesArray.getKymoIntervalsFromSpotsOFCage0().intervals;
+			TIntervalsArray tIntervals = exp.cagesArray.getCagesListTimeIntervals();
+			if (tIntervals == null)
+				return 0;
+			intervals = exp.cagesArray.getCagesListTimeIntervals().intervals;
 			return intervals.size();
 		}
 		return 0;

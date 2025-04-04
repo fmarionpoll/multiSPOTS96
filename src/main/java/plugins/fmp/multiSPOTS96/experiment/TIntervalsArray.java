@@ -11,6 +11,8 @@ public class TIntervalsArray {
 				return i;
 			if (interval.start < intervals.get(i).start) {
 				intervals.add(i, interval);
+				if (i > 0)
+					intervals.get(i-1).end = interval.start -1;
 				return i;
 			}
 		}
