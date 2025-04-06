@@ -146,6 +146,7 @@ public class SpotProperties {
 	// --------------------------------------
 
 	public void csvImportProperties(String[] data) {
+		int isize = data.length;
 		int i = 0;
 		sourceName = data[i];
 		i++;
@@ -158,6 +159,10 @@ public class SpotProperties {
 		i++;
 		cagePosition = Integer.valueOf(data[i]);
 		i++;
+		if (isize == 10) {
+			spotRadius = Integer.valueOf(data[i]); // dummy read
+			i++;
+		}
 		spotVolume = Double.valueOf(data[i]);
 		i++;
 		spotNPixels = Integer.valueOf(data[i]);
