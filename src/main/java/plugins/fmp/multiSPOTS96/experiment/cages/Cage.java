@@ -58,11 +58,11 @@ public class Cage implements Comparable<Cage> {
 
 	// ------------------------------------
 
-	public ROI2D getRoi() {
+	public ROI2D getCageRoi() {
 		return cageXROI2D;
 	}
 
-	public void setRoi(ROI2DShape roi) {
+	public void setCageRoi(ROI2DShape roi) {
 		cageXROI2D = roi;
 		listRoiAlongT.clear();
 	}

@@ -95,13 +95,13 @@ public class ExperimentUtils {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			boolean found = false;
 			for (ROI roi : roisAlreadyTransferred) {
-				if (roi.getName().equals(cage.getRoi().getName())) {
+				if (roi.getName().equals(cage.getCageRoi().getName())) {
 					found = true;
 					break;
 				}
 			}
 			if (!found)
-				exp.seqCamData.seq.addROI(cage.getRoi());
+				exp.seqCamData.seq.addROI(cage.getCageRoi());
 		}
 	}
 

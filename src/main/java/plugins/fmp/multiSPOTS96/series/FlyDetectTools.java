@@ -169,7 +169,7 @@ public class FlyDetectTools {
 		for (Cage cage : cages.cagesList) {
 			if (cage.prop.cageNFlies < 1)
 				continue;
-			Rectangle rect = cage.getRoi().getBounds();
+			Rectangle rect = cage.getCageRoi().getBounds();
 			if (rectangleAllCages == null)
 				rectangleAllCages = new Rectangle(rect);
 			else

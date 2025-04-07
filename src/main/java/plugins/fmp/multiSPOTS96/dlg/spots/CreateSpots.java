@@ -141,7 +141,7 @@ public class CreateSpots extends JPanel {
 		ArrayList<ROI2DPolygonPlus> listSelectedAreas = roiGrid.getSelectedAreaRois();
 		int spotIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
-			ROI2D cageRoi = cage.getRoi();
+			ROI2D cageRoi = cage.getCageRoi();
 			ROI2DGrid cageGrid = createGrid(cageRoi);
 			cage.spotsArray.spotsList.clear();
 			for (ROI2DPolygonPlus roi : listSelectedAreas) {
@@ -152,14 +152,14 @@ public class CreateSpots extends JPanel {
 				cage.addEllipseSpot(spotIndex, center, radius);
 				spotIndex++;
 			}
-			cage.getRoi().setSelected(false);
+			cage.getCageRoi().setSelected(false);
 		}
 	}
 
 	int findSelectedCage(Experiment exp) {
 		int selectedCage = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
-			ROI2D roi = cage.getRoi();
+			ROI2D roi = cage.getCageRoi();
 			if (roi.isSelected()) {
 				selectedCage = cage.getCageNumberInteger();
 				break;
@@ -173,7 +173,7 @@ public class CreateSpots extends JPanel {
 		if (cage == null)
 			return;
 
-		ROI2D roiCage = cage.getRoi();
+		ROI2D roiCage = cage.getCageRoi();
 		referencePosition = (Double) roiCage.getPosition2D();
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		Canvas2D canvas = (Canvas2D) v.getCanvas();

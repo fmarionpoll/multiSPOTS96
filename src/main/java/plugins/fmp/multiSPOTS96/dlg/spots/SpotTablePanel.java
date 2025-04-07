@@ -53,6 +53,7 @@ public class SpotTablePanel extends JPanel {
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(nPixelsButton);
+		panel2.add(duplicatePreviousButton);
 
 		topPanel.add(panel2);
 
