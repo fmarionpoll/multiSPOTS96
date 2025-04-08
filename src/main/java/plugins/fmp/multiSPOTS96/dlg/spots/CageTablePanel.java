@@ -96,7 +96,7 @@ public class CageTablePanel extends JPanel {
 					for (Cage cageFrom : cagesArrayCopy.cagesList) {
 						cageFrom.valid = false;
 						for (Cage cageTo : exp.cagesArray.cagesList) {
-							if (!cageFrom.getRoi().getName().equals(cageTo.getRoi().getName()))
+							if (!cageFrom.getCageRoi().getName().equals(cageTo.getCageRoi().getName()))
 								continue;
 							cageFrom.valid = true;
 							cageTo.prop.cageNFlies = cageFrom.prop.cageNFlies;
@@ -121,7 +121,7 @@ public class CageTablePanel extends JPanel {
 					if (rowIndex >= 0) {
 						Cage cage0 = exp.cagesArray.cagesList.get(rowIndex);
 						for (Cage cage : exp.cagesArray.cagesList) {
-							if (cage.getRoi().getName().equals(cage0.getRoi().getName()))
+							if (cage.getCageRoi().getName().equals(cage0.getCageRoi().getName()))
 								continue;
 							switch (columnIndex) {
 							case 1:

@@ -176,7 +176,7 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 
 	private String findSelectedCage(Experiment exp) {
 		for (Cage cage : exp.cagesArray.cagesList) {
-			ROI2D roi = cage.getRoi();
+			ROI2D roi = cage.getCageRoi();
 			if (roi.isSelected()) {
 				centerViewOnSelectedRoi(exp, roi);
 				return roi.getName();

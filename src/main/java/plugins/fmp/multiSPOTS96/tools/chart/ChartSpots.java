@@ -117,7 +117,7 @@ public class ChartSpots extends IcyFrame {
 
 				XYSeriesCollection xyDataSetList = chartCage.combineCageCurves(cage, xlsResultsArray, xlsResultsArray2);
 				XYPlot cagePlot = chartCage.buildCageXYPlot(xyDataSetList);
-				NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
+				NumberAxis yAxis = setYaxis(cage.getCageRoi().getName(), row, col, xlsExportOptions);
 				CombinedRangeXYPlot combinedXYPlot = new CombinedRangeXYPlot(yAxis);
 				combinedXYPlot.add(cagePlot);
 
@@ -246,10 +246,10 @@ public class ChartSpots extends IcyFrame {
 		spotFound.spotKymograph_T = index;
 		String spotName = spotFound.getRoi().getName();
 		Cage cage = exp.cagesArray.getCageFromSpotROIName(spotName);
-		System.out.println(description + "-- spot:" + spotName + " cage:" + cage.getRoi().getName());
+		System.out.println(description + "-- spot:" + spotName + " cage:" + cage.getCageRoi().getName());
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		Canvas2D canvas = (Canvas2D) v.getCanvas();
-		canvas.centerOn(cage.getRoi().getBounds());
+		canvas.centerOn(cage.getCageRoi().getBounds());
 		exp.seqCamData.seq.setSelectedROI(spotFound.getRoi());
 
 		return spotFound;
