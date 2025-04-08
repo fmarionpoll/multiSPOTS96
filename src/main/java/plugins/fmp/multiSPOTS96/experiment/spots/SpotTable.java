@@ -36,7 +36,6 @@ public class SpotTable extends JTable {
 
 		TableColumnModel columnModel = getColumnModel();
 
-		// columnModel.getColumn(0).setPreferredWidth(65);
 		columnModel.getColumn(1).setPreferredWidth(15);
 		columnModel.getColumn(2).setPreferredWidth(15);
 		columnModel.getColumn(3).setPreferredWidth(15);
