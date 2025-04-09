@@ -19,6 +19,8 @@ public class ROI2DAlongT implements XMLPersistent {
 	public BooleanMask2D mask2D_in = null;
 	public BooleanMask2D mask2D_in_nofly = null;
 	public Point[] mask2DPoints_in = null;
+	public int ymax = 0;
+	public int ymin = 0;
 
 //	private ROI2D roi_out = null;	
 //	private BooleanMask2D mask2D_out = null;	
@@ -68,6 +70,18 @@ public class ROI2DAlongT implements XMLPersistent {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public int getMask2D_Height() {
+		ymax = mask2DPoints_in[0].y;
+		ymin = ymax;
+		for (int i = 1; i < mask2DPoints_in.length; i++) {
+			if (mask2DPoints_in[i].y < ymin)
+				ymin = mask2DPoints_in[i].y;
+			if (mask2DPoints_in[i].y > ymax)
+				ymax = mask2DPoints_in[i].y;
+		}
+		return (ymax - ymin + 1);
 	}
 
 	public BooleanMask2D getMask2D_in() {

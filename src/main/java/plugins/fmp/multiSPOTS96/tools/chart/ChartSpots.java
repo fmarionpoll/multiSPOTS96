@@ -23,7 +23,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import icy.canvas.Canvas2D;
 import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
@@ -246,21 +245,16 @@ public class ChartSpots extends IcyFrame {
 		spotFound.spotKymograph_T = index;
 		String spotName = spotFound.getRoi().getName();
 		Cage cage = exp.cagesArray.getCageFromSpotROIName(spotName);
-
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
-		Canvas2D canvas = (Canvas2D) v.getCanvas();
-		canvas.centerOn(cage.getCageRoi().getBounds());
+		exp.seqCamData.centerOnRoi(cage.getCageRoi());
 		exp.seqCamData.seq.setSelectedROI(spotFound.getRoi());
 
 		return spotFound;
 	}
 
 	private void selectSpot(Experiment exp, Spot spot) {
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
-		if (v != null && spot != null) {
-			ROI2D roi = spot.getRoi();
-			exp.seqCamData.seq.setFocusedROI(roi);
-		}
+		ROI2D roi = spot.getRoi();
+		exp.seqCamData.seq.setFocusedROI(roi);
+		exp.seqCamData.centerOnRoi(roi);
 	}
 
 	private void selectT(Experiment exp, XLSExportOptions xlsExportOptions, Spot spot) {

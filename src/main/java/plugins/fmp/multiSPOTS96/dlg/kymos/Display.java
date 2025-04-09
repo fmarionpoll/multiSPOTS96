@@ -35,7 +35,6 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.Directories;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
@@ -367,14 +366,20 @@ public class Display extends JPanel implements ViewerListener {
 	}
 
 	private void selectSpot(Experiment exp, int isel) {
-		int i = 0;
-		for (Cage cage : exp.cagesArray.cagesList) {
-			SpotsArray spotsArray = cage.spotsArray;
-			for (Spot spot : spotsArray.spotsList) {
-				spot.getRoi().setSelected(isel == i);
-				spot.getRoi().setFocused(isel == i);
-				i++;
-			}
+//		int i = 0;
+//		for (Cage cage : exp.cagesArray.cagesList) {
+//			SpotsArray spotsArray = cage.spotsArray;
+//			for (Spot spot : spotsArray.spotsList) {
+//				spot.getRoi().setSelected(isel == i);
+//				spot.getRoi().setFocused(isel == i);
+//				i++;
+//			}
+//		}
+		String spotName = (String) kymographsCombo.getSelectedItem();
+		Spot spot = exp.cagesArray.getSpotFromROIName(spotName);
+		if (spot != null) {
+			exp.seqCamData.centerOnRoi(spot.getRoi());
+			exp.seqCamData.seq.setSelectedROI(spot.getRoi());
 		}
 	}
 

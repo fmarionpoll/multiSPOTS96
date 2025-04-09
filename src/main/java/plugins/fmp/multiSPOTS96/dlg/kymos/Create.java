@@ -21,7 +21,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.series.BuildSpotsKymos;
+import plugins.fmp.multiSPOTS96.series.BuildSpotsKymos2;
 
 public class Create extends JPanel implements PropertyChangeListener {
 	/**
@@ -46,7 +46,7 @@ public class Create extends JPanel implements PropertyChangeListener {
 
 	EnumStatusComputation sComputation = EnumStatusComputation.START_COMPUTATION;
 	private MultiSPOTS96 parent0 = null;
-	private BuildSpotsKymos threadBuildKymo = null;
+	private BuildSpotsKymos2 threadBuildKymo = null;
 
 	// -----------------------------------------------------
 
@@ -141,10 +141,10 @@ public class Create extends JPanel implements PropertyChangeListener {
 			options.expList.index1 = parent0.expListCombo.getItemCount() - 1;
 		else
 			options.expList.index1 = options.expList.index0;
-		options.isFrameFixed = false; // getIsFixedFrame();
+		options.isFrameFixed = false;
 		exp.loadFileIntervalsFromSeqCamData();
-		options.t_Ms_First = exp.seqCamData.firstImage_ms; // getStartMs();
-		options.t_Ms_Last = exp.seqCamData.lastImage_ms;// getEndMs();
+		options.t_Ms_First = exp.seqCamData.firstImage_ms;
+		options.t_Ms_Last = exp.seqCamData.lastImage_ms;
 		options.t_Ms_BinDuration = exp.seqCamData.binImage_ms;
 		options.doCreateBinDir = true;
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
@@ -159,7 +159,7 @@ public class Create extends JPanel implements PropertyChangeListener {
 		if (exp != null)
 			parent0.dlgSpots.tabFile.saveSpotsArray_file(exp);
 
-		threadBuildKymo = new BuildSpotsKymos();
+		threadBuildKymo = new BuildSpotsKymos2();
 		threadBuildKymo.options = initBuildParameters(exp);
 
 		threadBuildKymo.addPropertyChangeListener(this);

@@ -24,6 +24,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
+import icy.canvas.Canvas2D;
 import icy.canvas.IcyCanvas;
 import icy.canvas.Layer;
 import icy.file.Loader;
@@ -372,6 +373,16 @@ public class SequenceCamData {
 				listROIsMatchingString.add(roi);
 		}
 		seq.removeROIs(listROIsMatchingString, false);
+	}
+
+	public void centerOnRoi(ROI2D roi) {
+		Viewer v = seq.getFirstViewer();
+		Canvas2D canvas = (Canvas2D) v.getCanvas();
+		canvas.centerOn(roi.getBounds());
+	}
+
+	public void selectRoi(ROI2D roi, boolean select) {
+		seq.setSelectedROI(roi);
 	}
 
 }
