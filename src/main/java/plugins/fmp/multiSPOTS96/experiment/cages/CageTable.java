@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.experiment.spots;
+package plugins.fmp.multiSPOTS96.experiment.cages;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,10 +8,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotTableModel;
 import plugins.fmp.multiSPOTS96.tools.JComponents.SpotColorEditor;
 import plugins.fmp.multiSPOTS96.tools.JComponents.TableCellColorRenderer;
 
-public class SpotTable extends JTable {
+public class CageTable extends JTable {
 	/**
 	 * 
 	 */
@@ -21,7 +22,7 @@ public class SpotTable extends JTable {
 	Color cellsOrigBackColor;
 	Color cellsOrigForeColor;
 
-	public SpotTable(MultiSPOTS96 parent0) {
+	public CageTable(MultiSPOTS96 parent0) {
 		cellsOrigBackColor = this.getBackground();
 		cellsOrigForeColor = this.getForeground();
 		tableModelSpot = new SpotTableModel(parent0.expListCombo);

@@ -161,6 +161,7 @@ public class Cage implements Comparable<Cage> {
 			return false;
 		xmlLoadCageLimits(xmlVal);
 		prop.xmlLoadCageParameters(xmlVal);
+		cageXROI2D.setColor(prop.cageColor);
 		spotsArray.xmlLoadSpotsArray(xmlVal);
 		return true;
 	}

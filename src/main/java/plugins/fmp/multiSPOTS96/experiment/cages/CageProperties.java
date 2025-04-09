@@ -1,5 +1,7 @@
 package plugins.fmp.multiSPOTS96.experiment.cages;
 
+import java.awt.Color;
+
 import org.w3c.dom.Element;
 
 import icy.util.XMLUtil;
@@ -9,6 +11,7 @@ public class CageProperties {
 
 	public int cageID = -1;
 	public int cagePosition = 0;
+	public Color cageColor = Color.MAGENTA;
 
 	public int arrayIndex = 0;
 	public int arrayColumn = -1;
@@ -31,6 +34,9 @@ public class CageProperties {
 	private final String ID_ARRAYINDEX = "aIndex";
 	private final String ID_ARRAYCOLUMN = "aCol";
 	private final String ID_ARRAYROW = "aRow";
+	private final String ID_COLOR_R = "color_R";
+	private final String ID_COLOR_G = "color_G";
+	private final String ID_COLOR_B = "color_B";
 
 	public void copy(CageProperties propFrom) {
 		arrayIndex = propFrom.arrayIndex;
@@ -38,6 +44,7 @@ public class CageProperties {
 		arrayRow = propFrom.arrayRow;
 		cageID = propFrom.cageID;
 		cagePosition = propFrom.cagePosition;
+		cageColor = propFrom.cageColor;
 
 		cageNFlies = propFrom.cageNFlies;
 		cageAge = propFrom.cageAge;
@@ -49,10 +56,11 @@ public class CageProperties {
 
 	public void paste(CageProperties propTo) {
 		propTo.arrayIndex = arrayIndex;
-		propTo.arrayColumn = propTo.arrayColumn;
-		propTo.arrayRow = propTo.arrayRow;
-		propTo.cageID = propTo.cageID;
-		propTo.cagePosition = propTo.cagePosition;
+		propTo.arrayColumn = arrayColumn;
+		propTo.arrayRow = arrayRow;
+		propTo.cageID = cageID;
+		propTo.cagePosition = cagePosition;
+		propTo.cageColor = cageColor;
 
 		propTo.cageNFlies = cageNFlies;
 		propTo.cageAge = cageAge;
@@ -74,6 +82,10 @@ public class CageProperties {
 		strCageComment = XMLUtil.getElementValue(xmlVal, ID_COMMENT, strCageComment);
 		strCageSex = XMLUtil.getElementValue(xmlVal, ID_SEX, strCageSex);
 		strCageStrain = XMLUtil.getElementValue(xmlVal, ID_STRAIN, strCageStrain);
+		int r = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_R, cageColor.getRed());
+		int g = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_G, cageColor.getGreen());
+		int b = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_B, cageColor.getBlue());
+		cageColor = new Color(r, g, b);
 		return true;
 	}
 
@@ -89,6 +101,9 @@ public class CageProperties {
 		XMLUtil.setElementValue(xmlVal, ID_COMMENT, strCageComment);
 		XMLUtil.setElementValue(xmlVal, ID_SEX, strCageSex);
 		XMLUtil.setElementValue(xmlVal, ID_STRAIN, strCageStrain);
+		XMLUtil.setElementIntValue(xmlVal, ID_COLOR_R, cageColor.getRed());
+		XMLUtil.setElementIntValue(xmlVal, ID_COLOR_G, cageColor.getGreen());
+		XMLUtil.setElementIntValue(xmlVal, ID_COLOR_B, cageColor.getBlue());
 		return true;
 	}
 

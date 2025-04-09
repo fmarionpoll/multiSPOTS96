@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.dlg.spots;
+package plugins.fmp.multiSPOTS96.experiment.cages;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -10,16 +10,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
-import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
-import plugins.fmp.multiSPOTS96.experiment.cages.TableModelCage;
 
 public class CageTablePanel extends JPanel {
 	/**
@@ -27,8 +23,8 @@ public class CageTablePanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 7599620793495187279L;
 	IcyFrame dialogFrame = null;
-	private JTable tableView = new JTable();
-	private TableModelCage viewModel = null;
+	private CageTable jTable = null;
+	private CageTableModel viewModel = null;
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
@@ -40,14 +36,15 @@ public class CageTablePanel extends JPanel {
 	public void initialize(MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
 
-		viewModel = new TableModelCage(parent0.expListCombo);
-		tableView.setModel(viewModel);
-		tableView.setPreferredScrollableViewportSize(new Dimension(500, 400));
-		tableView.setFillsViewportHeight(true);
-		TableColumnModel columnModel = tableView.getColumnModel();
+		viewModel = new CageTableModel(parent0.expListCombo);
+		jTable = new CageTable(parent0);
+		jTable.setModel(viewModel);
+		jTable.setPreferredScrollableViewportSize(new Dimension(500, 400));
+		jTable.setFillsViewportHeight(true);
+		TableColumnModel columnModel = jTable.getColumnModel();
 		for (int i = 0; i < 2; i++)
 			setFixedColumnProperties(columnModel.getColumn(i));
-		JScrollPane scrollPane = new JScrollPane(tableView);
+		JScrollPane scrollPane = new JScrollPane(jTable);
 
 		JPanel topPanel = new JPanel(new GridLayout(2, 1));
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
@@ -73,6 +70,7 @@ public class CageTablePanel extends JPanel {
 		dialogFrame.center();
 		dialogFrame.setVisible(true);
 		defineActionListeners();
+
 		pasteButton.setEnabled(cagesArrayCopy != null);
 	}
 
@@ -99,11 +97,7 @@ public class CageTablePanel extends JPanel {
 							if (!cageFrom.getCageRoi().getName().equals(cageTo.getCageRoi().getName()))
 								continue;
 							cageFrom.valid = true;
-							cageTo.prop.cageNFlies = cageFrom.prop.cageNFlies;
-							cageTo.prop.cageAge = cageFrom.prop.cageAge;
-							cageTo.prop.strCageComment = cageFrom.prop.strCageComment;
-							cageTo.prop.strCageSex = cageFrom.prop.strCageSex;
-							cageTo.prop.strCageStrain = cageFrom.prop.strCageStrain;
+							cageTo.prop.copy(cageFrom.prop);
 						}
 					}
 					viewModel.fireTableDataChanged();
@@ -116,8 +110,8 @@ public class CageTablePanel extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					int rowIndex = tableView.getSelectedRow();
-					int columnIndex = tableView.getSelectedColumn();
+					int rowIndex = jTable.getSelectedRow();
+					int columnIndex = jTable.getSelectedColumn();
 					if (rowIndex >= 0) {
 						Cage cage0 = exp.cagesArray.cagesList.get(rowIndex);
 						for (Cage cage : exp.cagesArray.cagesList) {
@@ -139,6 +133,8 @@ public class CageTablePanel extends JPanel {
 							case 5:
 								cage.prop.strCageComment = cage0.prop.strCageComment;
 								break;
+							case 6:
+								cage.prop.cageColor = cage0.prop.cageColor;
 							default:
 								break;
 							}
@@ -149,7 +145,7 @@ public class CageTablePanel extends JPanel {
 		});
 	}
 
-	void close() {
+	public void close() {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {

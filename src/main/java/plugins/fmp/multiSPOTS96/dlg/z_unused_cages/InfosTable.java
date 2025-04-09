@@ -19,7 +19,7 @@ import icy.gui.frame.IcyFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
-import plugins.fmp.multiSPOTS96.experiment.cages.TableModelCage;
+import plugins.fmp.multiSPOTS96.experiment.cages.CageTableModel;
 
 public class InfosTable extends JPanel {
 	/**
@@ -28,7 +28,7 @@ public class InfosTable extends JPanel {
 	private static final long serialVersionUID = 7599620793495187279L;
 	IcyFrame dialogFrame = null;
 	private JTable tableView = new JTable();
-	private TableModelCage viewModel = null;
+	private CageTableModel viewModel = null;
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
@@ -41,7 +41,7 @@ public class InfosTable extends JPanel {
 		this.parent0 = parent0;
 		cageArrayCopy = cageCopy;
 
-		viewModel = new TableModelCage(parent0.expListCombo);
+		viewModel = new CageTableModel(parent0.expListCombo);
 		tableView.setModel(viewModel);
 		tableView.setPreferredScrollableViewportSize(new Dimension(500, 400));
 		tableView.setFillsViewportHeight(true);

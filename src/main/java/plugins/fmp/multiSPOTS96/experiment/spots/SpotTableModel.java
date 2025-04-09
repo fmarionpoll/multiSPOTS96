@@ -121,6 +121,7 @@ public class SpotTableModel extends AbstractTableModel {
 				break;
 			case 7:
 				spot.prop.spotColor = (Color) aValue;
+				break;
 			}
 		}
 	}

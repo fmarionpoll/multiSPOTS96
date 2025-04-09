@@ -14,7 +14,7 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
-public class SpotColorRenderer extends JLabel implements TableCellRenderer {
+public class TableCellColorRenderer extends JLabel implements TableCellRenderer {
 	/**
 	 * 
 	 */
@@ -23,7 +23,7 @@ public class SpotColorRenderer extends JLabel implements TableCellRenderer {
 	Border selectedBorder = null;
 	boolean isBordered = true;
 
-	public SpotColorRenderer(boolean isBordered) {
+	public TableCellColorRenderer(boolean isBordered) {
 		this.isBordered = isBordered;
 		setOpaque(true); // MUST do this for background to show up.
 	}

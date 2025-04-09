@@ -1,63 +1,28 @@
 package plugins.fmp.multiSPOTS96.experiment.cages;
 
+import java.awt.Color;
+
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
-public class TableModelCage extends AbstractTableModel {
+public class CageTableModel extends AbstractTableModel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3501225818220221949L;
 	private JComboBoxExperiment expList = null;
+	String columnNames[] = { "Name", "N flies", "Strain", "Sex", "Age", "Comment", "Color" };
 
-	public TableModelCage(JComboBoxExperiment expList) {
+	public CageTableModel(JComboBoxExperiment expList) {
 		super();
 		this.expList = expList;
 	}
 
 	@Override
 	public int getColumnCount() {
-		return 6;
-	}
-
-	@Override
-	public Class<?> getColumnClass(int columnIndex) {
-		switch (columnIndex) {
-		case 0:
-			return String.class;
-		case 1:
-			return Integer.class;
-		case 2:
-			return String.class;
-		case 3:
-			return String.class;
-		case 4:
-			return Integer.class;
-		case 5:
-			return String.class;
-		}
-		return String.class;
-	}
-
-	@Override
-	public String getColumnName(int column) {
-		switch (column) {
-		case 0:
-			return "Name";
-		case 1:
-			return "N flies";
-		case 2:
-			return "Strain";
-		case 3:
-			return "Sex";
-		case 4:
-			return "Age";
-		case 5:
-			return "Comment";
-		}
-		return "";
+		return columnNames.length;
 	}
 
 	@Override
@@ -67,6 +32,11 @@ public class TableModelCage extends AbstractTableModel {
 			return exp.cagesArray.cagesList.size();
 		}
 		return 0;
+	}
+
+	@Override
+	public String getColumnName(int column) {
+		return columnNames[column];
 	}
 
 	@Override
@@ -90,17 +60,39 @@ public class TableModelCage extends AbstractTableModel {
 				return cage.prop.cageAge;
 			case 5:
 				return cage.prop.strCageComment;
+			case 6:
+				return cage.prop.cageColor;
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public boolean isCellEditable(int rowIndex, int columnIndex) {
+	public Class<?> getColumnClass(int columnIndex) {
 		switch (columnIndex) {
 		case 0:
+			return String.class;
+		case 1:
+			return Integer.class;
+		case 2:
+			return String.class;
+		case 3:
+			return String.class;
+		case 4:
+			return Integer.class;
+		case 5:
+			return String.class;
+		case 6:
+			return Color.class;
+		}
+		return String.class;
+	}
+
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		if (columnIndex < 1) {
 			return false;
-		default:
+		} else {
 			return true;
 		}
 	}
@@ -131,6 +123,9 @@ public class TableModelCage extends AbstractTableModel {
 				break;
 			case 5:
 				cage.prop.strCageComment = aValue.toString();
+				break;
+			case 6:
+				cage.prop.cageColor = (Color) aValue;
 				break;
 			}
 		}

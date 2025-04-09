@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.cages.CageTablePanel;
 
 public class Infos extends JPanel {
 	/**
