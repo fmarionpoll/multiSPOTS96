@@ -268,9 +268,6 @@ public class EditSpots extends JPanel {
 			spot.prop.spotXCoord = (int) snake.xpoints[i];
 			spot.prop.spotYCoord = (int) snake.ypoints[i];
 			ROI2D roi = spot.getRoi();
-//			boolean flag = exp.seqCamData.seq.contains(roi);
-//			if (!flag)
-//				System.out.println("roi not found " + roi.getName());
 
 			Point2D.Double point = new Point2D.Double(snake.xpoints[i] - spot.prop.spotRadius,
 					snake.ypoints[i] - spot.prop.spotRadius);

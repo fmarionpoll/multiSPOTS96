@@ -73,7 +73,6 @@ public class ChartCageSpots {
 				xySeriesCollection = new XYSeriesCollection();
 			}
 			XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.name + token);
-			// System.out.println(xlsResults.name + token);
 			seriesXY.setDescription("ID:" + xlsResults.cageID + ":Pos:" + xlsResults.cagePosition + ":nflies:"
 					+ cage.prop.cageNFlies + ":R:" + xlsResults.color.getRed() + ":G:" + xlsResults.color.getGreen()
 					+ ":B:" + xlsResults.color.getBlue());

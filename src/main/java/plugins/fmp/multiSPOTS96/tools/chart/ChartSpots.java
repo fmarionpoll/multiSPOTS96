@@ -246,7 +246,7 @@ public class ChartSpots extends IcyFrame {
 		spotFound.spotKymograph_T = index;
 		String spotName = spotFound.getRoi().getName();
 		Cage cage = exp.cagesArray.getCageFromSpotROIName(spotName);
-		System.out.println(description + "-- spot:" + spotName + " cage:" + cage.getCageRoi().getName());
+
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		Canvas2D canvas = (Canvas2D) v.getCanvas();
 		canvas.centerOn(cage.getCageRoi().getBounds());

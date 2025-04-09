@@ -17,7 +17,7 @@ public class SpotTable extends JTable {
 	 */
 	private static final long serialVersionUID = 1L;
 	public SpotTableModel tableModelSpot = null;
-	// Table Default Colors
+
 	Color cellsOrigBackColor;
 	Color cellsOrigForeColor;
 

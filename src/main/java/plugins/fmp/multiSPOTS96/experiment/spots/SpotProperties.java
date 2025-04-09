@@ -17,7 +17,7 @@ public class SpotProperties {
 	public int cageID = -1;
 	public int cagePosition = 0;
 	public int spotArrayIndex = -1;
-	public Color spotColor = spotColors[0];
+	public Color spotColor = Color.GREEN;
 
 	// public int spotNFlies = 1;
 	public String spotStim = new String("..");
@@ -47,9 +47,6 @@ public class SpotProperties {
 	private final String ID_COLOR_R = "spotColor_R";
 	private final String ID_COLOR_G = "spotColor_G";
 	private final String ID_COLOR_B = "spotColor_B";
-
-	static final Color[] spotColors = new Color[] { Color.GREEN, Color.RED, Color.CYAN, Color.YELLOW, Color.MAGENTA,
-			Color.ORANGE, Color.PINK, Color.GRAY };
 
 	public void copy(SpotProperties propFrom) {
 		spotVolume = propFrom.spotVolume;

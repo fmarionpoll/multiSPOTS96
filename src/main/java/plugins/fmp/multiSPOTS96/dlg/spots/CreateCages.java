@@ -223,7 +223,7 @@ public class CreateCages extends JPanel {
 			for (int column = 0; column < ncolumns; column++) {
 				ROI2DPolygon roiP = createRoiPolygon(grid, column, row, width_interval, height_interval);
 				roiP.setName(cageRoot + String.format("%03d", index));
-				roiP.setColor(Color.magenta); //Color.yellow);
+				roiP.setColor(Color.magenta);
 
 				Cage cage = new Cage(roiP);
 				cage.prop.cageID = index;

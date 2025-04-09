@@ -61,22 +61,22 @@ public class ROI2DGrid implements ROIListener {
 	public ArrayList<ROI2DPolygonPlus> getAreaRois() {
 		return areaRois;
 	}
-	
+
 	public ArrayList<ROI2DPolygonPlus> getSelectedAreaRois() {
 		ArrayList<ROI2DPolygonPlus> listCarres = new ArrayList<ROI2DPolygonPlus>(areaRois.size());
-		for (ROI2DPolygonPlus roiP: areaRois) {
+		for (ROI2DPolygonPlus roiP : areaRois) {
 			if (roiP.isSelected)
 				listCarres.add(roiP);
 		}
 		return listCarres;
 	}
-	
+
 	public ROI2DPolygonPlus getAreaAt(int position) {
-		ROI2DPolygonPlus roiP = areaRois.get(position); 
+		ROI2DPolygonPlus roiP = areaRois.get(position);
 		int pos = roiP.cagePosition;
 		if (pos != position) {
 			roiP = null;
-			for (ROI2DPolygonPlus roi: areaRois) {
+			for (ROI2DPolygonPlus roi : areaRois) {
 				if (roi.cagePosition == position) {
 					roiP = roi;
 					break;
@@ -99,8 +99,7 @@ public class ROI2DGrid implements ROIListener {
 			seq.removeROIs(areaRois, false);
 	}
 
-	public void gridToRois(String cageRoot, Color color, int width_interval,
-			int height_interval) {
+	public void gridToRois(String cageRoot, Color color, int width_interval, int height_interval) {
 
 		areaRois = new ArrayList<ROI2DPolygonPlus>(grid_n_columns * grid_n_rows);
 		int index = 0;
@@ -255,8 +254,6 @@ public class ROI2DGrid implements ROIListener {
 				index = 0;
 			}
 
-			// System.out.println(roi.getName() + " : " +index+ " ___" + event.getType() + "
-			// __ " + event.getPropertyName());
 			allowUpdate = false;
 			if (name.contains("row")) {
 				updateGridFromHorizontalROI(index, (ROI2DPolyLine) roi);

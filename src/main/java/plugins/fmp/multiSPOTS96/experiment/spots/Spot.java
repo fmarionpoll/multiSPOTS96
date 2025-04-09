@@ -1,6 +1,5 @@
 package plugins.fmp.multiSPOTS96.experiment.spots;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -96,11 +95,6 @@ public class Spot implements Comparable<Spot> {
 	public void setRoi(ROI2DShape roi) {
 		this.spotROI2D = roi;
 		listRoiAlongT.clear();
-	}
-
-	public void setRoi_ColorAccordingToSpotIndex(int index) {
-		Color value = SpotProperties.spotColors[index % 8];
-		spotROI2D.setColor(value);
 	}
 
 	public String getCagePosition(EnumXLSExportType xlsExportOption) {
@@ -249,7 +243,6 @@ public class Spot implements Comparable<Spot> {
 		if (flag) {
 			prop.loadFromXML(node);
 			spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
-			// setRoi_ColorAccordingToSpotIndex(prop.cagePosition);
 			spotROI2D.setColor(prop.spotColor);
 			limitsOptions.loadFromXML(nodeMeta);
 
