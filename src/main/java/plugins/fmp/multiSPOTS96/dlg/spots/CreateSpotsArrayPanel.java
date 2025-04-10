@@ -14,7 +14,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 
 // https://www.youtube.com/watch?v=VlmyTOvvuJc
 
-public class SpotsDefinitionArrayPanel extends JPanel implements ActionListener {
+public class CreateSpotsArrayPanel extends JPanel implements ActionListener {
 	/**
 	 * 
 	 */

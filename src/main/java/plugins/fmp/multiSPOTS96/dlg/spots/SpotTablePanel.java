@@ -96,7 +96,6 @@ public class SpotTablePanel extends JPanel {
 					SpotsArray spotsArray = exp.cagesArray.getAllSpotsArray();
 					allSpotsCopy.pasteSpotsInfos(spotsArray);
 				}
-				jTable.tableModelSpot.fireTableDataChanged();
 			}
 		});
 
@@ -104,10 +103,8 @@ public class SpotTablePanel extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) {
+				if (exp != null) 
 					setSpotsNPixels(exp);
-					jTable.tableModelSpot.fireTableDataChanged();
-				}
 			}
 		});
 
@@ -147,7 +144,7 @@ public class SpotTablePanel extends JPanel {
 				}
 			}
 		});
-
+		jTable.tableModelSpot.fireTableDataChanged();
 	}
 
 	void close() {

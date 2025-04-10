@@ -45,7 +45,7 @@ public class CreateSpots extends JPanel {
 	private ROI2DGrid roiGrid = null;
 	private Point2D.Double referencePosition = null;
 	
-	private SpotsDefinitionArrayPanel spotsPanel = null;
+	private CreateSpotsArrayPanel spotsPanel = null;
 
 	// ----------------------------------------------------------
 
@@ -90,7 +90,7 @@ public class CreateSpots extends JPanel {
 					zoomCage(exp, cagenb);
 					
 					if (spotsPanel == null) {
-						spotsPanel = new SpotsDefinitionArrayPanel();
+						spotsPanel = new CreateSpotsArrayPanel();
 						int n_columns = (int) nColumnsCombo.getSelectedItem();
 						int n_rows = (int) nRowsCombo.getSelectedItem();
 						spotsPanel.initialize(parent0, n_columns, n_rows);
