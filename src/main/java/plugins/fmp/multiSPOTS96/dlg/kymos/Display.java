@@ -237,7 +237,7 @@ public class Display extends JPanel implements ViewerListener {
 				int isel = seqKymographs.currentFrame;
 				isel = selectKymographImage(isel);
 				selectKymographComboItem(isel);
-				canvas.selectImageTransformFunctionStep2(2);
+				// canvas.selectImageTransformFunctionStep2(2);
 
 				String title = kymographsCombo.getItemAt(0);
 				v.setTitle(title);
