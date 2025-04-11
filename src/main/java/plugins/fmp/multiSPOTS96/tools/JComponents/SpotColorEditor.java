@@ -33,8 +33,7 @@ public class SpotColorEditor extends AbstractCellEditor implements TableCellRend
 		// Set up the dialog that the button brings up.
 		colorChooser = new JColorChooser();
 		dialog = JColorChooser.createDialog(button, "Pick a Color", true, // modal
-				colorChooser, 
-				this, // OK button handler
+				colorChooser, this, // OK button handler
 				null); // no CANCEL button handler
 	}
 
