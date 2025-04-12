@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.experiment.cages;
+package plugins.fmp.multiSPOTS96.dlg.spots;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -16,8 +16,12 @@ import javax.swing.table.TableColumnModel;
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.cages.CageTable;
+import plugins.fmp.multiSPOTS96.experiment.cages.CageTableModel;
+import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 
-public class CageTablePanel extends JPanel {
+public class InfosCageTable extends JPanel {
 	/**
 	 * 
 	 */

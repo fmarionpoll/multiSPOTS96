@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.cages.CageTablePanel;
 
 public class Infos extends JPanel {
 	/**
@@ -20,8 +19,8 @@ public class Infos extends JPanel {
 
 	private JButton editCagesButton = new JButton("Edit cages infos...");
 	private JButton editSpotsButton = new JButton("Edit spots infos...");
-	private CageTablePanel infosCageTable = null;
-	private SpotTablePanel infosSpotTable = null;
+	private InfosCageTable infosCageTable = null;
+	private InfosSpotTable infosSpotTable = null;
 //	private JSpinner nFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
 //	private String[] flyString = new String[] { "fly", "flies" };
 //	private JLabel flyLabel = new JLabel(flyString[0]);
@@ -77,7 +76,7 @@ public class Infos extends JPanel {
 					if (infosCageTable != null) {
 						infosCageTable.close();
 					}
-					infosCageTable = new CageTablePanel();
+					infosCageTable = new InfosCageTable();
 					infosCageTable.initialize(parent0);
 					infosCageTable.requestFocus();
 				}
@@ -92,7 +91,7 @@ public class Infos extends JPanel {
 					if (infosSpotTable != null) {
 						infosSpotTable.close();
 					}
-					infosSpotTable = new SpotTablePanel();
+					infosSpotTable = new InfosSpotTable();
 					infosSpotTable.initialize(parent0);
 					infosSpotTable.requestFocus();
 				}

@@ -19,7 +19,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotTable;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 
-public class SpotTablePanel extends JPanel {
+public class InfosSpotTable extends JPanel {
 	/**
 	 * 
 	 */
