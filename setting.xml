@@ -78,7 +78,7 @@
 <key name="lastUpdateCheckTime" value="1744470484859"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
-<key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\2025-04-08sucrose avec et sans agar cam multispot 10 cages"/>
+<key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\2025-04-10"/>
 </section>
 <section name="canvas">
 <section name="Canvas2D">
@@ -170,14 +170,14 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="727"/>
+<key name="XE" value="774"/>
 <key name="YE" value="63"/>
-<key name="WidthE" value="2166"/>
+<key name="WidthE" value="2330"/>
 <key name="HeightE" value="1288"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1858"/>
+<key name="XC" value="2022"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
