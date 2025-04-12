@@ -30,8 +30,6 @@ public class SpotTableModel extends AbstractTableModel {
 		int count = 0;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();
-//			count =  exp.cagesArray.cagesList.size() * (exp.cagesArray.nColumnsPerCage * exp.cagesArray.nRowsPerCage);
-//			System.out.println("n spots ="+ count);
 			count = exp.cagesArray.getTotalNumberOfSpots();
 		}
 		return count;

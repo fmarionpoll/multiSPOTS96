@@ -162,7 +162,7 @@
 <section name="multiSPOTS96">
 <section name="MultiSPOTS96">
 <section name="gui">
-<key name="lastUsedPath" value="C:\Users\fred\Desktop\essai multispots plaques 96\2025-04-08sucrose avec et sans agar cam multispot 10 cages"/>
+<key name="lastUsedPath" value="C:\Users\fred\Desktop\essai multispots plaques 96"/>
 </section>
 </section>
 </section>
@@ -170,14 +170,14 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="774"/>
+<key name="XE" value="257"/>
 <key name="YE" value="63"/>
-<key name="WidthE" value="2330"/>
+<key name="WidthE" value="2847"/>
 <key name="HeightE" value="1288"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="2022"/>
+<key name="XC" value="2539"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
