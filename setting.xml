@@ -155,7 +155,7 @@
 <section name="gui.histo">
 <key name="logView" value="true"/>
 </section>
-<key name="lastUploadDate" value="1744470482921"/>
+<key name="lastUploadDate" value="1744564051764"/>
 </section>
 <section name="plugins">
 <section name="fmp">
@@ -170,21 +170,21 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="257"/>
-<key name="YE" value="63"/>
-<key name="WidthE" value="2847"/>
-<key name="HeightE" value="1288"/>
+<key name="XE" value="3447"/>
+<key name="YE" value="13"/>
+<key name="WidthE" value="1755"/>
+<key name="HeightE" value="1123"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="2269"/>
+<key name="XC" value="1447"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
-<key name="WidthC" value="570"/>
-<key name="HeightC" value="1126"/>
+<key name="WidthC" value="300"/>
+<key name="HeightC" value="961"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -201,8 +201,8 @@
 <key name="YE" value="100"/>
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
-<key name="WidthC" value="562"/>
-<key name="HeightC" value="1036"/>
+<key name="WidthC" value="292"/>
+<key name="HeightC" value="871"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -219,8 +219,8 @@
 <key name="YE" value="200"/>
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
-<key name="WidthC" value="562"/>
-<key name="HeightC" value="1036"/>
+<key name="WidthC" value="292"/>
+<key name="HeightC" value="871"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>

@@ -27,7 +27,7 @@ public class InfosCageTable extends JPanel {
 	 */
 	private static final long serialVersionUID = 7599620793495187279L;
 	IcyFrame dialogFrame = null;
-	private CageTable jTable = null;
+	private CageTable cageTable = null;
 	private CageTableModel viewModel = null;
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
@@ -41,14 +41,14 @@ public class InfosCageTable extends JPanel {
 		this.parent0 = parent0;
 
 		viewModel = new CageTableModel(parent0.expListCombo);
-		jTable = new CageTable(parent0);
-		jTable.setModel(viewModel);
-		jTable.setPreferredScrollableViewportSize(new Dimension(500, 400));
-		jTable.setFillsViewportHeight(true);
-		TableColumnModel columnModel = jTable.getColumnModel();
+		cageTable = new CageTable(parent0);
+		cageTable.setModel(viewModel);
+		cageTable.setPreferredScrollableViewportSize(new Dimension(500, 400));
+		cageTable.setFillsViewportHeight(true);
+		TableColumnModel columnModel = cageTable.getColumnModel();
 		for (int i = 0; i < 2; i++)
 			setFixedColumnProperties(columnModel.getColumn(i));
-		JScrollPane scrollPane = new JScrollPane(jTable);
+		JScrollPane scrollPane = new JScrollPane(cageTable);
 
 		JPanel topPanel = new JPanel(new GridLayout(2, 1));
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
@@ -114,8 +114,8 @@ public class InfosCageTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					int rowIndex = jTable.getSelectedRow();
-					int columnIndex = jTable.getSelectedColumn();
+					int rowIndex = cageTable.getSelectedRow();
+					int columnIndex = cageTable.getSelectedColumn();
 					if (rowIndex >= 0) {
 						Cage cage0 = exp.cagesArray.cagesList.get(rowIndex);
 						for (Cage cage : exp.cagesArray.cagesList) {
@@ -162,6 +162,17 @@ public class InfosCageTable extends JPanel {
 		column.setPreferredWidth(50);
 		column.setMaxWidth(50);
 		column.setMinWidth(30);
+	}
+
+	public void selectRowFromRoiName(String roiName) {
+		int nrows = cageTable.getRowCount();
+		for (int row_index = 0; row_index < nrows; row_index++) {
+			String colname = (String) cageTable.getModel().getValueAt(row_index, 0);
+			if (colname.equals(roiName)) {
+				cageTable.setRowSelectionInterval(row_index, row_index);
+				return;
+			}
+		}
 	}
 
 }

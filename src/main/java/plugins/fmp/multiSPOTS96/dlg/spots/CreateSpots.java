@@ -3,7 +3,6 @@ package plugins.fmp.multiSPOTS96.dlg.spots;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -16,8 +15,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import icy.canvas.Canvas2D;
-import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
@@ -44,7 +41,7 @@ public class CreateSpots extends JPanel {
 	private MultiSPOTS96 parent0 = null;
 	private ROI2DGrid roiGrid = null;
 	private Point2D.Double referencePosition = null;
-	
+
 	private CreateSpotsArrayPanel spotsPanel = null;
 
 	// ----------------------------------------------------------
@@ -86,9 +83,11 @@ public class CreateSpots extends JPanel {
 				if (exp != null) {
 					exp.seqCamData.removeROIsContainingString("carre");
 					exp.seqCamData.removeROIsContainingString("spot");
-					int cagenb = findSelectedCage(exp);
-					zoomCage(exp, cagenb);
-					
+					Cage cageFound = exp.cagesArray.findFirstSelectedCage();
+					exp.seqCamData.centerOnRoi(cageFound.getCageRoi());
+					if (cageFound != null)
+						changeGrid(exp, cageFound);
+
 					if (spotsPanel == null) {
 						spotsPanel = new CreateSpotsArrayPanel();
 						int n_columns = (int) nColumnsCombo.getSelectedItem();
@@ -156,33 +155,10 @@ public class CreateSpots extends JPanel {
 		}
 	}
 
-	int findSelectedCage(Experiment exp) {
-		int selectedCage = 0;
-		for (Cage cage : exp.cagesArray.cagesList) {
-			ROI2D roi = cage.getCageRoi();
-			if (roi.isSelected()) {
-				selectedCage = cage.getCageNumberInteger();
-				break;
-			}
-		}
-		return selectedCage;
-	}
-
-	void zoomCage(Experiment exp, int cagenb) {
-		Cage cage = exp.cagesArray.getCageFromNumber(cagenb);
-		if (cage == null)
-			return;
-
-		ROI2D roiCage = cage.getCageRoi();
-		referencePosition = (Double) roiCage.getPosition2D();
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
-		Canvas2D canvas = (Canvas2D) v.getCanvas();
-		Rectangle rect = roiCage.getBounds();
-		canvas.centerOn(rect);
-
+	void changeGrid(Experiment exp, Cage cage) {
 		if (roiGrid != null)
 			roiGrid.clearGridRois(exp.seqCamData.seq);
-		roiGrid = createGrid(roiCage);
+		roiGrid = createGrid(cage.getCageRoi());
 		exp.seqCamData.seq.addROIs(roiGrid.getAreaRois(), false);
 	}
 

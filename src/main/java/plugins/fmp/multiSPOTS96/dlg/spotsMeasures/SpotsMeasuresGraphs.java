@@ -14,9 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import icy.canvas.Canvas2D;
 import icy.gui.viewer.Viewer;
-import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
@@ -156,10 +154,11 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 			xlsExportOptions.cageIndexFirst = 0;
 			xlsExportOptions.cageIndexLast = exp.cagesArray.cagesList.size() - 1;
 		} else {
-			String cageName = findSelectedCage(exp);
-			if (cageName == null)
+			Cage cageFound = exp.cagesArray.findFirstSelectedCage();
+			if (cageFound == null)
 				return null;
-			String cageNumber = CageString.getCageNumberFromCageRoiName(cageName);
+			exp.seqCamData.centerOnRoi(cageFound.getCageRoi());
+			String cageNumber = CageString.getCageNumberFromCageRoiName(cageFound.getCageRoi().getName());
 			xlsExportOptions.cageIndexFirst = Integer.parseInt(cageNumber);
 			xlsExportOptions.cageIndexLast = xlsExportOptions.cageIndexFirst;
 		}
@@ -172,24 +171,6 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 		iChart.mainChartFrame.toFront();
 		iChart.mainChartFrame.requestFocus();
 		return iChart;
-	}
-
-	private String findSelectedCage(Experiment exp) {
-		for (Cage cage : exp.cagesArray.cagesList) {
-			ROI2D roi = cage.getCageRoi();
-			if (roi.isSelected()) {
-				centerViewOnSelectedRoi(exp, roi);
-				return roi.getName();
-			}
-		}
-		return null;
-	}
-
-	private void centerViewOnSelectedRoi(Experiment exp, ROI2D roi) {
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
-		Canvas2D canvas = (Canvas2D) v.getCanvas();
-		Rectangle rect = roi.getBounds();
-		canvas.centerOn(rect);
 	}
 
 	public void closeAllCharts() {

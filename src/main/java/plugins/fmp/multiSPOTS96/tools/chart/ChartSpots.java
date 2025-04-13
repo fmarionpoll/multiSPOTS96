@@ -141,9 +141,9 @@ public class ChartSpots extends IcyFrame {
 				panel.addChartMouseListener(new ChartMouseListener() {
 					public void chartMouseClicked(ChartMouseEvent e) {
 						Spot clickedSpot = getClickedSpot(e);
-						selectSpot(exp, clickedSpot);
-						selectT(exp, xlsExportOptions, clickedSpot);
-						selectKymograph(exp, clickedSpot);
+						if (clickedSpot != null) {
+							selectClickedSpot(exp, xlsExportOptions, clickedSpot);
+						}
 					}
 
 					public void chartMouseMoved(ChartMouseEvent e) {
@@ -233,7 +233,7 @@ public class ChartSpots extends IcyFrame {
 
 		} else if (subplotindex >= 0) {
 			XYDataset xyDataset = subplots.get(subplotindex).getDataset(0);
-			description = (String) xyDataset.getSeriesKey(0); // TODO check
+			description = (String) xyDataset.getSeriesKey(0);
 
 			spotFound = exp.cagesArray.getSpotFromROIName(description);
 		} else {
@@ -243,11 +243,6 @@ public class ChartSpots extends IcyFrame {
 
 		int index = SpotString.getSpotArrayIndexFromSpotName(description);
 		spotFound.spotKymograph_T = index;
-		String spotName = spotFound.getRoi().getName();
-		Cage cage = exp.cagesArray.getCageFromSpotROIName(spotName);
-		exp.seqCamData.centerOnRoi(cage.getCageRoi());
-		exp.seqCamData.seq.setSelectedROI(spotFound.getRoi());
-
 		return spotFound;
 	}
 
@@ -272,6 +267,18 @@ public class ChartSpots extends IcyFrame {
 				v.setPositionT(spot.spotKymograph_T);
 			}
 		}
+	}
+
+	private void selectClickedSpot(Experiment exp, XLSExportOptions xlsExportOptions, Spot clickedSpot) {
+		selectSpot(exp, clickedSpot);
+		selectT(exp, xlsExportOptions, clickedSpot);
+		selectKymograph(exp, clickedSpot);
+		exp.seqCamData.seq.setSelectedROI(clickedSpot.getRoi());
+
+		String spotName = clickedSpot.getRoi().getName();
+		Cage cage = exp.cagesArray.getCageFromSpotROIName(spotName);
+		ROI2D cageRoi = cage.getCageRoi();
+		exp.seqCamData.centerOnRoi(cageRoi);
 	}
 
 }

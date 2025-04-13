@@ -371,6 +371,18 @@ public class CagesArray {
 		return cage_found;
 	}
 
+	public Cage findFirstSelectedCage() {
+		Cage cageFound = null;
+		for (Cage cage : cagesList) {
+			ROI2D roi = cage.getCageRoi();
+			if (roi.isSelected()) {
+				cageFound = cage;
+				break;
+			}
+		}
+		return cageFound;
+	}
+
 	// --------------
 
 	public void transferCagesToSequenceAsROIs(SequenceCamData seqCamData) {
