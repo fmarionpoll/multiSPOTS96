@@ -377,8 +377,10 @@ public class SequenceCamData {
 
 	public void centerOnRoi(ROI2D roi) {
 		Viewer v = seq.getFirstViewer();
-		Canvas2D canvas = (Canvas2D) v.getCanvas();
-		canvas.centerOn(roi.getBounds());
+		if (v != null) {
+			Canvas2D canvas = (Canvas2D) v.getCanvas();
+			canvas.centerOn(roi.getBounds());
+		}
 	}
 
 	public void selectRoi(ROI2D roi, boolean select) {

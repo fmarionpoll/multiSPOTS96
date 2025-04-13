@@ -31,6 +31,9 @@ public class TableCellColorRenderer extends JLabel implements TableCellRenderer 
 	public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus,
 			int row, int column) {
 		Color newColor = (Color) color;
+		if (color == null)
+			return null;
+
 		setBackground(newColor);
 		if (isBordered) {
 			if (isSelected) {
