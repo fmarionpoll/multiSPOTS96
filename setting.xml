@@ -78,7 +78,7 @@
 <key name="lastUpdateCheckTime" value="1744621093026"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
-<key name="loaderFolder" value="\\comportement-egce.ideev.universite-paris-saclay.fr\MultiCAFE\2025 Beatrice\essai multispots  plaques 96\2025-04-11"/>
+<key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\2025-04-11"/>
 </section>
 <section name="canvas">
 <section name="Canvas2D">
@@ -98,10 +98,10 @@
 </section>
 <section name="online"/>
 </section>
-<key name="id" value="89539325"/>
+<key name="id" value="145338316"/>
 <key name="os" value="win64"/>
-<key name="clientCpuNumber" value="20"/>
-<key name="clientTotalMemory" value="34078789632"/>
+<key name="clientCpuNumber" value="16"/>
+<key name="clientTotalMemory" value="67880230912"/>
 <key name="appFolder" value="C:/Users/fred/.m2/repository/org/bioimageanalysis/icy/icy-kernel/2.5.1"/>
 <section name="loader">
 <section name="entry0">
@@ -170,14 +170,14 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="238"/>
-<key name="YE" value="101"/>
-<key name="WidthE" value="2143"/>
+<key name="XE" value="3522"/>
+<key name="YE" value="12"/>
+<key name="WidthE" value="1752"/>
 <key name="HeightE" value="1123"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1835"/>
+<key name="XC" value="1444"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>

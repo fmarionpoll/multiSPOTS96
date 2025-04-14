@@ -585,31 +585,31 @@ public class CagesArray {
 		List<ROI2D> listSeqRois = seqCamData.getROIsContainingString("spot");
 		Collections.sort(listSeqRois, new Comparators.ROI_Name_Comparator());
 		for (Cage cage : cagesList) {
-			
+
 			Iterator<Spot> iteratorSpots = cage.spotsArray.spotsList.iterator();
-			while (iteratorSpots.hasNext()) { 
+			while (iteratorSpots.hasNext()) {
 				Spot spot = iteratorSpots.next();
 				String spotRoiName = spot.getRoi().getName();
-				spot.valid = false;
-				
+				boolean found = false;
+
 				Iterator<ROI2D> iteratorSeqRois = listSeqRois.iterator();
 				while (iteratorSeqRois.hasNext()) {
 					ROI2D roi = iteratorSeqRois.next();
 					String roiName = roi.getName();
 					if (roiName.equals(spotRoiName)) {
 						spot.setRoi((ROI2DShape) roi);
-						spot.valid = true;
+						found = true;
 						iteratorSeqRois.remove();
 						break;
 					}
 				}
-				
-				if (!spot.valid)
+
+				if (!found)
 					iteratorSpots.remove();
 			}
 		}
 	}
-	
+
 	public Spot getSpotFromROIName(String name) {
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
