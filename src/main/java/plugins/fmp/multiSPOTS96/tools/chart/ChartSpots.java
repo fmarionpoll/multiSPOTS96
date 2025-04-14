@@ -45,12 +45,12 @@ public class ChartSpots extends IcyFrame {
 	int nPanelsAlongX = 1;
 	int nPanelsAlongY = 1;
 
-	ChartPanel[][] panelHolder = null;
+	ChartPanel[][] chartPanelArray = null;
 	Experiment exp = null;
 
 	// ----------------------------------------
 
-	public void createSpotsChartPanel2(String title, Experiment exp, XLSExportOptions xlsExportOptions) {
+	public void createPanel(String title, Experiment exp, XLSExportOptions xlsExportOptions) {
 		mainChartPanel = new JPanel();
 		nPanelsAlongX = exp.cagesArray.nCagesAlongX;
 		nPanelsAlongY = exp.cagesArray.nCagesAlongY;
@@ -62,7 +62,7 @@ public class ChartSpots extends IcyFrame {
 		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(), new Dimension(300, 70), true, true, true,
 				true);
 		mainChartFrame.add(mainChartPanel);
-		panelHolder = new ChartPanel[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
+		chartPanelArray = new ChartPanel[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
 	}
 
 	private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions xlsExportOptions) {
@@ -150,7 +150,7 @@ public class ChartSpots extends IcyFrame {
 					}
 				});
 
-				panelHolder[row][col] = panel;
+				chartPanelArray[row][col] = panel;
 				index_cage++;
 			}
 		}
@@ -159,11 +159,11 @@ public class ChartSpots extends IcyFrame {
 			int indexCage = xlsExportOptions.cageIndexFirst;
 			int irow = indexCage / exp.cagesArray.nCagesAlongX;
 			int icol = indexCage % exp.cagesArray.nCagesAlongX;
-			mainChartPanel.add(panelHolder[irow][icol]);
+			mainChartPanel.add(chartPanelArray[irow][icol]);
 		} else {
 			for (int row = 0; row < nPanelsAlongY; row++) {
 				for (int col = 0; col < nPanelsAlongX; col++) {
-					JPanel chartPanel = panelHolder[row][col];
+					JPanel chartPanel = chartPanelArray[row][col];
 					if (chartPanel == null)
 						chartPanel = new JPanel();
 					mainChartPanel.add(chartPanel);
@@ -202,7 +202,7 @@ public class ChartSpots extends IcyFrame {
 		int row = Integer.valueOf(chartID[1]);
 		int col = Integer.valueOf(chartID[3]);
 
-		ChartPanel panel = panelHolder[row][col];
+		ChartPanel panel = chartPanelArray[row][col];
 		PlotRenderingInfo plotInfo = panel.getChartRenderingInfo().getPlotInfo();
 		Point2D pointClicked = panel.translateScreenToJava2D(mouseEvent.getPoint());
 
