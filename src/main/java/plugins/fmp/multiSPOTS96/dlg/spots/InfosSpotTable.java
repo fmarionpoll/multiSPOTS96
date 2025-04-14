@@ -25,7 +25,7 @@ public class InfosSpotTable extends JPanel {
 	 */
 	private static final long serialVersionUID = -8611587540329642259L;
 	IcyFrame dialogFrame = null;
-	private SpotTable jTable = null;
+	private SpotTable spotTable = null;
 
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
@@ -58,9 +58,8 @@ public class InfosSpotTable extends JPanel {
 		topPanel.add(panel2);
 
 		JPanel tablePanel = new JPanel();
-		jTable = new SpotTable(parent0);
-		JScrollPane scrollPane = new JScrollPane(jTable);
-		tablePanel.add(scrollPane);
+		spotTable = new SpotTable(parent0);
+		tablePanel.add(new JScrollPane(spotTable));
 
 		dialogFrame = new IcyFrame("Spots properties", true, true);
 		dialogFrame.add(topPanel, BorderLayout.NORTH);
@@ -144,7 +143,7 @@ public class InfosSpotTable extends JPanel {
 				}
 			}
 		});
-		jTable.tableModelSpot.fireTableDataChanged();
+		spotTable.spotTableModel.fireTableDataChanged();
 	}
 
 	void close() {
@@ -164,11 +163,11 @@ public class InfosSpotTable extends JPanel {
 	}
 
 	private void duplicatePos(Experiment exp) {
-		int rowIndex = jTable.getSelectedRow();
+		int rowIndex = spotTable.getSelectedRow();
 		if (rowIndex < 0)
 			return;
 
-		String spotName = (String) jTable.getValueAt(rowIndex, 0);
+		String spotName = (String) spotTable.getValueAt(rowIndex, 0);
 		Spot spotFrom = exp.cagesArray.getSpotFromROIName(spotName);
 		if (spotFrom == null) {
 			System.out.println("spot not found: " + spotName);
@@ -192,7 +191,7 @@ public class InfosSpotTable extends JPanel {
 	}
 
 	private void duplicatePreviousRow(Experiment exp) {
-		int rowTo = jTable.getSelectedRow();
+		int rowTo = spotTable.getSelectedRow();
 		if (rowTo < 0)
 			return;
 
@@ -200,14 +199,14 @@ public class InfosSpotTable extends JPanel {
 		if (rowFrom < 0)
 			return;
 
-		String spotName = (String) jTable.getValueAt(rowFrom, 0);
+		String spotName = (String) spotTable.getValueAt(rowFrom, 0);
 		Spot spotFrom = exp.cagesArray.getSpotFromROIName(spotName);
 		if (spotFrom == null) {
 			System.out.println("spot not found or invalid: " + spotName);
 			return;
 		}
 
-		spotName = (String) jTable.getValueAt(rowTo, 0);
+		spotName = (String) spotTable.getValueAt(rowTo, 0);
 		Spot spotTo = exp.cagesArray.getSpotFromROIName(spotName);
 		if (spotTo == null) {
 			System.out.println("spot not found or invalid: " + spotName);
@@ -221,8 +220,8 @@ public class InfosSpotTable extends JPanel {
 	}
 
 	private void duplicateAll(Experiment exp) {
-		int columnIndex = jTable.getSelectedColumn();
-		int rowIndex = jTable.getSelectedRow();
+		int columnIndex = spotTable.getSelectedColumn();
+		int rowIndex = spotTable.getSelectedRow();
 		if (rowIndex < 0)
 			return;
 
@@ -255,7 +254,7 @@ public class InfosSpotTable extends JPanel {
 	}
 
 	private void duplicateCage(Experiment exp) {
-		int rowIndex = jTable.getSelectedRow();
+		int rowIndex = spotTable.getSelectedRow();
 		if (rowIndex < 0)
 			return;
 

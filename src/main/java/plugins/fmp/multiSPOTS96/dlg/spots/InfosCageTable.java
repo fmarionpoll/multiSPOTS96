@@ -18,7 +18,6 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CageTable;
-import plugins.fmp.multiSPOTS96.experiment.cages.CageTableModel;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 
 public class InfosCageTable extends JPanel {
@@ -28,7 +27,6 @@ public class InfosCageTable extends JPanel {
 	private static final long serialVersionUID = 7599620793495187279L;
 	IcyFrame dialogFrame = null;
 	private CageTable cageTable = null;
-	private CageTableModel viewModel = null;
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
@@ -40,9 +38,7 @@ public class InfosCageTable extends JPanel {
 	public void initialize(MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
 
-		viewModel = new CageTableModel(parent0.expListCombo);
 		cageTable = new CageTable(parent0);
-		cageTable.setModel(viewModel);
 		cageTable.setPreferredScrollableViewportSize(new Dimension(500, 400));
 		cageTable.setFillsViewportHeight(true);
 		TableColumnModel columnModel = cageTable.getColumnModel();
@@ -104,7 +100,7 @@ public class InfosCageTable extends JPanel {
 							cageTo.prop.copy(cageFrom.prop);
 						}
 					}
-					viewModel.fireTableDataChanged();
+					cageTable.cageTableModel.fireTableDataChanged();
 				}
 			}
 		});

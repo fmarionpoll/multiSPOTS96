@@ -13,7 +13,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-public class SpotColorEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
+public class TableCellColorEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
 	/**
 	 * 
 	 */
@@ -24,7 +24,7 @@ public class SpotColorEditor extends AbstractCellEditor implements TableCellRend
 	JDialog dialog;
 	protected static final String EDIT = "edit";
 
-	public SpotColorEditor() {
+	public TableCellColorEditor() {
 		button = new JButton();
 		button.setActionCommand(EDIT);
 		button.addActionListener(this);

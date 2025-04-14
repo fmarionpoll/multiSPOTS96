@@ -8,8 +8,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotTableModel;
-import plugins.fmp.multiSPOTS96.tools.JComponents.SpotColorEditor;
+import plugins.fmp.multiSPOTS96.tools.JComponents.TableCellColorEditor;
 import plugins.fmp.multiSPOTS96.tools.JComponents.TableCellColorRenderer;
 
 public class CageTable extends JTable {
@@ -17,7 +16,7 @@ public class CageTable extends JTable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public SpotTableModel tableModelSpot = null;
+	public CageTableModel cageTableModel = null;
 
 	Color cellsOrigBackColor;
 	Color cellsOrigForeColor;
@@ -25,15 +24,15 @@ public class CageTable extends JTable {
 	public CageTable(MultiSPOTS96 parent0) {
 		cellsOrigBackColor = this.getBackground();
 		cellsOrigForeColor = this.getForeground();
-		tableModelSpot = new SpotTableModel(parent0.expListCombo);
-		setModel(tableModelSpot);
+		cageTableModel = new CageTableModel(parent0.expListCombo);
+		setModel(cageTableModel);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		setPreferredScrollableViewportSize(new Dimension(500, 400));
 		setFillsViewportHeight(true);
 
 		setDefaultRenderer(Color.class, new TableCellColorRenderer(true));
-		setDefaultEditor(Color.class, new SpotColorEditor());
+		setDefaultEditor(Color.class, new TableCellColorEditor());
 
 		TableColumnModel columnModel = getColumnModel();
 

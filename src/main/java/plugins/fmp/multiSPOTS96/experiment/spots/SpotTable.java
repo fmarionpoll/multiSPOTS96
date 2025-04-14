@@ -8,7 +8,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
-import plugins.fmp.multiSPOTS96.tools.JComponents.SpotColorEditor;
+import plugins.fmp.multiSPOTS96.tools.JComponents.TableCellColorEditor;
 import plugins.fmp.multiSPOTS96.tools.JComponents.TableCellColorRenderer;
 
 public class SpotTable extends JTable {
@@ -16,7 +16,7 @@ public class SpotTable extends JTable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public SpotTableModel tableModelSpot = null;
+	public SpotTableModel spotTableModel = null;
 
 	Color cellsOrigBackColor;
 	Color cellsOrigForeColor;
@@ -24,15 +24,15 @@ public class SpotTable extends JTable {
 	public SpotTable(MultiSPOTS96 parent0) {
 		cellsOrigBackColor = this.getBackground();
 		cellsOrigForeColor = this.getForeground();
-		tableModelSpot = new SpotTableModel(parent0.expListCombo);
-		setModel(tableModelSpot);
+		spotTableModel = new SpotTableModel(parent0.expListCombo);
+		setModel(spotTableModel);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		setPreferredScrollableViewportSize(new Dimension(500, 400));
 		setFillsViewportHeight(true);
 
 		setDefaultRenderer(Color.class, new TableCellColorRenderer(true));
-		setDefaultEditor(Color.class, new SpotColorEditor());
+		setDefaultEditor(Color.class, new TableCellColorEditor());
 
 		TableColumnModel columnModel = getColumnModel();
 
