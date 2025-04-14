@@ -84,9 +84,13 @@ public class CreateSpots extends JPanel {
 					exp.seqCamData.removeROIsContainingString("carre");
 					exp.seqCamData.removeROIsContainingString("spot");
 					Cage cageFound = exp.cagesArray.findFirstSelectedCage();
-					exp.seqCamData.centerOnRoi(cageFound.getCageRoi());
-					if (cageFound != null)
+					if (cageFound == null)
+						cageFound = exp.cagesArray.cagesList.get(0);
+					
+					if (cageFound != null) {
+						exp.seqCamData.centerOnRoi(cageFound.getCageRoi());
 						changeGrid(exp, cageFound);
+					}
 
 					if (spotsPanel == null) {
 						spotsPanel = new CreateSpotsArrayPanel();

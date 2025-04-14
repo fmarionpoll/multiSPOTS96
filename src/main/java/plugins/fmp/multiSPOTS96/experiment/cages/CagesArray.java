@@ -582,25 +582,34 @@ public class CagesArray {
 	}
 
 	public void transferROIsFromSequenceToCageSpots(SequenceCamData seqCamData) {
-		List<ROI2D> listROISSpot = seqCamData.getROIsContainingString("spot");
-		Collections.sort(listROISSpot, new Comparators.ROI_Name_Comparator());
-
-		for (ROI2D roi : listROISSpot) {
-			String roiName = roi.getName();
-			if (roi instanceof ROI2DShape) {
-				for (Cage cage : cagesList) {
-					for (Spot spot : cage.spotsArray.spotsList) {
-						String spotRoiName = spot.getRoi().getName();
-						if (roiName.equals(spotRoiName)) {
-							spot.setRoi((ROI2DShape) roi);
-							spot.valid = true;
-						}
+		List<ROI2D> listSeqRois = seqCamData.getROIsContainingString("spot");
+		Collections.sort(listSeqRois, new Comparators.ROI_Name_Comparator());
+		for (Cage cage : cagesList) {
+			
+			Iterator<Spot> iteratorSpots = cage.spotsArray.spotsList.iterator();
+			while (iteratorSpots.hasNext()) { 
+				Spot spot = iteratorSpots.next();
+				String spotRoiName = spot.getRoi().getName();
+				spot.valid = false;
+				
+				Iterator<ROI2D> iteratorSeqRois = listSeqRois.iterator();
+				while (iteratorSeqRois.hasNext()) {
+					ROI2D roi = iteratorSeqRois.next();
+					String roiName = roi.getName();
+					if (roiName.equals(spotRoiName)) {
+						spot.setRoi((ROI2DShape) roi);
+						spot.valid = true;
+						iteratorSeqRois.remove();
+						break;
 					}
 				}
+				
+				if (!spot.valid)
+					iteratorSpots.remove();
 			}
 		}
 	}
-
+	
 	public Spot getSpotFromROIName(String name) {
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {

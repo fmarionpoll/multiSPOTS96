@@ -47,14 +47,12 @@ public class OverlayTrapMouse extends Overlay {
 
 	@Override
 	public void mouseClick(MouseEvent e, Point5D.Double imagePoint, IcyCanvas canvas) {
-		// check if we are dealing with a 2D canvas and we have a valid image position
 		if ((canvas instanceof IcyCanvas2D) && (imagePoint != null))
 			onMouseClicked(canvas.getSequence(), canvas.getPositionT(), imagePoint);
 	}
 
 	@Override
 	public void mouseMove(MouseEvent e, Point5D.Double imagePoint, IcyCanvas canvas) {
-		// check if we are dealing with a 2D canvas and we have a valid image position
 		if ((canvas instanceof IcyCanvas2D) && (imagePoint != null))
 			onMouseMoved(canvas.getSequence(), canvas.getPositionT(), imagePoint);
 	}

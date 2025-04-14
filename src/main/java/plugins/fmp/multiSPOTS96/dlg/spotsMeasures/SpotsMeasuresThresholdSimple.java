@@ -23,14 +23,14 @@ import javax.swing.event.ChangeListener;
 import icy.util.StringUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.series.BuildSpotsMeasures;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
-import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
+
 
 public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChangeListener {
-
 	/**
 	 * 
 	 */
@@ -63,7 +63,6 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 	private JComboBox<String> fliesDirectionComboBox = new JComboBox<String>(directions);
 	private JSpinner fliesThresholdSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 255, 1));
 
-	private OverlayThreshold overlayThreshold = null;
 	private BuildSpotsMeasures threadDetectLevels = null;
 	private MultiSPOTS96 parent0 = null;
 
@@ -111,10 +110,10 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					if (spotsOverlayCheckBox.isSelected()) {
-						updateOverlay(exp);
-						updateOverlayThreshold();
+						setOverlays(exp);
+						updateOverlaysThreshold();
 					} else
-						removeOverlay(exp);
+						removeOverlays(exp);
 				}
 			}
 		});
@@ -127,19 +126,8 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 					if (!viewButton1.isSelected()) 
 						viewButton1.setSelected(true);
 					int index = spotsTransformsComboBox.getSelectedIndex();
-					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer()
-							.getCanvas();
-					updateTransformFunctions1OfCanvas(canvas);
-
-					canvas.transformsComboStep1.setSelectedIndex(index + 1);
-					updateOverlayThreshold();
-
-					if (exp.seqKymos != null) {
-						Canvas2D_3Transforms canvasK = (Canvas2D_3Transforms) exp.seqKymos.seq.getFirstViewer()
-								.getCanvas();
-						updateTransformFunctions1OfCanvas(canvasK);
-						canvasK.transformsComboStep1.setSelectedIndex(index + 1);
-					}
+					updateCanvasFunctions(exp, index);
+					updateOverlaysThreshold();
 				}
 			}
 		});
@@ -156,7 +144,7 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 					if (!viewButton2.isSelected()) 
 						viewButton2.setSelected(true);
 					canvas.transformsComboStep1.setSelectedIndex(index + 1);
-					updateOverlayThreshold();
+					updateOverlaysThreshold();
 				}
 			}
 		});
@@ -164,26 +152,26 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 		spotsDirectionComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				updateOverlayThreshold();
+				updateOverlaysThreshold();
 			}
 		});
 
 		fliesDirectionComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				updateOverlayThreshold();
+				updateOverlaysThreshold();
 			}
 		});
 
 		spotsThresholdSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				updateOverlayThreshold();
+				updateOverlaysThreshold();
 			}
 		});
 
 		fliesThresholdSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				updateOverlayThreshold();
+				updateOverlaysThreshold();
 			}
 		});
 
@@ -216,25 +204,7 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 		});
 	}
 
-	void updateOverlay(Experiment exp) {
-		if (overlayThreshold == null)
-			overlayThreshold = new OverlayThreshold(exp.seqCamData.seq);
-		else {
-			exp.seqCamData.seq.removeOverlay(overlayThreshold);
-			overlayThreshold.setSequence(exp.seqCamData.seq);
-		}
-		exp.seqCamData.seq.addOverlay(overlayThreshold);
-	}
-
-	void removeOverlay(Experiment exp) {
-		if (exp.seqCamData != null && exp.seqCamData.seq != null)
-			exp.seqCamData.seq.removeOverlay(overlayThreshold);
-	}
-
-	void updateOverlayThreshold() {
-		if (overlayThreshold == null)
-			return;
-
+	void updateOverlaysThreshold() {
 		ImageTransformEnums transform = ImageTransformEnums.NONE;
 		boolean ifGreater = true;
 		int threshold = 0;
@@ -248,8 +218,14 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 			threshold = (int) fliesThresholdSpinner.getValue();
 			ifGreater = (fliesDirectionComboBox.getSelectedIndex() == 0);
 		}
-		overlayThreshold.setThresholdSingle(threshold, transform, ifGreater);
-		overlayThreshold.painterChanged();
+		
+		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		if (exp != null) {
+			if (exp.seqCamData != null) 
+				exp.seqCamData.updateOverlayThreshold(threshold, transform, ifGreater);
+			if (exp.seqKymos != null) 
+				exp.seqKymos.updateOverlayThreshold(threshold, transform, ifGreater);
+		}
 	}
 
 	void startDetection() {
@@ -305,22 +281,6 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 
 		return options;
 	}
-	
-	private void displayTransform1(Experiment exp) {
-		boolean displayCheckOverlay = false;
-		if (viewButton1.isSelected()) {
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
-			updateTransformFunctions1OfCanvas(canvas);
-			displayCheckOverlay = true;
-		} else {
-			removeOverlay(exp);
-			spotsOverlayCheckBox.setSelected(false);
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
-			canvas.transformsComboStep1.setSelectedIndex(0);
-
-		}
-		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
-	}
 
 	private void displayTransform2(Experiment exp) {
 		boolean displayCheckOverlay = false;
@@ -329,7 +289,7 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 			updateTransformFunctions2OfCanvas(canvas);
 			displayCheckOverlay = true;
 		} else {
-			removeOverlay(exp);
+			removeOverlays(exp);
 			spotsOverlayCheckBox.setSelected(false);
 			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
 			canvas.transformsComboStep1.setSelectedIndex(0);
@@ -338,6 +298,44 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
 	}
 
+	private void setOverlays(Experiment exp) {
+		if (exp.seqCamData != null) exp.seqCamData.updateOverlay();
+		if (exp.seqKymos != null) exp.seqKymos.updateOverlay();
+	}
+	
+	private void removeOverlays(Experiment exp) {
+		if (exp.seqCamData != null) exp.seqCamData.removeOverlay();
+		if (exp.seqKymos != null) exp.seqKymos.removeOverlay();
+	}
+	
+	private void updateCanvasFunctions(Experiment exp, int index) {
+		if (exp.seqCamData != null)
+			updateCanvasFunction(exp.seqCamData, index);		
+		if (exp.seqKymos != null)
+			updateCanvasFunction(exp.seqKymos, index);
+	}
+	
+	private void updateCanvasFunction(SequenceCamData seqCamData, int index) {
+		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) seqCamData.seq.getFirstViewer()
+				.getCanvas();
+		updateTransformFunctions1OfCanvas(canvas);
+		canvas.transformsComboStep1.setSelectedIndex(index + 1);
+	}
+	
+	private void displayTransform1(Experiment exp) {
+		int index = spotsTransformsComboBox.getSelectedIndex();
+		boolean displayCheckOverlay = false;
+		if (viewButton1.isSelected()) {
+			updateCanvasFunctions(exp, index);
+			displayCheckOverlay = true;
+		} else {
+			removeOverlays(exp);
+			spotsOverlayCheckBox.setSelected(false);
+			updateCanvasFunctions(exp, -1);
+		}
+		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
+	}
+	
 	private void updateTransformFunctions1OfCanvas(Canvas2D_3Transforms canvas) {
 		if (canvas.transformsComboStep1.getItemCount() < (spotsTransformsComboBox.getItemCount() + 1)) {
 			canvas.updateTransformsComboStep1(transforms);

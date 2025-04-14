@@ -36,10 +36,13 @@ import icy.roi.ROI2D;
 import icy.sequence.Sequence;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
+import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
+import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
 
 public class SequenceCamData {
 	public Sequence seq = null;
 	public IcyBufferedImage refImage = null;
+	public OverlayThreshold overlayThresholdCam = null;
 
 	public long seqAnalysisStart = 0;
 	public int seqAnalysisStep = 1;
@@ -386,5 +389,32 @@ public class SequenceCamData {
 	public void selectRoi(ROI2D roi, boolean select) {
 		seq.setSelectedROI(roi);
 	}
+	
+	// -------------------------
+	
+	public void updateOverlay() {
+		if (overlayThresholdCam == null)
+			overlayThresholdCam = new OverlayThreshold(seq);
+		else {
+			seq.removeOverlay(overlayThresholdCam);
+			overlayThresholdCam.setSequence(seq);
+		}
+		seq.addOverlay(overlayThresholdCam);
+	}
+	
+	public void removeOverlay() {
+		if (seq != null)
+			seq.removeOverlay(overlayThresholdCam);
+	}
+	
+	public void updateOverlayThreshold(int threshold , ImageTransformEnums transform, boolean ifGreater) {
+		if (overlayThresholdCam == null)
+			return;
+
+		overlayThresholdCam.setThresholdSingle(threshold, transform, ifGreater);
+		overlayThresholdCam.painterChanged();
+	}
+
+	
 
 }
