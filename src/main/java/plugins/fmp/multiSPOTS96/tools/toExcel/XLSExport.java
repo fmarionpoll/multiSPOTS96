@@ -395,10 +395,10 @@ public class XLSExport {
 		int nOutputFrames = (int) ((expi.seqCamData.binLast_ms - expi.seqCamData.binFirst_ms) / options.buildExcelStepMs
 				+ 1);
 		if (nOutputFrames <= 1) {
-			if (expi.seqSpotKymos.imageWidthMax == 0)
+			if (expi.seqKymos.imageWidthMax == 0)
 				expi.zloadKymographs();
 			expi.seqCamData.binLast_ms = expi.seqCamData.binFirst_ms
-					+ expi.seqSpotKymos.imageWidthMax * expi.seqCamData.binDuration_ms;
+					+ expi.seqKymos.imageWidthMax * expi.seqCamData.binDuration_ms;
 			if (expi.seqCamData.binLast_ms <= 0)
 				exportError(expi, -1);
 			nOutputFrames = (int) ((expi.seqCamData.binLast_ms - expi.seqCamData.binFirst_ms) / options.buildExcelStepMs

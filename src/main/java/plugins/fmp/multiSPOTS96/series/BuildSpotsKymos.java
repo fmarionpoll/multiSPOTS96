@@ -63,7 +63,7 @@ public class BuildSpotsKymos extends BuildSeries {
 
 		ProgressFrame progressBar = new ProgressFrame("Save kymographs");
 
-		int nframes = exp.seqSpotKymos.seq.getSizeT();
+		int nframes = exp.seqKymos.seq.getSizeT();
 		int nCPUs = SystemUtil.getNumberOfCPUs();
 		final Processor processor = new Processor(nCPUs);
 		processor.setThreadName("buildkymo2");
@@ -71,7 +71,7 @@ public class BuildSpotsKymos extends BuildSeries {
 		ArrayList<Future<?>> futuresArray = new ArrayList<Future<?>>(nframes);
 		futuresArray.clear();
 
-		for (int t = 0; t < exp.seqSpotKymos.seq.getSizeT(); t++) {
+		for (int t = 0; t < exp.seqKymos.seq.getSizeT(); t++) {
 			final int t_index = t;
 			futuresArray.add(processor.submit(new Runnable() {
 				@Override
@@ -80,7 +80,7 @@ public class BuildSpotsKymos extends BuildSeries {
 					String filename = directory + File.separator + spot.getRoi().getName() + ".tiff";
 
 					File file = new File(filename);
-					IcyBufferedImage image = exp.seqSpotKymos.getSeqImage(t_index, 0);
+					IcyBufferedImage image = exp.seqKymos.getSeqImage(t_index, 0);
 					try {
 						Saver.saveImage(image, file, true);
 					} catch (FormatException e) {
@@ -110,7 +110,7 @@ public class BuildSpotsKymos extends BuildSeries {
 		final int iiFirst = 0;
 		int iiLast = exp.seqCamData.fixedNumberOfImages > 0 ? (int) exp.seqCamData.fixedNumberOfImages
 				: exp.seqCamData.nTotalFrames;
-		final int iiDelta = (int) exp.seqSpotKymos.deltaImage;
+		final int iiDelta = (int) exp.seqKymos.deltaImage;
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack frame ");
 
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
@@ -184,7 +184,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private void exportSpotImages_to_Kymograph(Experiment exp, final int sizeC) {
-		Sequence seqKymo = exp.seqSpotKymos.seq;
+		Sequence seqKymo = exp.seqKymos.seq;
 		seqKymo.beginUpdate();
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("buildKymograph");
@@ -214,9 +214,9 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private void initArraysToBuildKymographImages(Experiment exp) {
-		if (exp.seqSpotKymos == null)
-			exp.seqSpotKymos = new SequenceKymos();
-		SequenceKymos seqKymos = exp.seqSpotKymos;
+		if (exp.seqKymos == null)
+			exp.seqKymos = new SequenceKymos();
+		SequenceKymos seqKymos = exp.seqKymos;
 		seqKymos.seq = new Sequence();
 
 		SequenceCamData seqCamData = exp.seqCamData;
@@ -262,7 +262,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	private void closeKymoViewers(Experiment exp) {
 		closeViewer(vData);
 		closeSequence(seqData);
-		exp.seqSpotKymos.closeSequence();
+		exp.seqKymos.closeSequence();
 	}
 
 	private void openKymoViewers(Experiment exp) {

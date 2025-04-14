@@ -34,7 +34,7 @@ public class Experiment {
 	private String binSubDirectory = null;
 
 	public SequenceCamData seqCamData = null;
-	public SequenceKymos seqSpotKymos = null;
+	public SequenceKymos seqKymos = null;
 	public Sequence seqReference = null;
 
 	public CagesArray cagesArray = new CagesArray();
@@ -77,18 +77,18 @@ public class Experiment {
 
 	public Experiment() {
 		seqCamData = new SequenceCamData();
-		seqSpotKymos = new SequenceKymos();
+		seqKymos = new SequenceKymos();
 	}
 
 	public Experiment(String expDirectory) {
 		seqCamData = new SequenceCamData();
-		seqSpotKymos = new SequenceKymos();
+		seqKymos = new SequenceKymos();
 		this.resultsDirectory = expDirectory;
 	}
 
 	public Experiment(SequenceCamData seqCamData) {
 		this.seqCamData = seqCamData;
-		this.seqSpotKymos = new SequenceKymos();
+		this.seqKymos = new SequenceKymos();
 		resultsDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
 		load_MS96_experiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML));
@@ -109,7 +109,7 @@ public class Experiment {
 			getFileIntervalsFromSeqCamData();
 
 		if (eADF.kymosImagesList != null && eADF.kymosImagesList.size() > 0) {
-			seqSpotKymos = new SequenceKymos(eADF.kymosImagesList);
+			seqKymos = new SequenceKymos(eADF.kymosImagesList);
 		}
 	}
 
@@ -198,8 +198,8 @@ public class Experiment {
 	}
 
 	public void closeSequences() {
-		if (seqSpotKymos != null)
-			seqSpotKymos.closeSequence();
+		if (seqKymos != null)
+			seqKymos.closeSequence();
 		if (seqCamData != null)
 			seqCamData.closeSequence();
 		if (seqReference != null)
@@ -212,8 +212,8 @@ public class Experiment {
 		load_MS96_experiment();
 		getFileIntervalsFromSeqCamData();
 
-		if (seqSpotKymos == null)
-			seqSpotKymos = new SequenceKymos();
+		if (seqKymos == null)
+			seqKymos = new SequenceKymos();
 
 		return zxmlReadDrosoTrack(null);
 	}
@@ -517,12 +517,12 @@ public class Experiment {
 //	}
 
 	public boolean zloadKymographs() {
-		if (seqSpotKymos == null)
-			seqSpotKymos = new SequenceKymos();
-		List<ImageFileDescriptor> myList = seqSpotKymos
+		if (seqKymos == null)
+			seqKymos = new SequenceKymos();
+		List<ImageFileDescriptor> myList = seqKymos
 				.loadListOfPotentialKymographsFromSpots(getKymosBinFullDirectory(), cagesArray);
 		ImageFileDescriptor.getExistingFileNames(myList);
-		return seqSpotKymos.loadKymographImagesFromList(myList, true);
+		return seqKymos.loadKymographImagesFromList(myList, true);
 	}
 
 	// ------------------------------------------------

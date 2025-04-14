@@ -87,7 +87,7 @@ public class LoadSave extends JPanel {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		SequenceKymos seqKymos = exp.seqSpotKymos;
+		SequenceKymos seqKymos = exp.seqKymos;
 		if (directory == null) {
 			directory = exp.getDirectoryToSaveResults();
 			try {
@@ -129,7 +129,7 @@ public class LoadSave extends JPanel {
 
 	public boolean loadDefaultKymos(Experiment exp) {
 		boolean flag = false;
-		SequenceKymos seqKymos = exp.seqSpotKymos;
+		SequenceKymos seqKymos = exp.seqKymos;
 		if (seqKymos == null || exp.cagesArray == null) {
 			System.out.println("LoadSaveKymos:loadDefaultKymos() no parent sequence or no spots found");
 			return flag;
@@ -142,12 +142,12 @@ public class LoadSave extends JPanel {
 		} else
 			exp.setBinSubDirectory(localString);
 
-		List<ImageFileDescriptor> myList = exp.seqSpotKymos
+		List<ImageFileDescriptor> myList = exp.seqKymos
 				.loadListOfPotentialKymographsFromSpots(exp.getKymosBinFullDirectory(), exp.cagesArray);
 		int nItems = ImageFileDescriptor.getExistingFileNames(myList);
 		if (nItems > 0) {
 			flag = seqKymos.loadKymographImagesFromList(myList, true);
-			exp.cagesArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqSpotKymos.seq);
+			exp.cagesArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqKymos.seq);
 			parent0.dlgKymos.tabDisplay.transferSpotNamesToComboBox(exp);
 		} else
 			seqKymos.closeSequence();

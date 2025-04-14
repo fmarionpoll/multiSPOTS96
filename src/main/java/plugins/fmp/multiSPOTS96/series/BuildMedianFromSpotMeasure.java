@@ -13,14 +13,14 @@ public class BuildMedianFromSpotMeasure extends BuildSeries {
 			return;
 
 		exp.zloadKymographs();
-		int imageHeight = exp.seqSpotKymos.seq.getHeight();
+		int imageHeight = exp.seqKymos.seq.getHeight();
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				spot.buildRunningMedianFromSumLevel2D(imageHeight);
 			}
 		}
 		exp.save_MS96_spotsMeasures();
-		exp.seqSpotKymos.closeSequence();
+		exp.seqKymos.closeSequence();
 	}
 
 }

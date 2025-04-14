@@ -120,7 +120,7 @@ public class DetectContours extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null && exp.seqSpotKymos != null) {
+				if (exp != null && exp.seqKymos != null) {
 					int index = spotsTransformsComboBox.getSelectedIndex();
 					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer()
 							.getCanvas();

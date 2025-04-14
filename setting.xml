@@ -78,7 +78,7 @@
 <key name="lastUpdateCheckTime" value="1744621093026"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
-<key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\2025-04-10"/>
+<key name="loaderFolder" value="\\comportement-egce.ideev.universite-paris-saclay.fr\MultiCAFE\2025 Beatrice\essai multispots  plaques 96\2025-04-11"/>
 </section>
 <section name="canvas">
 <section name="Canvas2D">
@@ -170,14 +170,14 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="3149"/>
-<key name="YE" value="51"/>
-<key name="WidthE" value="1755"/>
+<key name="XE" value="238"/>
+<key name="YE" value="101"/>
+<key name="WidthE" value="2143"/>
 <key name="HeightE" value="1123"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1447"/>
+<key name="XC" value="1835"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>

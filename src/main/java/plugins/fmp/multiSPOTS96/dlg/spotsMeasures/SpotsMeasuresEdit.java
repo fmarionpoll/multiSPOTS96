@@ -132,7 +132,7 @@ public class SpotsMeasuresEdit extends JPanel implements PropertyChangeListener 
 	}
 
 	void cutAndInterpolate(Experiment exp) {
-		SequenceKymos seqKymos = exp.seqSpotKymos;
+		SequenceKymos seqKymos = exp.seqKymos;
 		ROI2D roiRect = seqKymos.seq.getSelectedROI2D();
 		if (roiRect == null)
 			return;
@@ -149,7 +149,7 @@ public class SpotsMeasuresEdit extends JPanel implements PropertyChangeListener 
 	}
 
 	void compensate(Experiment exp) {
-		SequenceKymos seqKymos = exp.seqSpotKymos;
+		SequenceKymos seqKymos = exp.seqKymos;
 		ROI2D roiRect = seqKymos.seq.getSelectedROI2D();
 		if (roiRect == null)
 			return;

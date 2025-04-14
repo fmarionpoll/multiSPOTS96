@@ -261,8 +261,8 @@ public class ChartSpots extends IcyFrame {
 	}
 
 	private void selectKymograph(Experiment exp, Spot spot) {
-		if (exp.seqSpotKymos != null) {
-			Viewer v = exp.seqSpotKymos.seq.getFirstViewer();
+		if (exp.seqKymos != null) {
+			Viewer v = exp.seqKymos.seq.getFirstViewer();
 			if (v != null && spot != null) {
 				v.setPositionT(spot.spotKymograph_T);
 			}

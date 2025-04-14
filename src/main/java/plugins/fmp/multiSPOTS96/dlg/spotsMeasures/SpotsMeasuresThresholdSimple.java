@@ -123,16 +123,23 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null && exp.seqSpotKymos != null && viewButton1.isSelected()) {
+				if (exp != null) {
+					if (!viewButton1.isSelected()) 
+						viewButton1.setSelected(true);
 					int index = spotsTransformsComboBox.getSelectedIndex();
 					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer()
 							.getCanvas();
-					updateTransformFunctions1OfCanvas(exp);
-					if (!viewButton1.isSelected()) {
-						viewButton1.setSelected(true);
-					}
+					updateTransformFunctions1OfCanvas(canvas);
+
 					canvas.transformsComboStep1.setSelectedIndex(index + 1);
 					updateOverlayThreshold();
+
+					if (exp.seqKymos != null) {
+						Canvas2D_3Transforms canvasK = (Canvas2D_3Transforms) exp.seqKymos.seq.getFirstViewer()
+								.getCanvas();
+						updateTransformFunctions1OfCanvas(canvasK);
+						canvasK.transformsComboStep1.setSelectedIndex(index + 1);
+					}
 				}
 			}
 		});
@@ -141,14 +148,13 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null && exp.seqSpotKymos != null && viewButton2.isSelected()) {
+				if (exp != null && viewButton2.isSelected()) {
 					int index = fliesTransformsComboBox.getSelectedIndex();
 					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer()
 							.getCanvas();
-					updateTransformFunctions2OfCanvas(exp);
-					if (!viewButton2.isSelected()) {
+					updateTransformFunctions2OfCanvas(canvas);
+					if (!viewButton2.isSelected()) 
 						viewButton2.setSelected(true);
-					}
 					canvas.transformsComboStep1.setSelectedIndex(index + 1);
 					updateOverlayThreshold();
 				}
@@ -211,9 +217,6 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 	}
 
 	void updateOverlay(Experiment exp) {
-		if (exp.seqSpotKymos == null)
-			return;
-
 		if (overlayThreshold == null)
 			overlayThreshold = new OverlayThreshold(exp.seqCamData.seq);
 		else {
@@ -302,11 +305,12 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 
 		return options;
 	}
-
+	
 	private void displayTransform1(Experiment exp) {
 		boolean displayCheckOverlay = false;
 		if (viewButton1.isSelected()) {
-			updateTransformFunctions1OfCanvas(exp);
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+			updateTransformFunctions1OfCanvas(canvas);
 			displayCheckOverlay = true;
 		} else {
 			removeOverlay(exp);
@@ -321,7 +325,8 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 	private void displayTransform2(Experiment exp) {
 		boolean displayCheckOverlay = false;
 		if (viewButton2.isSelected()) {
-			updateTransformFunctions2OfCanvas(exp);
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+			updateTransformFunctions2OfCanvas(canvas);
 			displayCheckOverlay = true;
 		} else {
 			removeOverlay(exp);
@@ -333,8 +338,7 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
 	}
 
-	private void updateTransformFunctions1OfCanvas(Experiment exp) {
-		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+	private void updateTransformFunctions1OfCanvas(Canvas2D_3Transforms canvas) {
 		if (canvas.transformsComboStep1.getItemCount() < (spotsTransformsComboBox.getItemCount() + 1)) {
 			canvas.updateTransformsComboStep1(transforms);
 		}
@@ -342,8 +346,7 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 		canvas.selectImageTransformFunctionStep1(index + 1);
 	}
 
-	private void updateTransformFunctions2OfCanvas(Experiment exp) {
-		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+	private void updateTransformFunctions2OfCanvas(Canvas2D_3Transforms canvas) {
 		if (canvas.transformsComboStep1.getItemCount() < (fliesDirectionComboBox.getItemCount() + 1)) {
 			canvas.updateTransformsComboStep1(transforms);
 		}

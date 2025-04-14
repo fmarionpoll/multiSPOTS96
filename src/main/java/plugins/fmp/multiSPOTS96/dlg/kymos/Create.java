@@ -105,12 +105,12 @@ public class Create extends JPanel implements PropertyChangeListener {
 
 	private void setExptParms(Experiment exp) {
 		long bin_ms = exp.seqCamData.binImage_ms;
-		if (exp.seqSpotKymos == null)
-			exp.seqSpotKymos = new SequenceKymos();
-		exp.seqSpotKymos.absoluteIndexFirstImage = (long) kymosFrameFirstJSpinner.getValue();
-		exp.seqSpotKymos.deltaImage = (long) kymosFrameDeltaJSpinner.getValue();
-		exp.seqSpotKymos.binFirst_ms = exp.seqCamData.absoluteIndexFirstImage * bin_ms;
-		exp.seqSpotKymos.binLast_ms = ((long) kymosFrameLastJSpinner.getValue()) * bin_ms;
+		if (exp.seqKymos == null)
+			exp.seqKymos = new SequenceKymos();
+		exp.seqKymos.absoluteIndexFirstImage = (long) kymosFrameFirstJSpinner.getValue();
+		exp.seqKymos.deltaImage = (long) kymosFrameDeltaJSpinner.getValue();
+		exp.seqKymos.binFirst_ms = exp.seqCamData.absoluteIndexFirstImage * bin_ms;
+		exp.seqKymos.binLast_ms = ((long) kymosFrameLastJSpinner.getValue()) * bin_ms;
 	}
 
 	public void getExptParms(Experiment exp) {
@@ -119,10 +119,10 @@ public class Create extends JPanel implements PropertyChangeListener {
 			exp.loadFileIntervalsFromSeqCamData();
 			bin_ms = exp.seqCamData.binImage_ms;
 		}
-		if (exp.seqSpotKymos == null) {
-			exp.seqSpotKymos = new SequenceKymos();
+		if (exp.seqKymos == null) {
+			exp.seqKymos = new SequenceKymos();
 		}
-		long dFirst = exp.seqSpotKymos.absoluteIndexFirstImage;
+		long dFirst = exp.seqKymos.absoluteIndexFirstImage;
 		kymosFrameFirstJSpinner.setValue(dFirst);
 		kymosFrameDeltaJSpinner.setValue(exp.seqCamData.deltaImage);
 		if (exp.seqCamData.binLast_ms <= 0)

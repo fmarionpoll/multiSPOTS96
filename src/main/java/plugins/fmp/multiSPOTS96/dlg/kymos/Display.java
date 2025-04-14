@@ -194,7 +194,7 @@ public class Display extends JPanel implements ViewerListener {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Viewer v = exp.seqSpotKymos.seq.getFirstViewer();
+		Viewer v = exp.seqKymos.seq.getFirstViewer();
 		if (v == null)
 			return;
 		IcyCanvas canvas = v.getCanvas();
@@ -214,7 +214,7 @@ public class Display extends JPanel implements ViewerListener {
 	void displayON() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			SequenceKymos seqKymographs = exp.seqSpotKymos;
+			SequenceKymos seqKymographs = exp.seqKymos;
 			if (seqKymographs == null || seqKymographs.seq == null)
 				return;
 
@@ -252,7 +252,7 @@ public class Display extends JPanel implements ViewerListener {
 			return;
 
 		Rectangle rectViewerCamData = viewerCamData.getBounds();
-		Sequence seqKymograph = exp.seqSpotKymos.seq;
+		Sequence seqKymograph = exp.seqKymos.seq;
 
 		Rectangle rectViewerKymograph = (Rectangle) rectViewerCamData.clone();
 		Rectangle rectImageKymograph = seqKymograph.getBounds2D();
@@ -277,9 +277,9 @@ public class Display extends JPanel implements ViewerListener {
 
 	void displayOFF() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-		if (exp == null || exp.seqSpotKymos == null)
+		if (exp == null || exp.seqKymos == null)
 			return;
-		ArrayList<Viewer> vList = exp.seqSpotKymos.seq.getViewers();
+		ArrayList<Viewer> vList = exp.seqKymos.seq.getViewers();
 		if (vList.size() > 0) {
 			for (Viewer v : vList)
 				v.close();
@@ -338,7 +338,7 @@ public class Display extends JPanel implements ViewerListener {
 		if (exp == null)
 			return selectedImageIndex;
 
-		SequenceKymos seqKymos = exp.seqSpotKymos;
+		SequenceKymos seqKymos = exp.seqKymos;
 		if (seqKymos == null || seqKymos.seq == null)
 			return selectedImageIndex;
 		if (seqKymos.seq.isUpdating())
@@ -438,7 +438,7 @@ public class Display extends JPanel implements ViewerListener {
 
 		parent0.expListCombo.stringExpBinSubDirectory = localString;
 		exp.setBinSubDirectory(localString);
-		exp.seqSpotKymos.seq.close();
+		exp.seqKymos.seq.close();
 		exp.zloadKymographs();
 		parent0.dlgKymos.updateDialogs(exp);
 	}
@@ -447,13 +447,13 @@ public class Display extends JPanel implements ViewerListener {
 		if (spotsViewButton.isSelected()) {
 			updateTransformFunctionsOfCanvas(exp);
 		} else {
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqSpotKymos.seq.getFirstViewer().getCanvas();
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqKymos.seq.getFirstViewer().getCanvas();
 			canvas.transformsComboStep2.setSelectedIndex(0);
 		}
 	}
 
 	private void updateTransformFunctionsOfCanvas(Experiment exp) {
-		Viewer viewer = exp.seqSpotKymos.seq.getFirstViewer();
+		Viewer viewer = exp.seqKymos.seq.getFirstViewer();
 		if (viewer != null) {
 			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) viewer.getCanvas();
 			canvas.updateTransformsComboStep2(transforms);

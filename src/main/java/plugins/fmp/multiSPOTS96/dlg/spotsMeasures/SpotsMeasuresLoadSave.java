@@ -72,7 +72,7 @@ public class SpotsMeasuresLoadSave extends JPanel {
 		if (flag) {
 			exp.load_MS96_spotsMeasures();
 			exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
-			exp.cagesArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqSpotKymos.seq);
+			exp.cagesArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqKymos.seq);
 		}
 		return flag;
 	}
