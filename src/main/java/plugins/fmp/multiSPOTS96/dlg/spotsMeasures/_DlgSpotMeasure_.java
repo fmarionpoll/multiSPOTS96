@@ -29,7 +29,6 @@ public class _DlgSpotMeasure_ extends JPanel implements PropertyChangeListener, 
 	SpotsMeasuresEdit tabEdit = new SpotsMeasuresEdit();
 	public SpotsMeasuresGraphs tabGraphs = new SpotsMeasuresGraphs();
 	public SpotsMeasuresLoadSave tabFile = new SpotsMeasuresLoadSave();
-//			Adjust 						tabAdjust	= new Adjust();
 
 	private int id_threshold = 1;
 	private MultiSPOTS96 parent0 = null;
