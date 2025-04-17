@@ -24,7 +24,7 @@ import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.GaspardRigidRegistration;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
@@ -71,12 +71,13 @@ public class BuildSpotsKymos extends BuildSeries {
 		ArrayList<Future<?>> futuresArray = new ArrayList<Future<?>>(nframes);
 		futuresArray.clear();
 
+		SpotsArray spotsArray = exp.cagesArray.getAllSpotsArray();
 		for (int t = 0; t < exp.seqKymos.seq.getSizeT(); t++) {
 			final int t_index = t;
 			futuresArray.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					Spot spot = exp.cagesArray.getSpotAtGlobalIndex(t_index);
+					Spot spot = spotsArray.spotsList.get(t_index); 
 					String filename = directory + File.separator + spot.getRoi().getName() + ".tiff";
 
 					File file = new File(filename);
@@ -192,25 +193,38 @@ public class BuildSpotsKymos extends BuildSeries {
 		int nbspots = exp.cagesArray.getTotalNumberOfSpots();
 		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(nbspots);
 		tasks.clear();
-		int vertical_resolution = 512;
-
+		int vertical_resolution = getMaxImageHeight(exp);
+		
+		int indexSpot = 0; 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot: cage.spotsArray.spotsList) {
-				final int indexSpot = SpotString.getSpotArrayIndexFromSpotName(spot.getRoi().getName());
+				final int indexSpotKymo = indexSpot;
 				tasks.add(processor.submit(new Runnable() {
 					@Override
 					public void run() {
 						IcyBufferedImage kymoImage = IcyBufferedImageUtil.scale(spot.spotImage,
 								spot.spotImage.getWidth(), vertical_resolution);
-						seqKymo.setImage(indexSpot, 0, kymoImage);
+						seqKymo.setImage(indexSpotKymo, 0, kymoImage);
 						spot.spotImage = null;
 					}
 				}));
+				indexSpot++;
 			}
 		}
 
 		waitFuturesCompletion(processor, tasks, null);
 		seqKymo.endUpdate();
+	}
+	
+	private int getMaxImageHeight(Experiment exp) {
+		int maxImageHeight = 0;
+		for (Cage cage : exp.cagesArray.cagesList) {
+			for (Spot spot: cage.spotsArray.spotsList) {
+					int height = spot.spotImage.getHeight();
+					if (height > maxImageHeight) maxImageHeight = height;
+					}
+		}
+		return maxImageHeight;
 	}
 
 	private void initArraysToBuildKymographImages(Experiment exp) {
