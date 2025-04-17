@@ -282,7 +282,7 @@ public class BuildSpotsKymos extends BuildSeries {
 					// TODO transform into ROIT and add to outer
 					// subtract booleanmap from booleantmap of roiT
 
-					int imageHeight_i = roiT.mask2DPoints_in.length;
+					int imageHeight_i = roiT.getMask2D_Height();
 					if (imageHeight_i > imageHeight)
 						imageHeight = imageHeight_i;
 				}

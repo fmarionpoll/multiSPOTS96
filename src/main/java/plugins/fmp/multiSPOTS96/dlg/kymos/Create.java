@@ -21,7 +21,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.series.BuildSpotsKymos2;
+import plugins.fmp.multiSPOTS96.series.BuildSpotsKymos;
 
 public class Create extends JPanel implements PropertyChangeListener {
 	/**
@@ -46,7 +46,7 @@ public class Create extends JPanel implements PropertyChangeListener {
 
 	EnumStatusComputation sComputation = EnumStatusComputation.START_COMPUTATION;
 	private MultiSPOTS96 parent0 = null;
-	private BuildSpotsKymos2 threadBuildKymo = null;
+	private BuildSpotsKymos threadBuildKymo = null;
 
 	// -----------------------------------------------------
 
@@ -159,7 +159,7 @@ public class Create extends JPanel implements PropertyChangeListener {
 		if (exp != null)
 			parent0.dlgSpots.tabFile.saveSpotsArray_file(exp);
 
-		threadBuildKymo = new BuildSpotsKymos2();
+		threadBuildKymo = new BuildSpotsKymos();
 		threadBuildKymo.options = initBuildParameters(exp);
 
 		threadBuildKymo.addPropertyChangeListener(this);
