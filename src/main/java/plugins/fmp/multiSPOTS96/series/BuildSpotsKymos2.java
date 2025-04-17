@@ -77,7 +77,7 @@ public class BuildSpotsKymos2 extends BuildSeries {
 			futuresArray.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					Spot spot = spotsArray.spotsList.get(t_index); 
+					Spot spot = spotsArray.spotsList.get(t_index);
 					String filename = directory + File.separator + spot.getRoi().getName() + ".tiff";
 
 					File file = new File(filename);
@@ -141,7 +141,7 @@ public class BuildSpotsKymos2 extends BuildSeries {
 					IcyBufferedImageCursor cursorSource = new IcyBufferedImageCursor(sourceImage);
 					for (Cage cage : exp.cagesArray.cagesList) {
 						for (Spot spot : cage.spotsArray.spotsList) {
-							analyzeImageWithSpot(cursorSource, spot, t - iiFirst, sizeC);
+							analyzeImageWithSpot2(cursorSource, spot, t - iiFirst, sizeC);
 						}
 					}
 				}
@@ -164,6 +164,21 @@ public class BuildSpotsKymos2 extends BuildSeries {
 		for (int chan = 0; chan < sizeC; chan++) {
 			IcyBufferedImageCursor cursor = new IcyBufferedImageCursor(spot.spotImage);
 			try {
+				for (int y = 0; y < roiT.mask2DPoints_in.length; y++) {
+					Point pt = roiT.mask2DPoints_in[y];
+					cursor.set(t, y, chan, cursorSource.get((int) pt.getX(), (int) pt.getY(), chan));
+				}
+			} finally {
+				cursor.commitChanges();
+			}
+		}
+	}
+
+	private void analyzeImageWithSpot2(IcyBufferedImageCursor cursorSource, Spot spot, int t, int sizeC) {
+		ROI2DAlongT roiT = spot.getROIAtT(t);
+		for (int chan = 0; chan < sizeC; chan++) {
+			IcyBufferedImageCursor cursor = new IcyBufferedImageCursor(spot.spotImage);
+			try {
 				int i = 0;
 				for (int j = roiT.ymin; j < roiT.ymax; j++) {
 					double iSum = 0;
@@ -175,10 +190,9 @@ public class BuildSpotsKymos2 extends BuildSeries {
 							iN++;
 						}
 					}
-					if (iN > 0)
-						cursor.set(t, i, chan, iSum / iN);
-					else
-						cursor.set(t, i, chan, iSum);
+					if (iN == 0)
+						iN = 1;
+					cursor.set(t, i, chan, iSum / iN);
 					i++;
 				}
 			} finally {
@@ -227,14 +241,15 @@ public class BuildSpotsKymos2 extends BuildSeries {
 		waitFuturesCompletion(processor, tasks, null);
 		seqKymo.endUpdate();
 	}
-	
+
 	private int getMaxImageHeight(Experiment exp) {
 		int maxImageHeight = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot: cage.spotsArray.spotsList) {
-					int height = spot.spotImage.getHeight();
-					if (height > maxImageHeight) maxImageHeight = height;
-					}
+			for (Spot spot : cage.spotsArray.spotsList) {
+				int height = spot.spotImage.getHeight();
+				if (height > maxImageHeight)
+					maxImageHeight = height;
+			}
 		}
 		return maxImageHeight;
 	}

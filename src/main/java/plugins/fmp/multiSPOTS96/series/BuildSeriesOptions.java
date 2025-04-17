@@ -35,8 +35,6 @@ public class BuildSeriesOptions implements XMLPersistent {
 	boolean detectBottom = true;
 
 	public int detectCage = -1;
-//	public boolean detectL = true;
-//	public boolean detectR = true;
 	public boolean detectSelectedROIs = false;
 	public List<Integer> selectedIndexes = null;
 	public boolean detectAllSeries = true;
