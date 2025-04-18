@@ -31,17 +31,18 @@ public class ChartCageSpots {
 		flagMaxMinSet = false;
 	}
 
-	XYSeriesCollection combineCageCurves(Cage cage, XLSResultsArray xlsResultsArray, XLSResultsArray xlsResultsArray2) {
+	XYSeriesCollection combineResults(Cage cage, XLSResultsArray xlsResultsArray, XLSResultsArray xlsResultsArray2) {
 		XYSeriesCollection xyDataSetList = getSpotDataFromOneCage(xlsResultsArray, cage, "");
 		if (xlsResultsArray2 != null)
 			addXYSeriesCollection(xyDataSetList, getSpotDataFromOneCage(xlsResultsArray2, cage, "*"));
 		return xyDataSetList;
 	}
 
-	XYPlot buildCageXYPlot(XYSeriesCollection xySeriesCollection) {
+	XYPlot buildXYPlot(XYSeriesCollection xySeriesCollection) {
 		XYLineAndShapeRenderer subPlotRenderer = getSubPlotRenderer(xySeriesCollection);
 		NumberAxis xAxis = new NumberAxis(); // description[1]);
 		XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, null, subPlotRenderer);
+
 		updatePlotBackgroundAccordingToNFlies(xySeriesCollection, subplot);
 		return subplot;
 	}

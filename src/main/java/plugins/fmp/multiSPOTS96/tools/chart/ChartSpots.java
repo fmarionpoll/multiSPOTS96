@@ -120,17 +120,17 @@ public class ChartSpots extends IcyFrame {
 					continue;
 				}
 
-				XYSeriesCollection xyDataSetList = chartCage.combineCageCurves(cage, xlsResultsArray, xlsResultsArray2);
-				XYPlot cagePlot = chartCage.buildCageXYPlot(xyDataSetList);
+				XYSeriesCollection xyDataSetList = chartCage.combineResults(cage, xlsResultsArray, xlsResultsArray2);
+				XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList);
 				NumberAxis yAxis = setYaxis(cage.getCageRoi().getName(), row, col, xlsExportOptions);
 				CombinedRangeXYPlot combinedXYPlot = new CombinedRangeXYPlot(yAxis);
-				combinedXYPlot.add(cagePlot);
+				combinedXYPlot.add(cageXYPlot);
 
 				JFreeChart chart = new JFreeChart(null, // xlsExportOptions.exportType.toTitle()
 						null, // titleFont
 						combinedXYPlot, // plot
 						false); // true);
-				
+
 				// create legend
 				chart.setID("row:" + row + ":col:" + col + ":cageID:" + cageID);
 
@@ -157,11 +157,8 @@ public class ChartSpots extends IcyFrame {
 					}
 				});
 
-				
 				chartPanelArray[row][col] = panel;
 				index_cage++;
-				
-
 			}
 		}
 
