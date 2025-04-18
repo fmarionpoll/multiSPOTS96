@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import org.jfree.chart.ChartPanel;
+
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
@@ -27,10 +29,10 @@ public class ChartsOptions extends JPanel {
 	IcyFrame dialogFrame = null;
 	private MultiSPOTS96 parent0 = null;
 	private ChartSpots chartSpots = null;
-	private JSpinner lowerXSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 255, 1));
-	private JSpinner upperXSpinner = new JSpinner(new SpinnerNumberModel(120, 0, 255, 1));
-	private JSpinner lowerYSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 255, 1));
-	private JSpinner upperYSpinner = new JSpinner(new SpinnerNumberModel(1000, 0, 255, 1));
+	private JSpinner lowerXSpinner = new JSpinner(new SpinnerNumberModel(0., 0., 255., 1.));
+	private JSpinner upperXSpinner = new JSpinner(new SpinnerNumberModel(120., 0., 255., 1.));
+	private JSpinner lowerYSpinner = new JSpinner(new SpinnerNumberModel(0., 0., 255., 1.));
+	private JSpinner upperYSpinner = new JSpinner(new SpinnerNumberModel(80., 0., 255., 1.));
 	private JButton setYaxis = new JButton ("set Y axis values");
 	private JButton setXaxis = new JButton("set X axis values");
 
@@ -58,7 +60,14 @@ public class ChartsOptions extends JPanel {
 		
 		dialogFrame = new IcyFrame("Chart options", true, true);
 		dialogFrame.add(topPanel, BorderLayout.NORTH);
+		
+		dialogFrame.pack();
+		dialogFrame.addToDesktopPane();
+		dialogFrame.requestFocus();
+		dialogFrame.center();
+		dialogFrame.setVisible(true);
 
+		collectValuesFromCharts();
 		defineActionListeners();
 	}
 	
@@ -90,5 +99,15 @@ public class ChartsOptions extends JPanel {
 		});
 
 
+	}
+	
+	private void collectValuesFromCharts() {
+		int ncols = 6;
+		int nrows = 8;
+		for (int column = 0; column < ncols; column++ ) {
+			for (int row = 0; row < nrows; row++) {
+				ChartPanel panel = chartSpots.chartPanelArray[row][column];
+			}
+		}
 	}
 }

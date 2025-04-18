@@ -50,7 +50,7 @@ public class ChartSpots extends IcyFrame {
 	int nPanelsAlongX = 1;
 	int nPanelsAlongY = 1;
 
-	ChartPanel[][] chartPanelArray = null;
+	public ChartPanel[][] chartPanelArray = null;
 	Experiment exp = null;
 
 	// ----------------------------------------
