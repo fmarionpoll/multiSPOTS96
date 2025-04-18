@@ -13,6 +13,9 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.Range;
 
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
@@ -67,7 +70,7 @@ public class ChartsOptions extends JPanel {
 		dialogFrame.center();
 		dialogFrame.setVisible(true);
 
-		collectValuesFromCharts();
+		collectValuesFromAllCharts();
 		defineActionListeners();
 	}
 	
@@ -85,6 +88,7 @@ public class ChartsOptions extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
+					updateXAxis();
 				}
 			}
 		});
@@ -97,17 +101,47 @@ public class ChartsOptions extends JPanel {
 				}
 			}
 		});
-
-
 	}
 	
-	private void collectValuesFromCharts() {
-		int ncols = 6;
-		int nrows = 8;
-		for (int column = 0; column < ncols; column++ ) {
+	private void collectValuesFromAllCharts() {
+		
+		int nrows = chartSpots.chartPanelArray.length;
+		int ncolumns = chartSpots.chartPanelArray[0].length;
+		chartSpots.xRange = null;
+		chartSpots.yRange = null;
+
+		
+		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartPanel panel = chartSpots.chartPanelArray[row][column];
+				ChartPanel chartPanel = chartSpots.chartPanelArray[column][row];
+				XYPlot plot = (XYPlot) chartPanel.getChart().getPlot();
+				if (plot == null)
+					continue;
+				ValueAxis xAxis = plot.getDomainAxis();
+				chartSpots.xRange = Range.combine(chartSpots.xRange, xAxis.getRange());
+				ValueAxis yAxis = plot.getRangeAxis();
+				chartSpots.yRange = Range.combine(chartSpots.yRange, yAxis.getRange());		
+			}
+		}
+		
+		lowerXSpinner.setValue(chartSpots.xRange.getLowerBound()); 
+		upperXSpinner.setValue(chartSpots.xRange.getUpperBound());
+		lowerYSpinner.setValue(chartSpots.yRange.getLowerBound()); 
+		upperYSpinner.setValue(chartSpots.yRange.getUpperBound());
+	}
+	
+	 
+	
+	private void updateXAxis() {
+		int nrows = chartSpots.chartPanelArray.length;
+		int ncolumns = chartSpots.chartPanelArray[0].length;
+		for (int column = 0; column < ncolumns; column++) {
+			for (int row = 0; row < nrows; row++) {
+				ChartPanel chartPanel = chartSpots.chartPanelArray[column][row];
+				XYPlot plot = (XYPlot) chartPanel.getChart().getPlot();
 			}
 		}
 	}
+	
+	
 }

@@ -42,8 +42,8 @@ public class ChartSpots extends IcyFrame {
 	public JPanel mainChartPanel = null;
 	public IcyFrame mainChartFrame = null;
 
-	public Range yRange = new Range(0., 0.);
-	public Range xRange = new Range(0., 100.);
+	public Range yRange = null;
+	public Range xRange = null;
 
 	private Point ptGraphLocationn = new Point(0, 0);
 
@@ -130,6 +130,7 @@ public class ChartSpots extends IcyFrame {
 						null, // titleFont
 						combinedXYPlot, // plot
 						false); // true);
+				
 				// create legend
 				chart.setID("row:" + row + ":col:" + col + ":cageID:" + cageID);
 
@@ -156,8 +157,11 @@ public class ChartSpots extends IcyFrame {
 					}
 				});
 
+				
 				chartPanelArray[row][col] = panel;
 				index_cage++;
+				
+
 			}
 		}
 
