@@ -123,23 +123,24 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 			rectv = parent0.mainFrame.getBounds();
 			rectv.translate(rectv.width, rectv.height + 100);
 		}
+
+		int dx = 5;
+		int dy = 10;
+		rectv.translate(dx, dy);
 		return rectv;
 	}
 
 	public void displayGraphsPanels(Experiment exp) {
 		exp.seqCamData.seq.removeListener(this);
-		Rectangle rectv = getInitialUpperLeftPosition(exp);
-		int dx = 5;
-		int dy = 10;
 		EnumXLSExportType exportType = (EnumXLSExportType) exportTypeComboBox.getSelectedItem();
 		if (isThereAnyDataToDisplay(exp, exportType)) {
-			rectv.translate(dx, dy);
-			chartSpots = plotToChart(exp, exportType, chartSpots, rectv);
+
+			chartSpots = plotSpotMeasuresToChart(exp, exportType, chartSpots);
 		}
 		exp.seqCamData.seq.addListener(this);
 	}
 
-	private ChartSpots plotToChart(Experiment exp, EnumXLSExportType exportType, ChartSpots iChart, Rectangle rectv) {
+	private ChartSpots plotSpotMeasuresToChart(Experiment exp, EnumXLSExportType exportType, ChartSpots iChart) {
 		if (iChart != null)
 			iChart.mainChartFrame.dispose();
 
@@ -165,7 +166,8 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 
 		iChart = new ChartSpots();
 		iChart.createPanel("Spots measures", exp, xlsExportOptions);
-		iChart.setUpperLeftLocation(rectv);
+
+		iChart.setChartSpotUpperLeftLocation(getInitialUpperLeftPosition(exp));
 
 		iChart.displayData(exp, xlsExportOptions);
 		iChart.mainChartFrame.toFront();

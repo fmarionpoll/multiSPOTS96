@@ -9,6 +9,7 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -20,6 +21,7 @@ import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.CombinedRangeXYPlot;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -40,7 +42,10 @@ public class ChartSpots extends IcyFrame {
 	public JPanel mainChartPanel = null;
 	public IcyFrame mainChartFrame = null;
 
-	private Point pt = new Point(0, 0);
+	public Range yRange = new Range(0., 0.);
+	public Range xRange = new Range(0., 100.);
+
+	private Point ptGraphLocationn = new Point(0, 0);
 
 	int nPanelsAlongX = 1;
 	int nPanelsAlongY = 1;
@@ -61,7 +66,8 @@ public class ChartSpots extends IcyFrame {
 		mainChartPanel.setLayout(new GridLayout(nPanelsAlongY, nPanelsAlongX));
 		mainChartFrame = GuiUtil.generateTitleFrame(title, new JPanel(), new Dimension(300, 70), true, true, true,
 				true);
-		mainChartFrame.add(mainChartPanel);
+		JScrollPane scrollPane = new JScrollPane(mainChartPanel);
+		mainChartFrame.add(scrollPane);
 		chartPanelArray = new ChartPanel[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
 	}
 
@@ -173,17 +179,13 @@ public class ChartSpots extends IcyFrame {
 
 		// -----------------------------------
 		mainChartFrame.pack();
-		mainChartFrame.setLocation(pt);
+		mainChartFrame.setLocation(ptGraphLocationn);
 		mainChartFrame.addToDesktopPane();
 		mainChartFrame.setVisible(true);
 	}
 
-	public void setLocationRelativeToRectangle(Rectangle rectv, Point deltapt) {
-		pt = new Point(rectv.x + deltapt.x, rectv.y + deltapt.y);
-	}
-
-	public void setUpperLeftLocation(Rectangle rectv) {
-		pt = new Point(rectv.x, rectv.y);
+	public void setChartSpotUpperLeftLocation(Rectangle rectv) {
+		ptGraphLocationn = new Point(rectv.x, rectv.y);
 	}
 
 	private XLSResultsArray getDataAsResultsArray(Experiment exp, XLSExportOptions xlsExportOptions) {
