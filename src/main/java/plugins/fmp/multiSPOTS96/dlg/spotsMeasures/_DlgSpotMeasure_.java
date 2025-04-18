@@ -24,11 +24,11 @@ public class _DlgSpotMeasure_ extends JPanel implements PropertyChangeListener, 
 	private static final long serialVersionUID = 853047648249832145L;
 	public PopupPanel capPopupPanel = null;
 	JTabbedPane tabsPane = new JTabbedPane();
-	SpotsMeasuresThresholdSimple tabSimpleThreshold = new SpotsMeasuresThresholdSimple();
+	ThresholdSimple tabSimpleThreshold = new ThresholdSimple();
 //			ThresholdColors colorsThreshold = new ThresholdColors();
-	SpotsMeasuresEdit tabEdit = new SpotsMeasuresEdit();
-	public SpotsMeasuresGraphs tabGraphs = new SpotsMeasuresGraphs();
-	public SpotsMeasuresLoadSave tabFile = new SpotsMeasuresLoadSave();
+	Edit tabEdit = new Edit();
+	public Charts tabCharts = new Charts();
+	public LoadSave tabFile = new LoadSave();
 
 	private int id_threshold = 1;
 	private MultiSPOTS96 parent0 = null;
@@ -61,9 +61,9 @@ public class _DlgSpotMeasure_ extends JPanel implements PropertyChangeListener, 
 		tabsPane.addTab("Edit", null, tabEdit, "Edit measures (move/cut/extrapolate)");
 		order++;
 
-		tabGraphs.init(gridLayout, parent0);
-		tabGraphs.addPropertyChangeListener(this);
-		tabsPane.addTab("Graphs", null, tabGraphs, "Display results as a graph");
+		tabCharts.init(gridLayout, parent0);
+		tabCharts.addPropertyChangeListener(this);
+		tabsPane.addTab("Charts", null, tabCharts, "Display results as charts");
 		order++;
 
 		tabFile.init(gridLayout, parent0);

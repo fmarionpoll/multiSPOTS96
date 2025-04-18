@@ -159,6 +159,7 @@ public class BuildSpotsKymos extends BuildSeries {
 		return true;
 	}
 
+	/*
 	private void analyzeImageWithSpot(IcyBufferedImageCursor cursorSource, Spot spot, int t, int sizeC) {
 		ROI2DAlongT roiT = spot.getROIAtT(t);
 		for (int chan = 0; chan < sizeC; chan++) {
@@ -173,6 +174,7 @@ public class BuildSpotsKymos extends BuildSeries {
 			}
 		}
 	}
+	*/
 
 	private void analyzeImageWithSpot2(IcyBufferedImageCursor cursorSource, Spot spot, int t, int sizeC) {
 		ROI2DAlongT roiT = spot.getROIAtT(t);

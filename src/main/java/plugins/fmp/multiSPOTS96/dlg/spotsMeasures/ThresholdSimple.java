@@ -29,7 +29,7 @@ import plugins.fmp.multiSPOTS96.series.BuildSpotsMeasures;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 
-public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChangeListener {
+public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */
@@ -361,7 +361,7 @@ public class SpotsMeasuresThresholdSimple extends JPanel implements PropertyChan
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
 				exp.load_MS96_spotsMeasures();
-				parent0.dlgMeasure.tabGraphs.displayGraphsPanels(exp);
+				parent0.dlgMeasure.tabCharts.displayGraphsPanels(exp);
 			}
 		}
 	}

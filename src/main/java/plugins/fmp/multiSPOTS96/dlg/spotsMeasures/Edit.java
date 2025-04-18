@@ -24,7 +24,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.SpotMeasure;
 import plugins.fmp.multiSPOTS96.series.BuildMedianFromSpotMeasure;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 
-public class SpotsMeasuresEdit extends JPanel implements PropertyChangeListener {
+public class Edit extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */
@@ -183,7 +183,7 @@ public class SpotsMeasuresEdit extends JPanel implements PropertyChangeListener 
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
 				exp.load_MS96_spotsMeasures();
-				parent0.dlgMeasure.tabGraphs.displayGraphsPanels(exp);
+				parent0.dlgMeasure.tabCharts.displayGraphsPanels(exp);
 			}
 		}
 	}

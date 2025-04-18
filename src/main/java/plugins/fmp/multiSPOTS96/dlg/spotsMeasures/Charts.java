@@ -18,6 +18,7 @@ import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
 import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
+
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
@@ -27,7 +28,7 @@ import plugins.fmp.multiSPOTS96.tools.chart.ChartSpots;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 
-public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
+public class Charts extends JPanel implements SequenceListener {
 	/**
 	 * 
 	 */
@@ -35,6 +36,9 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 	private ChartSpots chartSpots = null;
 	private MultiSPOTS96 parent0 = null;
 	private JButton displayResultsButton = new JButton("Display results");
+	private JButton axisOptionsButton = new JButton("Axis options");
+	private ChartsOptions graphOptions = null;
+	
 	private EnumXLSExportType[] measures = new EnumXLSExportType[] { EnumXLSExportType.AREA_SUM,
 			EnumXLSExportType.AREA_SUMCLEAN // , EnumXLSExportType.AREA_DIFF
 	};
@@ -71,6 +75,7 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 
 		JPanel panel04 = new JPanel(layout);
 		panel04.add(displayResultsButton);
+		panel04.add(axisOptionsButton);
 		add(panel04);
 
 		ButtonGroup group1 = new ButtonGroup();
@@ -99,6 +104,21 @@ public class SpotsMeasuresGraphs extends JPanel implements SequenceListener {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					displayGraphsPanels(exp);
+				}
+			}
+		});
+		
+		axisOptionsButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					if (graphOptions != null) {
+						graphOptions.close();
+					}
+					graphOptions = new ChartsOptions();
+					graphOptions.initialize(parent0, chartSpots);
+					graphOptions.requestFocus();
 				}
 			}
 		});

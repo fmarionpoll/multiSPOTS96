@@ -15,7 +15,7 @@ import icy.gui.util.FontUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 
-public class SpotsMeasuresLoadSave extends JPanel {
+public class LoadSave extends JPanel {
 	/**
 	 * 
 	 */
