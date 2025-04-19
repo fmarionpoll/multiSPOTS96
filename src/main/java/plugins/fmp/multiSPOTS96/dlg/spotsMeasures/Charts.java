@@ -18,7 +18,6 @@ import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
 import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceListener;
-
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
@@ -37,8 +36,8 @@ public class Charts extends JPanel implements SequenceListener {
 	private MultiSPOTS96 parent0 = null;
 	private JButton displayResultsButton = new JButton("Display results");
 	private JButton axisOptionsButton = new JButton("Axis options");
-	private ChartsOptions graphOptions = null;
-	
+	private ChartOptions graphOptions = null;
+
 	private EnumXLSExportType[] measures = new EnumXLSExportType[] { EnumXLSExportType.AREA_SUM,
 			EnumXLSExportType.AREA_SUMCLEAN // , EnumXLSExportType.AREA_DIFF
 	};
@@ -94,7 +93,7 @@ public class Charts extends JPanel implements SequenceListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
-					displayGraphsPanels(exp);
+					displayChartPanels(exp);
 			}
 		});
 
@@ -103,11 +102,11 @@ public class Charts extends JPanel implements SequenceListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					displayGraphsPanels(exp);
+					displayChartPanels(exp);
 				}
 			}
 		});
-		
+
 		axisOptionsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -116,7 +115,7 @@ public class Charts extends JPanel implements SequenceListener {
 					if (graphOptions != null) {
 						graphOptions.close();
 					}
-					graphOptions = new ChartsOptions();
+					graphOptions = new ChartOptions();
 					graphOptions.initialize(parent0, chartSpots);
 					graphOptions.requestFocus();
 				}
@@ -128,7 +127,7 @@ public class Charts extends JPanel implements SequenceListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
-					displayGraphsPanels(exp);
+					displayChartPanels(exp);
 			}
 		});
 	}
@@ -150,13 +149,11 @@ public class Charts extends JPanel implements SequenceListener {
 		return rectv;
 	}
 
-	public void displayGraphsPanels(Experiment exp) {
+	public void displayChartPanels(Experiment exp) {
 		exp.seqCamData.seq.removeListener(this);
 		EnumXLSExportType exportType = (EnumXLSExportType) exportTypeComboBox.getSelectedItem();
-		if (isThereAnyDataToDisplay(exp, exportType)) {
-
+		if (isThereAnyDataToDisplay(exp, exportType))
 			chartSpots = plotSpotMeasuresToChart(exp, exportType, chartSpots);
-		}
 		exp.seqCamData.seq.addListener(this);
 	}
 

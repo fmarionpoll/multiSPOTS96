@@ -33,16 +33,19 @@ public class ChartCageSpots {
 
 	XYSeriesCollection combineResults(Cage cage, XLSResultsArray xlsResultsArray, XLSResultsArray xlsResultsArray2) {
 		XYSeriesCollection xyDataSetList = getSpotDataFromOneCage(xlsResultsArray, cage, "");
-		if (xlsResultsArray2 != null)
-			addXYSeriesCollection(xyDataSetList, getSpotDataFromOneCage(xlsResultsArray2, cage, "*"));
+		if (xlsResultsArray2 != null) {
+			XYSeriesCollection xyDataSetList2 = getSpotDataFromOneCage(xlsResultsArray2, cage, "*");
+			addXYSeriesCollection(xyDataSetList, xyDataSetList2);
+		}
 		return xyDataSetList;
 	}
 
 	XYPlot buildXYPlot(XYSeriesCollection xySeriesCollection) {
 		XYLineAndShapeRenderer subPlotRenderer = getSubPlotRenderer(xySeriesCollection);
-		NumberAxis xAxis = new NumberAxis(); // description[1]);
-		XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, null, subPlotRenderer);
+		NumberAxis domainAxis = new NumberAxis(); // description[1]);
+		NumberAxis rangeAxis = new NumberAxis(); // description[1]);
 
+		XYPlot subplot = new XYPlot(xySeriesCollection, domainAxis, rangeAxis, subPlotRenderer);
 		updatePlotBackgroundAccordingToNFlies(xySeriesCollection, subplot);
 		return subplot;
 	}

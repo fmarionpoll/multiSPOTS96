@@ -6,7 +6,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -15,10 +14,8 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
-import org.jfree.chart.plot.CombinedRangeXYPlot;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.Range;
@@ -71,22 +68,19 @@ public class ChartSpots extends IcyFrame {
 		chartPanelArray = new ChartPanel[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
 	}
 
-	private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions xlsExportOptions) {
-		NumberAxis yAxis = new NumberAxis();
-		row = row * exp.cagesArray.nRowsPerCage;
-		col = col * exp.cagesArray.nColumnsPerCage;
-		String yLegend = title + " " + String.valueOf((char) (row + 'A')) + "_" + Integer.toString(col);
-		yAxis.setLabel(yLegend);
-
-		if (xlsExportOptions.relativeToT0 || xlsExportOptions.relativeToMedianT0) {
-			yAxis.setAutoRange(false);
-			yAxis.setRange(-0.2, 1.2);
-		} else {
-			yAxis.setAutoRange(true);
-			yAxis.setAutoRangeIncludesZero(false);
-		}
-		return yAxis;
-	}
+	/*
+	 * private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions
+	 * xlsExportOptions) { NumberAxis yAxis = new NumberAxis(); row = row *
+	 * exp.cagesArray.nRowsPerCage; col = col * exp.cagesArray.nColumnsPerCage;
+	 * String yLegend = title + " " + String.valueOf((char) (row + 'A')) + "_" +
+	 * Integer.toString(col); yAxis.setLabel(yLegend);
+	 * 
+	 * if (xlsExportOptions.relativeToT0 || xlsExportOptions.relativeToMedianT0) {
+	 * yAxis.setAutoRange(false); yAxis.setRange(-0.2, 1.2); } else {
+	 * yAxis.setAutoRange(true); yAxis.setAutoRangeIncludesZero(false); } return
+	 * yAxis; }
+	 * 
+	 */
 
 	public void displayData(Experiment exp, XLSExportOptions xlsExportOptions) {
 		this.exp = exp;
@@ -122,13 +116,10 @@ public class ChartSpots extends IcyFrame {
 
 				XYSeriesCollection xyDataSetList = chartCage.combineResults(cage, xlsResultsArray, xlsResultsArray2);
 				XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList);
-				NumberAxis yAxis = setYaxis(cage.getCageRoi().getName(), row, col, xlsExportOptions);
-				CombinedRangeXYPlot combinedXYPlot = new CombinedRangeXYPlot(yAxis);
-				combinedXYPlot.add(cageXYPlot);
 
 				JFreeChart chart = new JFreeChart(null, // xlsExportOptions.exportType.toTitle()
 						null, // titleFont
-						combinedXYPlot, // plot
+						cageXYPlot, // cageXYPlot, // combinedXYPlot, // plot
 						false); // true);
 
 				// create legend
@@ -211,9 +202,10 @@ public class ChartSpots extends IcyFrame {
 
 		// get chart
 		int subplotindex = plotInfo.getSubplotIndex(pointClicked);
-		CombinedRangeXYPlot combinedXYPlot = (CombinedRangeXYPlot) chart.getPlot();
-		@SuppressWarnings("unchecked")
-		List<XYPlot> subplots = combinedXYPlot.getSubplots();
+		XYPlot xyPlot = (XYPlot) chart.getPlot();
+
+//		@SuppressWarnings("unchecked")
+//		List<XYPlot> subplots = xyPlot.getSubplots();
 
 		// get item in the chart
 		Spot spotFound = null;
@@ -235,7 +227,8 @@ public class ChartSpots extends IcyFrame {
 				spotFound.spotCamData_T = xyItemEntity.getItem();
 
 		} else if (subplotindex >= 0) {
-			XYDataset xyDataset = subplots.get(subplotindex).getDataset(0);
+			XYDataset xyDataset = xyPlot.getDataset(0);
+			; // subplots.get(subplotindex).getDataset(0);
 			description = (String) xyDataset.getSeriesKey(0);
 
 			spotFound = exp.cagesArray.getSpotFromROIName(description);

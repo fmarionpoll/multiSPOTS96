@@ -23,7 +23,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.chart.ChartSpots;
 
-public class ChartsOptions extends JPanel {
+public class ChartOptions extends JPanel {
 	/**
 	 * 
 	 */
