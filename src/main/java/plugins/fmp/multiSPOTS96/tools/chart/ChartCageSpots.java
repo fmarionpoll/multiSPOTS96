@@ -40,12 +40,10 @@ public class ChartCageSpots {
 		return xyDataSetList;
 	}
 
-	XYPlot buildXYPlot(XYSeriesCollection xySeriesCollection) {
+	XYPlot buildXYPlot(XYSeriesCollection xySeriesCollection, NumberAxis yAxis) {
 		XYLineAndShapeRenderer subPlotRenderer = getSubPlotRenderer(xySeriesCollection);
-		NumberAxis domainAxis = new NumberAxis(); // description[1]);
-		NumberAxis rangeAxis = new NumberAxis(); // description[1]);
-
-		XYPlot subplot = new XYPlot(xySeriesCollection, domainAxis, rangeAxis, subPlotRenderer);
+		NumberAxis domainAxis = new NumberAxis();
+		XYPlot subplot = new XYPlot(xySeriesCollection, domainAxis, yAxis, subPlotRenderer);
 		updatePlotBackgroundAccordingToNFlies(xySeriesCollection, subplot);
 		return subplot;
 	}

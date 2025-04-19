@@ -14,6 +14,7 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.PlotRenderingInfo;
@@ -68,19 +69,22 @@ public class ChartSpots extends IcyFrame {
 		chartPanelArray = new ChartPanel[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
 	}
 
-	/*
-	 * private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions
-	 * xlsExportOptions) { NumberAxis yAxis = new NumberAxis(); row = row *
-	 * exp.cagesArray.nRowsPerCage; col = col * exp.cagesArray.nColumnsPerCage;
-	 * String yLegend = title + " " + String.valueOf((char) (row + 'A')) + "_" +
-	 * Integer.toString(col); yAxis.setLabel(yLegend);
-	 * 
-	 * if (xlsExportOptions.relativeToT0 || xlsExportOptions.relativeToMedianT0) {
-	 * yAxis.setAutoRange(false); yAxis.setRange(-0.2, 1.2); } else {
-	 * yAxis.setAutoRange(true); yAxis.setAutoRangeIncludesZero(false); } return
-	 * yAxis; }
-	 * 
-	 */
+	private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions xlsExportOptions) {
+		NumberAxis yAxis = new NumberAxis();
+		row = row * exp.cagesArray.nRowsPerCage;
+		col = col * exp.cagesArray.nColumnsPerCage;
+		String yLegend = title + " " + String.valueOf((char) (row + 'A')) + "_" + Integer.toString(col);
+		yAxis.setLabel(yLegend);
+
+		if (xlsExportOptions.relativeToT0 || xlsExportOptions.relativeToMedianT0) {
+			yAxis.setAutoRange(false);
+			yAxis.setRange(-0.2, 1.2);
+		} else {
+			yAxis.setAutoRange(true);
+			yAxis.setAutoRangeIncludesZero(false);
+		}
+		return yAxis;
+	}
 
 	public void displayData(Experiment exp, XLSExportOptions xlsExportOptions) {
 		this.exp = exp;
@@ -115,7 +119,8 @@ public class ChartSpots extends IcyFrame {
 				}
 
 				XYSeriesCollection xyDataSetList = chartCage.combineResults(cage, xlsResultsArray, xlsResultsArray2);
-				XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList);
+				XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList,
+						setYaxis(cage.getCageRoi().getName(), row, col, xlsExportOptions));
 
 				JFreeChart chart = new JFreeChart(null, // xlsExportOptions.exportType.toTitle()
 						null, // titleFont
