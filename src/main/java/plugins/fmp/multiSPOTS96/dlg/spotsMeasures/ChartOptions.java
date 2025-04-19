@@ -139,14 +139,18 @@ public class ChartOptions extends JPanel {
 	private void updateXAxis() {
 		int nrows = chartSpots.chartPanelArray.length;
 		int ncolumns = chartSpots.chartPanelArray[0].length;
+
+		double upper = (double) upperXSpinner.getValue();
+		double lower = (double) lowerXSpinner.getValue();
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
 				ChartPanel chartPanel = chartSpots.chartPanelArray[row][column];
 				if (chartPanel == null)
 					continue;
 				XYPlot xyPlot = (XYPlot) chartPanel.getChart().getPlot();
-				NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
-				range.setRange(chartSpots.yRange);
+				NumberAxis xAxis = (NumberAxis) xyPlot.getDomainAxis();
+				xAxis.setAutoRange(false);
+				xAxis.setRange(lower, upper);
 			}
 		}
 	}
