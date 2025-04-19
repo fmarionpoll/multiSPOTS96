@@ -20,6 +20,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import icy.gui.viewer.Viewer;
 import icy.util.StringUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
@@ -319,7 +320,10 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	}
 
 	private void updateCanvasFunction(SequenceCamData seqCamData, int index) {
-		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) seqCamData.seq.getFirstViewer().getCanvas();
+		Viewer v = seqCamData.seq.getFirstViewer();
+		if (v == null)
+			return;
+		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) v.getCanvas();
 		updateTransformFunctions1OfCanvas(canvas);
 		canvas.transformsComboStep1.setSelectedIndex(index + 1);
 	}
