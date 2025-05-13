@@ -209,9 +209,6 @@ public class ChartSpots extends IcyFrame {
 		int subplotindex = plotInfo.getSubplotIndex(pointClicked);
 		XYPlot xyPlot = (XYPlot) chart.getPlot();
 
-//		@SuppressWarnings("unchecked")
-//		List<XYPlot> subplots = xyPlot.getSubplots();
-
 		// get item in the chart
 		Spot spotFound = null;
 		String description = null;
@@ -233,7 +230,6 @@ public class ChartSpots extends IcyFrame {
 
 		} else if (subplotindex >= 0) {
 			XYDataset xyDataset = xyPlot.getDataset(0);
-			; // subplots.get(subplotindex).getDataset(0);
 			description = (String) xyDataset.getSeriesKey(0);
 
 			spotFound = exp.cagesArray.getSpotFromROIName(description);

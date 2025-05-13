@@ -117,7 +117,8 @@ public class XLSResults {
 	private void relativeToValue(double value0) {
 		for (int index = 0; index < dataValues.size(); index++) {
 			double value = dataValues.get(index);
-			dataValues.set(index, ((value0 - value) / value0));
+			// dataValues.set(index, ((value0 - value) / value0));
+			dataValues.set(index, value / value0);
 		}
 	}
 

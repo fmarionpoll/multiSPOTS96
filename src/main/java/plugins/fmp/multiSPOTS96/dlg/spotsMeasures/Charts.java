@@ -164,8 +164,7 @@ public class Charts extends JPanel implements SequenceListener {
 		XLSExportOptions xlsExportOptions = new XLSExportOptions();
 		xlsExportOptions.buildExcelStepMs = 60000;
 
-		boolean bRelative = relativeToCheckbox.isSelected();
-		xlsExportOptions.relativeToT0 = bRelative;
+		xlsExportOptions.relativeToT0 = relativeToCheckbox.isSelected();
 		xlsExportOptions.exportType = exportType;
 
 		if (displayAllButton.isSelected()) {
