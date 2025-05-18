@@ -222,8 +222,6 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		options.t_Ms_BinDuration = parent0.dlgExcel.tabCommonOptions.getBinMs();
 
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
-//		options.binSubDirectory	= parent0.paneKymos.tabDisplay.getBinSubdirectory() ;
-
 		options.detectCage = allCagesComboBox.getSelectedIndex() - 1;
 
 		return options;

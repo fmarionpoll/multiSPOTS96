@@ -222,8 +222,6 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 		options.detectFlies = false;
 
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
-//		options.binSubDirectory = parent0.paneKymos.tabDisplay.getBinSubdirectory() ;
-
 		options.isFrameFixed = parent0.dlgExcel.tabCommonOptions.getIsFixedFrame();
 		options.t_Ms_First = parent0.dlgExcel.tabCommonOptions.getStartMs();
 		options.t_Ms_Last = parent0.dlgExcel.tabCommonOptions.getEndMs();

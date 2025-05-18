@@ -424,13 +424,6 @@ public class Display extends JPanel implements ViewerListener {
 		viewsCombo.setSelectedItem(select);
 	}
 
-	public String getBinSubdirectory() {
-		String name = (String) viewsCombo.getSelectedItem();
-		if (name != null && !name.contains("bin_"))
-			name = null;
-		return name;
-	}
-
 	private void changeBinSubdirectory(String localString) {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null || localString == null || exp.getBinSubDirectory().contains(localString))
