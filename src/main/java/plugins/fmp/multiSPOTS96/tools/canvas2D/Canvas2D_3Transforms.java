@@ -34,7 +34,9 @@ public class Canvas2D_3Transforms extends Canvas2D {
 	public JComboBox<ImageTransformEnums> transformsComboStep1 = new JComboBox<ImageTransformEnums>(
 			imageTransformStep1);
 	ImageTransformInterface transformStep1 = ImageTransformEnums.NONE.getFunction();
-	ImageTransformOptions transformOptionsStep1 = new ImageTransformOptions();
+	// ImageTransformOptions transformOptionsStep1 = new ImageTransformOptions();
+	ImageTransformOptions optionsStep1 = new ImageTransformOptions();
+	ImageTransformOptions optionsStep2 = new ImageTransformOptions();
 
 	public ImageTransformEnums[] imageTransformStep2 = new ImageTransformEnums[] { ImageTransformEnums.NONE,
 			ImageTransformEnums.SORT_SUMDIFFCOLS, ImageTransformEnums.SORT_CHAN0COLS };
@@ -89,7 +91,7 @@ public class Canvas2D_3Transforms extends Canvas2D {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				ImageTransformEnums transformEnum = (ImageTransformEnums) transformsComboStep1.getSelectedItem();
-				transformOptionsStep1.transformOption = transformEnum;
+				optionsStep1.transformOption = transformEnum;
 				transformStep1 = transformEnum.getFunction();
 				refresh();
 			}
@@ -126,9 +128,9 @@ public class Canvas2D_3Transforms extends Canvas2D {
 	@Override
 	public IcyBufferedImage getImage(int t, int z, int c) {
 
-		IcyBufferedImage img1 = transformStep1.getTransformedImage(super.getImage(t, z, c), transformOptionsStep1);
+		IcyBufferedImage img1 = transformStep1.getTransformedImage(super.getImage(t, z, c), optionsStep1);
 		if (transformStep2 != null)
-			return transformStep2.getTransformedImage(img1, null);
+			return transformStep2.getTransformedImage(img1, optionsStep2);
 		return img1;
 	}
 
@@ -178,12 +180,16 @@ public class Canvas2D_3Transforms extends Canvas2D {
 			imageTransformFunctionsCombo.addActionListener(listeners[i]);
 	}
 
-	public void selectImageTransformFunctionStep1(int iselected) {
+	public void selectImageTransformFunctionStep1(int iselected, ImageTransformOptions options) {
 		transformsComboStep1.setSelectedIndex(iselected);
+		if (options != null)
+			optionsStep1 = options;
 	}
 
-	public void selectImageTransformFunctionStep2(int iselected) {
+	public void selectImageTransformFunctionStep2(int iselected, ImageTransformOptions options) {
 		transformsComboStep2.setSelectedIndex(iselected);
+		if (options != null)
+			optionsStep2 = options;
 	}
 
 	public void customizeToolbarStep2(JToolBar toolBar) {
@@ -232,7 +238,7 @@ public class Canvas2D_3Transforms extends Canvas2D {
 	}
 
 	public void setTransformStep1ReferenceImage(IcyBufferedImage refImage) {
-		transformOptionsStep1.backgroundImage = refImage;
+		optionsStep1.backgroundImage = refImage;
 	}
 
 }

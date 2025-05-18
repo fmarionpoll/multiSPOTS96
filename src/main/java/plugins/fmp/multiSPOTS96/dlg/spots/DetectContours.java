@@ -267,7 +267,7 @@ public class DetectContours extends JPanel {
 			canvas.updateTransformsComboStep1(transforms);
 		}
 		int index = spotsTransformsComboBox.getSelectedIndex();
-		canvas.selectImageTransformFunctionStep1(index + 1);
+		canvas.selectImageTransformFunctionStep1(index + 1, null);
 	}
 
 	private void detectContours(Experiment exp) {

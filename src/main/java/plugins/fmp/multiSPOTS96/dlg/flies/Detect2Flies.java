@@ -207,11 +207,11 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
 		if (display) {
 			canvas.updateTransformsComboStep1(transforms);
-			canvas.selectImageTransformFunctionStep1(1);
+			canvas.selectImageTransformFunctionStep1(1, null);
 			exp.loadReferenceImage();
 			canvas.setTransformStep1ReferenceImage(exp.seqCamData.refImage);
 		} else
-			canvas.selectImageTransformFunctionStep1(0);
+			canvas.selectImageTransformFunctionStep1(0, null);
 	}
 
 	private BuildSeriesOptions initTrackParameters() {

@@ -458,7 +458,7 @@ public class Display extends JPanel implements ViewerListener {
 			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) viewer.getCanvas();
 			canvas.updateTransformsComboStep2(transforms);
 			int index = spotsTransformsComboBox.getSelectedIndex();
-			canvas.selectImageTransformFunctionStep2(index + 1);
+			canvas.selectImageTransformFunctionStep2(index + 1, null);
 		}
 	}
 

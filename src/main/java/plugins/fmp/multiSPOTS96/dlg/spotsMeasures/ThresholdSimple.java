@@ -347,7 +347,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 			canvas.updateTransformsComboStep1(transforms);
 		}
 		int index = spotsTransformsComboBox.getSelectedIndex();
-		canvas.selectImageTransformFunctionStep1(index + 1);
+		canvas.selectImageTransformFunctionStep1(index + 1, null);
 	}
 
 	private void updateTransformFunctions2OfCanvas(Canvas2D_3Transforms canvas) {
@@ -355,7 +355,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 			canvas.updateTransformsComboStep1(transforms);
 		}
 		int index = fliesDirectionComboBox.getSelectedIndex();
-		canvas.selectImageTransformFunctionStep1(index + 1);
+		canvas.selectImageTransformFunctionStep1(index + 1, null);
 	}
 
 	@Override
