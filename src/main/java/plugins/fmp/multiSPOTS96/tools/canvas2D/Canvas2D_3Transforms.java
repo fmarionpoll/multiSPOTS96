@@ -180,6 +180,22 @@ public class Canvas2D_3Transforms extends Canvas2D {
 			imageTransformFunctionsCombo.addActionListener(listeners[i]);
 	}
 
+	public ImageTransformOptions getOptionsStep1() {
+		return optionsStep1;
+	}
+
+	public void setOptionsStep1(ImageTransformOptions options) {
+		optionsStep1 = options;
+	}
+
+	public ImageTransformOptions getOptionsStep2() {
+		return optionsStep2;
+	}
+
+	public void setOptionsStep2(ImageTransformOptions options) {
+		optionsStep2 = options;
+	}
+
 	public void selectImageTransformFunctionStep1(int iselected, ImageTransformOptions options) {
 		transformsComboStep1.setSelectedIndex(iselected);
 		if (options != null)
