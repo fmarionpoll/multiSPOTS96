@@ -9,7 +9,6 @@ public class Canvas2D_3TransformsPlugin extends Plugin implements PluginCanvas {
 	@Override
 	public String getCanvasClassName() {
 		return Canvas2D_3TransformsPlugin.class.getName();
-		//
 	}
 
 	@Override
