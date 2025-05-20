@@ -88,7 +88,7 @@ public class CreateSpots extends JPanel {
 						cageFound = exp.cagesArray.cagesList.get(0);
 					
 					if (cageFound != null) {
-						exp.seqCamData.centerOnRoi(cageFound.getCageRoi());
+						exp.seqCamData.centerOnRoi(cageFound.getRoi());
 						changeGrid(exp, cageFound);
 					}
 
@@ -144,7 +144,7 @@ public class CreateSpots extends JPanel {
 		ArrayList<ROI2DPolygonPlus> listSelectedAreas = roiGrid.getSelectedAreaRois();
 		int spotIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
-			ROI2D cageRoi = cage.getCageRoi();
+			ROI2D cageRoi = cage.getRoi();
 			ROI2DGrid cageGrid = createGrid(cageRoi);
 			cage.spotsArray.spotsList.clear();
 			for (ROI2DPolygonPlus roi : listSelectedAreas) {
@@ -155,14 +155,14 @@ public class CreateSpots extends JPanel {
 				cage.addEllipseSpot(spotIndex, center, radius);
 				spotIndex++;
 			}
-			cage.getCageRoi().setSelected(false);
+			cage.getRoi().setSelected(false);
 		}
 	}
 
 	void changeGrid(Experiment exp, Cage cage) {
 		if (roiGrid != null)
 			roiGrid.clearGridRois(exp.seqCamData.seq);
-		roiGrid = createGrid(cage.getCageRoi());
+		roiGrid = createGrid(cage.getRoi());
 		exp.seqCamData.seq.addROIs(roiGrid.getAreaRois(), false);
 	}
 

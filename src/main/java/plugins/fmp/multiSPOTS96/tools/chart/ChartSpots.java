@@ -120,7 +120,7 @@ public class ChartSpots extends IcyFrame {
 
 				XYSeriesCollection xyDataSetList = chartCage.combineResults(cage, xlsResultsArray, xlsResultsArray2);
 				XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList,
-						setYaxis(cage.getCageRoi().getName(), row, col, xlsExportOptions));
+						setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions));
 
 				JFreeChart chart = new JFreeChart(null, // xlsExportOptions.exportType.toTitle()
 						null, // titleFont
@@ -274,7 +274,7 @@ public class ChartSpots extends IcyFrame {
 
 		String spotName = clickedSpot.getRoi().getName();
 		Cage cage = exp.cagesArray.getCageFromSpotROIName(spotName);
-		ROI2D cageRoi = cage.getCageRoi();
+		ROI2D cageRoi = cage.getRoi();
 		exp.seqCamData.centerOnRoi(cageRoi);
 	}
 

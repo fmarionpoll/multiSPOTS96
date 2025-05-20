@@ -171,11 +171,13 @@ public class Charts extends JPanel implements SequenceListener {
 			xlsExportOptions.cageIndexFirst = 0;
 			xlsExportOptions.cageIndexLast = exp.cagesArray.cagesList.size() - 1;
 		} else {
-			Cage cageFound = exp.cagesArray.findFirstSelectedCage();
+			Cage cageFound = exp.cagesArray.findFirstCageWithSelectedSpot();
+			if (cageFound == null)
+				cageFound = exp.cagesArray.findFirstSelectedCage();
 			if (cageFound == null)
 				return null;
-			exp.seqCamData.centerOnRoi(cageFound.getCageRoi());
-			String cageNumber = CageString.getCageNumberFromCageRoiName(cageFound.getCageRoi().getName());
+			exp.seqCamData.centerOnRoi(cageFound.getRoi());
+			String cageNumber = CageString.getCageNumberFromCageRoiName(cageFound.getRoi().getName());
 			xlsExportOptions.cageIndexFirst = Integer.parseInt(cageNumber);
 			xlsExportOptions.cageIndexLast = xlsExportOptions.cageIndexFirst;
 		}

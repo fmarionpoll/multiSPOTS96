@@ -58,16 +58,16 @@ public class Cage implements Comparable<Cage> {
 
 	// ------------------------------------
 
-	public ROI2D getCageRoi() {
+	public ROI2D getRoi() {
 		return cageXROI2D;
 	}
 
-	public void setCageRoi(ROI2DShape roi) {
+	public void setRoi(ROI2DShape roi) {
 		cageXROI2D = roi;
 		listRoiAlongT.clear();
 	}
 
-	public String getCageNumberFromCageRoiName() {
+	public String getCageNumberFromRoiName() {
 		if (prop.strCageNumber == null)
 			prop.strCageNumber = cageXROI2D.getName().substring(cageXROI2D.getName().length() - 3);
 		return prop.strCageNumber;
@@ -75,7 +75,7 @@ public class Cage implements Comparable<Cage> {
 
 	public int getCageNumberInteger() {
 		int cagenb = -1;
-		prop.strCageNumber = getCageNumberFromCageRoiName();
+		prop.strCageNumber = getCageNumberFromRoiName();
 		if (prop.strCageNumber != null) {
 			try {
 				return Integer.parseInt(prop.strCageNumber);
@@ -130,13 +130,13 @@ public class Cage implements Comparable<Cage> {
 		FlyPosition aValue = flyPositions.flyPositionList.get(t);
 
 		ROI2DRectangle flyRoiR = new ROI2DRectangle(aValue.rectPosition);
-		flyRoiR.setName("detR" + getCageNumberFromCageRoiName() + "_" + t);
+		flyRoiR.setName("detR" + getCageNumberFromRoiName() + "_" + t);
 		flyRoiR.setT(t);
 		return flyRoiR;
 	}
 
 	public void transferRoisToPositions(List<ROI2D> detectedROIsList) {
-		String filter = "detR" + getCageNumberFromCageRoiName();
+		String filter = "detR" + getCageNumberFromRoiName();
 		for (ROI2D roi : detectedROIsList) {
 			String name = roi.getName();
 			if (!name.contains(filter))

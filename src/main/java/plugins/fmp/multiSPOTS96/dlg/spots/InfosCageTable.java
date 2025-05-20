@@ -94,7 +94,7 @@ public class InfosCageTable extends JPanel {
 					for (Cage cageFrom : cagesArrayCopy.cagesList) {
 						cageFrom.valid = false;
 						for (Cage cageTo : exp.cagesArray.cagesList) {
-							if (!cageFrom.getCageRoi().getName().equals(cageTo.getCageRoi().getName()))
+							if (!cageFrom.getRoi().getName().equals(cageTo.getRoi().getName()))
 								continue;
 							cageFrom.valid = true;
 							cageTo.prop.copy(cageFrom.prop);
@@ -115,7 +115,7 @@ public class InfosCageTable extends JPanel {
 					if (rowIndex >= 0) {
 						Cage cage0 = exp.cagesArray.cagesList.get(rowIndex);
 						for (Cage cage : exp.cagesArray.cagesList) {
-							if (cage.getCageRoi().getName().equals(cage0.getCageRoi().getName()))
+							if (cage.getRoi().getName().equals(cage0.getRoi().getName()))
 								continue;
 							switch (columnIndex) {
 							case 1:

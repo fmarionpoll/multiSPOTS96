@@ -298,7 +298,7 @@ public class CagesArray {
 	private boolean isPresent(Cage cagenew) {
 		boolean flag = false;
 		for (Cage cage : cagesList) {
-			if (cage.getCageRoi().getName().contentEquals(cagenew.getCageRoi().getName())) {
+			if (cage.getRoi().getName().contentEquals(cagenew.getRoi().getName())) {
 				flag = true;
 				break;
 			}
@@ -312,16 +312,16 @@ public class CagesArray {
 			if (roi.getName() == null)
 				break;
 			for (Cage cage : cagesList) {
-				if (cage.getCageRoi() == null)
+				if (cage.getRoi() == null)
 					break;
-				if (roi.getName().equals(cage.getCageRoi().getName())) {
+				if (roi.getName().equals(cage.getRoi().getName())) {
 					found = true;
 					break;
 				}
 			}
 			if (!found) {
 				Cage cage = new Cage();
-				cage.setCageRoi((ROI2DShape) roi);
+				cage.setRoi((ROI2DShape) roi);
 				cagesList.add(cage);
 			}
 		}
@@ -333,8 +333,8 @@ public class CagesArray {
 		while (iterator.hasNext()) {
 			Cage cage = iterator.next();
 			boolean found = false;
-			if (cage.getCageRoi() != null) {
-				String cageRoiName = cage.getCageRoi().getName();
+			if (cage.getRoi() != null) {
+				String cageRoiName = cage.getRoi().getName();
 				for (ROI2D roi : roiList) {
 					if (roi.getName().equals(cageRoiName)) {
 						found = true;
@@ -374,10 +374,23 @@ public class CagesArray {
 	public Cage findFirstSelectedCage() {
 		Cage cageFound = null;
 		for (Cage cage : cagesList) {
-			ROI2D roi = cage.getCageRoi();
+			ROI2D roi = cage.getRoi();
 			if (roi.isSelected()) {
 				cageFound = cage;
 				break;
+			}
+		}
+		return cageFound;
+	}
+
+	public Cage findFirstCageWithSelectedSpot() {
+		Cage cageFound = null;
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				ROI2D roi = spot.getRoi();
+				if (roi.isSelected()) {
+					return cage;
+				}
 			}
 		}
 		return cageFound;
@@ -389,7 +402,7 @@ public class CagesArray {
 		seqCamData.removeROIsContainingString("cage");
 		List<ROI2D> cageROIList = new ArrayList<ROI2D>(cagesList.size());
 		for (Cage cage : cagesList)
-			cageROIList.add(cage.getCageRoi());
+			cageROIList.add(cage.getRoi());
 		seqCamData.seq.addROIs(cageROIList, true);
 	}
 
@@ -478,7 +491,7 @@ public class CagesArray {
 	public int getLastIntervalFlyAlive(int cagenumber) {
 		int flypos = -1;
 		for (Cage cage : cagesList) {
-			String cagenumberString = cage.getCageRoi().getName().substring(4);
+			String cagenumberString = cage.getRoi().getName().substring(4);
 			if (Integer.valueOf(cagenumberString) == cagenumber) {
 				flypos = cage.flyPositions.getLastIntervalAlive();
 				break;
@@ -490,7 +503,7 @@ public class CagesArray {
 	public boolean isFlyAlive(int cagenumber) {
 		boolean isalive = false;
 		for (Cage cage : cagesList) {
-			String cagenumberString = cage.getCageRoi().getName().substring(4);
+			String cagenumberString = cage.getRoi().getName().substring(4);
 			if (Integer.valueOf(cagenumberString) == cagenumber) {
 				isalive = (cage.flyPositions.getLastIntervalAlive() > 0);
 				break;
@@ -502,7 +515,7 @@ public class CagesArray {
 	public boolean isDataAvailable(int cagenumber) {
 		boolean isavailable = false;
 		for (Cage cage : cagesList) {
-			String cagenumberString = cage.getCageRoi().getName().substring(4);
+			String cagenumberString = cage.getRoi().getName().substring(4);
 			if (Integer.valueOf(cagenumberString) == cagenumber) {
 				isavailable = true;
 				break;
@@ -516,7 +529,7 @@ public class CagesArray {
 		int rightPixel = -1;
 
 		for (Cage cage : cagesList) {
-			ROI2D roiCage = cage.getCageRoi();
+			ROI2D roiCage = cage.getRoi();
 			Rectangle2D rect = roiCage.getBounds2D();
 			int left = (int) rect.getX();
 			int right = left + (int) rect.getWidth();
@@ -530,13 +543,13 @@ public class CagesArray {
 	}
 
 	public Polygon2D getPolygon2DEnclosingAllCages() {
-		if (cagesList.size() < 1 || cagesList.get(0).getCageRoi() == null)
+		if (cagesList.size() < 1 || cagesList.get(0).getRoi() == null)
 			return null;
-		Polygon2D polygon = getCoordinatesOfROI(cagesList.get(0).getCageRoi());
+		Polygon2D polygon = getCoordinatesOfROI(cagesList.get(0).getRoi());
 		for (Cage cage : cagesList) {
 			int col = cage.prop.arrayColumn;
 			int row = cage.prop.arrayRow;
-			Polygon2D n = getCoordinatesOfROI(cage.getCageRoi());
+			Polygon2D n = getCoordinatesOfROI(cage.getRoi());
 			if (col == 0 && row == 0) {
 				transferPointToPolygon(0, polygon, n);
 			} else if (col >= (nCagesAlongX - 1) && row == 0) {
@@ -805,7 +818,7 @@ public class CagesArray {
 
 		for (Cage cage : cagesList) {
 			List<ROI2DAlongT> listROI2DForKymo = cage.getROIAlongTList();
-			ROI2D roi = cage.getCageRoi();
+			ROI2D roi = cage.getRoi();
 			if (item > 0)
 				roi = (ROI2D) listROI2DForKymo.get(item - 1).getRoi_in().getCopy();
 			listROI2DForKymo.add(item, new ROI2DAlongT(start, roi));

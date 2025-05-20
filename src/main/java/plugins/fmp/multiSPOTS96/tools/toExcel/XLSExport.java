@@ -563,7 +563,7 @@ public class XLSExport {
 
 	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
 		for (Cage cage : exp.cagesArray.cagesList) {
-			String roiname = cage.getCageRoi().getName();
+			String roiname = cage.getRoi().getName();
 			if (roiname.length() < 4 || !roiname.substring(0, 4).contains("cage"))
 				continue;
 

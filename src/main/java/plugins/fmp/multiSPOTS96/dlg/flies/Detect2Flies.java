@@ -282,7 +282,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 			allCagesComboBox.removeAllItems();
 			allCagesComboBox.addItem("all cages");
 			for (Cage cage : exp.cagesArray.cagesList)
-				allCagesComboBox.addItem(cage.getCageNumberFromCageRoiName());
+				allCagesComboBox.addItem(cage.getCageNumberFromRoiName());
 		}
 	}
 

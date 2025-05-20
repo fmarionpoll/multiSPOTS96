@@ -132,7 +132,7 @@ public class Edit extends JPanel {
 		if (findFirst(exp)) {
 			selectImageT(exp, foundT);
 			Cage cage = exp.cagesArray.getCageFromNumber(foundCage);
-			String name = "det" + cage.getCageNumberFromCageRoiName() + "_" + foundT;
+			String name = "det" + cage.getCageNumberFromRoiName() + "_" + foundT;
 			foundCombo.setSelectedItem(name);
 		} else
 			MessageDialog.showDialog("no missed point found", MessageDialog.INFORMATION_MESSAGE);
@@ -171,7 +171,7 @@ public class Edit extends JPanel {
 					continue;
 				Rectangle2D rect = cage.flyPositions.flyPositionList.get(frame).rectPosition;
 				if (rect.getX() == -1 && rect.getY() == -1) {
-					String name = "det" + cage.getCageNumberFromCageRoiName() + "_"
+					String name = "det" + cage.getCageNumberFromRoiName() + "_"
 							+ cage.flyPositions.flyPositionList.get(frame).flyIndexT;
 					foundCombo.addItem(name);
 				}
@@ -200,7 +200,7 @@ public class Edit extends JPanel {
 			Cage cage = exp.cagesArray.getCageFromNumber(cageNumber);
 			Rectangle2D rect0 = cage.flyPositions.flyPositionList.get(frame).rectPosition;
 			if (rect0.getX() == -1 && rect0.getY() == -1) {
-				Rectangle rect = cage.getCageRoi().getBounds();
+				Rectangle rect = cage.getRoi().getBounds();
 				Point2D point2 = new Point2D.Double(rect.x + rect.width / 2, rect.y + rect.height / 2);
 				roi.setPosition2D(point2);
 			}
