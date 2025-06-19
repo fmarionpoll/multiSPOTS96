@@ -36,7 +36,6 @@ public class Experiment {
 	public SequenceCamData seqCamData = null;
 	public SequenceKymos seqKymos = null;
 	public Sequence seqReference = null;
-
 	public CagesArray cagesArray = new CagesArray();
 
 	public FileTime firstImage_FileTime;
@@ -486,8 +485,8 @@ public class Experiment {
 	public boolean zloadKymographs() {
 		if (seqKymos == null)
 			seqKymos = new SequenceKymos();
-		List<ImageFileDescriptor> myList = seqKymos
-				.loadListOfPotentialKymographsFromSpots(getKymosBinFullDirectory(), cagesArray);
+		List<ImageFileDescriptor> myList = seqKymos.loadListOfPotentialKymographsFromSpots(getKymosBinFullDirectory(),
+				cagesArray);
 		ImageFileDescriptor.getExistingFileNames(myList);
 		return seqKymos.loadKymographImagesFromList(myList, true);
 	}

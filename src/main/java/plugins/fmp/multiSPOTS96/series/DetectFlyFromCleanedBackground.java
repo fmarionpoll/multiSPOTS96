@@ -5,16 +5,17 @@ import java.util.List;
 
 import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
+import icy.image.IcyBufferedImageUtil;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 
-public class SpotsDetect extends BuildSeries {
-	public boolean buildBackground = true;
-	public boolean detectFlies = true;
-	public FlyDetectTools find_flies = new FlyDetectTools();
+public class DetectFlyFromCleanedBackground extends BuildSeries {
+	private DtectFlyTools find_flies = new DtectFlyTools();
+	public boolean viewInternalImages = true;
 
-	// -----------------------------------------------------
+	// -----------------------------------------
 
 	void analyzeExperiment(Experiment exp) {
 		if (!zloadDrosoTrack(exp))
@@ -22,72 +23,54 @@ public class SpotsDetect extends BuildSeries {
 		if (!checkBoundsForCages(exp))
 			return;
 
-		runFlyDetect1(exp);
+		runFlyDetect2(exp);
 		exp.cagesArray.orderFlyPositions();
 		if (!stopFlag)
 			exp.save_MS96_fliesPositions();
 		exp.seqCamData.closeSequence();
-		closeSequence(seqNegative);
+//		closeSequence(seqNegative);
 	}
 
-	private void runFlyDetect1(Experiment exp) {
+	private void runFlyDetect2(Experiment exp) {
 		exp.cleanPreviousDetectedFliesROIs();
 		find_flies.initParametersForDetection(exp, options);
 		exp.cagesArray.initFlyPositions(options.detectCage);
+		options.threshold = options.thresholdDiff;
 
-		openFlyDetectViewers(exp);
-		findFliesInAllFrames(exp);
-	}
-
-	private void getReferenceImage(Experiment exp, int t, ImageTransformOptions options) {
-		switch (options.transformOption) {
-		case SUBTRACT_TM1:
-			options.backgroundImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t));
-			break;
-
-		case SUBTRACT_T0:
-		case SUBTRACT_REF:
-			if (options.backgroundImage == null)
-				options.backgroundImage = imageIORead(exp.seqCamData.getFileNameFromImageList(0));
-			break;
-
-		case NONE:
-		default:
-			break;
+		if (exp.loadReferenceImage()) {
+			openFlyDetectViewers(exp);
+			findFliesInAllFrames(exp);
 		}
 	}
 
 	private void findFliesInAllFrames(Experiment exp) {
 		ProgressFrame progressBar = new ProgressFrame("Detecting flies...");
 		ImageTransformOptions transformOptions = new ImageTransformOptions();
-		transformOptions.transformOption = options.transformop;
-		ImageTransformInterface transformFunction = options.transformop.getFunction();
+		transformOptions.transformOption = ImageTransformEnums.SUBTRACT_REF;
+		transformOptions.backgroundImage = IcyBufferedImageUtil.getCopy(exp.seqCamData.refImage);
+		ImageTransformInterface transformFunction = transformOptions.transformOption.getFunction();
 
-		int t_previous = 0;
 		int totalFrames = exp.seqCamData.nTotalFrames;
-
 		for (int index = 0; index < totalFrames; index++) {
 			int t_from = index;
 			String title = "Frame #" + t_from + "/" + exp.seqCamData.nTotalFrames;
 			progressBar.setMessage(title);
 
-			IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));
-			getReferenceImage(exp, t_previous, transformOptions);
-			IcyBufferedImage workImage = transformFunction.getTransformedImage(sourceImage, transformOptions);
+			IcyBufferedImage workImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));
+			IcyBufferedImage negativeImage = transformFunction.getTransformedImage(workImage, transformOptions);
 			try {
 				seqNegative.beginUpdate();
-				seqNegative.setImage(0, 0, workImage);
+				seqNegative.setImage(0, 0, negativeImage);
 				vNegative.setTitle(title);
-				List<Rectangle2D> listRectangles = find_flies.findFlies(workImage, t_from);
+				List<Rectangle2D> listRectangles = find_flies.findFlies(negativeImage, t_from);
 				displayRectanglesAsROIs(seqNegative, listRectangles, true);
 				seqNegative.endUpdate();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
-			t_previous = t_from;
 		}
 
 		progressBar.close();
 	}
+
 }

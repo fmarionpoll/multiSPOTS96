@@ -7,10 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -18,37 +16,24 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JToggleButton;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import icy.image.IcyBufferedImage;
-import icy.roi.ROI;
-import icy.roi.ROI2D;
-import icy.sequence.Sequence;
 import icy.util.StringUtil;
-import plugins.adufour.quickhull.QuickHull2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
-import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.series.SpotsDetect;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DMeasures;
-import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
+import plugins.fmp.multiSPOTS96.series.DetectSpotsOutline;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
-import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformInterface;
-import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
 
-import plugins.kernel.roi.roi2d.ROI2DPolygon;
-import plugins.kernel.roi.roi2d.ROI2DShape;
-
-public class DetectSpots extends JPanel implements ChangeListener, ItemListener, PropertyChangeListener, PopupMenuListener {
+public class DetectSpots extends JPanel
+		implements ChangeListener, ItemListener, PropertyChangeListener, PopupMenuListener {
 	/**
 	 * 
 	 */
@@ -68,7 +53,7 @@ public class DetectSpots extends JPanel implements ChangeListener, ItemListener,
 	private JComboBox<ImageTransformEnums> backgroundComboBox = new JComboBox<>(new ImageTransformEnums[] {
 			ImageTransformEnums.NONE, ImageTransformEnums.SUBTRACT_TM1, ImageTransformEnums.SUBTRACT_T0 });
 
-	private JComboBox<String> cellsComboBox = new JComboBox<String>(new String[] { "all cells" });
+	private JComboBox<String> cagesComboBox = new JComboBox<String>(new String[] { "all cages" });
 	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(60, 0, 255, 1));
 	private JSpinner jitterTextField = new JSpinner(new SpinnerNumberModel(5, 0, 1000, 1));
 	private JSpinner objectLowsizeSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 9999, 1));
@@ -82,7 +67,7 @@ public class DetectSpots extends JPanel implements ChangeListener, ItemListener,
 	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
 
 	private OverlayThreshold overlayThreshold1 = null;
-	private SpotsDetect flyDetect1 = null;
+	private DetectSpotsOutline flyDetect1 = null;
 
 	// -----------------------------------------------------
 
@@ -95,13 +80,13 @@ public class DetectSpots extends JPanel implements ChangeListener, ItemListener,
 
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(startComputationButton);
-		panel1.add(cellsComboBox);
+		panel1.add(cagesComboBox);
 		panel1.add(allCheckBox);
 		panel1.add(new JLabel("n flies "));
 		panel1.add(nFliesPresentSpinner);
 		add(panel1);
 
-		cellsComboBox.addPopupMenuListener(this);
+		cagesComboBox.addPopupMenuListener(this);
 
 		JPanel panel2 = new JPanel(flowLayout);
 		transformComboBox.setSelectedIndex(1);
@@ -143,7 +128,7 @@ public class DetectSpots extends JPanel implements ChangeListener, ItemListener,
 				if (exp != null) {
 					if (overlayCheckBox.isSelected()) {
 						if (overlayThreshold1 == null)
-							overlayThreshold1 = new OverlayThreshold(exp.seqCamData);
+							overlayThreshold1 = new OverlayThreshold(exp.seqCamData.seq);
 						exp.seqCamData.seq.addOverlay(overlayThreshold1);
 						updateOverlay(exp);
 					} else
@@ -179,15 +164,15 @@ public class DetectSpots extends JPanel implements ChangeListener, ItemListener,
 		if (seqCamData == null)
 			return;
 		if (overlayThreshold1 == null)
-			overlayThreshold1 = new OverlayThreshold(seqCamData);
+			overlayThreshold1 = new OverlayThreshold(seqCamData.seq);
 		else {
 			seqCamData.seq.removeOverlay(overlayThreshold1);
-			overlayThreshold1.setSequence(seqCamData);
+			overlayThreshold1.setSequence(seqCamData.seq);
 		}
 		seqCamData.seq.addOverlay(overlayThreshold1);
 		boolean ifGreater = true;
 		ImageTransformEnums transformOp = (ImageTransformEnums) transformComboBox.getSelectedItem();
-		overlayThreshold1.setThresholdSingle(exp.cells.detect_threshold, transformOp, ifGreater);
+		overlayThreshold1.setThresholdSingle(exp.cagesArray.detect_threshold, transformOp, ifGreater);
 		overlayThreshold1.painterChanged();
 	}
 
@@ -201,7 +186,7 @@ public class DetectSpots extends JPanel implements ChangeListener, ItemListener,
 		if (e.getSource() == thresholdSpinner) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				exp.cells.detect_threshold = (int) thresholdSpinner.getValue();
+				exp.cagesArray.detect_threshold = (int) thresholdSpinner.getValue();
 				updateOverlay(exp);
 			}
 		}
@@ -230,15 +215,15 @@ public class DetectSpots extends JPanel implements ChangeListener, ItemListener,
 		options.transformop = (ImageTransformEnums) backgroundComboBox.getSelectedItem();
 		options.threshold = (int) thresholdSpinner.getValue();
 
-		options.isFrameFixed = parent0.paneExcel.tabCommonOptions.getIsFixedFrame();
-		options.t_Ms_First = parent0.paneExcel.tabCommonOptions.getStartMs();
-		options.t_Ms_Last = parent0.paneExcel.tabCommonOptions.getEndMs();
-		options.t_Ms_BinDuration = parent0.paneExcel.tabCommonOptions.getBinMs();
+//		options.isFrameFixed = parent0.paneExcel.tabCommonOptions.getIsFixedFrame();
+//		options.t_Ms_First = parent0.paneExcel.tabCommonOptions.getStartMs();
+//		options.t_Ms_Last = parent0.paneExcel.tabCommonOptions.getEndMs();
+//		options.t_Ms_BinDuration = parent0.paneExcel.tabCommonOptions.getBinMs();
 
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = exp.getBinSubDirectory();
 
-		options.detectCell = cellsComboBox.getSelectedIndex() - 1;
+		options.detectCage = cagesComboBox.getSelectedIndex() - 1;
 
 		return options;
 	}
@@ -247,9 +232,9 @@ public class DetectSpots extends JPanel implements ChangeListener, ItemListener,
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		parent0.paneBrowse.panelLoadSave.closeViewsForCurrentExperiment(exp);
+		parent0.dlgBrowse.panelLoadSave.closeViewsForCurrentExperiment(exp);
 
-		flyDetect1 = new FlyDetect1();
+		flyDetect1 = new DetectSpotsOutline();
 		flyDetect1.options = initTrackParameters(exp);
 		flyDetect1.stopFlag = false;
 		flyDetect1.buildBackground = false;
@@ -269,8 +254,8 @@ public class DetectSpots extends JPanel implements ChangeListener, ItemListener,
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (StringUtil.equals("thread_ended", evt.getPropertyName())) {
 			startComputationButton.setText(detectString);
-			parent0.paneKymos.tabDisplay.selectKymographImage(parent0.paneKymos.tabDisplay.indexImagesCombo);
-			parent0.paneKymos.tabDisplay.indexImagesCombo = -1;
+			parent0.dlgKymos.tabDisplay.selectKymographImage(parent0.dlgKymos.tabDisplay.indexImagesCombo);
+			parent0.dlgKymos.tabDisplay.indexImagesCombo = -1;
 		}
 	}
 
@@ -279,12 +264,12 @@ public class DetectSpots extends JPanel implements ChangeListener, ItemListener,
 		int nitems = 1;
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
-			nitems = exp.cells.cellList.size() + 1;
-		if (cellsComboBox.getItemCount() != nitems) {
-			cellsComboBox.removeAllItems();
-			cellsComboBox.addItem("all cells");
-			for (Cell cell : exp.cells.cellList) {
-				cellsComboBox.addItem(cell.getCellNumber());
+			nitems = exp.cagesArray.cagesList.size() + 1;
+		if (cagesComboBox.getItemCount() != nitems) {
+			cagesComboBox.removeAllItems();
+			cagesComboBox.addItem("all cells");
+			for (Cage cage : exp.cagesArray.cagesList) {
+				cagesComboBox.addItem(cage.getCageNumberFromRoiName());
 			}
 		}
 	}

@@ -9,10 +9,10 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 
-public class FlyDetect1 extends BuildSeries {
+public class DetectFlyUsingSimpleThreshold extends BuildSeries {
 	public boolean buildBackground = true;
 	public boolean detectFlies = true;
-	public FlyDetectTools find_flies = new FlyDetectTools();
+	public DtectFlyTools find_flies = new DtectFlyTools();
 
 	// -----------------------------------------------------
 

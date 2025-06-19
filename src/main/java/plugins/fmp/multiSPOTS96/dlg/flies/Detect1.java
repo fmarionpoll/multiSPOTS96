@@ -29,7 +29,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.series.FlyDetect1;
+import plugins.fmp.multiSPOTS96.series.DetectFlyUsingSimpleThreshold;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
 
@@ -67,7 +67,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
 
 	private OverlayThreshold overlayThreshold1 = null;
-	private FlyDetect1 flyDetect1 = null;
+	private DetectFlyUsingSimpleThreshold flyDetect1 = null;
 
 	// -----------------------------------------------------
 
@@ -233,7 +233,7 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 			return;
 		parent0.dlgBrowse.panelLoadSave.closeViewsForCurrentExperiment(exp);
 
-		flyDetect1 = new FlyDetect1();
+		flyDetect1 = new DetectFlyUsingSimpleThreshold();
 		flyDetect1.options = initTrackParameters();
 		flyDetect1.stopFlag = false;
 		flyDetect1.buildBackground = false;

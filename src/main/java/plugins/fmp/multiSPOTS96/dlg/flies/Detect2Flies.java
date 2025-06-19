@@ -29,7 +29,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.series.FlyDetect2;
+import plugins.fmp.multiSPOTS96.series.DetectFlyFromCleanedBackground;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
@@ -58,7 +58,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 //	private JToggleButton spotsViewButton = new JToggleButton("View");
 	ImageTransformEnums[] transforms = new ImageTransformEnums[] { ImageTransformEnums.SUBTRACT_REF };
 
-	private FlyDetect2 flyDetect2 = null;
+	private DetectFlyFromCleanedBackground flyDetect2 = null;
 	private OverlayThreshold overlayThreshold2 = null;
 
 	// ----------------------------------------------------
@@ -250,7 +250,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 			return;
 		parent0.dlgBrowse.panelLoadSave.closeViewsForCurrentExperiment(exp);
 
-		flyDetect2 = new FlyDetect2();
+		flyDetect2 = new DetectFlyFromCleanedBackground();
 		flyDetect2.options = initTrackParameters();
 		flyDetect2.stopFlag = false;
 		flyDetect2.addPropertyChangeListener(this);
