@@ -21,7 +21,7 @@ public class BuildBackground extends BuildSeries {
 	private ViewerFMP vData = null;
 	private ViewerFMP vReference = null;
 
-	private DtectFlyTools flyDetectTools = new DtectFlyTools();
+	private DetectFlyTools flyDetectTools = new DetectFlyTools();
 
 	// -----------------------------------------
 

@@ -11,8 +11,8 @@ import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 
-public class DetectFlyFromCleanedBackground extends BuildSeries {
-	private DtectFlyTools find_flies = new DtectFlyTools();
+public class DetectFlyFromCleanBackground extends BuildSeries {
+	private DetectFlyTools find_flies = new DetectFlyTools();
 	public boolean viewInternalImages = true;
 
 	// -----------------------------------------

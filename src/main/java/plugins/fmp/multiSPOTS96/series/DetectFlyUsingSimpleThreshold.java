@@ -12,7 +12,7 @@ import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 public class DetectFlyUsingSimpleThreshold extends BuildSeries {
 	public boolean buildBackground = true;
 	public boolean detectFlies = true;
-	public DtectFlyTools find_flies = new DtectFlyTools();
+	public DetectFlyTools find_flies = new DetectFlyTools();
 
 	// -----------------------------------------------------
 

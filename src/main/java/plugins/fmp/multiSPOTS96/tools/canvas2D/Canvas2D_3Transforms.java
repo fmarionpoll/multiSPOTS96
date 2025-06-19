@@ -34,6 +34,7 @@ public class Canvas2D_3Transforms extends Canvas2D {
 	public JComboBox<ImageTransformEnums> transformsComboStep1 = new JComboBox<ImageTransformEnums>(
 			imageTransformStep1);
 	ImageTransformInterface transformStep1 = ImageTransformEnums.NONE.getFunction();
+
 	// ImageTransformOptions transformOptionsStep1 = new ImageTransformOptions();
 	ImageTransformOptions optionsStep1 = new ImageTransformOptions();
 	ImageTransformOptions optionsStep2 = new ImageTransformOptions();
@@ -42,6 +43,7 @@ public class Canvas2D_3Transforms extends Canvas2D {
 			ImageTransformEnums.SORT_SUMDIFFCOLS, ImageTransformEnums.SORT_CHAN0COLS };
 	public JComboBox<ImageTransformEnums> transformsComboStep2 = new JComboBox<ImageTransformEnums>(
 			imageTransformStep2);
+
 	ImageTransformInterface transformStep2 = ImageTransformEnums.NONE.getFunction();
 
 	public Canvas2D_3Transforms(Viewer viewer) {
@@ -204,6 +206,30 @@ public class Canvas2D_3Transforms extends Canvas2D {
 
 	public void selectImageTransformFunctionStep2(int iselected, ImageTransformOptions options) {
 		transformsComboStep2.setSelectedIndex(iselected);
+		if (options != null)
+			optionsStep2 = options;
+	}
+
+	public void selectIndexStep1(int iselected, ImageTransformOptions options) {
+		transformsComboStep1.setSelectedIndex(iselected);
+		if (options != null)
+			optionsStep1 = options;
+	}
+
+	public void selectItemStep1(ImageTransformEnums item, ImageTransformOptions options) {
+		transformsComboStep1.setSelectedItem(item);
+		if (options != null)
+			optionsStep1 = options;
+	}
+
+	public void selectIndexStep2(int iselected, ImageTransformOptions options) {
+		transformsComboStep2.setSelectedIndex(iselected);
+		if (options != null)
+			optionsStep2 = options;
+	}
+
+	public void selectItemStep2(ImageTransformEnums item, ImageTransformOptions options) {
+		transformsComboStep2.setSelectedItem(item);
 		if (options != null)
 			optionsStep2 = options;
 	}

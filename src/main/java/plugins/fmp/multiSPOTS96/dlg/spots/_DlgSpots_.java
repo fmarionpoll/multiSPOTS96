@@ -50,7 +50,7 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 		capPopupPanel.collapse();
 		mainPanel.add(capPopupPanel);
 
-		GridLayout gridLayout = new GridLayout(3, 1);
+		GridLayout gridLayout = new GridLayout(4, 1);
 		int order = 0;
 
 		tabCreateCages.init(gridLayout, parent0);
@@ -70,7 +70,7 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 		tabbedPane.addTab("Detect", null, tabDetectSpots, "Detect spots after threshold");
 //		id_spots = order;
 		order++;
-		
+
 		tabEditSpots.init(gridLayout, parent0);
 		tabEditSpots.addPropertyChangeListener(this);
 		tabbedPane.addTab("Edit", null, tabEditSpots, "Edit spots position");

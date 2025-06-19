@@ -17,7 +17,7 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 
-public class DtectFlyTools {
+public class DetectFlyTools {
 	public List<BooleanMask2D> cageMaskList = new ArrayList<BooleanMask2D>();
 	public Rectangle rectangleAllCages = null;
 	public BuildSeriesOptions options = null;

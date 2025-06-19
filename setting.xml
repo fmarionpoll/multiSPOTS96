@@ -78,7 +78,7 @@
 <key name="lastUpdateCheckTime" value="1750335235809"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
-<key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\2025-03-20\cam96_D02"/>
+<key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\Thomas\2025-06-13-caf1mM-3mM"/>
 </section>
 <section name="canvas">
 <section name="Canvas2D">
@@ -98,10 +98,10 @@
 </section>
 <section name="online"/>
 </section>
-<key name="id" value="293943977"/>
+<key name="id" value="211168308"/>
 <key name="os" value="win64"/>
-<key name="clientCpuNumber" value="20"/>
-<key name="clientTotalMemory" value="34078789632"/>
+<key name="clientCpuNumber" value="16"/>
+<key name="clientTotalMemory" value="67880230912"/>
 <key name="appFolder" value="C:/Users/fred/.m2/repository/org/bioimageanalysis/icy/icy-kernel/2.5.1"/>
 <section name="loader">
 <section name="entry0">
@@ -170,20 +170,20 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="317"/>
-<key name="YE" value="204"/>
-<key name="WidthE" value="1913"/>
+<key name="XE" value="3596"/>
+<key name="YE" value="32"/>
+<key name="WidthE" value="1679"/>
 <key name="HeightE" value="1092"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1367"/>
+<key name="XC" value="1371"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
-<key name="WidthC" value="538"/>
+<key name="WidthC" value="300"/>
 <key name="HeightC" value="930"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
@@ -201,7 +201,7 @@
 <key name="YE" value="100"/>
 <key name="XI" value="100"/>
 <key name="YI" value="100"/>
-<key name="WidthC" value="530"/>
+<key name="WidthC" value="292"/>
 <key name="HeightC" value="840"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
@@ -219,7 +219,7 @@
 <key name="YE" value="200"/>
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
-<key name="WidthC" value="530"/>
+<key name="WidthC" value="292"/>
 <key name="HeightC" value="840"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
