@@ -1,5 +1,6 @@
 package plugins.fmp.multiSPOTS96.dlg.spots;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -7,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -19,17 +22,22 @@ import javax.swing.JToggleButton;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import icy.image.IcyBufferedImage;
 import icy.roi.ROI;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
+import icy.util.StringUtil;
 import plugins.adufour.quickhull.QuickHull2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
+import plugins.fmp.multiSPOTS96.series.SpotsDetect;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DMeasures;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
@@ -40,287 +48,265 @@ import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
-public class DetectSpots extends JPanel {
+public class DetectSpots extends JPanel implements ChangeListener, ItemListener, PropertyChangeListener, PopupMenuListener {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6066671006689527651L;
 
-	/**
-	 * 
-	 */
-
-	private JButton detectContoursButton = new JButton("Detect spots");
-
-
-	private JLabel spotsFilterLabel = new JLabel("Filter");
-	private String[] directions = new String[] { " threshold >", " threshold <" };
-	ImageTransformEnums[] transforms = new ImageTransformEnums[] { ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB,
-			ImageTransformEnums.B_RGB, ImageTransformEnums.R2MINUS_GB, ImageTransformEnums.G2MINUS_RB,
-			ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB, ImageTransformEnums.GBMINUS_2R,
-			ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, ImageTransformEnums.RGB_DIFFS,
-			ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB };
-	private JComboBox<ImageTransformEnums> spotsTransformsComboBox = new JComboBox<ImageTransformEnums>(transforms);
-	private JComboBox<String> spotsDirectionComboBox = new JComboBox<String>(directions);
-	private JSpinner spotsThresholdSpinner = new JSpinner(new SpinnerNumberModel(35, 0, 255, 1));
-	private JCheckBox spotsOverlayCheckBox = new JCheckBox("overlay");
-	private JToggleButton spotsViewButton = new JToggleButton("View");
-
-	private OverlayThreshold overlayThreshold = null;
 	private MultiSPOTS96 parent0 = null;
+	private String detectString = "Detect...";
+	private JButton startComputationButton = new JButton(detectString);
+	private JSpinner nFliesPresentSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 255, 1));
 
-	void init(GridLayout gridLayout, MultiSPOTS96 parent0) {
-		setLayout(gridLayout);
+	JComboBox<ImageTransformEnums> transformComboBox = new JComboBox<>(
+			new ImageTransformEnums[] { ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB, ImageTransformEnums.B_RGB,
+					ImageTransformEnums.R2MINUS_GB, ImageTransformEnums.G2MINUS_RB, ImageTransformEnums.B2MINUS_RG,
+					ImageTransformEnums.NORM_BRMINUSG, ImageTransformEnums.RGB, ImageTransformEnums.H_HSB,
+					ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB });
+
+	private JComboBox<ImageTransformEnums> backgroundComboBox = new JComboBox<>(new ImageTransformEnums[] {
+			ImageTransformEnums.NONE, ImageTransformEnums.SUBTRACT_TM1, ImageTransformEnums.SUBTRACT_T0 });
+
+	private JComboBox<String> cellsComboBox = new JComboBox<String>(new String[] { "all cells" });
+	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(60, 0, 255, 1));
+	private JSpinner jitterTextField = new JSpinner(new SpinnerNumberModel(5, 0, 1000, 1));
+	private JSpinner objectLowsizeSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 9999, 1));
+	private JSpinner objectUpsizeSpinner = new JSpinner(new SpinnerNumberModel(500, 0, 9999, 1));
+	private JCheckBox objectLowsizeCheckBox = new JCheckBox("object > ");
+	private JCheckBox objectUpsizeCheckBox = new JCheckBox("object < ");
+	private JSpinner limitRatioSpinner = new JSpinner(new SpinnerNumberModel(4, 0, 1000, 1));
+
+	private JCheckBox whiteObjectCheckBox = new JCheckBox("white object");
+	JCheckBox overlayCheckBox = new JCheckBox("overlay");
+	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
+
+	private OverlayThreshold overlayThreshold1 = null;
+	private SpotsDetect flyDetect1 = null;
+
+	// -----------------------------------------------------
+
+	void init(GridLayout capLayout, MultiSPOTS96 parent0) {
+		setLayout(capLayout);
 		this.parent0 = parent0;
 
-		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEFT);
-		layoutLeft.setVgap(0);
+		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
+		flowLayout.setVgap(0);
 
-		JPanel panel0 = new JPanel(layoutLeft);
-		panel0.add(detectContoursButton);
-		add(panel0);
-
-		JPanel panel1 = new JPanel(layoutLeft);
-		panel1.add(spotsFilterLabel);
-		panel1.add(spotsTransformsComboBox);
-		panel1.add(spotsDirectionComboBox);
-		panel1.add(spotsThresholdSpinner);
-		panel1.add(spotsViewButton);
-		panel1.add(spotsOverlayCheckBox);
+		JPanel panel1 = new JPanel(flowLayout);
+		panel1.add(startComputationButton);
+		panel1.add(cellsComboBox);
+		panel1.add(allCheckBox);
+		panel1.add(new JLabel("n flies "));
+		panel1.add(nFliesPresentSpinner);
 		add(panel1);
 
-		JPanel panel2 = new JPanel(layoutLeft);
+		cellsComboBox.addPopupMenuListener(this);
+
+		JPanel panel2 = new JPanel(flowLayout);
+		transformComboBox.setSelectedIndex(1);
+		panel2.add(new JLabel("source "));
+		panel2.add(transformComboBox);
+		panel2.add(new JLabel("bkgnd "));
+		panel2.add(backgroundComboBox);
+		panel2.add(new JLabel("threshold "));
+		panel2.add(thresholdSpinner);
 		add(panel2);
 
-		spotsTransformsComboBox.setSelectedItem(ImageTransformEnums.RGB_DIFFS);
-		spotsDirectionComboBox.setSelectedIndex(1);
-		declareListeners();
+//		objectLowsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
+//		objectUpsizeCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
+		JPanel panel3 = new JPanel(flowLayout);
+		panel3.add(objectLowsizeCheckBox);
+		panel3.add(objectLowsizeSpinner);
+		panel3.add(objectUpsizeCheckBox);
+		panel3.add(objectUpsizeSpinner);
+		panel3.add(whiteObjectCheckBox);
+		add(panel3);
+
+		JPanel panel4 = new JPanel(flowLayout);
+		panel4.add(new JLabel("length/width<"));
+		panel4.add(limitRatioSpinner);
+		panel4.add(new JLabel("jitter <= "));
+		panel4.add(jitterTextField);
+		panel4.add(overlayCheckBox);
+		add(panel4);
+
+		defineActionListeners();
+		thresholdSpinner.addChangeListener(this);
+		transformComboBox.addItemListener(this);
 	}
 
-	private void declareListeners() {
-		spotsOverlayCheckBox.addItemListener(new ItemListener() {
+	private void defineActionListeners() {
+		overlayCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					if (spotsOverlayCheckBox.isSelected()) {
+					if (overlayCheckBox.isSelected()) {
+						if (overlayThreshold1 == null)
+							overlayThreshold1 = new OverlayThreshold(exp.seqCamData);
+						exp.seqCamData.seq.addOverlay(overlayThreshold1);
 						updateOverlay(exp);
-						updateOverlayThreshold();
-					} else {
+					} else
 						removeOverlay(exp);
-						overlayThreshold = null;
-					}
 				}
 			}
 		});
 
-		spotsTransformsComboBox.addActionListener(new ActionListener() {
+		startComputationButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null && exp.seqKymos != null) {
-					int index = spotsTransformsComboBox.getSelectedIndex();
-					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer()
-							.getCanvas();
-					updateTransformFunctionsOfCanvas(exp);
-					if (!spotsViewButton.isSelected()) {
-						spotsViewButton.setSelected(true);
-					}
-					canvas.transformsComboStep1.setSelectedIndex(index + 1);
-					updateOverlayThreshold();
-				}
+				if (startComputationButton.getText().equals(detectString))
+					startComputation();
+				else
+					stopComputation();
 			}
 		});
 
-		spotsDirectionComboBox.addActionListener(new ActionListener() {
+		allCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				updateOverlayThreshold();
+				Color color = Color.BLACK;
+				if (allCheckBox.isSelected())
+					color = Color.RED;
+				allCheckBox.setForeground(color);
+				startComputationButton.setForeground(color);
 			}
 		});
-
-		spotsThresholdSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				updateOverlayThreshold();
-			}
-		});
-
-		spotsViewButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null)
-					displayTransform(exp);
-			}
-		});
-
-		detectContoursButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) {
-					exp.seqCamData.removeROIsContainingString("_mask");
-					detectContours(exp);
-					parent0.dlgSpots.tabFile.saveSpotsArray_file(exp);
-				}
-			}
-		});
-
 	}
 
-	void updateOverlay(Experiment exp) {
-		if (overlayThreshold == null)
-			overlayThreshold = new OverlayThreshold(exp.seqCamData.seq);
-		else {
-			exp.seqCamData.seq.removeOverlay(overlayThreshold);
-			overlayThreshold.setSequence(exp.seqCamData.seq);
-		}
-		exp.seqCamData.seq.addOverlay(overlayThreshold);
-	}
-
-	void removeOverlay(Experiment exp) {
-		if (exp.seqCamData != null && exp.seqCamData.seq != null)
-			exp.seqCamData.seq.removeOverlay(overlayThreshold);
-	}
-
-	void updateOverlayThreshold() {
-		if (!spotsOverlayCheckBox.isSelected())
+	public void updateOverlay(Experiment exp) {
+		SequenceCamData seqCamData = exp.seqCamData;
+		if (seqCamData == null)
 			return;
-
-		if (overlayThreshold == null) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-			if (exp != null)
-				updateOverlay(exp);
+		if (overlayThreshold1 == null)
+			overlayThreshold1 = new OverlayThreshold(seqCamData);
+		else {
+			seqCamData.seq.removeOverlay(overlayThreshold1);
+			overlayThreshold1.setSequence(seqCamData);
 		}
-
-		boolean ifGreater = (spotsDirectionComboBox.getSelectedIndex() == 0);
-		int threshold = (int) spotsThresholdSpinner.getValue();
-		ImageTransformEnums transform = (ImageTransformEnums) spotsTransformsComboBox.getSelectedItem();
-		overlayThreshold.setThresholdSingle(threshold, transform, ifGreater);
-		overlayThreshold.painterChanged();
+		seqCamData.seq.addOverlay(overlayThreshold1);
+		boolean ifGreater = true;
+		ImageTransformEnums transformOp = (ImageTransformEnums) transformComboBox.getSelectedItem();
+		overlayThreshold1.setThresholdSingle(exp.cells.detect_threshold, transformOp, ifGreater);
+		overlayThreshold1.painterChanged();
 	}
 
-	private BuildSeriesOptions initDetectOptions(Experiment exp) {
-		BuildSeriesOptions options = new BuildSeriesOptions();
+	public void removeOverlay(Experiment exp) {
+		if (exp.seqCamData != null && exp.seqCamData.seq != null)
+			exp.seqCamData.seq.removeOverlay(overlayThreshold1);
+	}
 
-		// list of stack experiments
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		if (e.getSource() == thresholdSpinner) {
+			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			if (exp != null) {
+				exp.cells.detect_threshold = (int) thresholdSpinner.getValue();
+				updateOverlay(exp);
+			}
+		}
+	}
+
+	private BuildSeriesOptions initTrackParameters(Experiment exp) {
+		BuildSeriesOptions options = new BuildSeriesOptions();
 		options.expList = parent0.expListCombo;
 		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
-		options.expList.index1 = parent0.expListCombo.getSelectedIndex();
-		options.detectAllSeries = false;
-		options.seriesFirst = 0;
+		if (allCheckBox.isSelected())
+			options.expList.index1 = options.expList.getItemCount() - 1;
+		else
+			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
 
-		// other parameters
-		options.transform01 = (ImageTransformEnums) spotsTransformsComboBox.getSelectedItem();
-		options.spotThresholdUp = (spotsDirectionComboBox.getSelectedIndex() == 0);
-		options.spotThreshold = (int) spotsThresholdSpinner.getValue();
-		options.analyzePartOnly = false; // fromCheckBox.isSelected();
+		options.btrackWhite = whiteObjectCheckBox.isSelected();
+		options.blimitLow = objectLowsizeCheckBox.isSelected();
+		options.blimitUp = objectUpsizeCheckBox.isSelected();
+		options.limitLow = (int) objectLowsizeSpinner.getValue();
+		options.limitUp = (int) objectUpsizeSpinner.getValue();
+		options.limitRatio = (int) limitRatioSpinner.getValue();
+		options.jitter = (int) jitterTextField.getValue();
+		options.videoChannel = 0; // colorChannelComboBox.getSelectedIndex();
+		options.transformop = (ImageTransformEnums) transformComboBox.getSelectedItem();
+		options.nFliesPresent = (int) nFliesPresentSpinner.getValue();
 
-		options.overlayTransform = (ImageTransformEnums) spotsTransformsComboBox.getSelectedItem();
-		options.overlayIfGreater = (spotsDirectionComboBox.getSelectedIndex() == 0);
-		options.overlayThreshold = (int) spotsThresholdSpinner.getValue();
+		options.transformop = (ImageTransformEnums) backgroundComboBox.getSelectedItem();
+		options.threshold = (int) thresholdSpinner.getValue();
 
-		options.detectSelectedROIs = false; //selectedSpotCheckBox.isSelected();
+		options.isFrameFixed = parent0.paneExcel.tabCommonOptions.getIsFixedFrame();
+		options.t_Ms_First = parent0.paneExcel.tabCommonOptions.getStartMs();
+		options.t_Ms_Last = parent0.paneExcel.tabCommonOptions.getEndMs();
+		options.t_Ms_BinDuration = parent0.paneExcel.tabCommonOptions.getBinMs();
+
+		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
+		options.binSubDirectory = exp.getBinSubDirectory();
+
+		options.detectCell = cellsComboBox.getSelectedIndex() - 1;
 
 		return options;
 	}
 
-	private void displayTransform(Experiment exp) {
-		boolean displayCheckOverlay = false;
-		if (spotsViewButton.isSelected()) {
-			updateTransformFunctionsOfCanvas(exp);
-			displayCheckOverlay = true;
-		} else {
-			removeOverlay(exp);
-			spotsOverlayCheckBox.setSelected(false);
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
-			canvas.transformsComboStep1.setSelectedIndex(0);
-		}
-		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
+	void startComputation() {
+		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		if (exp == null)
+			return;
+		parent0.paneBrowse.panelLoadSave.closeViewsForCurrentExperiment(exp);
+
+		flyDetect1 = new FlyDetect1();
+		flyDetect1.options = initTrackParameters(exp);
+		flyDetect1.stopFlag = false;
+		flyDetect1.buildBackground = false;
+		flyDetect1.detectFlies = true;
+		flyDetect1.addPropertyChangeListener(this);
+		flyDetect1.execute();
+		startComputationButton.setText("STOP");
 	}
 
-	private void updateTransformFunctionsOfCanvas(Experiment exp) {
-		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
-		if (canvas.transformsComboStep1.getItemCount() < (spotsTransformsComboBox.getItemCount() + 1)) {
-			canvas.updateTransformsComboStep1(transforms);
+	private void stopComputation() {
+		if (flyDetect1 != null && !flyDetect1.stopFlag) {
+			flyDetect1.stopFlag = true;
 		}
-		int index = spotsTransformsComboBox.getSelectedIndex();
-		canvas.selectImageTransformFunctionStep1(index + 1, null);
 	}
 
-	private void detectContours(Experiment exp) {
-		BuildSeriesOptions options = initDetectOptions(exp);
-		ImageTransformOptions transformOptions = new ImageTransformOptions();
-		transformOptions.transformOption = options.transform01;
-		transformOptions.setSingleThreshold(options.spotThreshold, options.spotThresholdUp);
-		ImageTransformInterface transformFunction = options.transform01.getFunction();
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (StringUtil.equals("thread_ended", evt.getPropertyName())) {
+			startComputationButton.setText(detectString);
+			parent0.paneKymos.tabDisplay.selectKymographImage(parent0.paneKymos.tabDisplay.indexImagesCombo);
+			parent0.paneKymos.tabDisplay.indexImagesCombo = -1;
+		}
+	}
 
-		Sequence seq = exp.seqCamData.seq;
-		int t = seq.getFirstViewer().getPositionT();
-
-		IcyBufferedImage sourceImage = seq.getImage(t, 0);
-		IcyBufferedImage workImage = transformFunction.getTransformedImage(sourceImage, transformOptions);
-		boolean detectSelectedROIs = false; //selectedSpotCheckBox.isSelected();
-		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				ROI2D roi_in = spot.getRoi();
-				if (detectSelectedROIs && !roi_in.isSelected())
-					continue;
-
-				exp.seqCamData.seq.removeROI(roi_in);
-				try {
-					spot.mask2DSpot = spot.getRoi().getBooleanMask2D(0, 0, 1, true);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				ROI2DPolygon roi0 = ROI2DMeasures.getContourOfDetectedSpot(workImage, spot, options);
-				if (roi0 != null) {
-					List<Point2D> listPoints = QuickHull2D.computeConvexEnvelope(((ROI2DShape) roi0).getPoints());
-					ROI2DPolygon roi_new = new ROI2DPolygon(listPoints);
-
-					roi_new.setName(spot.getRoi().getName());
-					roi_new.setColor(spot.getRoi().getColor());
-					spot.setRoi(roi_new);
-				}
-				exp.seqCamData.seq.addROI(spot.getRoi());
+	@Override
+	public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+		int nitems = 1;
+		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		if (exp != null)
+			nitems = exp.cells.cellList.size() + 1;
+		if (cellsComboBox.getItemCount() != nitems) {
+			cellsComboBox.removeAllItems();
+			cellsComboBox.addItem("all cells");
+			for (Cell cell : exp.cells.cellList) {
+				cellsComboBox.addItem(cell.getCellNumber());
 			}
 		}
 	}
 
-
-	private void replaceRoi(Experiment exp, Spot spot, ROI2D roi_old, ROI2D roi_new) {
-		exp.seqCamData.seq.removeROI(roi_new);
-		exp.seqCamData.seq.removeROI(roi_old);
-		roi_new.setName(roi_old.getName());
-		roi_new.setColor(roi_old.getColor());
-		spot.setRoi((ROI2DShape) roi_new);
-		try {
-			spot.prop.spotNPixels = (int) roi_new.getNumberOfPoints();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		exp.seqCamData.seq.addROI(roi_new);
+	@Override
+	public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+		// TODO Auto-generated method stub
 	}
 
-	void cutAndInterpolate(Experiment exp) {
-		ROI2D roi = exp.seqCamData.seq.getSelectedROI2D();
-		if (roi == null)
-			return;
+	@Override
+	public void popupMenuCanceled(PopupMenuEvent e) {
+		// TODO Auto-generated method stub
 
-		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				ROI2D spotRoi = spot.getRoi();
-				try {
-					if (!spotRoi.intersects(roi))
-						continue;
+	}
 
-					ROI newRoi = spotRoi.getSubtraction(roi);
-					replaceRoi(exp, spot, spotRoi, (ROI2D) newRoi);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				break;
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		if (e.getStateChange() == ItemEvent.SELECTED) {
+			Object source = e.getSource();
+			if (source instanceof JComboBox) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				updateOverlay(exp);
 			}
 		}
 	}
