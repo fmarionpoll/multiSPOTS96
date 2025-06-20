@@ -27,6 +27,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public int diskRadius = 5;
 	public boolean doRegistration = false;
 	public int referenceFrame = 0;
+	public long fromFrame = 0;
 	public boolean doCreateBinDir = false;
 
 	public boolean loopRunning = false;
@@ -35,6 +36,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 	boolean detectBottom = true;
 
 	public int detectCage = -1;
+
 	public boolean detectSelectedROIs = false;
 	public List<Integer> selectedIndexes = null;
 	public boolean detectAllSeries = true;

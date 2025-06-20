@@ -32,7 +32,6 @@ import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.series.DetectSpotsOutline;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
-import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
 
 public class DetectSpots extends JPanel implements ChangeListener, PropertyChangeListener, PopupMenuListener {
@@ -116,7 +115,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		add(panel3);
 
 		spotsTransformsComboBox.setSelectedItem(ImageTransformEnums.RGB_DIFFS);
-		spotsDirectionComboBox.setSelectedIndex(0);
+		spotsDirectionComboBox.setSelectedIndex(1);
 
 		defineActionListeners();
 		defineItemListeners();
@@ -183,7 +182,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 				updateOverlayThreshold();
 			}
 		});
-		
+
 		spotsThresholdSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				updateOverlayThreshold();
@@ -238,7 +237,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	void updateOverlayThreshold() {
 		if (!spotsOverlayCheckBox.isSelected())
 			return;
-		
+
 		if (overlayThreshold == null) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null)
@@ -274,6 +273,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = exp.getBinSubDirectory();
 
+		options.fromFrame = exp.seqCamData.currentFrame;
 		return options;
 	}
 
@@ -335,24 +335,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	void removeOverlay(Experiment exp) {
 		if (exp.seqCamData != null && exp.seqCamData.seq != null)
 			exp.seqCamData.seq.removeOverlay(overlayThreshold);
-	}
-
-	void viewDifference(Experiment exp, boolean display) {
-		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
-		ImageTransformEnums[] imageTransformStep1 = new ImageTransformEnums[] { ImageTransformEnums.NONE,
-				ImageTransformEnums.SUBTRACT_REF };
-		ImageTransformOptions optionsStep1 = canvas.getOptionsStep1();
-
-		optionsStep1.backgroundImage = null;
-		int index = 0;
-		if (display) {
-			if (exp.seqCamData.refImage == null) {
-				exp.loadReferenceImage();
-			}
-			optionsStep1.backgroundImage = exp.seqCamData.refImage;
-			index = 1;
-		}
-		canvas.selectItemStep1(imageTransformStep1[index], optionsStep1);
 	}
 
 }

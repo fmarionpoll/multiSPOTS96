@@ -9,7 +9,7 @@ import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 public class DetectSpotsOutline extends BuildSeries {
 	public boolean buildBackground = true;
 	public boolean detectFlies = true;
-	public DetectFlyTools find_flies = new DetectFlyTools();
+	public DetectSpotsTools find_spots = new DetectSpotsTools();
 
 	// -----------------------------------------------------
 
@@ -20,7 +20,6 @@ public class DetectSpotsOutline extends BuildSeries {
 			return;
 
 		runSpotsDetect(exp);
-		exp.cagesArray.orderFlyPositions();
 		if (!stopFlag)
 			exp.save_MS96_fliesPositions();
 		exp.seqCamData.closeSequence();
@@ -28,34 +27,20 @@ public class DetectSpotsOutline extends BuildSeries {
 	}
 
 	private void runSpotsDetect(Experiment exp) {
-		exp.cleanPreviousDetectedFliesROIs();
-		find_flies.initParametersForDetection(exp, options);
-		exp.cagesArray.initFlyPositions(options.detectCage);
-
-		openFlyDetectViewers(exp);
-		findSpotsInAllCages(exp);
-	}
-
-	private void findSpotsInAllCages(Experiment exp) {
 		ProgressFrame progressBar = new ProgressFrame("Detecting spots...");
 		ImageTransformOptions transformOptions = new ImageTransformOptions();
 		transformOptions.transformOption = options.transformop;
 		ImageTransformInterface transformFunction = options.transformop.getFunction();
+		// find_spots.options = options;
 
-		int t_from = options.referenceFrame;
+		int t_from = (int) options.fromFrame;
 		String title = "Frame #" + t_from + "/" + exp.seqCamData.nTotalFrames;
 		progressBar.setMessage(title);
 
 		IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));
 		IcyBufferedImage workImage = transformFunction.getTransformedImage(sourceImage, transformOptions);
 		try {
-//			seqNegative.beginUpdate();
-//			seqNegative.setImage(0, 0, workImage);
-//			vNegative.setTitle(title);
-//			List<Rectangle2D> listRectangles = 
-			find_flies.findFlies(workImage, t_from);
-//			displayRectanglesAsROIs(seqNegative, listRectangles, true);
-//			seqNegative.endUpdate();
+			find_spots.findSpots(exp, options, workImage);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

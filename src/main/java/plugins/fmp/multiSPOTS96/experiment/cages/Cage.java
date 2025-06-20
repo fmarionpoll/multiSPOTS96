@@ -72,19 +72,6 @@ public class Cage implements Comparable<Cage> {
 		return prop.strCageNumber;
 	}
 
-//	public int getCageNumberInteger() {
-//		int cagenb = -1;
-//		prop.strCageNumber = getCageNumberFromRoiName();
-//		if (prop.strCageNumber != null) {
-//			try {
-//				return Integer.parseInt(prop.strCageNumber);
-//			} catch (NumberFormatException e) {
-//				return cagenb;
-//			}
-//		}
-//		return cagenb;
-//	}
-
 	public void clearMeasures() {
 		flyPositions.clear();
 	}
