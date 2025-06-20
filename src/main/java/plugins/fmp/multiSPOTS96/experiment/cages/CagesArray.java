@@ -80,8 +80,7 @@ public class CagesArray {
 
 	public void clearAllMeasures(int option_detectCage) {
 		for (Cage cage : cagesList) {
-			int cagenb = cage.getCageNumberInteger();
-			if (option_detectCage < 0 || option_detectCage == cagenb)
+			if (option_detectCage < 0 || option_detectCage == cage.prop.cageID)
 				cage.clearMeasures();
 		}
 	}
@@ -428,7 +427,7 @@ public class CagesArray {
 	public Cage getCageFromNumber(int number) {
 		Cage cageFound = null;
 		for (Cage cage : cagesList) {
-			if (number == cage.getCageNumberInteger()) {
+			if (number == cage.prop.cageID) {
 				cageFound = cage;
 				break;
 			}
@@ -466,7 +465,7 @@ public class CagesArray {
 		int nbcages = cagesList.size();
 		for (int i = 0; i < nbcages; i++) {
 			Cage cage = cagesList.get(i);
-			if (option_cagenumber != -1 && cage.getCageNumberInteger() != option_cagenumber)
+			if (option_cagenumber != -1 && cage.prop.cageID != option_cagenumber)
 				continue;
 			if (cage.prop.cageNFlies > 0) {
 				cage.flyPositions = new FlyPositions();

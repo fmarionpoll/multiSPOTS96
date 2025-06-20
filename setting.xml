@@ -75,7 +75,7 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1750335235809"/>
+<key name="lastUpdateCheckTime" value="1750393166065"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
 <key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\Thomas\2025-06-13-caf1mM-3mM"/>
@@ -170,8 +170,8 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="3596"/>
-<key name="YE" value="32"/>
+<key name="XE" value="3594"/>
+<key name="YE" value="33"/>
 <key name="WidthE" value="1679"/>
 <key name="HeightE" value="1092"/>
 <key name="MaximizedE" value="false"/>

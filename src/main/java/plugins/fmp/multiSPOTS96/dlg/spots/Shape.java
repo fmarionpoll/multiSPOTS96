@@ -41,7 +41,7 @@ import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
-public class DetectContours extends JPanel {
+public class Shape extends JPanel {
 	/**
 	 * 
 	 */
@@ -54,19 +54,17 @@ public class DetectContours extends JPanel {
 	private JButton cutAndInterpolateButton = new JButton("Cut");
 
 	private JLabel spotsFilterLabel = new JLabel("Filter");
-	private String[] directions = new String[] { " threshold >", " threshold <" };
-
 	ImageTransformEnums[] transforms = new ImageTransformEnums[] { ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB,
 			ImageTransformEnums.B_RGB, ImageTransformEnums.R2MINUS_GB, ImageTransformEnums.G2MINUS_RB,
 			ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB, ImageTransformEnums.GBMINUS_2R,
 			ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, ImageTransformEnums.RGB_DIFFS,
 			ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB };
 	private JComboBox<ImageTransformEnums> spotsTransformsComboBox = new JComboBox<ImageTransformEnums>(transforms);
-
+	private String[] directions = new String[] { " threshold >", " threshold <" };
 	private JComboBox<String> spotsDirectionComboBox = new JComboBox<String>(directions);
 	private JSpinner spotsThresholdSpinner = new JSpinner(new SpinnerNumberModel(35, 0, 255, 1));
-	private JCheckBox spotsOverlayCheckBox = new JCheckBox("overlay");
 	private JToggleButton spotsViewButton = new JToggleButton("View");
+	private JCheckBox spotsOverlayCheckBox = new JCheckBox("overlay");
 
 	private OverlayThreshold overlayThreshold = null;
 	private MultiSPOTS96 parent0 = null;

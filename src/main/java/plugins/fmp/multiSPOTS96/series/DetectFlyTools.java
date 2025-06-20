@@ -95,7 +95,7 @@ public class DetectFlyTools {
 		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(cages.cagesList.size());
 
 		for (Cage cage : cages.cagesList) {
-			if (options.detectCage != -1 && cage.getCageNumberInteger() != options.detectCage)
+			if (options.detectCage != -1 && cage.prop.cageID != options.detectCage)
 				continue;
 			if (cage.prop.cageNFlies < 1)
 				continue;

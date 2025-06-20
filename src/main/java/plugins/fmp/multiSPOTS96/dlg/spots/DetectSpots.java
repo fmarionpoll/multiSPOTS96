@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -39,8 +41,21 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 
 	private String detectString = "Detect...";
 	private JButton startComputationButton = new JButton(detectString);
-	private JComboBox<String> allCellsComboBox = new JComboBox<String>(new String[] { "all cells" });
+	private JComboBox<String> allCellsComboBox = new JComboBox<String>(new String[] { "all cages" });
 	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
+
+	private JLabel spotsFilterLabel = new JLabel("Filter");
+	ImageTransformEnums[] transforms = new ImageTransformEnums[] { ImageTransformEnums.R_RGB, ImageTransformEnums.G_RGB,
+			ImageTransformEnums.B_RGB, ImageTransformEnums.R2MINUS_GB, ImageTransformEnums.G2MINUS_RB,
+			ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB, ImageTransformEnums.GBMINUS_2R,
+			ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, ImageTransformEnums.RGB_DIFFS,
+			ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB };
+	private JComboBox<ImageTransformEnums> spotsTransformsComboBox = new JComboBox<ImageTransformEnums>(transforms);
+	private String[] directions = new String[] { " threshold >", " threshold <" };
+	private JComboBox<String> spotsDirectionComboBox = new JComboBox<String>(directions);
+	private JSpinner spotsThresholdSpinner = new JSpinner(new SpinnerNumberModel(35, 0, 255, 1));
+	private JToggleButton spotsViewButton = new JToggleButton("View");
+	private JCheckBox spotsOverlayCheckBox = new JCheckBox("overlay");
 
 	private JCheckBox objectLowsizeCheckBox = new JCheckBox("size >");
 	private JSpinner objectLowsizeSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 9999, 1));
@@ -52,10 +67,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	private JSpinner jitterTextField = new JSpinner(new SpinnerNumberModel(5, 0, 1000, 1));
 	private JSpinner limitRatioSpinner = new JSpinner(new SpinnerNumberModel(4, 0, 1000, 1));
 
-	private JToggleButton viewButton = new JToggleButton("View");
-	private JCheckBox overlayCheckBox = new JCheckBox("overlay");
-	private JCheckBox whiteObjectCheckBox = new JCheckBox("white object");
-
 	private DetectSpotsOutline flyDetect2 = null;
 	private OverlayThreshold overlayThreshold = null;
 
@@ -65,43 +76,47 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		setLayout(capLayout);
 		this.parent0 = parent0;
 
-		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
-		flowLayout.setVgap(0);
+		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEFT);
+		layoutLeft.setVgap(0);
 
-		JPanel panel1 = new JPanel(flowLayout);
-		panel1.add(startComputationButton);
-		panel1.add(allCellsComboBox);
-		panel1.add(allCheckBox);
-		add(panel1);
+		JPanel panel0 = new JPanel(layoutLeft);
+		panel0.add(startComputationButton);
+		panel0.add(allCellsComboBox);
+		panel0.add(allCheckBox);
+		add(panel0);
 
 		allCellsComboBox.addPopupMenuListener(this);
 
-		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(new JLabel("threshold"));
-		panel2.add(thresholdSpinner);
-		panel2.add(viewButton);
-		panel2.add(overlayCheckBox);
+		JPanel panel1 = new JPanel(layoutLeft);
+		panel1.add(spotsFilterLabel);
+		panel1.add(spotsTransformsComboBox);
+		panel1.add(spotsDirectionComboBox);
+		panel1.add(spotsThresholdSpinner);
+		panel1.add(spotsViewButton);
+		panel1.add(spotsOverlayCheckBox);
+		add(panel1);
+		add(panel1);
 
+		JPanel panel2 = new JPanel(layoutLeft);
+		panel2.add(objectLowsizeCheckBox);
+		panel2.add(objectLowsizeSpinner);
+		objectLowsizeSpinner.setPreferredSize(new Dimension(80, 20));
+		panel2.add(objectUpsizeCheckBox);
+		panel2.add(objectUpsizeSpinner);
+		objectUpsizeSpinner.setPreferredSize(new Dimension(80, 20));
 		add(panel2);
 
-		JPanel panel3 = new JPanel(flowLayout);
-		panel3.add(objectLowsizeCheckBox);
-		panel3.add(objectLowsizeSpinner);
-		objectLowsizeSpinner.setPreferredSize(new Dimension(80, 20));
-		panel3.add(objectUpsizeCheckBox);
-		panel3.add(objectUpsizeSpinner);
-		objectUpsizeSpinner.setPreferredSize(new Dimension(80, 20));
-		panel3.add(whiteObjectCheckBox);
+		JPanel panel3 = new JPanel(layoutLeft);
+		panel3.add(new JLabel("length/width<"));
+		panel3.add(limitRatioSpinner);
+		limitRatioSpinner.setPreferredSize(new Dimension(40, 20));
+		panel3.add(new JLabel("jitter <="));
+		panel3.add(jitterTextField);
+		jitterTextField.setPreferredSize(new Dimension(40, 20));
 		add(panel3);
 
-		JPanel panel4 = new JPanel(flowLayout);
-		panel4.add(new JLabel("length/width<"));
-		panel4.add(limitRatioSpinner);
-		limitRatioSpinner.setPreferredSize(new Dimension(40, 20));
-		panel4.add(new JLabel("jitter <="));
-		panel4.add(jitterTextField);
-		jitterTextField.setPreferredSize(new Dimension(40, 20));
-		add(panel4);
+		spotsTransformsComboBox.setSelectedItem(ImageTransformEnums.RGB_DIFFS);
+		spotsDirectionComboBox.setSelectedIndex(1);
 
 		defineActionListeners();
 		defineItemListeners();
@@ -138,40 +153,31 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			}
 		});
 
-		viewButton.addActionListener(new ActionListener() {
+		spotsViewButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) {
-
-					if (!viewButton.isSelected()) {
-						viewDifference(exp, false);
-						overlayCheckBox.setSelected(false);
-						removeOverlay(exp);
-					} else {
-						viewDifference(exp, true);
-					}
-					overlayCheckBox.setEnabled(viewButton.isSelected());
-				}
+				if (exp != null)
+					displayTransform(exp);
 			}
 		});
 
-		overlayCheckBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
+		spotsOverlayCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					if (overlayCheckBox.isSelected()) {
+					if (spotsOverlayCheckBox.isSelected()) {
 						updateOverlay(exp);
 						updateOverlayThreshold();
 					} else {
 						removeOverlay(exp);
+						overlayThreshold = null;
 					}
 				}
 			}
 		});
 
-		whiteObjectCheckBox.addActionListener(new ActionListener() {
+		spotsDirectionComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				updateOverlayThreshold();
@@ -202,11 +208,34 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		exp.seqCamData.seq.addOverlay(overlayThreshold);
 	}
 
+	private void displayTransform(Experiment exp) {
+		boolean displayCheckOverlay = false;
+		if (spotsViewButton.isSelected()) {
+			updateTransformFunctionsOfCanvas(exp);
+			displayCheckOverlay = true;
+		} else {
+			removeOverlay(exp);
+			spotsOverlayCheckBox.setSelected(false);
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+			canvas.transformsComboStep1.setSelectedIndex(0);
+		}
+		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
+	}
+
+	private void updateTransformFunctionsOfCanvas(Experiment exp) {
+		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+		if (canvas.transformsComboStep1.getItemCount() < (spotsTransformsComboBox.getItemCount() + 1)) {
+			canvas.updateTransformsComboStep1(transforms);
+		}
+		int index = spotsTransformsComboBox.getSelectedIndex();
+		canvas.selectImageTransformFunctionStep1(index + 1, null);
+	}
+
 	void updateOverlayThreshold() {
 		if (overlayThreshold == null)
 			return;
 
-		boolean ifGreater = !whiteObjectCheckBox.isSelected();
+		boolean ifGreater = (spotsDirectionComboBox.getSelectedIndex() == 0);
 		ImageTransformEnums transformOp = ImageTransformEnums.SUBTRACT_REF;
 		int threshold = (int) thresholdSpinner.getValue();
 		overlayThreshold.setThresholdSingle(threshold, transformOp, ifGreater);
@@ -280,9 +309,9 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			nitems = exp.cagesArray.cagesList.size() + 1;
 		if (allCellsComboBox.getItemCount() != nitems) {
 			allCellsComboBox.removeAllItems();
-			allCellsComboBox.addItem("all cells");
+			allCellsComboBox.addItem("all cages");
 			for (Cage cage : exp.cagesArray.cagesList) {
-				allCellsComboBox.addItem(cage.getCageNumberFromRoiName());
+				allCellsComboBox.addItem(Integer.toString(cage.prop.cageID));
 			}
 		}
 	}
