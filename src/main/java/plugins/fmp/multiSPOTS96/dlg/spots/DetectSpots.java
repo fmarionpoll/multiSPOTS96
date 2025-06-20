@@ -274,6 +274,12 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		options.binSubDirectory = exp.getBinSubDirectory();
 
 		options.fromFrame = exp.seqCamData.currentFrame;
+
+		options.transformop = (ImageTransformEnums) spotsTransformsComboBox.getSelectedItem();
+		int iselected = -1;
+		if (allCellsComboBox.getSelectedIndex() > 0)
+			iselected = allCellsComboBox.getSelectedIndex() - 1;
+		options.detectCage = iselected;
 		return options;
 	}
 

@@ -19,32 +19,36 @@ public class DetectSpotsOutline extends BuildSeries {
 		if (!checkBoundsForCages(exp))
 			return;
 
+		openFlyDetectViewers(exp);
 		runSpotsDetect(exp);
 		if (!stopFlag)
-			exp.save_MS96_fliesPositions();
+			exp.save_MS96_cages();
+
 		exp.seqCamData.closeSequence();
 		closeSequence(seqNegative);
 	}
 
 	private void runSpotsDetect(Experiment exp) {
-		ProgressFrame progressBar = new ProgressFrame("Detecting spots...");
 		ImageTransformOptions transformOptions = new ImageTransformOptions();
 		transformOptions.transformOption = options.transformop;
 		ImageTransformInterface transformFunction = options.transformop.getFunction();
-		// find_spots.options = options;
-
 		int t_from = (int) options.fromFrame;
-		String title = "Frame #" + t_from + "/" + exp.seqCamData.nTotalFrames;
-		progressBar.setMessage(title);
+		String fileName = exp.seqCamData.getFileNameFromImageList(t_from);
 
-		IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));
+		ProgressFrame progressBar = new ProgressFrame("Detecting spots from " + fileName);
+		IcyBufferedImage sourceImage = imageIORead(fileName);
 		IcyBufferedImage workImage = transformFunction.getTransformedImage(sourceImage, transformOptions);
+
+//		seqNegative.beginUpdate();
+		seqNegative.setImage(0, 0, workImage);
+		vNegative.setTitle("frame " + t_from);
+
 		try {
-			find_spots.findSpots(exp, options, workImage);
+			find_spots.findSpots(exp, seqNegative, options, workImage);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
+//		seqNegative.endUpdate();
 		progressBar.close();
 	}
 }
