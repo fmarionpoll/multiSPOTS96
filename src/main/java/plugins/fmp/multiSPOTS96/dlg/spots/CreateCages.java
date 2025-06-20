@@ -40,7 +40,8 @@ public class CreateCages extends JPanel {
 	private JButton createFrameButton = new JButton("(1) Create frame over all cages");
 	private JButton createGridButton = new JButton("(2) Grid");
 	private JButton createCagesButton = new JButton("(3) Create cages");
-
+	private JButton editCagesButton = new JButton("Edit cages infos...");
+	
 	private JSpinner nCagesPerPlateAlongXJSpinner = new JSpinner(new SpinnerNumberModel(6, 0, 10000, 1));
 	private JSpinner nCagesPerPlateAlongYJSpinner = new JSpinner(new SpinnerNumberModel(8, 0, 10000, 1));
 	private JSpinner width_intervalTextField = new JSpinner(new SpinnerNumberModel(4, 0, 10000, 1));
@@ -86,6 +87,10 @@ public class CreateCages extends JPanel {
 		width_intervalTextField.setPreferredSize(new Dimension(40, 20));
 		panel2.add(new JLabel("pixels spacing"));
 		add(panel2);
+		
+		JPanel panel3 = new JPanel(flowLayout);
+		panel3.add(editCagesButton);
+		add(panel3);
 
 		defineActionListeners();
 	}
@@ -121,6 +126,15 @@ public class CreateCages extends JPanel {
 					createCages(exp);
 					removeGrid(exp);
 				}
+			}
+		});
+		
+		editCagesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) 
+					parent0.dlgSpots.tabInfos.editCagesInfos(exp);
 			}
 		});
 

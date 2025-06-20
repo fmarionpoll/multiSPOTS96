@@ -41,7 +41,7 @@ import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
-public class Shape extends JPanel {
+public class ShapeSpots extends JPanel {
 	/**
 	 * 
 	 */

@@ -72,14 +72,8 @@ public class Infos extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) {
-					if (infosCageTable != null) {
-						infosCageTable.close();
-					}
-					infosCageTable = new InfosCageTable();
-					infosCageTable.initialize(parent0);
-					infosCageTable.requestFocus();
-				}
+				if (exp != null) 
+					editCagesInfos(exp);
 			}
 		});
 
@@ -87,16 +81,27 @@ public class Infos extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) {
-					if (infosSpotTable != null) {
-						infosSpotTable.close();
-					}
-					infosSpotTable = new InfosSpotTable();
-					infosSpotTable.initialize(parent0);
-					infosSpotTable.requestFocus();
-				}
+				if (exp != null) 
+					editSpotsInfos(exp);
 			}
 		});
 	}
+	
+	void editCagesInfos (Experiment exp) {
+		if (infosCageTable != null) {
+			infosCageTable.close();
+		}
+		infosCageTable = new InfosCageTable();
+		infosCageTable.initialize(parent0);
+		infosCageTable.requestFocus();
+	}
 
+	void editSpotsInfos (Experiment exp) {
+		if (infosSpotTable != null) {
+			infosSpotTable.close();
+		}
+		infosSpotTable = new InfosSpotTable();
+		infosSpotTable.initialize(parent0);
+		infosSpotTable.requestFocus();
+	}
 }

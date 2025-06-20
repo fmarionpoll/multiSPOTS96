@@ -51,7 +51,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, ImageTransformEnums.RGB_DIFFS,
 			ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB };
 	private JComboBox<ImageTransformEnums> spotsTransformsComboBox = new JComboBox<ImageTransformEnums>(transforms);
-	private String[] directions = new String[] { " threshold >", " threshold <" };
+	private String[] directions = new String[] { "threshold >", "threshold <" };
 	private JComboBox<String> spotsDirectionComboBox = new JComboBox<String>(directions);
 	private JSpinner spotsThresholdSpinner = new JSpinner(new SpinnerNumberModel(35, 0, 255, 1));
 	private JToggleButton spotsViewButton = new JToggleButton("View");
@@ -67,7 +67,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	private JSpinner jitterTextField = new JSpinner(new SpinnerNumberModel(5, 0, 1000, 1));
 	private JSpinner limitRatioSpinner = new JSpinner(new SpinnerNumberModel(4, 0, 1000, 1));
 
-	private DetectSpotsOutline flyDetect2 = null;
+	private DetectSpotsOutline detectSpots = null;
 	private OverlayThreshold overlayThreshold = null;
 
 	// ----------------------------------------------------
@@ -116,7 +116,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		add(panel3);
 
 		spotsTransformsComboBox.setSelectedItem(ImageTransformEnums.RGB_DIFFS);
-		spotsDirectionComboBox.setSelectedIndex(1);
+		spotsDirectionComboBox.setSelectedIndex(0);
 
 		defineActionListeners();
 		defineItemListeners();
@@ -183,6 +183,12 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 				updateOverlayThreshold();
 			}
 		});
+		
+		spotsThresholdSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				updateOverlayThreshold();
+			}
+		});
 
 	}
 
@@ -196,8 +202,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	}
 
 	public void updateOverlay(Experiment exp) {
-		if (exp.seqCamData == null)
-			return;
 		if (overlayThreshold == null) {
 			overlayThreshold = new OverlayThreshold(exp.seqCamData.seq);
 		} else {
@@ -232,19 +236,24 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	}
 
 	void updateOverlayThreshold() {
-		if (overlayThreshold == null)
+		if (!spotsOverlayCheckBox.isSelected())
 			return;
+		
+		if (overlayThreshold == null) {
+			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			if (exp != null)
+				updateOverlay(exp);
+		}
 
 		boolean ifGreater = (spotsDirectionComboBox.getSelectedIndex() == 0);
-		ImageTransformEnums transformOp = ImageTransformEnums.SUBTRACT_REF;
-		int threshold = (int) thresholdSpinner.getValue();
-		overlayThreshold.setThresholdSingle(threshold, transformOp, ifGreater);
-
+		int threshold = (int) spotsThresholdSpinner.getValue();
+		ImageTransformEnums transform = (ImageTransformEnums) spotsTransformsComboBox.getSelectedItem();
+		overlayThreshold.setThresholdSingle(threshold, transform, ifGreater);
 		overlayThreshold.painterChanged();
 	}
 
 	private BuildSeriesOptions initTrackParameters(Experiment exp) {
-		BuildSeriesOptions options = flyDetect2.options;
+		BuildSeriesOptions options = detectSpots.options;
 		options.expList = parent0.expListCombo;
 		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
 		if (allCheckBox.isSelected())
@@ -265,11 +274,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = exp.getBinSubDirectory();
 
-//		options.isFrameFixed = parent0.paneExcel.tabCommonOptions.getIsFixedFrame();
-//		options.t_Ms_First = parent0.paneExcel.tabCommonOptions.getStartMs();
-//		options.t_Ms_Last = parent0.paneExcel.tabCommonOptions.getEndMs();
-//		options.t_Ms_BinDuration = parent0.paneExcel.tabCommonOptions.getBinMs();
-
 		return options;
 	}
 
@@ -279,17 +283,17 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			return;
 		parent0.dlgBrowse.panelLoadSave.closeViewsForCurrentExperiment(exp);
 
-		flyDetect2 = new DetectSpotsOutline();
-		flyDetect2.options = initTrackParameters(exp);
-		flyDetect2.stopFlag = false;
-		flyDetect2.addPropertyChangeListener(this);
-		flyDetect2.execute();
+		detectSpots = new DetectSpotsOutline();
+		detectSpots.options = initTrackParameters(exp);
+		detectSpots.stopFlag = false;
+		detectSpots.addPropertyChangeListener(this);
+		detectSpots.execute();
 		startComputationButton.setText("STOP");
 	}
 
 	private void stopComputation() {
-		if (flyDetect2 != null && !flyDetect2.stopFlag)
-			flyDetect2.stopFlag = true;
+		if (detectSpots != null && !detectSpots.stopFlag)
+			detectSpots.stopFlag = true;
 	}
 
 	@Override
