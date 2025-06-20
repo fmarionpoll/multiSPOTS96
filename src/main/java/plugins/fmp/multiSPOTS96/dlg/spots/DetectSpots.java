@@ -252,7 +252,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		else
 			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
 
-		options.btrackWhite = whiteObjectCheckBox.isSelected();
+		options.btrackWhite = (spotsDirectionComboBox.getSelectedIndex() == 1);
 		options.blimitLow = objectLowsizeCheckBox.isSelected();
 		options.blimitUp = objectUpsizeCheckBox.isSelected();
 		options.limitLow = (int) objectLowsizeSpinner.getValue();
