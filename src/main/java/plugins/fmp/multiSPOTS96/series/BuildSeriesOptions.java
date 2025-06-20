@@ -34,7 +34,6 @@ public class BuildSeriesOptions implements XMLPersistent {
 
 	boolean detectTop = true;
 	boolean detectBottom = true;
-
 	public int detectCage = -1;
 
 	public boolean detectSelectedROIs = false;
@@ -90,6 +89,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public int videoChannel = 0;
 	public int background_delta = 50;
 	public int background_jitter = 1;
+	public int spotRadius = 5;
 
 	// -----------------------
 

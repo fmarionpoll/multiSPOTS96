@@ -21,9 +21,6 @@ import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class DetectSpotsTools {
-	// public BuildSeriesOptions options = null;
-
-	// -----------------------------------------------------
 
 	BooleanMask2D[] findBlobs(ROI2DArea binarizedImageRoi, BooleanMask2D cageMask) throws InterruptedException {
 		if (cageMask == null)

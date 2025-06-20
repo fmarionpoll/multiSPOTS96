@@ -86,7 +86,7 @@ public class CreateSpots extends JPanel {
 					Cage cageFound = exp.cagesArray.findFirstSelectedCage();
 					if (cageFound == null)
 						cageFound = exp.cagesArray.cagesList.get(0);
-					
+
 					if (cageFound != null) {
 						exp.seqCamData.centerOnRoi(cageFound.getRoi());
 						changeGrid(exp, cageFound);
@@ -120,7 +120,6 @@ public class CreateSpots extends JPanel {
 				if (exp != null) {
 					exp.seqCamData.removeROIsContainingString("spot");
 					createSpotsForAllCages(exp, roiGrid, referencePosition);
-
 					ExperimentUtils.transferSpotsToCamDataSequence(exp);
 					exp.seqCamData.removeROIsContainingString("carre");
 				}

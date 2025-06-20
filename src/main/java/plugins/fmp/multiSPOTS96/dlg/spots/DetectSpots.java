@@ -1,15 +1,19 @@
 package plugins.fmp.multiSPOTS96.dlg.spots;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -24,21 +28,24 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import icy.roi.ROI2D;
 import icy.util.StringUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.series.DetectSpotsOutline;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
+import plugins.kernel.roi.roi2d.ROI2DEllipse;
 
 public class DetectSpots extends JPanel implements ChangeListener, PropertyChangeListener, PopupMenuListener {
 	private static final long serialVersionUID = -5257698990389571518L;
 	private MultiSPOTS96 parent0 = null;
 
-	private String detectString = "Detect...";
+	private String detectString = "Detect blobs...";
 	private JButton startComputationButton = new JButton(detectString);
 	private JComboBox<String> allCellsComboBox = new JComboBox<String>(new String[] { "all cages" });
 	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
@@ -56,15 +63,10 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	private JToggleButton spotsViewButton = new JToggleButton("View");
 	private JCheckBox spotsOverlayCheckBox = new JCheckBox("overlay");
 
-	private JCheckBox objectLowsizeCheckBox = new JCheckBox("size >");
-	private JSpinner objectLowsizeSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 9999, 1));
+	private JButton deleteSelectedSpotButton = new JButton("Deleted selected blob");
 
-	private JCheckBox objectUpsizeCheckBox = new JCheckBox("<");
-	private JSpinner objectUpsizeSpinner = new JSpinner(new SpinnerNumberModel(500, 0, 9999, 1));
-	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(100, 0, 255, 1));
-
-	private JSpinner jitterTextField = new JSpinner(new SpinnerNumberModel(5, 0, 1000, 1));
-	private JSpinner limitRatioSpinner = new JSpinner(new SpinnerNumberModel(4, 0, 1000, 1));
+	private JButton convertSpotToEllipseButton = new JButton("Convert blobs to spots");
+	private JSpinner spotDiameterSpinner = new JSpinner(new SpinnerNumberModel(22, 1, 1200, 1));
 
 	private DetectSpotsOutline detectSpots = null;
 	private OverlayThreshold overlayThreshold = null;
@@ -97,21 +99,13 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		add(panel1);
 
 		JPanel panel2 = new JPanel(layoutLeft);
-		panel2.add(objectLowsizeCheckBox);
-		panel2.add(objectLowsizeSpinner);
-		objectLowsizeSpinner.setPreferredSize(new Dimension(80, 20));
-		panel2.add(objectUpsizeCheckBox);
-		panel2.add(objectUpsizeSpinner);
-		objectUpsizeSpinner.setPreferredSize(new Dimension(80, 20));
+		panel2.add(deleteSelectedSpotButton);
 		add(panel2);
 
 		JPanel panel3 = new JPanel(layoutLeft);
-		panel3.add(new JLabel("length/width<"));
-		panel3.add(limitRatioSpinner);
-		limitRatioSpinner.setPreferredSize(new Dimension(40, 20));
-		panel3.add(new JLabel("jitter <="));
-		panel3.add(jitterTextField);
-		jitterTextField.setPreferredSize(new Dimension(40, 20));
+		panel3.add(convertSpotToEllipseButton);
+		panel3.add(new JLabel("size (pixels="));
+		panel3.add(spotDiameterSpinner);
 		add(panel3);
 
 		spotsTransformsComboBox.setSelectedItem(ImageTransformEnums.RGB_DIFFS);
@@ -123,7 +117,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 
 	private void defineItemListeners() {
 
-		thresholdSpinner.addChangeListener(new ChangeListener() {
+		spotsThresholdSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				updateOverlayThreshold();
 			}
@@ -189,14 +183,40 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			}
 		});
 
+		deleteSelectedSpotButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null)
+					deleteSelectedSpot(exp);
+			}
+		});
+
+		convertSpotToEllipseButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null)
+					convertBlobsToCircularSpots(exp);
+			}
+		});
+
+		spotDiameterSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null)
+					changeSpotsDiameter(exp);
+			}
+		});
+
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		if (e.getSource() == thresholdSpinner) {
+		if (e.getSource() == spotsThresholdSpinner) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null)
-				exp.cagesArray.detect_threshold = (int) thresholdSpinner.getValue();
+				exp.cagesArray.detect_threshold = (int) spotsThresholdSpinner.getValue();
 		}
 	}
 
@@ -261,14 +281,8 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
 
 		options.btrackWhite = (spotsDirectionComboBox.getSelectedIndex() == 1);
-		options.blimitLow = objectLowsizeCheckBox.isSelected();
-		options.blimitUp = objectUpsizeCheckBox.isSelected();
-		options.limitLow = (int) objectLowsizeSpinner.getValue();
-		options.limitUp = (int) objectUpsizeSpinner.getValue();
-		options.limitRatio = (int) limitRatioSpinner.getValue();
-		options.jitter = (int) jitterTextField.getValue();
-		options.threshold = (int) thresholdSpinner.getValue();
-		options.detectFlies = true;
+		options.threshold = (int) spotsThresholdSpinner.getValue();
+		options.detectFlies = false;
 
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = exp.getBinSubDirectory();
@@ -341,6 +355,57 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	void removeOverlay(Experiment exp) {
 		if (exp.seqCamData != null && exp.seqCamData.seq != null)
 			exp.seqCamData.seq.removeOverlay(overlayThreshold);
+	}
+
+	void deleteSelectedSpot(Experiment exp) {
+		if (exp.seqCamData.seq != null) {
+			ArrayList<ROI2D> listROIs = exp.seqCamData.seq.getSelectedROI2Ds();
+			exp.seqCamData.seq.removeROIs(listROIs, true);
+			for (ROI2D roi : listROIs) {
+				String name = roi.getName();
+				Cage cage = exp.cagesArray.getCageFromSpotRoiName(name);
+//				Spot spot = cage.getSpotFromRoiName(name);
+//				if (!cage.spotsArray.spotsList.remove(spot))
+//					System.out.println("element was not removed: " + name);
+				Iterator<Spot> iterator = cage.spotsArray.spotsList.iterator();
+				while (iterator.hasNext()) {
+					Spot spot = iterator.next();
+					if (name.equals(spot.getRoi().getName())) {
+						iterator.remove();
+//						break;
+					}
+				}
+			}
+
+		}
+	}
+
+	void convertBlobsToCircularSpots(Experiment exp) {
+		exp.seqCamData.removeROIsContainingString("spot");
+		int diameter = (int) spotDiameterSpinner.getValue();
+
+		for (Cage cage : exp.cagesArray.cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+
+				ROI2D roiP = spot.getRoi();
+				Point center = roiP.getPosition();
+				Rectangle rect = roiP.getBounds();
+				center.x += rect.getWidth() / 2;
+				center.y += rect.getHeight() / 2;
+
+				String name = spot.getRoi().getName();
+				Ellipse2D ellipse = new Ellipse2D.Double(center.x - diameter / 2, center.y - diameter / 2, diameter,
+						diameter);
+				ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
+				roiEllipse.setName(name);
+				spot.setRoi(roiEllipse);
+			}
+		}
+		exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
+	}
+
+	void changeSpotsDiameter(Experiment exp) {
+		convertBlobsToCircularSpots(exp);
 	}
 
 }
