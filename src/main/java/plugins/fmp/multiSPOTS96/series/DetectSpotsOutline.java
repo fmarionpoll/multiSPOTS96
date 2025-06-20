@@ -39,7 +39,6 @@ public class DetectSpotsOutline extends BuildSeries {
 		IcyBufferedImage sourceImage = imageIORead(fileName);
 		IcyBufferedImage workImage = transformFunction.getTransformedImage(sourceImage, transformOptions);
 
-//		seqNegative.beginUpdate();
 		seqNegative.setImage(0, 0, workImage);
 		vNegative.setTitle("frame " + t_from);
 
@@ -48,7 +47,7 @@ public class DetectSpotsOutline extends BuildSeries {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-//		seqNegative.endUpdate();
+
 		progressBar.close();
 	}
 }

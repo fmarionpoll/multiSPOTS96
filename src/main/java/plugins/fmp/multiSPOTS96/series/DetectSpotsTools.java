@@ -69,9 +69,6 @@ public class DetectSpotsTools {
 			if (options.detectCage != -1 && cage.prop.cageID != options.detectCage)
 				continue;
 
-//			ROI2DArea roiMask = new ROI2DArea(cage.cageMask2D);
-//			seqNegative.addROI(roiMask);
-
 			cage.spotsArray = new SpotsArray();
 			int spotID = 0;
 			BooleanMask2D[] blobs;
@@ -112,7 +109,6 @@ public class DetectSpotsTools {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			seqNegative.removeROI(roiMask);
 		}
 	}
 

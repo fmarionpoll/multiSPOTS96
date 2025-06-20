@@ -267,7 +267,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		options.limitUp = (int) objectUpsizeSpinner.getValue();
 		options.limitRatio = (int) limitRatioSpinner.getValue();
 		options.jitter = (int) jitterTextField.getValue();
-		options.thresholdDiff = (int) thresholdSpinner.getValue();
+		options.threshold = (int) thresholdSpinner.getValue();
 		options.detectFlies = true;
 
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
