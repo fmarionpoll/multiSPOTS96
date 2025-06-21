@@ -307,4 +307,8 @@ public class Cage implements Comparable<Cage> {
 		listRoiAlongT.add(new ROI2DAlongT(0, cageROI2D));
 	}
 
+	public void cleanUpSpotNames() {
+		ArrayList<ROI2D> roisSsortedList = spotsArray.sortListAlongX_Then_Y();
+	}
+
 }

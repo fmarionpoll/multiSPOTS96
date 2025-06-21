@@ -159,7 +159,6 @@ public class ROI2DUtilities {
 	}
 
 	private static ROI2D rescaleRectROI(ROI2D out, double scale) {
-
 		Rectangle2D b2 = ((ROI2D) out).getBounds2D();
 		// translate to origin
 		double oldX = b2.getCenterX();

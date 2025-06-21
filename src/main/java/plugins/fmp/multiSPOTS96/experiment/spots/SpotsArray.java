@@ -321,7 +321,7 @@ public class SpotsArray {
 	}
 
 	public int addKymoROI2DInterval(long start) {
-		TInterval interval = new TInterval( start, (long) -1);
+		TInterval interval = new TInterval(start, (long) -1);
 		int item = spotsListTimeIntervals.addIfNew(interval);
 
 		for (Spot spot : spotsList) {
@@ -535,6 +535,13 @@ public class SpotsArray {
 			if (options.detectSelectedROIs && !spot.isIndexSelected(options.selectedIndexes))
 				spot.okToAnalyze = false;
 		}
+	}
+
+	public ArrayList<ROI2D> sortListAlongX_Then_Y() {
+		int countSpots = spotsList.size();
+		ArrayList<ROI2D> roisSortedList = new ArrayList<ROI2D>(countSpots);
+		ArrayList<ROI2D> dummyList = 
+		while ()
 	}
 
 }

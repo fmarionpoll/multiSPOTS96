@@ -883,4 +883,9 @@ public class CagesArray {
 		return null;
 	}
 
+	public void cleanUpSpotNames() {
+		for (Cage cage : cagesList) {
+			cage.cleanUpSpotNames();
+		}
+	}
 }

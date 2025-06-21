@@ -198,8 +198,10 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null)
-					convertBlobsToCircularSpots(exp);
+				if (exp != null) {
+					int diameter = (int) spotDiameterSpinner.getValue();
+					convertBlobsToCircularSpots(exp, diameter);
+				}
 			}
 		});
 
@@ -211,6 +213,15 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			}
 		});
 
+		cleanUpNamesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					exp.cagesArray.cleanUpSpotNames();
+				}
+			}
+		});
 	}
 
 	@Override
@@ -378,9 +389,8 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		}
 	}
 
-	void convertBlobsToCircularSpots(Experiment exp) {
+	void convertBlobsToCircularSpots(Experiment exp, int diameter) {
 		exp.seqCamData.removeROIsContainingString("spot");
-		int diameter = (int) spotDiameterSpinner.getValue();
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				ROI2D roiP = spot.getRoi();
@@ -401,7 +411,8 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	}
 
 	void changeSpotsDiameter(Experiment exp) {
-		convertBlobsToCircularSpots(exp);
+		int diameter = (int) spotDiameterSpinner.getValue();
+		convertBlobsToCircularSpots(exp, diameter);
 	}
 
 }
