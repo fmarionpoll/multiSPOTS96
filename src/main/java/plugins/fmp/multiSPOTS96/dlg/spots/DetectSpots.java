@@ -63,7 +63,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	private JToggleButton spotsViewButton = new JToggleButton("View");
 	private JCheckBox spotsOverlayCheckBox = new JCheckBox("overlay");
 
-	private JButton deleteSelectedSpotButton = new JButton("Deleted selected blob");
+	private JButton deleteSelectedSpotButton = new JButton("Deleted selected blobs");
 
 	private JButton convertSpotToEllipseButton = new JButton("Convert blobs to spots");
 	private JSpinner spotDiameterSpinner = new JSpinner(new SpinnerNumberModel(22, 1, 1200, 1));
@@ -376,17 +376,14 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 					}
 				}
 			}
-
 		}
 	}
 
 	void convertBlobsToCircularSpots(Experiment exp) {
 		exp.seqCamData.removeROIsContainingString("spot");
 		int diameter = (int) spotDiameterSpinner.getValue();
-
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-
 				ROI2D roiP = spot.getRoi();
 				Point center = roiP.getPosition();
 				Rectangle rect = roiP.getBounds();

@@ -26,7 +26,6 @@ public class InfosSpotTable extends JPanel {
 	private static final long serialVersionUID = -8611587540329642259L;
 	IcyFrame dialogFrame = null;
 	private SpotTable spotTable = null;
-
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicatePosButton = new JButton("Duplicate row at cage pos");
@@ -102,7 +101,7 @@ public class InfosSpotTable extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) 
+				if (exp != null)
 					setSpotsNPixels(exp);
 			}
 		});

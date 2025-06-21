@@ -11,14 +11,16 @@ public class ImageFileDescriptor {
 	public int imageWidth = 0;
 
 	public static int getExistingFileNames(List<ImageFileDescriptor> fileNameList) {
-		Iterator<ImageFileDescriptor> it = fileNameList.iterator();
 		int ntotal = 0;
-		while (it.hasNext()) {
-			ImageFileDescriptor fP = it.next();
-			File fileName = new File(fP.fileName);
-			fP.exists = fileName.exists();
-			if (fileName.exists())
-				ntotal++;
+		if (fileNameList != null) {
+			Iterator<ImageFileDescriptor> it = fileNameList.iterator();
+			while (it.hasNext()) {
+				ImageFileDescriptor fP = it.next();
+				File fileName = new File(fP.fileName);
+				fP.exists = fileName.exists();
+				if (fileName.exists())
+					ntotal++;
+			}
 		}
 		return ntotal;
 	}

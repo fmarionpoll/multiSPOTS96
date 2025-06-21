@@ -693,14 +693,15 @@ public class CagesArray {
 	}
 
 	public Spot getSpotAtGlobalIndex(int indexT) {
+		int i = 0;
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				ROI2D roi = spot.getRoi();
-				int index = SpotString.getSpotArrayIndexFromSpotName(roi.getName());
-				if (index == indexT) {
-					return spot;
-				}
+			int count = cage.spotsArray.spotsList.size();
+			if (i + count - 1 < indexT) {
+				i += count;
+				continue;
 			}
+			Spot spot = cage.spotsArray.spotsList.get(indexT - i);
+			return spot;
 		}
 		return null;
 	}

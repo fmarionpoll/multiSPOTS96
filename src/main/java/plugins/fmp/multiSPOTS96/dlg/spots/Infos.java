@@ -21,10 +21,6 @@ public class Infos extends JPanel {
 	private JButton editSpotsButton = new JButton("Edit spots infos...");
 	private InfosCageTable infosCageTable = null;
 	private InfosSpotTable infosSpotTable = null;
-//	private JSpinner nFliesPerCageJSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 500, 1));
-//	private String[] flyString = new String[] { "fly", "flies" };
-//	private JLabel flyLabel = new JLabel(flyString[0]);
-
 	private MultiSPOTS96 parent0 = null;
 
 	void init(GridLayout gridLayout, MultiSPOTS96 parent0) {
@@ -42,29 +38,7 @@ public class Infos extends JPanel {
 		panel02.add(editSpotsButton);
 		add(panel02);
 
-//		JPanel panel2 = new JPanel(layoutLeft);
-//		panel2.add(nFliesPerCageJSpinner);
-//		panel2.add(flyLabel);
-//		nFliesPerCageJSpinner.setPreferredSize(new Dimension(40, 20));
-
 		declareListeners();
-		defineActionListeners();
-	}
-
-	private void defineActionListeners() {
-//		nFliesPerCageJSpinner.addChangeListener(new ChangeListener() {
-//			@Override
-//			public void stateChanged(ChangeEvent e) {
-//				int i = (int) nFliesPerCageJSpinner.getValue() > 1 ? 1 : 0;
-//				flyLabel.setText(flyString[i]);
-//				nFliesPerCageJSpinner.requestFocus();
-//				int nbFliesPerCage = (int) nFliesPerCageJSpinner.getValue();
-//				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-//				if (exp != null) {
-//					exp.cagesArray.initCagesAndSpotsWithNFlies(nbFliesPerCage);
-//				}
-//			}
-//		});
 	}
 
 	private void declareListeners() {
@@ -72,7 +46,7 @@ public class Infos extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) 
+				if (exp != null)
 					editCagesInfos(exp);
 			}
 		});
@@ -81,13 +55,13 @@ public class Infos extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) 
+				if (exp != null)
 					editSpotsInfos(exp);
 			}
 		});
 	}
-	
-	void editCagesInfos (Experiment exp) {
+
+	void editCagesInfos(Experiment exp) {
 		if (infosCageTable != null) {
 			infosCageTable.close();
 		}
@@ -96,7 +70,7 @@ public class Infos extends JPanel {
 		infosCageTable.requestFocus();
 	}
 
-	void editSpotsInfos (Experiment exp) {
+	void editSpotsInfos(Experiment exp) {
 		if (infosSpotTable != null) {
 			infosSpotTable.close();
 		}
