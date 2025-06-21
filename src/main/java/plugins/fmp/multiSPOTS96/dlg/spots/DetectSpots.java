@@ -63,10 +63,11 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	private JToggleButton spotsViewButton = new JToggleButton("View");
 	private JCheckBox spotsOverlayCheckBox = new JCheckBox("overlay");
 
-	private JButton deleteSelectedSpotButton = new JButton("Deleted selected blobs");
-
 	private JButton convertSpotToEllipseButton = new JButton("Convert blobs to spots");
 	private JSpinner spotDiameterSpinner = new JSpinner(new SpinnerNumberModel(22, 1, 1200, 1));
+
+	private JButton deleteSelectedSpotButton = new JButton("Remove selected blobs");
+	private JButton cleanUpNamesButton = new JButton("Clean up spot names");
 
 	private DetectSpotsOutline detectSpots = null;
 	private OverlayThreshold overlayThreshold = null;
@@ -99,24 +100,25 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		add(panel1);
 
 		JPanel panel2 = new JPanel(layoutLeft);
-		panel2.add(deleteSelectedSpotButton);
+		panel2.add(convertSpotToEllipseButton);
+		panel2.add(new JLabel("size (pixels="));
+		panel2.add(spotDiameterSpinner);
 		add(panel2);
 
 		JPanel panel3 = new JPanel(layoutLeft);
-		panel3.add(convertSpotToEllipseButton);
-		panel3.add(new JLabel("size (pixels="));
-		panel3.add(spotDiameterSpinner);
+		panel3.add(deleteSelectedSpotButton);
+		panel3.add(cleanUpNamesButton);
 		add(panel3);
 
 		spotsTransformsComboBox.setSelectedItem(ImageTransformEnums.RGB_DIFFS);
 		spotsDirectionComboBox.setSelectedIndex(1);
 
+		cleanUpNamesButton.setEnabled(false);
 		defineActionListeners();
 		defineItemListeners();
 	}
 
 	private void defineItemListeners() {
-
 		spotsThresholdSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				updateOverlayThreshold();
@@ -364,15 +366,12 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			for (ROI2D roi : listROIs) {
 				String name = roi.getName();
 				Cage cage = exp.cagesArray.getCageFromSpotRoiName(name);
-//				Spot spot = cage.getSpotFromRoiName(name);
-//				if (!cage.spotsArray.spotsList.remove(spot))
-//					System.out.println("element was not removed: " + name);
 				Iterator<Spot> iterator = cage.spotsArray.spotsList.iterator();
 				while (iterator.hasNext()) {
 					Spot spot = iterator.next();
 					if (name.equals(spot.getRoi().getName())) {
 						iterator.remove();
-//						break;
+						break;
 					}
 				}
 			}
