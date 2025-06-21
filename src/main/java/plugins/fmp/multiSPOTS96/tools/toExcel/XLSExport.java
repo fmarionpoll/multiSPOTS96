@@ -330,7 +330,7 @@ public class XLSExport {
 				rowListForOneExp.resultsList.add(rowResults);
 			}
 		}
-		Collections.sort(rowListForOneExp.resultsList, new Comparators.XLSResults_Name_Comparator());
+		Collections.sort(rowListForOneExp.resultsList, new Comparators.XLSResults_Name());
 		return rowListForOneExp;
 	}
 
@@ -363,7 +363,7 @@ public class XLSExport {
 				rowListForOneExp.resultsList.add(rowResults);
 			}
 		}
-		Collections.sort(rowListForOneExp.resultsList, new Comparators.XLSResults_Name_Comparator());
+		Collections.sort(rowListForOneExp.resultsList, new Comparators.XLSResults_Name());
 		return rowListForOneExp;
 	}
 

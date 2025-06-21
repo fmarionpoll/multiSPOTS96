@@ -113,7 +113,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		spotsTransformsComboBox.setSelectedItem(ImageTransformEnums.RGB_DIFFS);
 		spotsDirectionComboBox.setSelectedIndex(1);
 
-		cleanUpNamesButton.setEnabled(false);
 		defineActionListeners();
 		defineItemListeners();
 	}

@@ -537,11 +537,4 @@ public class SpotsArray {
 		}
 	}
 
-	public ArrayList<ROI2D> sortListAlongX_Then_Y() {
-		int countSpots = spotsList.size();
-		ArrayList<ROI2D> roisSortedList = new ArrayList<ROI2D>(countSpots);
-		ArrayList<ROI2D> dummyList = 
-		while ()
-	}
-
 }

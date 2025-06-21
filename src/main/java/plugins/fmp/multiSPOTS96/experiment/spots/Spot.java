@@ -97,6 +97,13 @@ public class Spot implements Comparable<Spot> {
 		listRoiAlongT.clear();
 	}
 
+	public void setName(int cageID, int spotID) {
+		String name = "spot_" + cageID + "_" + spotID;
+		if (spotROI2D != null)
+			spotROI2D.setName(name);
+		prop.sourceName = name;
+	}
+
 	public String getCagePosition(EnumXLSExportType xlsExportOption) {
 		String value = null;
 		switch (xlsExportOption) {
@@ -275,7 +282,7 @@ public class Spot implements Comparable<Spot> {
 	public boolean saveToXML_SpotOnly(Node node) {
 		if (!valid)
 			return false;
-		
+
 		final Node nodeMeta = XMLUtil.setElement(node, ID_META);
 		if (nodeMeta == null)
 			return false;

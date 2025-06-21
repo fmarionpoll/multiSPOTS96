@@ -60,7 +60,6 @@ public class DetectSpotsTools {
 
 		exp.cagesArray.computeBooleanMasksForCages();
 		final ROI2DArea binarizedImageRoi = binarizeImage(workimage, options);
-		int index_global = 0;
 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			if (options.detectCage != -1 && cage.prop.cageID != options.detectCage)
@@ -91,11 +90,10 @@ public class DetectSpotsTools {
 									.map(point -> new Point2D.Double(point.getX(), point.getY()))
 									.collect(Collectors.toList());
 							ROI2DPolygon roi = new ROI2DPolygon(points2s);
-							roi.setName("spot_" + cage.prop.cageID + "_" + spotID + "_" + index_global);
 							Spot spot = new Spot(roi);
+							spot.setName(cage.prop.cageID, spotID);
 							cage.spotsArray.spotsList.add(spot);
 							spotID++;
-							index_global++;
 						}
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block

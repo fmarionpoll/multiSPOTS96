@@ -119,7 +119,7 @@ public class XLSExportMoveResults extends XLSExport {
 			row.nflies = cage.prop.cageNFlies;
 			rowsForOneExp.add(row);
 		}
-		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name_Comparator());
+		Collections.sort(rowsForOneExp, new Comparators.XYTaSeries_Name());
 	}
 
 	private void getMoveDataFromOneSeriesOfExperiments(Experiment exp, EnumXLSExportType xlsOption) {

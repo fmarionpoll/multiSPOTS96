@@ -203,7 +203,7 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 			if (list.size() < 2)
 				continue;
 
-			Collections.sort(list, new Comparators.Experiment_Start_Comparator());
+			Collections.sort(list, new Comparators.Experiment_Start());
 			for (int k = 0; k < list.size(); k++) {
 				Experiment expk = list.get(k);
 				if (k > 0)

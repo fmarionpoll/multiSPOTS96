@@ -62,7 +62,7 @@ public class SequenceKymos extends SequenceCamData {
 			if (roi.getName().contains("derivative"))
 				continue;
 		}
-		Collections.sort(listRois, new Comparators.ROI2D_Name_Comparator());
+		Collections.sort(listRois, new Comparators.ROI2D_Name());
 	}
 
 	public List<ImageFileDescriptor> loadListOfPotentialKymographsFromSpots(String dir, CagesArray cagesArray) {

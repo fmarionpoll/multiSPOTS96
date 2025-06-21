@@ -4,6 +4,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -17,6 +18,7 @@ import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
+import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -308,7 +310,11 @@ public class Cage implements Comparable<Cage> {
 	}
 
 	public void cleanUpSpotNames() {
-		ArrayList<ROI2D> roisSsortedList = spotsArray.sortListAlongX_Then_Y();
+		Collections.sort(spotsArray.spotsList, new Comparators.Spot_XYPosition());
+		for (int i = 0; i < spotsArray.spotsList.size(); i++) {
+			Spot spot = spotsArray.spotsList.get(i);
+			spot.setName(prop.cageID, i);
+		}
 	}
 
 }

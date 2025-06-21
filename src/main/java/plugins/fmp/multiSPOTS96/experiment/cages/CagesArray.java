@@ -407,10 +407,10 @@ public class CagesArray {
 
 	public void transferROIsFromSequenceToCages(SequenceCamData seqCamData) {
 		List<ROI2D> roiList = seqCamData.getROIsContainingString("cage");
-		Collections.sort(roiList, new Comparators.ROI2D_Name_Comparator());
+		Collections.sort(roiList, new Comparators.ROI2D_Name());
 		addMissingCages(roiList);
 		removeOrphanCages(roiList);
-		Collections.sort(cagesList, new Comparators.Cage_Name_Comparator());
+		Collections.sort(cagesList, new Comparators.Cage_Name());
 	}
 
 	public void removeAllRoiDetFromSequence(SequenceCamData seqCamData) {
@@ -458,7 +458,7 @@ public class CagesArray {
 
 	public void orderFlyPositions() {
 		for (Cage cage : cagesList)
-			Collections.sort(cage.flyPositions.flyPositionList, new Comparators.XYTaValue_Tindex_Comparator());
+			Collections.sort(cage.flyPositions.flyPositionList, new Comparators.XYTaValue_Tindex());
 	}
 
 	public void initFlyPositions(int option_cagenumber) {
@@ -595,7 +595,7 @@ public class CagesArray {
 
 	public void transferROIsFromSequenceToCageSpots(SequenceCamData seqCamData) {
 		List<ROI2D> listSeqRois = seqCamData.getROIsContainingString("spot");
-		Collections.sort(listSeqRois, new Comparators.ROI_Name_Comparator());
+		Collections.sort(listSeqRois, new Comparators.ROI_Name());
 		for (Cage cage : cagesList) {
 
 			Iterator<Spot> iteratorSpots = cage.spotsArray.spotsList.iterator();

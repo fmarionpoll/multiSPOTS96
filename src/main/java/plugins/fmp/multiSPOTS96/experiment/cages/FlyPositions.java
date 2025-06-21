@@ -150,7 +150,7 @@ public class FlyPositions {
 		}
 
 		if (bAdded)
-			Collections.sort(flyPositionList, new Comparators.XYTaValue_Tindex_Comparator());
+			Collections.sort(flyPositionList, new Comparators.XYTaValue_Tindex());
 		return true;
 	}
 

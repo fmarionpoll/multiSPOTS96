@@ -358,7 +358,7 @@ public class SequenceCamData {
 
 	public ArrayList<ROI2D> getROIsContainingString(String string) {
 		ArrayList<ROI2D> roiList = seq.getROI2Ds();
-		Collections.sort(roiList, new Comparators.ROI_Name_Comparator());
+		Collections.sort(roiList, new Comparators.ROI_Name());
 		ArrayList<ROI2D> listROIsMatchingString = new ArrayList<ROI2D>();
 		for (ROI2D roi : roiList) {
 			if (roi.getName().contains(string))
@@ -369,7 +369,7 @@ public class SequenceCamData {
 
 	public void removeROIsContainingString(String string) {
 		List<ROI> roiList = seq.getROIs();
-		Collections.sort(roiList, new Comparators.ROI_Name_Comparator());
+		Collections.sort(roiList, new Comparators.ROI_Name());
 		List<ROI> listROIsMatchingString = new ArrayList<ROI>();
 		for (ROI roi : roiList) {
 			if (roi.getName().contains(string))
