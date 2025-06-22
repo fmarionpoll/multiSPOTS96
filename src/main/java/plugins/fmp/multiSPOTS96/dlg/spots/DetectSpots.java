@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -66,7 +68,8 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	private JButton convertSpotToEllipseButton = new JButton("Convert blobs to spots");
 	private JSpinner spotDiameterSpinner = new JSpinner(new SpinnerNumberModel(22, 1, 1200, 1));
 
-	private JButton deleteSelectedSpotButton = new JButton("Remove selected blobs");
+	private JButton deleteSelectedSpotsButton = new JButton("Remove selected spots");
+	private JButton duplicateSelectedSpotButton = new JButton("Duplicate selected spot");
 	private JButton cleanUpNamesButton = new JButton("Clean up spot names");
 
 	private DetectSpotsOutline detectSpots = null;
@@ -104,7 +107,8 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		add(panel2);
 
 		JPanel panel3 = new JPanel(layoutLeft);
-		panel3.add(deleteSelectedSpotButton);
+		panel3.add(deleteSelectedSpotsButton);
+		panel3.add(duplicateSelectedSpotButton);
 		panel3.add(cleanUpNamesButton);
 		add(panel3);
 
@@ -182,12 +186,21 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			}
 		});
 
-		deleteSelectedSpotButton.addActionListener(new ActionListener() {
+		deleteSelectedSpotsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
 					deleteSelectedSpot(exp);
+			}
+		});
+
+		duplicateSelectedSpotButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null)
+					duplicateSelectedSpot(exp);
 			}
 		});
 
@@ -386,6 +399,37 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 					if (name.equals(spot.getRoi().getName())) {
 						iterator.remove();
 						break;
+					}
+				}
+			}
+		}
+	}
+
+	void duplicateSelectedSpot(Experiment exp) {
+		if (exp.seqCamData.seq != null) {
+			ArrayList<ROI2D> listROIs = exp.seqCamData.seq.getSelectedROI2Ds();
+			for (ROI2D roi : listROIs) {
+				String name = roi.getName();
+				if (!name.contains("spot"))
+					continue;
+				Cage cage = exp.cagesArray.getCageFromSpotRoiName(name);
+				ArrayList<Spot> spotsToDuplicate = new ArrayList<Spot>();
+				Iterator<Spot> iterator = cage.spotsArray.spotsList.iterator();
+				while (iterator.hasNext()) {
+					Spot spot = iterator.next();
+					if (name.equals(spot.getRoi().getName())) {
+						spotsToDuplicate.add(spot);
+						break;
+					}
+				}
+				if (spotsToDuplicate.size() > 0) {
+					for (Spot spot : spotsToDuplicate) {
+						Point2D.Double pos = (Double) spot.getRoi().getPosition2D();
+						int radius = spot.prop.spotRadius / 2;
+						pos.setLocation(pos.getX() + 5, pos.getY() + 5);
+						cage.addEllipseSpot(cage.spotsArray.spotsList.size(), pos, radius);
+						Spot newSpot = cage.spotsArray.spotsList.get(cage.spotsArray.spotsList.size() - 1);
+						exp.seqCamData.seq.addROI(newSpot.getRoi());
 					}
 				}
 			}

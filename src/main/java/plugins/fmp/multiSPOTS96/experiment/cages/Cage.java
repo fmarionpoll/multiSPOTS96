@@ -234,8 +234,8 @@ public class Cage implements Comparable<Cage> {
 
 		if (spotsArray.spotsList == null)
 			spotsArray.spotsList = new ArrayList<Spot>(1);
-		int carreIndex = spotsArray.spotsList.size();
-		Spot spot = createEllipseSpot(spotIndex, carreIndex, center, radius);
+		int index = spotsArray.spotsList.size();
+		Spot spot = createEllipseSpot(spotIndex, index, center, radius);
 		spot.prop.cagePosition = spotsArray.spotsList.size();
 		spotsArray.spotsList.add(spot);
 		return spotsArray.spotsList.size();
