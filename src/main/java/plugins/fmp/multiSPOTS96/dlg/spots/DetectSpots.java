@@ -220,10 +220,11 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					exp.cagesArray.mapSpotsToCagesColumnRow();
-					for (Cage cage : exp.cagesArray.cagesList) {
+					for (Cage cage : exp.cagesArray.cagesList)
 						Collections.sort(cage.spotsArray.spotsList, new Comparators.Spot_cagePosition());
-					}
 					exp.cagesArray.cleanUpSpotNames();
+					exp.seqCamData.removeROIsContainingString("spot");
+					exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
 				}
 			}
 		});
@@ -395,7 +396,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	}
 
 	void convertBlobsToCircularSpots(Experiment exp, int diameter) {
-		exp.seqCamData.removeROIsContainingString("spot");
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				ROI2D roiP = spot.getRoi();
@@ -412,6 +412,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 				spot.setRoi(roiEllipse);
 			}
 		}
+		exp.seqCamData.removeROIsContainingString("spot");
 		exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
 	}
 

@@ -1,6 +1,5 @@
 package plugins.fmp.multiSPOTS96.tools;
 
-import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
 
 import icy.roi.ROI;
@@ -26,45 +25,6 @@ public class Comparators {
 		@Override
 		public int compare(ROI2D o1, ROI2D o2) {
 			return o1.getName().compareTo(o2.getName());
-		}
-	}
-
-	public static class Spot_XYPosition implements Comparator<Spot> {
-		@Override
-		public int compare(Spot spot1, Spot spot2) {
-			Rectangle2D rect1 = spot1.getRoi().getBounds2D();
-			Rectangle2D rect2 = spot2.getRoi().getBounds2D();
-
-			Double height = Math.max(rect1.getHeight(), rect2.getHeight());
-			double y1 = Math.round(rect1.getCenterY() / height);
-			double y2 = Math.round(rect2.getCenterY() / height);
-			double diff = y2 - y1;
-			int result = Double.compare(diff, height);
-			if (result == 0) {
-				Double width = Math.max(rect1.getWidth(), rect2.getWidth());
-				double x1 = Math.round(rect1.getCenterX() / width);
-				double x2 = Math.round(rect2.getCenterX() / width);
-				diff = x2 - x1;
-				result = Double.compare(diff, width);
-			}
-			return result;
-		}
-	}
-
-	public static class Spot_RowColumn implements Comparator<Spot> {
-		@Override
-		public int compare(Spot spot1, Spot spot2) {
-
-			int y1 = spot1.prop.cageRow;
-			int y2 = spot2.prop.cageRow;
-			int result = Integer.compare(y1, y2);
-			if (result == 0) {
-				int x1 = spot1.prop.cageColumn;
-				int x2 = spot2.prop.cageColumn;
-				;
-				result = Integer.compare(x1, x2);
-			}
-			return result;
 		}
 	}
 

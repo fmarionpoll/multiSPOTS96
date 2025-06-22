@@ -87,7 +87,7 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	public void setName(int cageID, int spotID) {
-		String name = "spot_" + cageID + "_" + spotID;
+		String name = "spot_" + String.format("%03d", cageID) + "_" + String.format("%03d", spotID);
 		if (spotROI2D != null)
 			spotROI2D.setName(name);
 		prop.sourceName = name;

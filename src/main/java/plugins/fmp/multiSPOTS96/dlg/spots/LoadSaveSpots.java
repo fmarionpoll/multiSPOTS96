@@ -71,6 +71,7 @@ public class LoadSaveSpots extends JPanel {
 
 	public boolean loadSpotsArray_File(Experiment exp) {
 		boolean flag = exp.load_MS96_cages();
+		exp.seqCamData.removeROIsContainingString("spot");
 		exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
 		return flag;
 	}

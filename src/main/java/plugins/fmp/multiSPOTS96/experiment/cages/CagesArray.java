@@ -581,7 +581,6 @@ public class CagesArray {
 	// --------------------------------------------------------
 
 	public void transferCageSpotsToSequenceAsROIs(SequenceCamData seqCamData) {
-		seqCamData.removeROIsContainingString("spot");
 		if (cagesList.size() > 0) {
 			List<ROI2D> spotROIList = new ArrayList<ROI2D>(
 					cagesList.get(0).spotsArray.spotsList.size() * cagesList.size());
@@ -589,6 +588,7 @@ public class CagesArray {
 				for (Spot spot : cage.spotsArray.spotsList)
 					spotROIList.add(spot.getRoi());
 			}
+			Collections.sort(spotROIList, new Comparators.ROI2D_Name());
 			seqCamData.seq.addROIs(spotROIList, true);
 		}
 	}
@@ -615,7 +615,6 @@ public class CagesArray {
 						break;
 					}
 				}
-
 				if (!found)
 					iteratorSpots.remove();
 			}
