@@ -1,6 +1,5 @@
 package plugins.fmp.multiSPOTS96.tools;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
 
@@ -35,18 +34,48 @@ public class Comparators {
 		public int compare(Spot spot1, Spot spot2) {
 			Rectangle2D rect1 = spot1.getRoi().getBounds2D();
 			Rectangle2D rect2 = spot2.getRoi().getBounds2D();
-			Point2D.Double x1 = getCenterPoint(rect1);
-			Point2D.Double x2 = getCenterPoint(rect2);
-			int result = Double.compare(x1.getX(), x2.getX());
-			if (result == 0)
-				result = Double.compare(x1.getY(), x2.getY());
+
+			Double height = Math.max(rect1.getHeight(), rect2.getHeight());
+			double y1 = Math.round(rect1.getCenterY() / height);
+			double y2 = Math.round(rect2.getCenterY() / height);
+			double diff = y2 - y1;
+			int result = Double.compare(diff, height);
+			if (result == 0) {
+				Double width = Math.max(rect1.getWidth(), rect2.getWidth());
+				double x1 = Math.round(rect1.getCenterX() / width);
+				double x2 = Math.round(rect2.getCenterX() / width);
+				diff = x2 - x1;
+				result = Double.compare(diff, width);
+			}
 			return result;
 		}
 	}
 
-	private static Point2D.Double getCenterPoint(Rectangle2D rectangle) {
-		return new Point2D.Double(rectangle.getX() + rectangle.getWidth() / 2,
-				rectangle.getY() + rectangle.getHeight() / 2);
+	public static class Spot_RowColumn implements Comparator<Spot> {
+		@Override
+		public int compare(Spot spot1, Spot spot2) {
+
+			int y1 = spot1.prop.cageRow;
+			int y2 = spot2.prop.cageRow;
+			int result = Integer.compare(y1, y2);
+			if (result == 0) {
+				int x1 = spot1.prop.cageColumn;
+				int x2 = spot2.prop.cageColumn;
+				;
+				result = Integer.compare(x1, x2);
+			}
+			return result;
+		}
+	}
+
+	public static class Spot_cagePosition implements Comparator<Spot> {
+		@Override
+		public int compare(Spot spot1, Spot spot2) {
+
+			int y1 = spot1.prop.cageRow * 8 + spot1.prop.cageColumn;
+			int y2 = spot2.prop.cageRow * 8 + spot2.prop.cageColumn;
+			return Integer.compare(y1, y2);
+		}
 	}
 
 	public static class ROI2D_T implements Comparator<ROI2D> {
@@ -105,6 +134,5 @@ public class Comparators {
 					exp2.seqCamData.firstImage_ms + exp2.seqCamData.binFirst_ms);
 		}
 	}
-
 
 }

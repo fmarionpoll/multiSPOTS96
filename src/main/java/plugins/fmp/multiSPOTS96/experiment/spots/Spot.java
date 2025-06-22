@@ -77,17 +77,6 @@ public class Spot implements Comparable<Spot> {
 		}
 	}
 
-	public void pasteSpot(Spot spotTo, boolean bMeasures) {
-		prop.paste(spotTo.prop);
-		spotTo.spotROI2D = (ROI2DShape) spotROI2D.getCopy();
-		spotTo.limitsOptions = limitsOptions;
-		if (bMeasures) {
-			spotTo.sum_in.copyLevel2D(sum_in);
-			spotTo.sum_clean.copyLevel2D(sum_clean);
-			spotTo.flyPresent.copyLevel2D(flyPresent);
-		}
-	}
-
 	public ROI2D getRoi() {
 		return spotROI2D;
 	}
@@ -102,6 +91,10 @@ public class Spot implements Comparable<Spot> {
 		if (spotROI2D != null)
 			spotROI2D.setName(name);
 		prop.sourceName = name;
+	}
+
+	public String getName() {
+		return prop.sourceName;
 	}
 
 	public String getCagePosition(EnumXLSExportType xlsExportOption) {

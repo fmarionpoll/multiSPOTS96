@@ -883,6 +883,12 @@ public class CagesArray {
 		return null;
 	}
 
+	public void mapSpotsToCagesColumnRow() {
+		for (Cage cage : cagesList) {
+			cage.mapSpotsToCageColumnRow();
+		}
+	}
+
 	public void cleanUpSpotNames() {
 		for (Cage cage : cagesList) {
 			cage.cleanUpSpotNames();

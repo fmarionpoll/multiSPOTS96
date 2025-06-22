@@ -189,7 +189,7 @@ public class SpotsArray {
 		for (Spot toSpot : toSpotsArray.spotsList) {
 			for (Spot spot : spotsList) {
 				if (spot.compareTo(toSpot) == 0) {
-					spot.pasteSpot(toSpot, bMeasures);
+					toSpot.copySpot(spot, bMeasures);
 					break;
 				}
 			}

@@ -16,6 +16,8 @@ public class SpotProperties {
 	public String sourceName = null;
 	public int cageID = -1;
 	public int cagePosition = 0;
+	public int cageRow = -1;
+	public int cageColumn = -1;
 	public int spotArrayIndex = -1;
 	public Color spotColor = Color.GREEN;
 
@@ -43,6 +45,8 @@ public class SpotProperties {
 	private final String ID_CONCENTRATION = "concentration";
 	private final String ID_CAGEID = "cageID";
 	private final String ID_CAGEPOSITION = "cagePosition";
+	private final String ID_CAGECOLUMN = "cageColumn";
+	private final String ID_CAGEROW = "cageRow";
 	private final String ID_SPOTARRAYINDEX = "spotArrayIndex";
 	private final String ID_COLOR_R = "spotColor_R";
 	private final String ID_COLOR_G = "spotColor_G";
@@ -56,16 +60,8 @@ public class SpotProperties {
 		spotArrayIndex = propFrom.spotArrayIndex;
 		cageID = propFrom.cageID;
 		cagePosition = propFrom.cagePosition;
-	}
-
-	public void paste(SpotProperties propTo) {
-		propTo.spotVolume = spotVolume;
-		propTo.spotStim = spotStim;
-		propTo.spotConc = spotConc;
-		propTo.spotColor = spotColor;
-		propTo.spotArrayIndex = spotArrayIndex;
-		propTo.cageID = cageID;
-		propTo.cagePosition = cagePosition;
+		cageColumn = propFrom.cageColumn;
+		cageRow = propFrom.cageRow;
 	}
 
 	public boolean isChanged(SpotProperties desc) {
@@ -100,7 +96,8 @@ public class SpotProperties {
 		spotArrayIndex = XMLUtil.getElementIntValue(nodeParameters, ID_SPOTARRAYINDEX, spotArrayIndex);
 		cageID = XMLUtil.getElementIntValue(nodeParameters, ID_CAGEID, cageID);
 		cagePosition = XMLUtil.getElementIntValue(nodeParameters, ID_CAGEPOSITION, cagePosition);
-//		int version = XMLUtil.getElementIntValue(nodeParameters, ID_VERSIONINFOS, versionInfos);
+		cageColumn = XMLUtil.getElementIntValue(nodeParameters, ID_CAGECOLUMN, cageColumn);
+		cageRow = XMLUtil.getElementIntValue(nodeParameters, ID_CAGEROW, cageRow);
 
 		descriptionOK = XMLUtil.getElementBooleanValue(nodeParameters, ID_DESCOK, false);
 		spotVolume = XMLUtil.getElementDoubleValue(nodeParameters, ID_SPOTVOLUME, Double.NaN);
@@ -124,6 +121,8 @@ public class SpotProperties {
 		XMLUtil.setElementIntValue(nodeParameters, ID_SPOTARRAYINDEX, spotArrayIndex);
 		XMLUtil.setElementIntValue(nodeParameters, ID_CAGEID, cageID);
 		XMLUtil.setElementIntValue(nodeParameters, ID_CAGEPOSITION, cagePosition);
+		XMLUtil.setElementIntValue(nodeParameters, ID_CAGECOLUMN, cageColumn);
+		XMLUtil.setElementIntValue(nodeParameters, ID_CAGEROW, cageRow);
 		XMLUtil.setElementIntValue(nodeParameters, ID_VERSIONINFOS, versionInfos);
 
 		XMLUtil.setElementBooleanValue(nodeParameters, ID_DESCOK, descriptionOK);
@@ -156,6 +155,14 @@ public class SpotProperties {
 		i++;
 		cagePosition = Integer.valueOf(data[i]);
 		i++;
+		if (isize == 11) {
+			cageColumn = Integer.valueOf(data[i]);
+			i++;
+		}
+		if (isize == 11) {
+			cageRow = Integer.valueOf(data[i]);
+			i++;
+		}
 		if (isize == 10) {
 			spotRadius = Integer.valueOf(data[i]); // dummy read
 			i++;
@@ -175,8 +182,8 @@ public class SpotProperties {
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("#" + csvSep + "#\n");
 		sbf.append("#" + csvSep + "SPOTS" + csvSep + "multiSPOTS96 data\n");
-		List<String> row2 = Arrays.asList("name", "index", "cageID", "cagePos", "volume", "npixels", "radius", "stim",
-				"conc");
+		List<String> row2 = Arrays.asList("name", "index", "cageID", "cagePos", "cageColumn", "cageRow", "volume",
+				"npixels", "radius", "stim", "conc");
 		sbf.append(String.join(csvSep, row2));
 		sbf.append("\n");
 		return sbf.toString();
@@ -185,8 +192,9 @@ public class SpotProperties {
 	public String csvExportSpotProperties(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = Arrays.asList(sourceName, String.valueOf(spotArrayIndex), String.valueOf(cageID),
-				String.valueOf(cagePosition), String.valueOf(spotVolume), String.valueOf(spotNPixels),
-				String.valueOf(spotRadius), spotStim.replace(",", "."), spotConc.replace(",", "."));
+				String.valueOf(cagePosition), String.valueOf(cageColumn), String.valueOf(cageRow),
+				String.valueOf(spotVolume), String.valueOf(spotNPixels), String.valueOf(spotRadius),
+				spotStim.replace(",", "."), spotConc.replace(",", "."));
 		sbf.append(String.join(csvSep, row));
 		sbf.append("\n");
 		return sbf.toString();

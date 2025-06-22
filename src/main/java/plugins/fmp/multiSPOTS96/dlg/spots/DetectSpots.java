@@ -13,6 +13,7 @@ import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import javax.swing.JButton;
@@ -36,6 +37,7 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.series.DetectSpotsOutline;
+import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
@@ -217,6 +219,10 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
+					exp.cagesArray.mapSpotsToCagesColumnRow();
+					for (Cage cage : exp.cagesArray.cagesList) {
+						Collections.sort(cage.spotsArray.spotsList, new Comparators.Spot_cagePosition());
+					}
 					exp.cagesArray.cleanUpSpotNames();
 				}
 			}

@@ -1,10 +1,10 @@
 package plugins.fmp.multiSPOTS96.experiment.cages;
 
+import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -18,7 +18,6 @@ import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
-import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -309,11 +308,23 @@ public class Cage implements Comparable<Cage> {
 		listRoiAlongT.add(new ROI2DAlongT(0, cageROI2D));
 	}
 
+	public void mapSpotsToCageColumnRow() {
+		Rectangle rect = cageROI2D.getBounds();
+		int deltaX = rect.width / 8;
+		int deltaY = rect.height / 4;
+		for (Spot spot : spotsArray.spotsList) {
+			Rectangle rectSpot = spot.getRoi().getBounds();
+			spot.prop.cageColumn = (rectSpot.x - rect.x) / deltaX;
+			spot.prop.cageRow = (rectSpot.y - rect.y) / deltaY;
+		}
+	}
+
 	public void cleanUpSpotNames() {
-		Collections.sort(spotsArray.spotsList, new Comparators.Spot_XYPosition());
 		for (int i = 0; i < spotsArray.spotsList.size(); i++) {
 			Spot spot = spotsArray.spotsList.get(i);
 			spot.setName(prop.cageID, i);
+			// System.out.println(spot.getName() + " row=" + spot.prop.cageRow + " col=" +
+			// spot.prop.cageColumn);
 		}
 	}
 
