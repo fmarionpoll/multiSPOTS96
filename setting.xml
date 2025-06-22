@@ -162,7 +162,7 @@
 <section name="multiSPOTS96">
 <section name="MultiSPOTS96">
 <section name="gui">
-<key name="lastUsedPath" value="C:\Users\fred\Desktop\essai multispots plaques 96"/>
+<key name="lastUsedPath" value="C:\Users\fred\Desktop\essai multispots plaques 96\Thomas"/>
 </section>
 </section>
 </section>
@@ -177,13 +177,13 @@
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1325"/>
+<key name="XC" value="1505"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
-<key name="WidthC" value="480"/>
+<key name="WidthC" value="300"/>
 <key name="HeightC" value="993"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
@@ -201,7 +201,7 @@
 <key name="YE" value="100"/>
 <key name="XI" value="904"/>
 <key name="YI" value="35"/>
-<key name="WidthC" value="472"/>
+<key name="WidthC" value="292"/>
 <key name="HeightC" value="903"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
@@ -219,7 +219,7 @@
 <key name="YE" value="200"/>
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
-<key name="WidthC" value="472"/>
+<key name="WidthC" value="292"/>
 <key name="HeightC" value="903"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>

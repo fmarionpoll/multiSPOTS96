@@ -26,8 +26,6 @@ import javax.swing.JToggleButton;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 
 import icy.roi.ROI2D;
 import icy.util.StringUtil;
@@ -43,13 +41,13 @@ import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 
-public class DetectSpots extends JPanel implements ChangeListener, PropertyChangeListener, PopupMenuListener {
+public class DetectSpots extends JPanel implements ChangeListener, PropertyChangeListener {
 	private static final long serialVersionUID = -5257698990389571518L;
 	private MultiSPOTS96 parent0 = null;
 
 	private String detectString = "Detect blobs...";
 	private JButton startComputationButton = new JButton(detectString);
-	private JComboBox<String> allCellsComboBox = new JComboBox<String>(new String[] { "all cages" });
+	private JComboBox<String> allCellsComboBox = new JComboBox<String>(new String[] { "all cages", "selected cages" });
 	private JCheckBox allCheckBox = new JCheckBox("ALL (current to last)", false);
 
 	private JLabel spotsFilterLabel = new JLabel("Filter");
@@ -88,8 +86,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		panel0.add(allCellsComboBox);
 		panel0.add(allCheckBox);
 		add(panel0);
-
-		allCellsComboBox.addPopupMenuListener(this);
 
 		JPanel panel1 = new JPanel(layoutLeft);
 		panel1.add(spotsFilterLabel);
@@ -309,11 +305,23 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		options.fromFrame = exp.seqCamData.currentFrame;
 
 		options.transformop = (ImageTransformEnums) spotsTransformsComboBox.getSelectedItem();
-		int iselected = -1;
-		if (allCellsComboBox.getSelectedIndex() > 0)
-			iselected = allCellsComboBox.getSelectedIndex() - 1;
+		int iselected = allCellsComboBox.getSelectedIndex() - 1;
+		options.selectedIndexes = new ArrayList<Integer>(exp.cagesArray.cagesList.size());
+		options.selectedIndexes.addAll(getSelectedCages(exp, iselected));
 		options.detectCage = iselected;
 		return options;
+	}
+
+	ArrayList<Integer> getSelectedCages(Experiment exp, int iSelectedOption) {
+		ArrayList<Integer> indexes = new ArrayList<Integer>(exp.cagesArray.cagesList.size());
+		for (Cage cage : exp.cagesArray.cagesList) {
+			boolean bselected = true;
+			if (iSelectedOption == 0)
+				bselected = cage.getRoi().isSelected();
+			if (bselected)
+				indexes.add(cage.prop.cageID);
+		}
+		return indexes;
 	}
 
 	void startComputation() {
@@ -341,34 +349,21 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			startComputationButton.setText(detectString);
 			parent0.dlgKymos.tabDisplay.selectKymographImage(parent0.dlgKymos.tabDisplay.indexImagesCombo);
 			parent0.dlgKymos.tabDisplay.indexImagesCombo = -1;
+			selectCagesAccordingToOptions(detectSpots.options.selectedIndexes);
 		}
 	}
 
-	@Override
-	public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-		int nitems = 1;
+	void selectCagesAccordingToOptions(ArrayList<Integer> selectedCagesList) {
+		if (allCellsComboBox.getSelectedIndex() == 0 || selectedCagesList == null || selectedCagesList.size() < 1)
+			return;
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-		if (exp != null)
-			nitems = exp.cagesArray.cagesList.size() + 1;
-		if (allCellsComboBox.getItemCount() != nitems) {
-			allCellsComboBox.removeAllItems();
-			allCellsComboBox.addItem("all cages");
-			for (Cage cage : exp.cagesArray.cagesList) {
-				allCellsComboBox.addItem(Integer.toString(cage.prop.cageID));
-			}
+		if (exp == null)
+			return;
+		for (Cage cage : exp.cagesArray.cagesList) {
+			if (!selectedCagesList.contains(cage.prop.cageID))
+				continue;
+			cage.getRoi().setSelected(true);
 		}
-	}
-
-	@Override
-	public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void popupMenuCanceled(PopupMenuEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	void removeOverlay(Experiment exp) {
@@ -382,6 +377,8 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			exp.seqCamData.seq.removeROIs(listROIs, true);
 			for (ROI2D roi : listROIs) {
 				String name = roi.getName();
+				if (!name.contains("spot"))
+					continue;
 				Cage cage = exp.cagesArray.getCageFromSpotRoiName(name);
 				Iterator<Spot> iterator = cage.spotsArray.spotsList.iterator();
 				while (iterator.hasNext()) {
@@ -396,7 +393,11 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	}
 
 	void convertBlobsToCircularSpots(Experiment exp, int diameter) {
+		boolean bOnlySelectedCages = (allCellsComboBox.getSelectedIndex() == 1);
 		for (Cage cage : exp.cagesArray.cagesList) {
+			if (bOnlySelectedCages && !cage.getRoi().isSelected())
+				continue;
+
 			for (Spot spot : cage.spotsArray.spotsList) {
 				ROI2D roiP = spot.getRoi();
 				Point center = roiP.getPosition();

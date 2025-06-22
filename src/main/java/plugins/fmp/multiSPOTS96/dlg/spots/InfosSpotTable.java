@@ -267,6 +267,8 @@ public class InfosSpotTable extends JPanel {
 
 			for (int i = 0; i < cage.spotsArray.spotsList.size(); i++) {
 				Spot spot = cage.spotsArray.spotsList.get(i);
+				if (i >= cageFrom.spotsArray.spotsList.size())
+					continue;
 				Spot spotFrom = cageFrom.spotsArray.spotsList.get(i);
 				spot.prop.spotVolume = spotFrom.prop.spotVolume;
 				spot.prop.spotStim = spotFrom.prop.spotStim;

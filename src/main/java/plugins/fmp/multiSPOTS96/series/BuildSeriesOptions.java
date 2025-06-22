@@ -2,7 +2,6 @@ package plugins.fmp.multiSPOTS96.series;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -37,7 +36,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public int detectCage = -1;
 
 	public boolean detectSelectedROIs = false;
-	public List<Integer> selectedIndexes = null;
+	public ArrayList<Integer> selectedIndexes = null;
 	public boolean detectAllSeries = true;
 	public int seriesFirst = 0;
 	public int seriesLast = 0;

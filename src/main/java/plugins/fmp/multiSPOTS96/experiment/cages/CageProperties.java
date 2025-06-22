@@ -19,6 +19,7 @@ public class CageProperties {
 
 	public int cageNFlies = 0;
 	public int cageAge = 5;
+
 	public String strCageComment = "..";
 	public String strCageSex = "..";
 	public String strCageStrain = "..";

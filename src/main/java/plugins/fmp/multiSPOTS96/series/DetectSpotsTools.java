@@ -62,7 +62,7 @@ public class DetectSpotsTools {
 		final ROI2DArea binarizedImageRoi = binarizeImage(workimage, options);
 
 		for (Cage cage : exp.cagesArray.cagesList) {
-			if (options.detectCage != -1 && cage.prop.cageID != options.detectCage)
+			if (!options.selectedIndexes.contains(cage.prop.cageID))
 				continue;
 
 			cage.spotsArray = new SpotsArray();

@@ -143,6 +143,9 @@ public class ChartCageSpots {
 				new float[] { 2.0f, 4.0f }, // dash = array representing dashing pattern
 				0.0f); // dash phase = offset to start dashing pattern
 
+		if (xySeriesCollection == null)
+			return null;
+
 		for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
 			String[] description = xySeriesCollection.getSeries(i).getDescription().split(":");
 			int r = Integer.valueOf(description[7]);
