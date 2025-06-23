@@ -223,31 +223,12 @@ public class InfosSpotTable extends JPanel {
 		int rowIndex = spotTable.getSelectedRow();
 		if (rowIndex < 0)
 			return;
-
-		Spot spotFrom = exp.cagesArray.getSpotAtGlobalIndex(rowIndex);
+		
+		Object value = spotTable.spotTableModel.getValueAt(rowIndex, columnIndex);
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				if (spot.getRoi().getName().equals(spotFrom.getRoi().getName()))
-					continue;
-				switch (columnIndex) {
-				case 3:
-					spot.prop.spotNPixels = spotFrom.prop.spotNPixels;
-					break;
-				case 4:
-					spot.prop.spotVolume = spotFrom.prop.spotVolume;
-					break;
-				case 5:
-					spot.prop.spotStim = spotFrom.prop.spotStim;
-					break;
-				case 6:
-					spot.prop.spotConc = spotFrom.prop.spotConc;
-					break;
-				case 7:
-					spot.prop.spotColor = spotFrom.prop.spotColor;
-					break;
-				default:
-					break;
-				}
+				int iID =  exp.cagesArray.getSpotGlobalPosition(spot);
+				spotTable.spotTableModel.setValueAt(value, iID, columnIndex);
 			}
 		}
 	}

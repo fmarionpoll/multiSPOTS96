@@ -115,31 +115,10 @@ public class InfosCageTable extends JPanel {
 					int rowIndex = cageTable.getSelectedRow();
 					int columnIndex = cageTable.getSelectedColumn();
 					if (rowIndex >= 0) {
-						Cage cage0 = exp.cagesArray.cagesList.get(rowIndex);
+						Object value = cageTable.cageTableModel.getValueAt(rowIndex, columnIndex);
 						for (Cage cage : exp.cagesArray.cagesList) {
-							if (cage.getRoi().getName().equals(cage0.getRoi().getName()))
-								continue;
-							switch (columnIndex) {
-							case 1:
-								cage.prop.cageNFlies = cage0.prop.cageNFlies;
-								break;
-							case 2:
-								cage.prop.strCageStrain = cage0.prop.strCageStrain;
-								break;
-							case 3:
-								cage.prop.strCageSex = cage0.prop.strCageSex;
-								break;
-							case 4:
-								cage.prop.cageAge = cage0.prop.cageAge;
-								break;
-							case 5:
-								cage.prop.strCageComment = cage0.prop.strCageComment;
-								break;
-							case 6:
-								cage.prop.cageColor = cage0.prop.cageColor;
-							default:
-								break;
-							}
+							int iID = cage.prop.cageID;
+							cageTable.cageTableModel.setValueAt(value, iID, columnIndex);
 						}
 					}
 				}
