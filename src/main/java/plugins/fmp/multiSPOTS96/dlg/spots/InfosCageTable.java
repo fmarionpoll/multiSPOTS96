@@ -132,6 +132,7 @@ public class InfosCageTable extends JPanel {
 				if (exp != null) {
 					for (Cage cage : exp.cagesArray.cagesList) {
 						cage.prop.cageColor = cageTable.cageTableModel.colorTable[cage.prop.cageNFlies % 2];
+						cage.getRoi().setColor(cage.prop.cageColor);
 					}
 				}
 			}
@@ -152,17 +153,6 @@ public class InfosCageTable extends JPanel {
 		column.setPreferredWidth(50);
 		column.setMaxWidth(50);
 		column.setMinWidth(30);
-	}
-
-	public void selectRowFromRoiName(String roiName) {
-		int nrows = cageTable.getRowCount();
-		for (int row_index = 0; row_index < nrows; row_index++) {
-			String colname = (String) cageTable.getModel().getValueAt(row_index, 0);
-			if (colname.equals(roiName)) {
-				cageTable.setRowSelectionInterval(row_index, row_index);
-				return;
-			}
-		}
 	}
 
 }
