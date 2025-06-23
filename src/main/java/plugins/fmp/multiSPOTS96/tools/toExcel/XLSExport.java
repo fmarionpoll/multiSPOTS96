@@ -17,7 +17,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
@@ -83,7 +82,8 @@ public class XLSExport {
 			for (int t = 0; t < spotsList.size(); t++) {
 				Spot spot = spotsList.get(t);
 //				String name = spot.getRoi().getName();
-				int col = spot.prop.cageID * spot.prop.cagePosition; //.getSpotArrayIndexFromSpotName(name);
+				int col = exp.cagesArray.getSpotGlobalPosition(spot); // spot.prop.cageID * spot.prop.cagePosition;
+																		// //.getSpotArrayIndexFromSpotName(name);
 				if (col >= 0)
 					pt.x = colseries + col;
 				int x = pt.x;
@@ -245,12 +245,12 @@ public class XLSExport {
 		return numFromName;
 	}
 
-	protected Point getCellXCoordinateFromDataName(XLSResults xlsResults, Point pt_main, int colseries) {
-		int col = SpotString.getSpotArrayIndexFromSpotName(xlsResults.name);
-		if (col >= 0)
-			pt_main.x = colseries + col;
-		return pt_main;
-	}
+//	protected Point getCellXCoordinateFromDataName(XLSResults xlsResults, Point pt_main, int colseries) {
+//		int col = SpotString.getSpotArrayIndexFromSpotName(xlsResults.name);
+//		if (col >= 0)
+//			pt_main.x = colseries + col;
+//		return pt_main;
+//	}
 
 	protected int getCageFromKymoFileName(String name) {
 		if (!name.contains("line") || !name.contains("spot"))
@@ -635,15 +635,15 @@ public class XLSExport {
 			int rowSeries, Point pt) {
 		for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
 			XLSResults row = rowListForOneExp.getRow(iRow);
-			writeRow(sheet, column_dataArea, rowSeries, pt, row);
+			writeRow(sheet, column_dataArea, rowSeries, pt, iRow, row);
 		}
 
 	}
 
-	private void writeRow(XSSFSheet sheet, int column_dataArea, int rowSeries, Point pt, XLSResults row) {
+	private void writeRow(XSSFSheet sheet, int column_dataArea, int rowSeries, Point pt, int iRow, XLSResults row) {
 		boolean transpose = options.transpose;
 		pt.y = column_dataArea;
-		int col = SpotString.getSpotArrayIndexFromSpotName(row.name);
+		int col = iRow; // SpotString.getSpotArrayIndexFromSpotName(row.name);
 		pt.x = rowSeries + col;
 		if (row.valuesOut == null)
 			return;

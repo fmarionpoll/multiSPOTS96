@@ -25,7 +25,7 @@ public class SpotProperties {
 	public String spotStim = new String("..");
 	public String spotConc = new String("..");
 
-	public double spotVolume = 1;
+	public double spotVolume = .5;
 	public int spotNPixels = 1;
 	public int spotRadius = 30;
 	public int spotXCoord = -1;

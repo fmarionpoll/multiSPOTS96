@@ -51,6 +51,8 @@ public class ChartCageSpots {
 	// ---------------------------
 
 	private void updatePlotBackgroundAccordingToNFlies(XYSeriesCollection xySeriesCollection, XYPlot subplot) {
+		if (xySeriesCollection == null)
+			return;
 		String[] description = xySeriesCollection.getSeries(0).getDescription().split(":");
 		int nflies = Integer.valueOf(description[5]);
 		if (nflies > 0) {

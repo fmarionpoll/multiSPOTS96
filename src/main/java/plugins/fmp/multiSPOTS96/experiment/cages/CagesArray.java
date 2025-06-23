@@ -705,6 +705,25 @@ public class CagesArray {
 		return null;
 	}
 
+	public int getSpotGlobalPosition(Spot spot) {
+		int i = 0;
+		int cageID = spot.prop.cageID;
+		for (Cage cage : cagesList) {
+			int count = cage.spotsArray.spotsList.size();
+			if (cageID != cage.prop.cageID) {
+				i += count;
+				continue;
+			}
+			String name = spot.getRoi().getName();
+			for (int j = 0; j < cage.spotsArray.spotsList.size(); j++) {
+				if (name.equals(cage.spotsArray.spotsList.get(j).getRoi().getName())) {
+					return i + j;
+				}
+			}
+		}
+		return 0;
+	}
+
 	public int getTotalNumberOfSpots() {
 		int nspots = 0;
 		for (Cage cage : cagesList) {

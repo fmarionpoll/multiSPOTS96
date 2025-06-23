@@ -30,7 +30,6 @@ import icy.roi.ROI2D;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
@@ -238,7 +237,7 @@ public class ChartSpots extends IcyFrame {
 			return null;
 		}
 
-		int index = SpotString.getSpotArrayIndexFromSpotName(description);
+		int index = exp.cagesArray.getSpotGlobalPosition(spotFound); // SpotString.getSpotArrayIndexFromSpotName(description);
 		spotFound.spotKymograph_T = index;
 		return spotFound;
 	}

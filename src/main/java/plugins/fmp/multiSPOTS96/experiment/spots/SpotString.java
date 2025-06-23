@@ -31,15 +31,15 @@ public class SpotString {
 		return index;
 	}
 
-	static public int getSpotArrayIndexFromSpotName(String description) {
-		int index = -1;
-		String[] roiDescription = description.split("_");
-		try {
-			index = Integer.parseInt(roiDescription[1])*Integer.parseInt(roiDescription[2]);
-		} catch (NumberFormatException e1) {
-		}
-		return index;
-	}
+//	static public int getSpotArrayIndexFromSpotName(String description) {
+//		int index = -1;
+//		String[] roiDescription = description.split("_");
+//		try {
+//			index = Integer.parseInt(roiDescription[1])*Integer.parseInt(roiDescription[2]);
+//		} catch (NumberFormatException e1) {
+//		}
+//		return index;
+//	}
 
 	static public String createSpotString(int cageID, int cagePosition, int spotArrayIndex) {
 		return "spot_" + String.format("%03d", cageID) + "_" + String.format("%03d", cagePosition) + "_"

@@ -30,6 +30,7 @@ public class InfosCageTable extends JPanel {
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
+	private JButton colorizeCagesRoiButton = new JButton("Set cell color according to nflies");
 	private MultiSPOTS96 parent0 = null;
 	private CagesArray cagesArrayCopy = null;
 
@@ -55,6 +56,7 @@ public class InfosCageTable extends JPanel {
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(duplicateAllButton);
+		panel2.add(colorizeCagesRoiButton);
 		topPanel.add(panel2);
 
 		JPanel tablePanel = new JPanel();
@@ -142,6 +144,19 @@ public class InfosCageTable extends JPanel {
 					}
 				}
 			}
+		});
+
+		colorizeCagesRoiButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					for (Cage cage : exp.cagesArray.cagesList) {
+						cage.prop.cageColor = cageTable.cageTableModel.colorTable[cage.prop.cageNFlies % 2];
+					}
+				}
+			}
+
 		});
 	}
 
