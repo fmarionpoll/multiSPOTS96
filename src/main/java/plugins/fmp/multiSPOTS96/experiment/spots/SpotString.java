@@ -35,7 +35,7 @@ public class SpotString {
 		int index = -1;
 		String[] roiDescription = description.split("_");
 		try {
-			index = Integer.parseInt(roiDescription[3]);
+			index = Integer.parseInt(roiDescription[1])*Integer.parseInt(roiDescription[2]);
 		} catch (NumberFormatException e1) {
 		}
 		return index;

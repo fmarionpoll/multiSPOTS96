@@ -82,8 +82,8 @@ public class XLSExport {
 			List<Spot> spotsList = cage.spotsArray.spotsList;
 			for (int t = 0; t < spotsList.size(); t++) {
 				Spot spot = spotsList.get(t);
-				String name = spot.getRoi().getName();
-				int col = SpotString.getSpotArrayIndexFromSpotName(name);
+//				String name = spot.getRoi().getName();
+				int col = spot.prop.cageID * spot.prop.cagePosition; //.getSpotArrayIndexFromSpotName(name);
 				if (col >= 0)
 					pt.x = colseries + col;
 				int x = pt.x;
