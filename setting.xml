@@ -75,10 +75,10 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1750585012966"/>
+<key name="lastUpdateCheckTime" value="1750663286864"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
-<key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\Thomas\2025-06-03-caf 3mM-"/>
+<key name="loaderFolder" value="\\comportement-egce.ideev.universite-paris-saclay.fr\MultiCAFE\2025 Thomas\fmp\Thomas\2025-06-03-caf 3mM-"/>
 </section>
 <section name="canvas">
 <section name="Canvas2D">
@@ -98,10 +98,10 @@
 </section>
 <section name="online"/>
 </section>
-<key name="id" value="75992164"/>
+<key name="id" value="272462178"/>
 <key name="os" value="win64"/>
-<key name="clientCpuNumber" value="16"/>
-<key name="clientTotalMemory" value="67880230912"/>
+<key name="clientCpuNumber" value="20"/>
+<key name="clientTotalMemory" value="34078789632"/>
 <key name="appFolder" value="C:/Users/fred/.m2/repository/org/bioimageanalysis/icy/icy-kernel/2.5.1"/>
 <section name="loader">
 <section name="entry0">
@@ -155,14 +155,14 @@
 <section name="gui.histo">
 <key name="logView" value="true"/>
 </section>
-<key name="lastUploadDate" value="1750539821385"/>
+<key name="lastUploadDate" value="1750664689606"/>
 </section>
 <section name="plugins">
 <section name="fmp">
 <section name="multiSPOTS96">
 <section name="MultiSPOTS96">
 <section name="gui">
-<key name="lastUsedPath" value="C:\Users\fred\Desktop\essai multispots plaques 96\Thomas"/>
+<key name="lastUsedPath" value="\\comportement-egce.ideev.universite-paris-saclay.fr\MultiCAFE\2025 Thomas\fmp\Thomas"/>
 </section>
 </section>
 </section>
@@ -170,21 +170,21 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="3543"/>
-<key name="YE" value="0"/>
+<key name="XE" value="91"/>
+<key name="YE" value="129"/>
 <key name="WidthE" value="1813"/>
 <key name="HeightE" value="1155"/>
-<key name="MaximizedE" value="false"/>
+<key name="MaximizedE" value="true"/>
 </section>
 <section name="inspector">
-<key name="XC" value="1505"/>
+<key name="XC" value="2252"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="300"/>
-<key name="HeightC" value="993"/>
+<key name="HeightC" value="1230"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -202,7 +202,7 @@
 <key name="XI" value="904"/>
 <key name="YI" value="35"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="903"/>
+<key name="HeightC" value="1140"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -220,7 +220,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="903"/>
+<key name="HeightC" value="1140"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>
