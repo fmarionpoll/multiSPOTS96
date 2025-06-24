@@ -425,7 +425,8 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 				if (spotsToDuplicate.size() > 0) {
 					for (Spot spot : spotsToDuplicate) {
 						Point2D.Double pos = (Double) spot.getRoi().getPosition2D();
-						int radius = spot.prop.spotRadius / 2;
+						Rectangle rect = spot.getRoi().getBounds();
+						int radius = rect.width / 2;
 						pos.setLocation(pos.getX() + 5, pos.getY() + 5);
 						cage.addEllipseSpot(cage.spotsArray.spotsList.size(), pos, radius);
 						Spot newSpot = cage.spotsArray.spotsList.get(cage.spotsArray.spotsList.size() - 1);
