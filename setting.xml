@@ -75,7 +75,7 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1750663286864"/>
+<key name="lastUpdateCheckTime" value="1750847092069"/>
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
 <key name="loaderFolder" value="C:\Users\fred\Desktop\96wells\2025-03-20"/>
@@ -155,14 +155,14 @@
 <section name="gui.histo">
 <key name="logView" value="true"/>
 </section>
-<key name="lastUploadDate" value="1750664689606"/>
+<key name="lastUploadDate" value="1750847086992"/>
 </section>
 <section name="plugins">
 <section name="fmp">
 <section name="multiSPOTS96">
 <section name="MultiSPOTS96">
 <section name="gui">
-<key name="lastUsedPath" value="C:\Users\fred\Desktop\essai multispots plaques 96\Thomas"/>
+<key name="lastUsedPath" value="D:\Thomas"/>
 </section>
 </section>
 </section>

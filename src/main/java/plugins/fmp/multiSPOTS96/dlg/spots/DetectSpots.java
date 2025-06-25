@@ -232,6 +232,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 					for (Cage cage : exp.cagesArray.cagesList)
 						Collections.sort(cage.spotsArray.spotsList, new Comparators.Spot_cagePosition());
 					exp.cagesArray.cleanUpSpotNames();
+					
 					exp.seqCamData.removeROIsContainingString("spot");
 					exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
 				}
