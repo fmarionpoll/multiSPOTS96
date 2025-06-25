@@ -10,13 +10,11 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 
 import icy.gui.frame.IcyFrame;
 import icy.roi.ROI2D;
@@ -25,7 +23,6 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CageTable;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
-
 
 public class InfosCageTable extends JPanel implements ListSelectionListener {
 	/**
@@ -174,23 +171,12 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("something happened");
+		if (e.getValueIsAdjusting())
+			return;
+
+		ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+		int minIndex = lsm.getMinSelectionIndex();
+		selectCage(minIndex);
 	}
 
-//	@Override
-//	public void tableChanged(TableModelEvent e) {
-//		int row = e.getFirstRow();
-//        int column = e.getColumn();
-//        TableModel model = (TableModel)e.getSource();
-//        String columnName = model.getColumnName(column);
-//        Object data = model.getValueAt(row, column);
-//
-//		int selectedRow = cageTable.getSelectedRow();
-//		if (selectedRow < 0) {
-//			cageTable.setRowSelectionInterval(0, 0);
-//			selectedRow = 0;
-//		}
-//		selectCage(selectedRow);
-//	}
 }
