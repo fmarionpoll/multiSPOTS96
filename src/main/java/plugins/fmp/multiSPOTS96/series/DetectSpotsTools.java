@@ -92,6 +92,7 @@ public class DetectSpotsTools {
 							ROI2DPolygon roi = new ROI2DPolygon(points2s);
 							Spot spot = new Spot(roi);
 							spot.setName(cage.prop.cageID, spotID);
+							spot.prop.cageID = cage.prop.cageID;
 							cage.spotsArray.spotsList.add(spot);
 							spotID++;
 						}

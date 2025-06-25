@@ -323,6 +323,7 @@ public class Cage implements Comparable<Cage> {
 		for (int i = 0; i < spotsArray.spotsList.size(); i++) {
 			Spot spot = spotsArray.spotsList.get(i);
 			spot.setName(prop.cageID, i);
+			spot.prop.cageID = prop.cageID;
 		}
 	}
 
