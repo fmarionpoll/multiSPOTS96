@@ -54,15 +54,15 @@ public class CageTableModel extends AbstractTableModel {
 			case 1:
 				return cage.prop.cageNFlies;
 			case 2:
-				return cage.prop.strCageStrain;
+				return cage.prop.flyStrain;
 			case 3:
-				return cage.prop.strCageSex;
+				return cage.prop.flySex;
 			case 4:
-				return cage.prop.cageAge;
+				return cage.prop.flyAge;
 			case 5:
-				return cage.prop.strCageComment;
+				return cage.prop.comment;
 			case 6:
-				return cage.prop.cageColor;
+				return cage.prop.color;
 			}
 		}
 		return null;
@@ -112,23 +112,23 @@ public class CageTableModel extends AbstractTableModel {
 				break;
 			case 1:
 				cage.prop.cageNFlies = (int) aValue;
-				cage.prop.cageColor = colorTable[((int) aValue) % 2];
-				cage.getRoi().setColor(cage.prop.cageColor);
+				cage.prop.color = colorTable[((int) aValue) % 2];
+				cage.getRoi().setColor(cage.prop.color);
 				break;
 			case 2:
-				cage.prop.strCageStrain = aValue.toString();
+				cage.prop.flyStrain = aValue.toString();
 				break;
 			case 3:
-				cage.prop.strCageSex = aValue.toString();
+				cage.prop.flySex = aValue.toString();
 				break;
 			case 4:
-				cage.prop.cageAge = (int) aValue;
+				cage.prop.flyAge = (int) aValue;
 				break;
 			case 5:
-				cage.prop.strCageComment = aValue.toString();
+				cage.prop.comment = aValue.toString();
 				break;
 			case 6:
-				cage.prop.cageColor = (Color) aValue;
+				cage.prop.color = (Color) aValue;
 				break;
 			}
 		}

@@ -148,7 +148,7 @@ public class Cage implements Comparable<Cage> {
 			return false;
 		xmlLoadCageLimits(xmlVal);
 		prop.xmlLoadCageParameters(xmlVal);
-		cageROI2D.setColor(prop.cageColor);
+		cageROI2D.setColor(prop.color);
 		spotsArray.xmlLoadSpotsArray(xmlVal);
 		return true;
 	}
@@ -204,10 +204,10 @@ public class Cage implements Comparable<Cage> {
 		row.add(prop.strCageNumber);
 		row.add(cageROI2D.getName());
 		row.add(Integer.toString(prop.cageNFlies));
-		row.add(Integer.toString(prop.cageAge));
-		row.add(prop.strCageComment);
-		row.add(prop.strCageStrain);
-		row.add(prop.strCageSex);
+		row.add(Integer.toString(prop.flyAge));
+		row.add(prop.comment);
+		row.add(prop.flyStrain);
+		row.add(prop.flySex);
 
 		int npoints = 0;
 		if (cageROI2D != null) {
@@ -324,6 +324,7 @@ public class Cage implements Comparable<Cage> {
 			Spot spot = spotsArray.spotsList.get(i);
 			spot.setName(prop.cageID, i);
 			spot.prop.cageID = prop.cageID;
+
 			spot.prop.cagePosition = i;
 		}
 	}

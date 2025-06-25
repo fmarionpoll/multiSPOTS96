@@ -104,10 +104,10 @@ public class InfosTable extends JPanel {
 								continue;
 							cageFrom.valid = true;
 							cageTo.prop.cageNFlies = cageFrom.prop.cageNFlies;
-							cageTo.prop.cageAge = cageFrom.prop.cageAge;
-							cageTo.prop.strCageComment = cageFrom.prop.strCageComment;
-							cageTo.prop.strCageSex = cageFrom.prop.strCageSex;
-							cageTo.prop.strCageStrain = cageFrom.prop.strCageStrain;
+							cageTo.prop.flyAge = cageFrom.prop.flyAge;
+							cageTo.prop.comment = cageFrom.prop.comment;
+							cageTo.prop.flySex = cageFrom.prop.flySex;
+							cageTo.prop.flyStrain = cageFrom.prop.flyStrain;
 						}
 					}
 					viewModel.fireTableDataChanged();
@@ -132,16 +132,16 @@ public class InfosTable extends JPanel {
 								cage.prop.cageNFlies = cage0.prop.cageNFlies;
 								break;
 							case 2:
-								cage.prop.strCageStrain = cage0.prop.strCageStrain;
+								cage.prop.flyStrain = cage0.prop.flyStrain;
 								break;
 							case 3:
-								cage.prop.strCageSex = cage0.prop.strCageSex;
+								cage.prop.flySex = cage0.prop.flySex;
 								break;
 							case 4:
-								cage.prop.cageAge = cage0.prop.cageAge;
+								cage.prop.flyAge = cage0.prop.flyAge;
 								break;
 							case 5:
-								cage.prop.strCageComment = cage0.prop.strCageComment;
+								cage.prop.comment = cage0.prop.comment;
 								break;
 							default:
 								break;

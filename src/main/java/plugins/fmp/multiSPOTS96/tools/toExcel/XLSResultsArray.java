@@ -58,11 +58,11 @@ public class XLSResultsArray {
 		if (!sameLR)
 			return;
 		if (stim == null)
-			stim = spot.prop.spotStim;
+			stim = spot.prop.stimulus;
 		if (conc == null)
-			conc = spot.prop.spotConc;
-		sameLR &= stim.equals(spot.prop.spotStim);
-		sameLR &= conc.equals(spot.prop.spotConc);
+			conc = spot.prop.concentration;
+		sameLR &= stim.equals(spot.prop.stimulus);
+		sameLR &= conc.equals(spot.prop.concentration);
 	}
 
 	public void subtractEvaporation() {

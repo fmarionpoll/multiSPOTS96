@@ -121,12 +121,12 @@ public class XLSExport {
 						desc_getChoiceTestType(spotsList, t));
 
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose,
-						cage.prop.strCageStrain);
+						cage.prop.flyStrain);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose,
-						cage.prop.strCageSex);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.prop.cageAge);
+						cage.prop.flySex);
+				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.prop.flyAge);
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose,
-						cage.prop.strCageComment);
+						cage.prop.comment);
 			}
 		}
 		pt.x = col0;
@@ -146,8 +146,8 @@ public class XLSExport {
 			Spot othercap = spotsList.get(t);
 			int otherSide = othercap.prop.cagePosition;
 			if (otherSide != side) {
-				if (spot.prop.spotStim.equals(othercap.prop.spotStim)
-						&& spot.prop.spotConc.equals(othercap.prop.spotConc))
+				if (spot.prop.stimulus.equals(othercap.prop.stimulus)
+						&& spot.prop.concentration.equals(othercap.prop.concentration))
 					choiceText = "no-choice";
 				else
 					choiceText = "choice";
@@ -166,12 +166,12 @@ public class XLSExport {
 			else
 				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, "(L-R)/(L+R)");
 			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose,
-					spot.prop.spotStim + ": " + spot.prop.spotConc);
+					spot.prop.stimulus + ": " + spot.prop.concentration);
 			break;
 
 		default:
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.prop.spotStim);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.prop.spotConc);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.prop.stimulus);
+			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.prop.concentration);
 			break;
 		}
 	}
@@ -324,8 +324,8 @@ public class XLSExport {
 		for (Cage cage : expAll.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				XLSResults rowResults = new XLSResults(cage, spot, xlsOption, nFrames);
-				rowResults.stimulus = spot.prop.spotStim;
-				rowResults.concentration = spot.prop.spotConc;
+				rowResults.stimulus = spot.prop.stimulus;
+				rowResults.concentration = spot.prop.concentration;
 				rowResults.cageID = spot.prop.cageID;
 				rowListForOneExp.resultsList.add(rowResults);
 			}
@@ -357,8 +357,8 @@ public class XLSExport {
 		for (Cage cage : expAll.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				XLSResults rowResults = new XLSResults(cage, spot, xlsOption, nFrames);
-				rowResults.stimulus = spot.prop.spotStim;
-				rowResults.concentration = spot.prop.spotConc;
+				rowResults.stimulus = spot.prop.stimulus;
+				rowResults.concentration = spot.prop.concentration;
 				rowResults.cageID = spot.prop.cageID;
 				rowListForOneExp.resultsList.add(rowResults);
 			}

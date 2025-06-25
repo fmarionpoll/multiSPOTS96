@@ -139,8 +139,8 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					for (Cage cage : exp.cagesArray.cagesList) {
-						cage.prop.cageColor = cageTable.cageTableModel.colorTable[cage.prop.cageNFlies % 2];
-						cage.getRoi().setColor(cage.prop.cageColor);
+						cage.prop.color = cageTable.cageTableModel.colorTable[cage.prop.cageNFlies % 2];
+						cage.getRoi().setColor(cage.prop.color);
 					}
 				}
 			}

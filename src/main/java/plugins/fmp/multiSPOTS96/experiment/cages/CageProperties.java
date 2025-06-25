@@ -11,18 +11,18 @@ public class CageProperties {
 
 	public int cageID = -1;
 	public int cagePosition = 0;
-	public Color cageColor = Color.MAGENTA;
+	public Color color = Color.MAGENTA;
 
 	public int arrayIndex = 0;
 	public int arrayColumn = -1;
 	public int arrayRow = -1;
 
 	public int cageNFlies = 0;
-	public int cageAge = 5;
+	public int flyAge = 5;
 
-	public String strCageComment = "..";
-	public String strCageSex = "..";
-	public String strCageStrain = "..";
+	public String comment = "..";
+	public String flySex = "..";
+	public String flyStrain = "..";
 	public String strCageNumber = "0";
 
 	private final String ID_NFLIES = "nflies";
@@ -45,14 +45,14 @@ public class CageProperties {
 		arrayRow = propFrom.arrayRow;
 		cageID = propFrom.cageID;
 		cagePosition = propFrom.cagePosition;
-		cageColor = propFrom.cageColor;
+		color = propFrom.color;
 
 		cageNFlies = propFrom.cageNFlies;
-		cageAge = propFrom.cageAge;
-		strCageComment = propFrom.strCageComment;
-		strCageSex = propFrom.strCageSex;
+		flyAge = propFrom.flyAge;
+		comment = propFrom.comment;
+		flySex = propFrom.flySex;
 		strCageNumber = propFrom.strCageNumber;
-		strCageStrain = propFrom.strCageStrain;
+		flyStrain = propFrom.flyStrain;
 	}
 
 	public void paste(CageProperties propTo) {
@@ -61,14 +61,14 @@ public class CageProperties {
 		propTo.arrayRow = arrayRow;
 		propTo.cageID = cageID;
 		propTo.cagePosition = cagePosition;
-		propTo.cageColor = cageColor;
+		propTo.color = color;
 
 		propTo.cageNFlies = cageNFlies;
-		propTo.cageAge = cageAge;
-		propTo.strCageComment = strCageComment;
-		propTo.strCageSex = strCageSex;
+		propTo.flyAge = flyAge;
+		propTo.comment = comment;
+		propTo.flySex = flySex;
 		propTo.strCageNumber = strCageNumber;
-		propTo.strCageStrain = strCageStrain;
+		propTo.flyStrain = flyStrain;
 	}
 
 	public boolean xmlLoadCageParameters(Element xmlVal) {
@@ -78,15 +78,15 @@ public class CageProperties {
 		arrayColumn = XMLUtil.getElementIntValue(xmlVal, ID_ARRAYCOLUMN, arrayColumn);
 		arrayRow = XMLUtil.getElementIntValue(xmlVal, ID_ARRAYROW, arrayRow);
 		cageNFlies = XMLUtil.getElementIntValue(xmlVal, ID_NFLIES, cageNFlies);
-		cageAge = XMLUtil.getElementIntValue(xmlVal, ID_AGE, cageAge);
+		flyAge = XMLUtil.getElementIntValue(xmlVal, ID_AGE, flyAge);
 
-		strCageComment = XMLUtil.getElementValue(xmlVal, ID_COMMENT, strCageComment);
-		strCageSex = XMLUtil.getElementValue(xmlVal, ID_SEX, strCageSex);
-		strCageStrain = XMLUtil.getElementValue(xmlVal, ID_STRAIN, strCageStrain);
-		int r = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_R, cageColor.getRed());
-		int g = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_G, cageColor.getGreen());
-		int b = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_B, cageColor.getBlue());
-		cageColor = new Color(r, g, b);
+		comment = XMLUtil.getElementValue(xmlVal, ID_COMMENT, comment);
+		flySex = XMLUtil.getElementValue(xmlVal, ID_SEX, flySex);
+		flyStrain = XMLUtil.getElementValue(xmlVal, ID_STRAIN, flyStrain);
+		int r = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_R, color.getRed());
+		int g = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_G, color.getGreen());
+		int b = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_B, color.getBlue());
+		color = new Color(r, g, b);
 		return true;
 	}
 
@@ -97,14 +97,14 @@ public class CageProperties {
 		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYCOLUMN, arrayColumn);
 		XMLUtil.setElementIntValue(xmlVal, ID_ARRAYROW, arrayRow);
 		XMLUtil.setElementIntValue(xmlVal, ID_NFLIES, cageNFlies);
-		XMLUtil.setElementIntValue(xmlVal, ID_AGE, cageAge);
+		XMLUtil.setElementIntValue(xmlVal, ID_AGE, flyAge);
 
-		XMLUtil.setElementValue(xmlVal, ID_COMMENT, strCageComment);
-		XMLUtil.setElementValue(xmlVal, ID_SEX, strCageSex);
-		XMLUtil.setElementValue(xmlVal, ID_STRAIN, strCageStrain);
-		XMLUtil.setElementIntValue(xmlVal, ID_COLOR_R, cageColor.getRed());
-		XMLUtil.setElementIntValue(xmlVal, ID_COLOR_G, cageColor.getGreen());
-		XMLUtil.setElementIntValue(xmlVal, ID_COLOR_B, cageColor.getBlue());
+		XMLUtil.setElementValue(xmlVal, ID_COMMENT, comment);
+		XMLUtil.setElementValue(xmlVal, ID_SEX, flySex);
+		XMLUtil.setElementValue(xmlVal, ID_STRAIN, flyStrain);
+		XMLUtil.setElementIntValue(xmlVal, ID_COLOR_R, color.getRed());
+		XMLUtil.setElementIntValue(xmlVal, ID_COLOR_G, color.getGreen());
+		XMLUtil.setElementIntValue(xmlVal, ID_COLOR_B, color.getBlue());
 		return true;
 	}
 

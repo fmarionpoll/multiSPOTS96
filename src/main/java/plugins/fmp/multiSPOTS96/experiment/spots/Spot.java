@@ -130,10 +130,10 @@ public class Spot implements Comparable<Spot> {
 		String stringValue = null;
 		switch (fieldEnumCode) {
 		case SPOT_STIM:
-			stringValue = prop.spotStim;
+			stringValue = prop.stimulus;
 			break;
 		case SPOT_CONC:
-			stringValue = prop.spotConc;
+			stringValue = prop.concentration;
 			break;
 		default:
 			break;
@@ -144,10 +144,10 @@ public class Spot implements Comparable<Spot> {
 	public void setSpotField(EnumXLSColumnHeader fieldEnumCode, String stringValue) {
 		switch (fieldEnumCode) {
 		case SPOT_STIM:
-			prop.spotStim = stringValue;
+			prop.stimulus = stringValue;
 			break;
 		case SPOT_CONC:
-			prop.spotConc = stringValue;
+			prop.concentration = stringValue;
 			break;
 		default:
 			break;
@@ -244,7 +244,7 @@ public class Spot implements Comparable<Spot> {
 			prop.loadFromXML(node);
 			spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
 			if (spotROI2D != null)
-				spotROI2D.setColor(prop.spotColor);
+				spotROI2D.setColor(prop.color);
 			limitsOptions.loadFromXML(nodeMeta);
 			loadFromXML_SpotAlongT(node);
 		}
