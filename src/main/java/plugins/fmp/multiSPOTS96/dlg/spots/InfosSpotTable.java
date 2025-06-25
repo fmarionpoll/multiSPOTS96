@@ -188,11 +188,11 @@ public class InfosSpotTable extends JPanel {
 				int columnIndex = 4;
 				spotTable.spotTableModel.setValueAt(spotFrom.prop.spotVolume, iID, columnIndex);
 				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.spotStim, iID, columnIndex);
+				spotTable.spotTableModel.setValueAt(spotFrom.prop.stimulus, iID, columnIndex);
 				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.spotConc, iID, columnIndex);
+				spotTable.spotTableModel.setValueAt(spotFrom.prop.concentration, iID, columnIndex);
 				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.spotColor, iID, columnIndex);
+				spotTable.spotTableModel.setValueAt(spotFrom.prop.color, iID, columnIndex);
 			}
 		}
 	}
@@ -223,11 +223,11 @@ public class InfosSpotTable extends JPanel {
 		int columnIndex = 4;
 		spotTable.spotTableModel.setValueAt(spotFrom.prop.spotVolume, iID, columnIndex);
 		columnIndex++;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.spotStim, iID, columnIndex);
+		spotTable.spotTableModel.setValueAt(spotFrom.prop.stimulus, iID, columnIndex);
 		columnIndex++;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.spotConc, iID, columnIndex);
+		spotTable.spotTableModel.setValueAt(spotFrom.prop.concentration, iID, columnIndex);
 		columnIndex++;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.spotColor, iID, columnIndex);
+		spotTable.spotTableModel.setValueAt(spotFrom.prop.color, iID, columnIndex);
 	}
 
 	private void duplicateAll(Experiment exp) {
@@ -267,11 +267,11 @@ public class InfosSpotTable extends JPanel {
 				int columnIndex = 4;
 				spotTable.spotTableModel.setValueAt(spotFrom.prop.spotVolume, iID, columnIndex);
 				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.spotStim, iID, columnIndex);
+				spotTable.spotTableModel.setValueAt(spotFrom.prop.stimulus, iID, columnIndex);
 				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.spotConc, iID, columnIndex);
+				spotTable.spotTableModel.setValueAt(spotFrom.prop.concentration, iID, columnIndex);
 				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.spotColor, iID, columnIndex);
+				spotTable.spotTableModel.setValueAt(spotFrom.prop.color, iID, columnIndex);
 			}
 		}
 

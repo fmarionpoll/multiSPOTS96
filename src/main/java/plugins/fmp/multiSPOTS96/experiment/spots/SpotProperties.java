@@ -19,11 +19,11 @@ public class SpotProperties {
 	public int cageRow = -1;
 	public int cageColumn = -1;
 	public int spotArrayIndex = -1;
-	public Color spotColor = Color.GREEN;
+	public Color color = Color.GREEN;
 
 	// public int spotNFlies = 1;
-	public String spotStim = new String("..");
-	public String spotConc = new String("..");
+	public String stimulus = new String("..");
+	public String concentration = new String("..");
 
 	public double spotVolume = .5;
 	public int spotNPixels = 1;
@@ -54,9 +54,9 @@ public class SpotProperties {
 
 	public void copy(SpotProperties propFrom) {
 		spotVolume = propFrom.spotVolume;
-		spotStim = propFrom.spotStim;
-		spotConc = propFrom.spotConc;
-		spotColor = propFrom.spotColor;
+		stimulus = propFrom.stimulus;
+		concentration = propFrom.concentration;
+		color = propFrom.color;
 		spotArrayIndex = propFrom.spotArrayIndex;
 		cageID = propFrom.cageID;
 		cagePosition = propFrom.cagePosition;
@@ -105,12 +105,12 @@ public class SpotProperties {
 		spotRadius = XMLUtil.getElementIntValue(nodeParameters, ID_RADIUS, 30);
 		spotXCoord = XMLUtil.getElementIntValue(nodeParameters, ID_XCOORD, -1);
 		spotYCoord = XMLUtil.getElementIntValue(nodeParameters, ID_YCOORD, -1);
-		spotStim = XMLUtil.getElementValue(nodeParameters, ID_SPOTSTIMULUS, ID_SPOTSTIMULUS);
-		spotConc = XMLUtil.getElementValue(nodeParameters, ID_CONCENTRATION, ID_CONCENTRATION);
-		int r = XMLUtil.getElementIntValue(nodeParameters, ID_COLOR_R, spotColor.getRed());
-		int g = XMLUtil.getElementIntValue(nodeParameters, ID_COLOR_G, spotColor.getGreen());
-		int b = XMLUtil.getElementIntValue(nodeParameters, ID_COLOR_B, spotColor.getBlue());
-		spotColor = new Color(r, g, b);
+		stimulus = XMLUtil.getElementValue(nodeParameters, ID_SPOTSTIMULUS, ID_SPOTSTIMULUS);
+		concentration = XMLUtil.getElementValue(nodeParameters, ID_CONCENTRATION, ID_CONCENTRATION);
+		int r = XMLUtil.getElementIntValue(nodeParameters, ID_COLOR_R, color.getRed());
+		int g = XMLUtil.getElementIntValue(nodeParameters, ID_COLOR_G, color.getGreen());
+		int b = XMLUtil.getElementIntValue(nodeParameters, ID_COLOR_B, color.getBlue());
+		color = new Color(r, g, b);
 		return true;
 	}
 
@@ -131,11 +131,11 @@ public class SpotProperties {
 		XMLUtil.setElementIntValue(nodeParameters, ID_RADIUS, spotRadius);
 		XMLUtil.setElementIntValue(nodeParameters, ID_XCOORD, spotXCoord);
 		XMLUtil.setElementIntValue(nodeParameters, ID_YCOORD, spotYCoord);
-		XMLUtil.setElementValue(nodeParameters, ID_SPOTSTIMULUS, spotStim);
-		XMLUtil.setElementValue(nodeParameters, ID_CONCENTRATION, spotConc);
-		XMLUtil.setElementIntValue(nodeParameters, ID_COLOR_R, spotColor.getRed());
-		XMLUtil.setElementIntValue(nodeParameters, ID_COLOR_G, spotColor.getGreen());
-		XMLUtil.setElementIntValue(nodeParameters, ID_COLOR_B, spotColor.getBlue());
+		XMLUtil.setElementValue(nodeParameters, ID_SPOTSTIMULUS, stimulus);
+		XMLUtil.setElementValue(nodeParameters, ID_CONCENTRATION, concentration);
+		XMLUtil.setElementIntValue(nodeParameters, ID_COLOR_R, color.getRed());
+		XMLUtil.setElementIntValue(nodeParameters, ID_COLOR_G, color.getGreen());
+		XMLUtil.setElementIntValue(nodeParameters, ID_COLOR_B, color.getBlue());
 		return true;
 	}
 
@@ -173,9 +173,9 @@ public class SpotProperties {
 		i++;
 		spotRadius = Integer.valueOf(data[i]);
 		i++;
-		spotStim = data[i];
+		stimulus = data[i];
 		i++;
-		spotConc = data[i];
+		concentration = data[i];
 	}
 
 	static public String csvExportSpotPropertiesHeader(String csvSep) {
@@ -194,7 +194,7 @@ public class SpotProperties {
 		List<String> row = Arrays.asList(sourceName, String.valueOf(spotArrayIndex), String.valueOf(cageID),
 				String.valueOf(cagePosition), String.valueOf(cageColumn), String.valueOf(cageRow),
 				String.valueOf(spotVolume), String.valueOf(spotNPixels), String.valueOf(spotRadius),
-				spotStim.replace(",", "."), spotConc.replace(",", "."));
+				stimulus.replace(",", "."), concentration.replace(",", "."));
 		sbf.append(String.join(csvSep, row));
 		sbf.append("\n");
 		return sbf.toString();

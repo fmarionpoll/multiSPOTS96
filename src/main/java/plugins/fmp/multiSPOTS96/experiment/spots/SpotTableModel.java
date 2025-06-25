@@ -60,11 +60,11 @@ public class SpotTableModel extends AbstractTableModel {
 			case 4:
 				return spot.prop.spotVolume;
 			case 5:
-				return spot.prop.spotStim;
+				return spot.prop.stimulus;
 			case 6:
-				return spot.prop.spotConc;
+				return spot.prop.concentration;
 			case 7:
-				return spot.prop.spotColor;
+				return spot.prop.color;
 			}
 		}
 		return null;
@@ -119,13 +119,14 @@ public class SpotTableModel extends AbstractTableModel {
 				spot.prop.spotVolume = (double) aValue;
 				break;
 			case 5:
-				spot.prop.spotStim = aValue.toString();
+				spot.prop.stimulus = aValue.toString();
 				break;
 			case 6:
-				spot.prop.spotConc = aValue.toString();
+				spot.prop.concentration = aValue.toString();
 				break;
 			case 7:
-				spot.prop.spotColor = (Color) aValue;
+				spot.prop.color = (Color) aValue;
+				spot.getRoi().setColor(spot.prop.color);
 				break;
 			}
 		}
