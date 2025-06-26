@@ -228,13 +228,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					exp.cagesArray.mapSpotsToCagesColumnRow();
-					for (Cage cage : exp.cagesArray.cagesList)
-						Collections.sort(cage.spotsArray.spotsList, new Comparators.Spot_cagePosition());
-					exp.cagesArray.cleanUpSpotNames();
-					
-					exp.seqCamData.removeROIsContainingString("spot");
-					exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
+					cleanUpSpotNames(exp);
 				}
 			}
 		});
@@ -388,7 +382,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	void deleteSelectedSpot(Experiment exp) {
 		if (exp.seqCamData.seq != null) {
 			ArrayList<ROI2D> listROIs = exp.seqCamData.seq.getSelectedROI2Ds();
-			exp.seqCamData.seq.removeROIs(listROIs, true);
 			for (ROI2D roi : listROIs) {
 				String name = roi.getName();
 				if (!name.contains("spot"))
@@ -403,6 +396,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 					}
 				}
 			}
+			cleanUpSpotNames(exp);
 		}
 	}
 
@@ -435,6 +429,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 					}
 				}
 			}
+			cleanUpSpotNames(exp);
 		}
 	}
 
@@ -443,7 +438,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		for (Cage cage : exp.cagesArray.cagesList) {
 			if (bOnlySelectedCages && !cage.getRoi().isSelected())
 				continue;
-
 			for (Spot spot : cage.spotsArray.spotsList) {
 				ROI2D roiP = spot.getRoi();
 				Point center = roiP.getPosition();
@@ -466,6 +460,16 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	void changeSpotsDiameter(Experiment exp) {
 		int diameter = (int) spotDiameterSpinner.getValue();
 		convertBlobsToCircularSpots(exp, diameter);
+	}
+
+	private void cleanUpSpotNames(Experiment exp) {
+		for (Cage cage : exp.cagesArray.cagesList) {
+			cage.mapSpotsToCageColumnRow();
+			Collections.sort(cage.spotsArray.spotsList, new Comparators.Spot_cagePosition());
+			cage.cleanUpSpotNames();
+		}
+		exp.seqCamData.removeROIsContainingString("spot");
+		exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
 	}
 
 }

@@ -43,10 +43,6 @@ public class Charts extends JPanel implements SequenceListener {
 	};
 	private JComboBox<EnumXLSExportType> exportTypeComboBox = new JComboBox<EnumXLSExportType>(measures);
 	private JCheckBox relativeToCheckbox = new JCheckBox("relative to t0", false);
-//	private JRadioButton t0Button = new JRadioButton("t0", false);
-//	private JRadioButton medianT0Button = new JRadioButton("relative to median of first", true);
-//	private JSpinner medianT0FromNPointsSpinner = new JSpinner(new SpinnerNumberModel(5, 0, 50, 1));
-//	private JLabel medianT0Legend = new JLabel("points");
 
 	private JRadioButton displayAllButton = new JRadioButton("all cages");
 	private JRadioButton displaySelectedButton = new JRadioButton("cage selected");

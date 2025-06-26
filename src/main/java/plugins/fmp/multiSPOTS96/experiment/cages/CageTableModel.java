@@ -110,10 +110,13 @@ public class CageTableModel extends AbstractTableModel {
 			case 0:
 				cage.getRoi().setName(aValue.toString());
 				break;
-			case 1:
+			case 1: {
 				cage.prop.cageNFlies = (int) aValue;
-				cage.prop.color = colorTable[((int) aValue) % 2];
-				cage.getRoi().setColor(cage.prop.color);
+				int ivalue = (int) aValue;
+				Color color = ivalue >= 0 ? colorTable[((int) aValue) % 2] : Color.yellow;
+				cage.prop.color = color;
+				cage.getRoi().setColor(color);
+			}
 				break;
 			case 2:
 				cage.prop.flyStrain = aValue.toString();
