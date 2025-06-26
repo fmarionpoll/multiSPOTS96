@@ -290,7 +290,9 @@ public class InfosSpotTable extends JPanel {
 		}
 		if (selectedRow >= 0) {
 			spotTable.setRowSelectionInterval(selectedRow, selectedRow);
-			spotTable.scrollRectToVisible(new Rectangle(spotTable.getCellRect(selectedRow, 0, true)));
+			Rectangle rect = new Rectangle(spotTable.getCellRect(selectedRow, 0, true));
+			rect.height = rect.height * 2;
+			spotTable.scrollRectToVisible(rect);
 		}
 	}
 }

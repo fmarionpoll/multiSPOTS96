@@ -186,7 +186,9 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 		}
 		if (selectedRow >= 0) {
 			cageTable.setRowSelectionInterval(selectedRow, selectedRow);
-			cageTable.scrollRectToVisible(new Rectangle(cageTable.getCellRect(selectedRow, 0, true)));
+			Rectangle rect = new Rectangle(cageTable.getCellRect(selectedRow, 0, true));
+			rect.height = rect.height * 2;
+			cageTable.scrollRectToVisible(rect);
 		}
 	}
 
