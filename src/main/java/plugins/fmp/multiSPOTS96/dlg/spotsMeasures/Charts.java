@@ -179,7 +179,7 @@ public class Charts extends JPanel implements SequenceListener {
 		}
 
 		iChart = new ChartSpots();
-		iChart.createPanel("Spots measures", exp, xlsExportOptions);
+		iChart.createPanel("Spots measures", exp, xlsExportOptions, parent0);
 		iChart.setChartSpotUpperLeftLocation(getInitialUpperLeftPosition(exp));
 		iChart.displayData(exp, xlsExportOptions);
 		iChart.mainChartFrame.toFront();

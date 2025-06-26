@@ -27,6 +27,7 @@ import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
 import icy.gui.viewer.Viewer;
 import icy.roi.ROI2D;
+import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
@@ -49,10 +50,13 @@ public class ChartSpots extends IcyFrame {
 
 	public ChartPanel[][] chartPanelArray = null;
 	Experiment exp = null;
+	private MultiSPOTS96 parent0 = null;
+	
 
 	// ----------------------------------------
 
-	public void createPanel(String title, Experiment exp, XLSExportOptions xlsExportOptions) {
+	public void createPanel(String title, Experiment exp, XLSExportOptions xlsExportOptions, MultiSPOTS96 parent0) {
+		this.parent0 = parent0;
 		mainChartPanel = new JPanel();
 		nPanelsAlongX = exp.cagesArray.nCagesAlongX;
 		nPanelsAlongY = exp.cagesArray.nCagesAlongY;
@@ -142,9 +146,12 @@ public class ChartSpots extends IcyFrame {
 
 				panel.addChartMouseListener(new ChartMouseListener() {
 					public void chartMouseClicked(ChartMouseEvent e) {
-						Spot clickedSpot = getClickedSpot(e);
+						Spot clickedSpot = getSpotFromClickedChart(e);
 						if (clickedSpot != null) {
-							selectClickedSpot(exp, xlsExportOptions, clickedSpot);
+							chartSelectClickedSpot(exp, xlsExportOptions, clickedSpot);
+							Cage cage = exp.cagesArray.getCageFromCageID(clickedSpot.prop.cageID);
+							parent0.dlgSpots.tabInfos.selectCage(cage);
+							parent0.dlgSpots.tabInfos.selectSpot(clickedSpot);
 						}
 					}
 
@@ -189,7 +196,7 @@ public class ChartSpots extends IcyFrame {
 		return xlsExport.getSpotsDataFromOneExperiment_v2parms(exp, xlsExportOptions);
 	}
 
-	private Spot getClickedSpot(ChartMouseEvent e) {
+	private Spot getSpotFromClickedChart(ChartMouseEvent e) {
 		final MouseEvent trigger = e.getTrigger();
 		if (trigger.getButton() != MouseEvent.BUTTON1)
 			return null;
@@ -237,12 +244,12 @@ public class ChartSpots extends IcyFrame {
 			return null;
 		}
 
-		int index = exp.cagesArray.getSpotGlobalPosition(spotFound); // SpotString.getSpotArrayIndexFromSpotName(description);
+		int index = exp.cagesArray.getSpotGlobalPosition(spotFound); 
 		spotFound.spotKymograph_T = index;
 		return spotFound;
 	}
 
-	private void selectSpot(Experiment exp, Spot spot) {
+	private void chartSelectSpot(Experiment exp, Spot spot) {
 		ROI2D roi = spot.getRoi();
 		exp.seqCamData.seq.setFocusedROI(roi);
 		exp.seqCamData.centerOnRoi(roi);
@@ -256,7 +263,7 @@ public class ChartSpots extends IcyFrame {
 		}
 	}
 
-	private void selectKymograph(Experiment exp, Spot spot) {
+	private void chartSelectKymograph(Experiment exp, Spot spot) {
 		if (exp.seqKymos != null) {
 			Viewer v = exp.seqKymos.seq.getFirstViewer();
 			if (v != null && spot != null) {
@@ -265,10 +272,10 @@ public class ChartSpots extends IcyFrame {
 		}
 	}
 
-	private void selectClickedSpot(Experiment exp, XLSExportOptions xlsExportOptions, Spot clickedSpot) {
-		selectSpot(exp, clickedSpot);
+	private void chartSelectClickedSpot(Experiment exp, XLSExportOptions xlsExportOptions, Spot clickedSpot) {
+		chartSelectSpot(exp, clickedSpot);
 		selectT(exp, xlsExportOptions, clickedSpot);
-		selectKymograph(exp, clickedSpot);
+		chartSelectKymograph(exp, clickedSpot);
 		exp.seqCamData.seq.setSelectedROI(clickedSpot.getRoi());
 
 		String spotName = clickedSpot.getRoi().getName();

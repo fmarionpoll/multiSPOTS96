@@ -30,7 +30,7 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 	CreateCages tabCreateCages = new CreateCages();
 //	CreateSpots tabCreateSpots = new CreateSpots();
 	DetectSpots tabDetectSpots = new DetectSpots();
-	Infos tabInfos = new Infos();
+	public Infos tabInfos = new Infos();
 //	ShapeSpots tabShape = new ShapeSpots();
 //	EditSpots tabEditSpots = new EditSpots();
 	public LoadSaveSpots tabFile = new LoadSaveSpots();

@@ -79,7 +79,7 @@
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; branch 'master' of https://github.com/fmarionpoll/multiSPOTS96.git
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
-<key name="loaderFolder" value="C:\Users\fred\Desktop\essai multispots plaques 96\Thomas\data\2025-06-03-caf 3mM-"/>
+<key name="loaderFolder" value="H:\Thomas\data\2025-06-05-caf 1mM"/>
 </section>
 <section name="canvas">
 <section name="Canvas2D">
@@ -99,10 +99,10 @@
 </section>
 <section name="online"/>
 </section>
-<key name="id" value="70382589"/>
+<key name="id" value="71952600"/>
 <key name="os" value="win64"/>
-<key name="clientCpuNumber" value="16"/>
-<key name="clientTotalMemory" value="67880230912"/>
+<key name="clientCpuNumber" value="20"/>
+<key name="clientTotalMemory" value="34078789632"/>
 <key name="appFolder" value="C:/Users/fred/.m2/repository/org/bioimageanalysis/icy/icy-kernel/2.5.1"/>
 <section name="loader">
 <section name="entry0">
@@ -163,7 +163,7 @@
 <section name="multiSPOTS96">
 <section name="MultiSPOTS96">
 <section name="gui">
-<key name="lastUsedPath" value="C:\Users\fred\Desktop\essai multispots plaques 96\Thomas\data"/>
+<key name="lastUsedPath" value="H:\Thomas\data"/>
 </section>
 </section>
 </section>
@@ -171,21 +171,21 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="285"/>
-<key name="YE" value="0"/>
-<key name="WidthE" value="3010"/>
-<key name="HeightE" value="1225"/>
+<key name="XE" value="80"/>
+<key name="YE" value="51"/>
+<key name="WidthE" value="2446"/>
+<key name="HeightE" value="1405"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="2702"/>
+<key name="XC" value="2438"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
-<key name="WidthC" value="300"/>
-<key name="HeightC" value="1063"/>
+<key name="WidthC" value="0"/>
+<key name="HeightC" value="1243"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -202,8 +202,8 @@
 <key name="YE" value="100"/>
 <key name="XI" value="904"/>
 <key name="YI" value="35"/>
-<key name="WidthC" value="292"/>
-<key name="HeightC" value="973"/>
+<key name="WidthC" value="-8"/>
+<key name="HeightC" value="1153"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -220,8 +220,8 @@
 <key name="YE" value="200"/>
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
-<key name="WidthC" value="292"/>
-<key name="HeightC" value="973"/>
+<key name="WidthC" value="-8"/>
+<key name="HeightC" value="1153"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>

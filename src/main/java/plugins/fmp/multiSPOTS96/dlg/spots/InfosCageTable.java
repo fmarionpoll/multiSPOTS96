@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -142,6 +143,8 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 				}
 			}
 		});
+		
+		cageTable.cageTableModel.fireTableDataChanged();
 	}
 
 	public void close() {
@@ -166,6 +169,24 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 			ROI2D roi = cage.getRoi();
 			exp.seqCamData.seq.setFocusedROI(roi);
 			exp.seqCamData.centerOnRoi(roi);
+			roi.setSelected(true);
+		}
+	}
+	
+	public void selectRowFromCage(Cage cage) {
+		String cageName = cage.getRoi().getName();
+		int nrows = cageTable.getRowCount();
+		int selectedRow = -1;
+		for (int i = 0; i< nrows; i++) {
+			String name = (String) cageTable.getValueAt(i, 0);
+			if (name.equals(cageName)) {
+				selectedRow = i;
+				break;
+			}
+		}
+		if (selectedRow >= 0) {
+			cageTable.setRowSelectionInterval(selectedRow, selectedRow);
+			cageTable.scrollRectToVisible(new Rectangle(cageTable.getCellRect(selectedRow, 0, true)));
 		}
 	}
 

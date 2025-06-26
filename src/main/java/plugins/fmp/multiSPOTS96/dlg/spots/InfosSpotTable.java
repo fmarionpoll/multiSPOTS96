@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -274,7 +275,22 @@ public class InfosSpotTable extends JPanel {
 				spotTable.spotTableModel.setValueAt(spotFrom.prop.color, iID, columnIndex);
 			}
 		}
-
 	}
 
+	public void selectRowFromSpot(Spot spot) {
+		String spotName = spot.getRoi().getName();
+		int nrows = spotTable.getRowCount();
+		int selectedRow = -1;
+		for (int i = 0; i< nrows; i++) {
+			String name = (String) spotTable.getValueAt(i, 0);
+			if (name.equals(spotName)) {
+				selectedRow = i;
+				break;
+			}
+		}
+		if (selectedRow >= 0) {
+			spotTable.setRowSelectionInterval(selectedRow, selectedRow);
+			spotTable.scrollRectToVisible(new Rectangle(spotTable.getCellRect(selectedRow, 0, true)));
+		}
+	}
 }

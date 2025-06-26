@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
 public class Infos extends JPanel {
 	/**
@@ -77,5 +79,15 @@ public class Infos extends JPanel {
 		infosSpotTable = new InfosSpotTable();
 		infosSpotTable.initialize(parent0);
 		infosSpotTable.requestFocus();
+	}
+	
+	public void selectCage(Cage cage) {
+		if (infosCageTable == null) return;
+		infosCageTable.selectRowFromCage(cage);		
+	}
+	
+	public void selectSpot(Spot spot) {
+		if (infosSpotTable == null) return;
+		infosSpotTable.selectRowFromSpot(spot);		
 	}
 }

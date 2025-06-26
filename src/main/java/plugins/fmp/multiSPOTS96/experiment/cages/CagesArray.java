@@ -890,10 +890,10 @@ public class CagesArray {
 
 	public Cage getCageFromSpotRoiName(String name) {
 		int cageID = SpotString.getCageIDFromSpotName(name);
-		return getCageFromSpotCageID(cageID);
+		return getCageFromCageID(cageID);
 	}
 
-	public Cage getCageFromSpotCageID(int cageID) {
+	public Cage getCageFromCageID(int cageID) {
 		for (Cage cage : cagesList) {
 			if (cage.prop.cageID == cageID)
 				return cage;
