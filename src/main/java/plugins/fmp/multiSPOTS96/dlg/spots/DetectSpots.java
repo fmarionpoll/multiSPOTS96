@@ -398,6 +398,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			}
 			cleanUpSpotNames(exp);
 		}
+		exp.saveSpotsArray_file();
 	}
 
 	void duplicateSelectedSpot(Experiment exp) {
@@ -431,6 +432,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			}
 			cleanUpSpotNames(exp);
 		}
+		exp.saveSpotsArray_file();
 	}
 
 	void convertBlobsToCircularSpots(Experiment exp, int diameter) {
@@ -455,6 +457,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		}
 		exp.seqCamData.removeROIsContainingString("spot");
 		exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
+		exp.saveSpotsArray_file();
 	}
 
 	void changeSpotsDiameter(Experiment exp) {
@@ -470,6 +473,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		}
 		exp.seqCamData.removeROIsContainingString("spot");
 		exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
+		exp.saveSpotsArray_file();
 	}
 
 }

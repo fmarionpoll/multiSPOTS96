@@ -76,7 +76,7 @@ public class ChartOptions extends JPanel {
 		dialogFrame.close();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			parent0.dlgSpots.tabFile.saveSpotsArray_file(exp);
+			exp.saveSpotsArray_file();
 		}
 	}
 

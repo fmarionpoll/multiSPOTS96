@@ -755,5 +755,35 @@ public class Experiment {
 	private String getReferenceImageFullName() {
 		return resultsDirectory + File.separator + "referenceImage.jpg";
 	}
+	
+	public boolean loadCagesArray_File() {
+		boolean flag = load_MS96_cages();
+		if (flag) {
+			cagesArray.transferCagesToSequenceAsROIs(seqCamData);
+		}
+		return flag;
+	}
+
+	public boolean saveCagesArray_File() {
+		cagesArray.transferROIsFromSequenceToCages(seqCamData);
+		save_MS96_cages();
+		return save_MS96_spotsMeasures();
+	}
+	
+	public boolean loadSpotsArray_File() {
+		boolean flag = load_MS96_cages();
+		seqCamData.removeROIsContainingString("spot");
+		cagesArray.transferCageSpotsToSequenceAsROIs(seqCamData);
+		return flag;
+	}
+
+	public boolean saveSpotsArray_file() {
+//		parent0.dlgExperiment.getExperimentInfosFromDialog(exp);
+		boolean flag = save_MS96_experiment();
+		cagesArray.transferROIsFromSequenceToCageSpots(seqCamData);
+		flag &= save_MS96_cages();
+		flag &= save_MS96_spotsMeasures();
+		return flag;
+	}
 
 }

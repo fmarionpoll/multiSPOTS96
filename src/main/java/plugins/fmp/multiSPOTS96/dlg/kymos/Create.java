@@ -157,7 +157,7 @@ public class Create extends JPanel implements PropertyChangeListener {
 		sComputation = EnumStatusComputation.STOP_COMPUTATION;
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
-			parent0.dlgSpots.tabFile.saveSpotsArray_file(exp);
+			exp.saveSpotsArray_file();
 
 		threadBuildKymo = new BuildSpotsKymos();
 		threadBuildKymo.options = initBuildParameters(exp);

@@ -125,6 +125,7 @@ public class CreateCages extends JPanel {
 				if (exp != null) {
 					createCages(exp);
 					removeGrid(exp);
+					exp.saveCagesArray_File();
 				}
 			}
 		});
