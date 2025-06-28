@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -29,12 +30,13 @@ public class InfosSpotTable extends JPanel {
 	private SpotTable spotTable = null;
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
-	private JButton duplicateRowAtCagePositionButton = new JButton("Duplicate row at cage pos");
-	private JButton duplicatePreviousButton = new JButton("Duplicate previous row");
-	private JButton duplicateCageButton = new JButton("Duplicate cage");
-
-	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
 	private JButton nPixelsButton = new JButton("Get n pixels");
+
+	private JButton duplicateRowAtCagePositionButton = new JButton("Row at cage pos");
+	private JButton duplicatePreviousButton = new JButton("Row above");
+	private JButton duplicateCageButton = new JButton("Cage");
+	private JButton duplicateAllButton = new JButton("Cell to all");
+
 	private MultiSPOTS96 parent0 = null;
 	private SpotsArray allSpotsCopy = null;
 
@@ -46,13 +48,14 @@ public class InfosSpotTable extends JPanel {
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(copyButton);
 		panel1.add(pasteButton);
-		panel1.add(duplicateRowAtCagePositionButton);
-		panel1.add(duplicateAllButton);
-		panel1.add(duplicateCageButton);
+		panel1.add(nPixelsButton);
 		topPanel.add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(nPixelsButton);
+		panel2.add(new JLabel("Duplicate:"));
+		panel2.add(duplicateRowAtCagePositionButton);
+		panel2.add(duplicateAllButton);
+		panel2.add(duplicateCageButton);
 		panel2.add(duplicatePreviousButton);
 
 		topPanel.add(panel2);
@@ -281,7 +284,7 @@ public class InfosSpotTable extends JPanel {
 		String spotName = spot.getRoi().getName();
 		int nrows = spotTable.getRowCount();
 		int selectedRow = -1;
-		for (int i = 0; i< nrows; i++) {
+		for (int i = 0; i < nrows; i++) {
 			String name = (String) spotTable.getValueAt(i, 0);
 			if (name.equals(spotName)) {
 				selectedRow = i;

@@ -154,12 +154,13 @@ public class Intervals extends JPanel implements ItemListener {
 			exp.seqCamData.binLast_ms = (exp.seqCamData.fixedNumberOfImages - 1) * bin_ms;
 		else
 			exp.seqCamData.binLast_ms = (exp.seqCamData.nTotalFrames - 1) * bin_ms;
+		// tentative
+		parent0.dlgBrowse.loadSaveExperiment.closeCurrentExperiment();
+		parent0.dlgBrowse.loadSaveExperiment.openSelecteExperiment(exp);
 	}
 
 	public void getExptParms(Experiment exp) {
-
 		refreshBinSize(exp);
-
 		long bin_ms = exp.seqCamData.binImage_ms;
 		long dFirst = exp.seqCamData.absoluteIndexFirstImage;
 		indexFirstImageJSpinner.setValue(dFirst);

@@ -117,7 +117,7 @@ public class Filter extends JPanel {
 	}
 
 	public void initFilterCombos() {
-		if (!parent0.dlgBrowse.panelLoadSave.filteredCheck.isSelected())
+		if (!parent0.dlgBrowse.loadSaveExperiment.filteredCheck.isSelected())
 			filterExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsList());
 		filterExpList.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
 		filterExpList.getFieldValuesToCombo(cmt1Combo, EnumXLSColumnHeader.EXP_STIM);
@@ -156,8 +156,8 @@ public class Filter extends JPanel {
 
 		if (parent0.expListCombo.getItemCount() > 0)
 			parent0.expListCombo.setSelectedIndex(0);
-		if (setFilter != parent0.dlgBrowse.panelLoadSave.filteredCheck.isSelected())
-			parent0.dlgBrowse.panelLoadSave.filteredCheck.setSelected(setFilter);
+		if (setFilter != parent0.dlgBrowse.loadSaveExperiment.filteredCheck.isSelected())
+			parent0.dlgBrowse.loadSaveExperiment.filteredCheck.setSelected(setFilter);
 	}
 
 	public void clearAllCheckBoxes() {

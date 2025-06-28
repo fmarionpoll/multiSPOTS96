@@ -265,7 +265,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		}
 	}
 
-	boolean openSelecteExperiment(Experiment exp) {
+	public boolean openSelecteExperiment(Experiment exp) {
 		ProgressFrame progressFrame = new ProgressFrame("Load Data");
 		exp.load_MS96_experiment();
 

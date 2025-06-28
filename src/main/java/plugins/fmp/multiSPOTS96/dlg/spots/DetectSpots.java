@@ -336,7 +336,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		parent0.dlgBrowse.panelLoadSave.closeViewsForCurrentExperiment(exp);
+		parent0.dlgBrowse.loadSaveExperiment.closeViewsForCurrentExperiment(exp);
 
 		detectSpots = new DetectSpotsOutline();
 		detectSpots.options = initTrackParameters(exp);
