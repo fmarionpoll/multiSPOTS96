@@ -64,16 +64,15 @@ public class Intervals extends JPanel implements ItemListener {
 		panel0.add(indexFirstImageJSpinner);
 		panel0.add(clipNumberImagesCombo);
 		panel0.add(fixedNumberOfImagesJSpinner);
+		panel0.add(applyButton);
 		add(panel0);
 
 		JPanel panel1 = new JPanel(layout1);
 		panel1.add(new JLabel("Time between frames ", SwingConstants.RIGHT));
 		panel1.add(binSizeJSpinner);
 		panel1.add(binUnit);
-		add(panel1);
-
 		panel1.add(refreshButton);
-		panel1.add(applyButton);
+		add(panel1);
 
 		fixedNumberOfImagesJSpinner.setVisible(false);
 		defineActionListeners();

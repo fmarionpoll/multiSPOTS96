@@ -13,7 +13,7 @@ public class CageTableModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = -3501225818220221949L;
 	private JComboBoxExperiment expList = null;
-	String columnNames[] = { "Name", "N flies", "Strain", "Sex", "Age", "Comment", "Color" };
+	String columnNames[] = { "Name", "N flies", "Strain", "Sex", "Age", "Comment", "Color", "Checked?" };
 	public Color colorTable[] = { Color.GRAY, Color.WHITE };
 
 	public CageTableModel(JComboBoxExperiment expList) {
@@ -63,6 +63,8 @@ public class CageTableModel extends AbstractTableModel {
 				return cage.prop.comment;
 			case 6:
 				return cage.prop.color;
+			case 7:
+				return cage.prop.isSelected();
 			}
 		}
 		return null;
@@ -85,6 +87,8 @@ public class CageTableModel extends AbstractTableModel {
 			return String.class;
 		case 6:
 			return Color.class;
+		case 7:
+			return Boolean.class;
 		}
 		return String.class;
 	}
@@ -132,6 +136,13 @@ public class CageTableModel extends AbstractTableModel {
 				break;
 			case 6:
 				cage.prop.color = (Color) aValue;
+				break;
+			case 7:
+				cage.prop.setSelected(Boolean.valueOf(aValue.toString()));
+				int ivalue = (int) aValue;
+				Color color = ivalue >= 0 ? colorTable[((int) aValue) % 2] : Color.yellow;
+				cage.prop.color = color;
+				cage.getRoi().setColor(color);
 				break;
 			}
 		}

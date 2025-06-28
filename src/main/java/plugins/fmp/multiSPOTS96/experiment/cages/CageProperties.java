@@ -19,6 +19,7 @@ public class CageProperties {
 
 	public int cageNFlies = 0;
 	public int flyAge = 5;
+	public boolean checked = true;
 
 	public String comment = "..";
 	public String flySex = "..";
@@ -38,6 +39,14 @@ public class CageProperties {
 	private final String ID_COLOR_R = "color_R";
 	private final String ID_COLOR_G = "color_G";
 	private final String ID_COLOR_B = "color_B";
+
+	public boolean isSelected() {
+		return cageNFlies > 0;
+	}
+
+	public void setSelected(boolean selected) {
+		cageNFlies = selected ? 1 : 0;
+	}
 
 	public void copy(CageProperties propFrom) {
 		arrayIndex = propFrom.arrayIndex;
