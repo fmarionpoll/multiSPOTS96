@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import icy.gui.viewer.Viewer;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentDirectories;
@@ -154,8 +155,10 @@ public class Intervals extends JPanel implements ItemListener {
 		else
 			exp.seqCamData.binLast_ms = (exp.seqCamData.nTotalFrames - 1) * bin_ms;
 		// tentative
-//		Viewer v = exp.seqCamData.seq.getFirstViewer();
-//		v.close();
+
+		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		if (v != null)
+			v.close();
 		parent0.dlgBrowse.loadSaveExperiment.closeCurrentExperiment();
 		parent0.dlgBrowse.loadSaveExperiment.openSelecteExperiment(exp);
 	}
@@ -168,7 +171,6 @@ public class Intervals extends JPanel implements ItemListener {
 		if (exp.seqCamData.binLast_ms <= 0)
 			exp.seqCamData.binLast_ms = (long) (exp.seqCamData.nTotalFrames - 1) * bin_ms;
 		fixedNumberOfImagesJSpinner.setValue(exp.seqCamData.fixedNumberOfImages);
-		// exp.getFileIntervalsFromSeqCamData();
 	}
 
 	private void refreshBinSize(Experiment exp) {
