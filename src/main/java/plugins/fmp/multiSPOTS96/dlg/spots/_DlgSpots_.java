@@ -32,14 +32,14 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 	DetectSpots tabDetectSpots = new DetectSpots();
 	public Infos tabInfos = new Infos();
 //	ShapeSpots tabShape = new ShapeSpots();
-//	EditSpots tabEditSpots = new EditSpots();
+	EditSpots tabEditSpots = new EditSpots();
 	public LoadSaveSpots tabFile = new LoadSaveSpots();
 
 	private int id_shape = 1;
 	private int id_infos = 1;
 	private int id_createCages = 0;
 //	private int id_spots = 1;
-//	private int id_editSpots = 2;
+	private int id_editSpots = 2;
 	private MultiSPOTS96 parent0 = null;
 
 	public void init(JPanel mainPanel, String string, MultiSPOTS96 parent0) {
@@ -70,11 +70,11 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 //		id_spots = order;
 		order++;
 
-//		tabEditSpots.init(gridLayout, parent0);
-//		tabEditSpots.addPropertyChangeListener(this);
-//		tabbedPane.addTab("Edit", null, tabEditSpots, "Edit spots position");
-//		id_editSpots = order;
-//		order++;
+		tabEditSpots.init(gridLayout, parent0);
+		tabEditSpots.addPropertyChangeListener(this);
+		tabbedPane.addTab("Edit", null, tabEditSpots, "Edit spots position");
+		id_editSpots = order;
+		order++;
 //
 //		tabShape.init(gridLayout, parent0);
 //		tabShape.addPropertyChangeListener(this);
@@ -142,8 +142,8 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 	public void stateChanged(ChangeEvent e) {
 		JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
 		int selectedIndex = tabbedPane.getSelectedIndex();
-//		if (selectedIndex != id_editSpots)
-//			tabEditSpots.clearTemporaryROIs();
+		if (selectedIndex != id_editSpots)
+			tabEditSpots.clearTemporaryROIs();
 		if (selectedIndex != id_createCages)
 			tabCreateCages.clearTemporaryROIs();
 //		exp.seqCamData.displaySpecificROIs(true, "spots");

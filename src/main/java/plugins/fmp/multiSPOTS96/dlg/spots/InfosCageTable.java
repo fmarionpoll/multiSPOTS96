@@ -35,7 +35,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
-	private JButton colorizeCagesRoiButton = new JButton("Set cell color according to nflies");
+//	private JButton colorizeCagesRoiButton = new JButton("Set cell color according to nflies");
 	private MultiSPOTS96 parent0 = null;
 	private CagesArray cagesArrayCopy = null;
 
@@ -62,7 +62,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(duplicateAllButton);
-		panel2.add(colorizeCagesRoiButton);
+//		panel2.add(colorizeCagesRoiButton);
 		topPanel.add(panel2);
 
 		JPanel tablePanel = new JPanel();
@@ -131,19 +131,19 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 			}
 		});
 
-		colorizeCagesRoiButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) {
-					for (Cage cage : exp.cagesArray.cagesList) {
-						cage.prop.color = cageTable.cageTableModel.colorTable[cage.prop.cageNFlies % 2];
-						cage.getRoi().setColor(cage.prop.color);
-					}
-				}
-			}
-		});
-		
+//		colorizeCagesRoiButton.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(final ActionEvent e) {
+//				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+//				if (exp != null) {
+//					for (Cage cage : exp.cagesArray.cagesList) {
+//						cage.prop.color = cageTable.cageTableModel.colorTable[cage.prop.cageNFlies % 2];
+//						cage.getRoi().setColor(cage.prop.color);
+//					}
+//				}
+//			}
+//		});
+
 		cageTable.cageTableModel.fireTableDataChanged();
 	}
 
@@ -172,12 +172,12 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 			roi.setSelected(true);
 		}
 	}
-	
+
 	public void selectRowFromCage(Cage cage) {
 		String cageName = cage.getRoi().getName();
 		int nrows = cageTable.getRowCount();
 		int selectedRow = -1;
-		for (int i = 0; i< nrows; i++) {
+		for (int i = 0; i < nrows; i++) {
 			String name = (String) cageTable.getValueAt(i, 0);
 			if (name.equals(cageName)) {
 				selectedRow = i;

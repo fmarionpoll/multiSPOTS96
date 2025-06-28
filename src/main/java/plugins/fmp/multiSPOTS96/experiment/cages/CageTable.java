@@ -42,5 +42,6 @@ public class CageTable extends JTable {
 		columnModel.getColumn(4).setPreferredWidth(25);
 		columnModel.getColumn(5).setPreferredWidth(15);
 		columnModel.getColumn(6).setPreferredWidth(15);
+		columnModel.getColumn(7).setPreferredWidth(10);
 	}
 }

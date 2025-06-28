@@ -14,8 +14,6 @@ public class SpotTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 6325792669154093747L;
 	private JComboBoxExperiment expList = null;
 	String columnNames[] = { "Name", "IDCage", "PosCage", "N pixels", "Volume", "Stimulus", "Concentration", "Color" };
-	private int count = 0;
-	private int selectedIndex = -1;
 
 	public SpotTableModel(JComboBoxExperiment expList) {
 		super();
@@ -30,13 +28,10 @@ public class SpotTableModel extends AbstractTableModel {
 	@Override
 	public int getRowCount() {
 		if (expList != null && expList.getSelectedIndex() >= 0) {
-			if (expList.getSelectedIndex() != selectedIndex) {
-				selectedIndex = expList.getSelectedIndex();
-				Experiment exp = (Experiment) expList.getSelectedItem();
-				count = exp.cagesArray.getTotalNumberOfSpots();
-			}
+			Experiment exp = (Experiment) expList.getSelectedItem();
+			return exp.cagesArray.getTotalNumberOfSpots();
 		}
-		return count;
+		return 0;
 	}
 
 	@Override
@@ -47,7 +42,7 @@ public class SpotTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Spot spot = getSpotAt(rowIndex);
-		if (spot != null && spot.prop != null) {
+		if (spot != null) { // && spot.prop != null
 			switch (columnIndex) {
 			case 0:
 				return spot.getRoi().getName();
@@ -91,11 +86,7 @@ public class SpotTableModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		if (columnIndex < 1) {
-			return false;
-		} else {
-			return true;
-		}
+		return columnIndex > 0;
 	}
 
 	@Override

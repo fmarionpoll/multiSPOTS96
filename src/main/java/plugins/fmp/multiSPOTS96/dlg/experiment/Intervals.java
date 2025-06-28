@@ -154,6 +154,8 @@ public class Intervals extends JPanel implements ItemListener {
 		else
 			exp.seqCamData.binLast_ms = (exp.seqCamData.nTotalFrames - 1) * bin_ms;
 		// tentative
+//		Viewer v = exp.seqCamData.seq.getFirstViewer();
+//		v.close();
 		parent0.dlgBrowse.loadSaveExperiment.closeCurrentExperiment();
 		parent0.dlgBrowse.loadSaveExperiment.openSelecteExperiment(exp);
 	}
