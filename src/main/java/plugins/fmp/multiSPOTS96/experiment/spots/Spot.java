@@ -104,13 +104,7 @@ public class Spot implements Comparable<Spot> {
 		case ISALIVE:
 			value = String.valueOf(prop.cagePosition) + "(T=B)";
 			break;
-		case TOPLEVELDELTA_LR:
-		case TOPLEVEL_LR:
-			if (prop.cagePosition == 0)
-				value = "sum";
-			else if (prop.cagePosition == 1)
-				value = "PI";
-			break;
+
 		case XYIMAGE:
 		case XYTOPCAGE:
 		case XYTIPCAPS:
@@ -164,10 +158,10 @@ public class Spot implements Comparable<Spot> {
 	private SpotMeasure getSpotArea(EnumXLSExportType option) {
 		switch (option) {
 		case AREA_SUM:
-		case AREA_SUM_LR:
+//		case AREA_SUM_LR:
 			return sum_in;
 		case AREA_SUMCLEAN:
-		case AREA_SUMCLEAN_LR:
+//		case AREA_SUMCLEAN_LR:
 			return sum_clean;
 		case AREA_FLYPRESENT:
 			return flyPresent;

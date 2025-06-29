@@ -40,14 +40,8 @@ public class XLSExportSpotMeasures extends XLSExport {
 					collast = getDataAndExport(exp, column, charSeries, EnumXLSExportType.AREA_SUM);
 					getDataAndExport(exp, column, charSeries, EnumXLSExportType.AREA_FLYPRESENT);
 					getDataAndExport(exp, column, charSeries, EnumXLSExportType.AREA_SUMCLEAN);
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.AREA_OUT);
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.AREA_DIFF);
-					if (options.lrPI) {
-						getDataAndExport(exp, column, charSeries, EnumXLSExportType.AREA_SUM_LR);
-						getDataAndExport(exp, column, charSeries, EnumXLSExportType.AREA_SUMCLEAN_LR);
-					}
 				}
-				column = collast + 2;
+				column = collast;
 				iSeries++;
 				progress.incPosition();
 			}

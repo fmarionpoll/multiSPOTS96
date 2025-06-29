@@ -32,7 +32,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExport;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportForChart;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResultsArray;
 
@@ -51,7 +51,6 @@ public class ChartSpots extends IcyFrame {
 	public ChartPanel[][] chartPanelArray = null;
 	Experiment exp = null;
 	private MultiSPOTS96 parent0 = null;
-	
 
 	// ----------------------------------------
 
@@ -192,7 +191,7 @@ public class ChartSpots extends IcyFrame {
 	}
 
 	private XLSResultsArray getDataAsResultsArray(Experiment exp, XLSExportOptions xlsExportOptions) {
-		XLSExport xlsExport = new XLSExport();
+		XLSExportForChart xlsExport = new XLSExportForChart();
 		return xlsExport.getSpotsDataFromOneExperiment_v2parms(exp, xlsExportOptions);
 	}
 
@@ -244,7 +243,7 @@ public class ChartSpots extends IcyFrame {
 			return null;
 		}
 
-		int index = exp.cagesArray.getSpotGlobalPosition(spotFound); 
+		int index = exp.cagesArray.getSpotGlobalPosition(spotFound);
 		spotFound.spotKymograph_T = index;
 		return spotFound;
 	}

@@ -4,179 +4,40 @@ import java.awt.Point;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
 public class XLSExport {
 	protected XLSExportOptions options = null;
 	protected Experiment expAll = null;
 
-	XSSFCellStyle xssfCellStyle_red = null;
-	XSSFCellStyle xssfCellStyle_blue = null;
-	XSSFFont font_red = null;
-	XSSFFont font_blue = null;
-	XSSFWorkbook workbook = null;
+	CellStyle xssfCellStyle_red = null;
+	CellStyle xssfCellStyle_blue = null;
+	Font font_red = null;
+	Font font_blue = null;
+	SXSSFWorkbook workbook = null;
 
 	JComboBoxExperiment expList = null;
 
 	// ------------------------------------------------
 
-	protected Point writeExperiment_properties(Experiment exp, String charSeries, XSSFSheet sheet, Point pt,
-			EnumXLSExportType xlsExportOption) {
-		boolean transpose = options.transpose;
-		int row = pt.y;
-		int col0 = pt.x;
-		XLSUtils.setValue(sheet, pt, transpose, "..");
-		pt.x++;
-		XLSUtils.setValue(sheet, pt, transpose, "..");
-		pt.x++;
-		int colseries = pt.x;
-		int len = EnumXLSColumnHeader.values().length;
-		for (int i = 0; i < len; i++) {
-			XLSUtils.setValue(sheet, pt, transpose, "--");
-			pt.x++;
-		}
-		pt.x = colseries;
-
-		String filename = exp.getResultsDirectory();
-		if (filename == null)
-			filename = exp.seqCamData.getImagesDirectory();
-		Path path = Paths.get(filename);
-
-		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-		String date = df.format(exp.chainImageFirst_ms);
-
-		String name0 = path.toString();
-		int pos = name0.indexOf("cam");
-		String cam = "-";
-		if (pos > 0) {
-			int pos5 = pos + 5;
-			if (pos5 >= name0.length())
-				pos5 = name0.length() - 1;
-			cam = name0.substring(pos, pos5);
-		}
-
-		String sheetName = sheet.getSheetName();
-
-		int rowmax = -1;
-		for (EnumXLSColumnHeader dumb : EnumXLSColumnHeader.values()) {
-			if (rowmax < dumb.getValue())
-				rowmax = dumb.getValue();
-		}
-
-		for (Cage cage : exp.cagesArray.cagesList) {
-			List<Spot> spotsList = cage.spotsArray.spotsList;
-			for (int t = 0; t < spotsList.size(); t++) {
-				Spot spot = spotsList.get(t);
-//				String name = spot.getRoi().getName();
-				int col = exp.cagesArray.getSpotGlobalPosition(spot); // spot.prop.cageID * spot.prop.cagePosition;
-																		// //.getSpotArrayIndexFromSpotName(name);
-				if (col >= 0)
-					pt.x = colseries + col;
-				int x = pt.x;
-				int y = row;
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.PATH.getValue(), transpose, name0);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
-
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_BOXID);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_EXPT);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_STIM);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_CONC);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_STRAIN);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_SEX);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_COND1);
-				XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_COND2);
-
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_VOLUME.getValue(), transpose,
-						spot.prop.spotVolume);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAP_PIXELS.getValue(), transpose,
-						spot.prop.spotNPixels);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose,
-						spot.getCagePosition(xlsExportOption));
-				outputStimAndConc_according_to_DataOption(sheet, xlsExportOption, spot, transpose, x, y);
-
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEID.getValue(), transpose,
-						spot.prop.cageID);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
-						charSeries + spot.prop.cageID);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose,
-						cage.prop.cageNFlies);
-
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose,
-						desc_getChoiceTestType(spotsList, t));
-
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose,
-						cage.prop.flyStrain);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose,
-						cage.prop.flySex);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.prop.flyAge);
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose,
-						cage.prop.comment);
-			}
-		}
-		pt.x = col0;
-		pt.y = rowmax + 1;
-		return pt;
-	}
-
-	private String desc_getChoiceTestType(List<Spot> spotsList, int t) {
-		Spot spot = spotsList.get(t);
-		String choiceText = "..";
-		int side = spot.prop.cagePosition;
-		if (side == 0)
-			t = t + 1;
-		else
-			t = t - 1;
-		if (t >= 0 && t < spotsList.size()) {
-			Spot othercap = spotsList.get(t);
-			int otherSide = othercap.prop.cagePosition;
-			if (otherSide != side) {
-				if (spot.prop.stimulus.equals(othercap.prop.stimulus)
-						&& spot.prop.concentration.equals(othercap.prop.concentration))
-					choiceText = "no-choice";
-				else
-					choiceText = "choice";
-			}
-		}
-		return choiceText;
-	}
-
-	private void outputStimAndConc_according_to_DataOption(XSSFSheet sheet, EnumXLSExportType xlsExportOption,
+	private void outputStimAndConc_according_to_DataOption(SXSSFSheet sheet, EnumXLSExportType xlsExportOption,
 			Spot spot, boolean transpose, int x, int y) {
-		switch (xlsExportOption) {
-		case TOPLEVEL_LR:
-		case TOPLEVELDELTA_LR:
-			if (spot.prop.cagePosition == 0)
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, "L+R");
-			else
-				XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, "(L-R)/(L+R)");
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose,
-					spot.prop.stimulus + ": " + spot.prop.concentration);
-			break;
-
-		default:
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.prop.stimulus);
-			XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.prop.concentration);
-			break;
-		}
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.prop.stimulus);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.prop.concentration);
 	}
 
-	int writeTopRow_descriptors(XSSFSheet sheet) {
+	int writeTopRow_descriptors(SXSSFSheet sheet) {
 		Point pt = new Point(0, 0);
 		int x = 0;
 		boolean transpose = options.transpose;
@@ -190,33 +51,11 @@ public class XLSExport {
 		return pt.y;
 	}
 
-	void writeTopRow_timeIntervals(XSSFSheet sheet, int row, EnumXLSExportType xlsExport) {
-		switch (xlsExport) {
-		case AUTOCORREL:
-		case CROSSCORREL:
-		case AUTOCORREL_LR:
-		case CROSSCORREL_LR:
-			writeTopRow_timeIntervals_Correl(sheet, row);
-			break;
-		default:
-			writeTopRow_timeIntervals_Default(sheet, row);
-			break;
-		}
+	void writeTopRow_timeIntervals(SXSSFSheet sheet, int row, EnumXLSExportType xlsExport) {
+		writeTopRow_timeIntervals_Default(sheet, row);
 	}
 
-	void writeTopRow_timeIntervals_Correl(XSSFSheet sheet, int row) {
-		boolean transpose = options.transpose;
-		Point pt = new Point(0, row);
-		long interval = -options.nBinsCorrelation;
-		while (interval < options.nBinsCorrelation) {
-			int i = (int) interval;
-			XLSUtils.setValue(sheet, pt, transpose, "t" + i);
-			pt.y++;
-			interval += 1;
-		}
-	}
-
-	void writeTopRow_timeIntervals_Default(XSSFSheet sheet, int row) {
+	void writeTopRow_timeIntervals_Default(SXSSFSheet sheet, int row) {
 		boolean transpose = options.transpose;
 		Point pt = new Point(0, row);
 		long duration = expAll.seqCamData.lastImage_ms - expAll.seqCamData.firstImage_ms;
@@ -229,37 +68,8 @@ public class XLSExport {
 		}
 	}
 
-	protected int desc_getCageFromSpotRoiName(String name) {
-		if (!name.contains("spot"))
-			return -1;
-		String num = name.substring(4, 6);
-		int numFromName = Integer.valueOf(num);
-		return numFromName;
-	}
-
-	protected int getRowIndexFromCageName(String name) {
-		if (!name.contains("cage"))
-			return -1;
-		String num = name.substring(4, name.length());
-		int numFromName = Integer.valueOf(num);
-		return numFromName;
-	}
-
-//	protected Point getCellXCoordinateFromDataName(XLSResults xlsResults, Point pt_main, int colseries) {
-//		int col = SpotString.getSpotArrayIndexFromSpotName(xlsResults.name);
-//		if (col >= 0)
-//			pt_main.x = colseries + col;
-//		return pt_main;
-//	}
-
-	protected int getCageFromKymoFileName(String name) {
-		if (!name.contains("line") || !name.contains("spot"))
-			return -1;
-		return Integer.valueOf(name.substring(4, 5));
-	}
-
-	XSSFWorkbook xlsInitWorkbook() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
+	SXSSFWorkbook xlsInitWorkbook() {
+		SXSSFWorkbook workbook = new SXSSFWorkbook();
 		workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
 		xssfCellStyle_red = workbook.createCellStyle();
 		font_red = workbook.createFont();
@@ -273,8 +83,8 @@ public class XLSExport {
 		return workbook;
 	}
 
-	XSSFSheet xlsInitSheet(String title, EnumXLSExportType xlsExport) {
-		XSSFSheet sheet = workbook.getSheet(title);
+	SXSSFSheet xlsGetSheet(String title, EnumXLSExportType xlsExport) {
+		SXSSFSheet sheet = workbook.getSheet(title);
 		if (sheet == null) {
 			sheet = workbook.createSheet(title);
 			int row = writeTopRow_descriptors(sheet);
@@ -285,103 +95,15 @@ public class XLSExport {
 
 	protected int getDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType exportType) {
 		options.exportType = exportType;
-		XLSResultsArray rowListForOneExp = getSpotsDataFromOneExperimentSeries_v2parms(exp, options);
-		XSSFSheet sheet = xlsInitSheet(exportType.toString(), exportType);
-		int colmax = xlsExportResultsArrayToSheet(exp, rowListForOneExp, sheet, exportType, col0, charSeries);
+
+		SXSSFSheet sheet = xlsGetSheet(exportType.toString(), exportType);
+		int colmax = xlsExportExperimentDataToSheet(exp, sheet, exportType, col0, charSeries);
 		if (options.onlyalive) {
-			trimDeadsFromArrayList(rowListForOneExp, exp);
-			sheet = xlsInitSheet(exportType.toString() + "_alive", exportType);
-			xlsExportResultsArrayToSheet(exp, rowListForOneExp, sheet, exportType, col0, charSeries);
+			sheet = xlsGetSheet(exportType.toString() + "_alive", exportType);
+			xlsExportExperimentDataToSheet(exp, sheet, exportType, col0, charSeries);
 		}
-		if (options.sumPerCage) {
-			combineDataForOneCage(rowListForOneExp, exp);
-			sheet = xlsInitSheet(exportType.toString() + "_cage", exportType);
-			xlsExportResultsArrayToSheet(exp, rowListForOneExp, sheet, exportType, col0, charSeries);
-		}
+
 		return colmax;
-	}
-
-	private XLSResultsArray getSpotDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
-		if (expAll == null)
-			return null;
-
-		// loop to get all spots into expAll and init rows for this experiment
-		expAll.cagesArray.copyCages(exp.cagesArray.cagesList, true);
-		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
-		expAll.expProperties.copyExperimentFieldsFrom(exp.expProperties);
-		expAll.setResultsDirectory(exp.getResultsDirectory());
-
-		Experiment expi = exp.chainToNextExperiment;
-		while (expi != null) {
-			expAll.cagesArray.mergeSpotsLists(expi.cagesArray);
-			expi = expi.chainToNextExperiment;
-		}
-
-		int nFrames = (int) ((expAll.seqCamData.lastImage_ms - expAll.seqCamData.firstImage_ms)
-				/ options.buildExcelStepMs + 1);
-		int nspots = expAll.cagesArray.getTotalNumberOfSpots();
-		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
-		for (Cage cage : expAll.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				XLSResults rowResults = new XLSResults(cage, spot, xlsOption, nFrames);
-				rowResults.stimulus = spot.prop.stimulus;
-				rowResults.concentration = spot.prop.concentration;
-				rowResults.cageID = spot.prop.cageID;
-				rowListForOneExp.resultsList.add(rowResults);
-			}
-		}
-		Collections.sort(rowListForOneExp.resultsList, new Comparators.XLSResults_Name());
-		return rowListForOneExp;
-	}
-
-	private XLSResultsArray getSpotsDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
-		if (expAll == null)
-			return null;
-
-		// loop to get all spots into expAll and init rows for this experiment
-		expAll.cagesArray.copyCages(exp.cagesArray.cagesList, true);
-		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
-		expAll.expProperties.copyExperimentFieldsFrom(exp.expProperties);
-		expAll.setResultsDirectory(exp.getResultsDirectory());
-
-		Experiment expi = exp.chainToNextExperiment;
-		while (expi != null) {
-			expAll.cagesArray.mergeSpotsLists(expi.cagesArray);
-			expi = expi.chainToNextExperiment;
-		}
-
-		int nFrames = (int) ((expAll.seqCamData.lastImage_ms - expAll.seqCamData.firstImage_ms)
-				/ options.buildExcelStepMs + 1);
-		int nspots = expAll.cagesArray.getTotalNumberOfSpots();
-		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
-		for (Cage cage : expAll.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				XLSResults rowResults = new XLSResults(cage, spot, xlsOption, nFrames);
-				rowResults.stimulus = spot.prop.stimulus;
-				rowResults.concentration = spot.prop.concentration;
-				rowResults.cageID = spot.prop.cageID;
-				rowListForOneExp.resultsList.add(rowResults);
-			}
-		}
-		Collections.sort(rowListForOneExp.resultsList, new Comparators.XLSResults_Name());
-		return rowListForOneExp;
-	}
-
-	public XLSResultsArray getSpotDataFromOneExperiment_v3parms(Experiment exp, EnumXLSExportType exportType,
-			XLSExportOptions options) {
-		this.options = options;
-		expAll = new Experiment();
-		expAll.seqCamData.lastImage_ms = exp.seqCamData.lastImage_ms;
-		expAll.seqCamData.firstImage_ms = exp.seqCamData.firstImage_ms;
-		return getSpotDataFromOneExperimentSeries_v3parms(exp, exportType);
-	}
-
-	public XLSResultsArray getSpotsDataFromOneExperiment_v2parms(Experiment exp, XLSExportOptions options) {
-		this.options = options;
-		expAll = new Experiment();
-		expAll.seqCamData.lastImage_ms = exp.seqCamData.lastImage_ms;
-		expAll.seqCamData.firstImage_ms = exp.seqCamData.firstImage_ms;
-		return getSpotsDataFromOneExperimentSeries_v2parms(exp, options);
 	}
 
 	private void exportError(Experiment expi, int nOutputFrames) {
@@ -391,7 +113,7 @@ public class XLSExport {
 		System.out.println(error);
 	}
 
-	private int getNOutputFrames(Experiment expi) {
+	protected int getNOutputFrames(Experiment expi) {
 		int nOutputFrames = (int) ((expi.seqCamData.binLast_ms - expi.seqCamData.binFirst_ms) / options.buildExcelStepMs
 				+ 1);
 		if (nOutputFrames <= 1) {
@@ -411,255 +133,115 @@ public class XLSExport {
 		return nOutputFrames;
 	}
 
-	private XLSResultsArray getSpotDataFromOneExperimentSeries_v3parms(Experiment exp,
-			EnumXLSExportType xlsExportType) {
-		XLSResultsArray rowListForOneExp = getSpotDescriptorsForOneExperiment(exp, xlsExportType);
-		Experiment expi = exp.getFirstChainedExperiment(true);
-
-		while (expi != null) {
-			int nOutputFrames = getNOutputFrames(expi);
-			if (nOutputFrames > 1) {
-				XLSResultsArray resultsArrayList = new XLSResultsArray(expi.cagesArray.getTotalNumberOfSpots());
-				options.compensateEvaporation = false;
-				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames, exp.seqCamData.binDuration_ms,
-						options);
-				addResultsTo_rowsForOneExp(rowListForOneExp, expi, resultsArrayList);
-			}
-			expi = expi.chainToNextExperiment;
-		}
-		return rowListForOneExp;
-	}
-
-	private XLSResultsArray getSpotsDataFromOneExperimentSeries_v2parms(Experiment exp, XLSExportOptions options) {
-		XLSResultsArray rowListForOneExp = getSpotsDescriptorsForOneExperiment(exp, options.exportType);
-		Experiment expi = exp.getFirstChainedExperiment(true);
-		while (expi != null) {
-			int nOutputFrames = getNOutputFrames(expi);
-			if (nOutputFrames > 1) {
-				XLSResultsArray resultsArrayList = new XLSResultsArray(expi.cagesArray.getTotalNumberOfSpots());
-				options.compensateEvaporation = false;
-				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames, exp.seqCamData.binDuration_ms,
-						options);
-				addResultsTo_rowsForOneExp(rowListForOneExp, expi, resultsArrayList);
-			}
-			expi = expi.chainToNextExperiment;
-		}
-		return rowListForOneExp;
-	}
-
-	private XLSResults getResultsArrayWithThatName(String testname, XLSResultsArray resultsArrayList) {
-		XLSResults resultsFound = null;
-		for (XLSResults results : resultsArrayList.resultsList) {
-			if (results.name.equals(testname)) {
-				resultsFound = results;
-				break;
-			}
-		}
-		return resultsFound;
-	}
-
-	private void addResultsTo_rowsForOneExp(XLSResultsArray rowListForOneExp, Experiment expi,
-			XLSResultsArray resultsArrayList) {
-		if (resultsArrayList.resultsList.size() < 1)
-			return;
-
-		EnumXLSExportType xlsoption = resultsArrayList.getRow(0).exportType;
-
-		long offsetChain = expi.seqCamData.firstImage_ms - expi.chainImageFirst_ms;
-		long start_Ms = expi.seqCamData.binFirst_ms + offsetChain; // TODO check when collate?
-		long end_Ms = expi.seqCamData.binLast_ms + offsetChain;
-		if (options.fixedIntervals) {
-			if (start_Ms < options.startAll_Ms)
-				start_Ms = options.startAll_Ms;
-			if (start_Ms > expi.seqCamData.lastImage_ms)
-				return;
-			if (end_Ms > options.endAll_Ms)
-				end_Ms = options.endAll_Ms;
-			if (end_Ms > expi.seqCamData.firstImage_ms)
-				return;
-		}
-
-		// TODO check this
-		final long from_first_Ms = start_Ms - offsetChain;
-		final long from_lastMs = end_Ms - offsetChain;
-		final int to_first_index = (int) (start_Ms / options.buildExcelStepMs);
-		final int to_nvalues = (int) ((end_Ms - start_Ms) / options.buildExcelStepMs) + 1;
-
-		for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
-			XLSResults row = rowListForOneExp.getRow(iRow);
-			XLSResults results = getResultsArrayWithThatName(row.name, resultsArrayList);
-			if (results != null && results.valuesOut != null) {
-				double dvalue = 0.;
-				switch (xlsoption) {
-				case TOPLEVEL:
-				case TOPLEVEL_LR:
-				case TOPLEVELDELTA:
-				case TOPLEVELDELTA_LR:
-					if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null)
-						dvalue = padWithLastPreviousValue(row, to_first_index);
-					break;
-				default:
-					break;
-				}
-
-				int icolTo = 0;
-				if (options.collateSeries || options.absoluteTime)
-					icolTo = to_first_index;
-				for (long fromTime = from_first_Ms; fromTime <= from_lastMs; fromTime += options.buildExcelStepMs, icolTo++) {
-					int from_i = (int) Math
-							.round(((double) (fromTime - from_first_Ms)) / ((double) options.buildExcelStepMs));
-					if (from_i >= results.valuesOut.length)
-						break;
-					// TODO check how this can happen
-					if (from_i < 0)
-						continue;
-					double value = results.valuesOut[from_i] + dvalue;
-					if (icolTo >= row.valuesOut.length)
-						break;
-					row.valuesOut[icolTo] = value;
-				}
-
-			} else {
-				if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null) {
-					double dvalue = padWithLastPreviousValue(row, to_first_index);
-					int tofirst = (int) to_first_index;
-					int tolast = (int) (tofirst + to_nvalues);
-					if (tolast > row.valuesOut.length)
-						tolast = row.valuesOut.length;
-					for (int toi = tofirst; toi < tolast; toi++)
-						row.valuesOut[toi] = dvalue;
-				}
-			}
-		}
-	}
-
-	private double padWithLastPreviousValue(XLSResults row, long to_first_index) {
-		double dvalue = 0;
-		if (to_first_index >= row.valuesOut.length)
-			return dvalue;
-
-		int index = getIndexOfFirstNonEmptyValueBackwards(row, to_first_index);
-		if (index >= 0) {
-			dvalue = row.valuesOut[index];
-			for (int i = index + 1; i < to_first_index; i++) {
-				row.valuesOut[i] = dvalue;
-				row.padded_out[i] = true;
-			}
-		}
-		return dvalue;
-	}
-
-	private int getIndexOfFirstNonEmptyValueBackwards(XLSResults row, long fromindex) {
-		int index = -1;
-		int ifrom = (int) fromindex;
-		for (int i = ifrom; i >= 0; i--) {
-			if (!Double.isNaN(row.valuesOut[i])) {
-				index = i;
-				break;
-			}
-		}
-		return index;
-	}
-
-	private void trimDeadsFromArrayList(XLSResultsArray rowListForOneExp, Experiment exp) {
-		for (Cage cage : exp.cagesArray.cagesList) {
-			String roiname = cage.getRoi().getName();
-			if (roiname.length() < 4 || !roiname.substring(0, 4).contains("cage"))
-				continue;
-
-			String cagenumberString = roiname.substring(4);
-			int cagenumber = Integer.valueOf(cagenumberString);
-			int ilastalive = 0;
-			if (cage.prop.cageNFlies > 0) {
-				Experiment expi = exp;
-				while (expi.chainToNextExperiment != null
-						&& expi.chainToNextExperiment.cagesArray.isFlyAlive(cagenumber)) {
-					expi = expi.chainToNextExperiment;
-				}
-				int lastIntervalFlyAlive = expi.cagesArray.getLastIntervalFlyAlive(cagenumber);
-				int lastMinuteAlive = (int) (lastIntervalFlyAlive * expi.seqCamData.binImage_ms
-						+ (expi.seqCamData.firstImage_ms - expAll.seqCamData.firstImage_ms));
-				ilastalive = (int) (lastMinuteAlive / expAll.seqCamData.binDuration_ms);
-			}
-			if (ilastalive > 0)
-				ilastalive += 1;
-
-			for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
-				XLSResults row = rowListForOneExp.getRow(iRow);
-				if (desc_getCageFromSpotRoiName(row.name) == cagenumber)
-					row.clearValues(ilastalive);
-			}
-		}
-	}
-
-	private void combineDataForOneCage(XLSResultsArray rowListForOneExp, Experiment exp) {
-		for (int iRow0 = 0; iRow0 < rowListForOneExp.size(); iRow0++) {
-			XLSResults row_master = rowListForOneExp.getRow(iRow0);
-			if (row_master.nflies == 0 || row_master.valuesOut == null)
-				continue;
-
-			for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
-				XLSResults row = rowListForOneExp.getRow(iRow);
-				if (row.nflies == 0 || row.valuesOut == null)
-					continue;
-				if (row.cageID != row_master.cageID)
-					continue;
-				if (row.name.equals(row_master.name))
-					continue;
-				if (row.stimulus.equals(row_master.stimulus) && row.concentration.equals(row_master.concentration)) {
-					row_master.sumValues_out(row);
-					row.clearAll();
-				}
-			}
-		}
-	}
-
-	private int xlsExportResultsArrayToSheet(Experiment exp, XLSResultsArray rowListForOneExp, XSSFSheet sheet,
-			EnumXLSExportType xlsExportOption, int col0, String charSeries) {
+	private int xlsExportExperimentDataToSheet(Experiment exp, SXSSFSheet sheet, EnumXLSExportType xlsExportType,
+			int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
-		writeExperiment_properties(exp, charSeries, sheet, pt, xlsExportOption);
-		pt = writeExperiment_data(rowListForOneExp, sheet, pt);
+		pt = writeExperiment_separator(sheet, pt);
+
+		for (Cage cage : exp.cagesArray.cagesList) {
+			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
+			for (Spot spot : cage.spotsArray.spotsList) {
+				pt.y = 0;
+				pt = writeExperiment_spot_infos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
+				XLSResults xlsResults = getSpotResults(exp, cage, spot, xlsExportType);
+				xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
+				writeXLSResult(sheet, pt, xlsResults);
+				pt.x++;
+			}
+		}
 		return pt.x;
 	}
 
-	private Point writeExperiment_data(XLSResultsArray rowListForOneExp, XSSFSheet sheet, Point pt_main) {
-		int rowSeries = pt_main.x + 2;
-		int column_dataArea = pt_main.y;
-		Point pt = new Point(pt_main);
-		writeExperiment_data_simpleRows(rowListForOneExp, sheet, column_dataArea, rowSeries, pt);
-		pt_main.x = pt.x + 1;
-		return pt_main;
+	private XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, EnumXLSExportType xlsExportType) {
+		int nOutputFrames = getNOutputFrames(exp);
+		XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
+		xlsResults.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportType, exp.seqCamData.binDuration_ms,
+				options.buildExcelStepMs);
+		if (options.relativeToT0 && xlsExportType != EnumXLSExportType.AREA_FLYPRESENT)
+			xlsResults.relativeToT0();
+		return xlsResults;
 	}
 
-	private void writeExperiment_data_simpleRows(XLSResultsArray rowListForOneExp, XSSFSheet sheet, int column_dataArea,
-			int rowSeries, Point pt) {
-		for (int iRow = 0; iRow < rowListForOneExp.size(); iRow++) {
-			XLSResults row = rowListForOneExp.getRow(iRow);
-			writeRow(sheet, column_dataArea, rowSeries, pt, iRow, row);
-		}
-
-	}
-
-	private void writeRow(XSSFSheet sheet, int column_dataArea, int rowSeries, Point pt, int iRow, XLSResults row) {
+	private void writeXLSResult(SXSSFSheet sheet, Point pt, XLSResults xlsResult) {
 		boolean transpose = options.transpose;
-		pt.y = column_dataArea;
-		int col = iRow; // SpotString.getSpotArrayIndexFromSpotName(row.name);
-		pt.x = rowSeries + col;
-		if (row.valuesOut == null)
+		if (xlsResult.valuesOut == null)
 			return;
 
 		for (long coltime = expAll.seqCamData.firstImage_ms; coltime < expAll.seqCamData.lastImage_ms; coltime += options.buildExcelStepMs, pt.y++) {
 			int i_from = (int) ((coltime - expAll.seqCamData.firstImage_ms) / options.buildExcelStepMs);
-			if (i_from >= row.valuesOut.length)
+			if (i_from >= xlsResult.valuesOut.length)
 				break;
-			double value = row.valuesOut[i_from];
+			double value = xlsResult.valuesOut[i_from];
 			if (!Double.isNaN(value)) {
 				XLSUtils.setValue(sheet, pt, transpose, value);
-				if (i_from < row.padded_out.length && row.padded_out[i_from])
+				if (i_from < xlsResult.padded_out.length && xlsResult.padded_out[i_from])
 					XLSUtils.getCell(sheet, pt, transpose).setCellStyle(xssfCellStyle_red);
 			}
 		}
+	}
+
+	protected Point writeExperiment_separator(SXSSFSheet sheet, Point pt) {
+		boolean transpose = options.transpose;
+		XLSUtils.setValue(sheet, pt, transpose, "--");
 		pt.x++;
+		XLSUtils.setValue(sheet, pt, transpose, "--");
+		pt.x++;
+		return pt;
+	}
+
+	protected Point writeExperiment_spot_infos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
+			Spot spot, EnumXLSExportType xlsExportType) {
+		int x = pt.x;
+		int y = pt.y;
+		boolean transpose = options.transpose;
+		String filename = exp.getResultsDirectory();
+		if (filename == null)
+			filename = exp.seqCamData.getImagesDirectory();
+		Path path = Paths.get(filename);
+		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		String date = df.format(exp.chainImageFirst_ms);
+		String name0 = path.toString();
+		int pos = name0.indexOf("cam");
+		String cam = "-";
+		if (pos > 0) {
+			int pos5 = pos + 5;
+			if (pos5 >= name0.length())
+				pos5 = name0.length() - 1;
+			cam = name0.substring(pos, pos5);
+		}
+
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.PATH.getValue(), transpose, name0);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
+
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_BOXID);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_EXPT);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_STIM);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_CONC);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_STRAIN);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_SEX);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_COND1);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_COND2);
+
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_VOLUME.getValue(), transpose, spot.prop.spotVolume);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_PIXELS.getValue(), transpose, spot.prop.spotNPixels);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose,
+				spot.getCagePosition(xlsExportType));
+		outputStimAndConc_according_to_DataOption(sheet, xlsExportType, spot, transpose, x, y);
+
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEID.getValue(), transpose, spot.prop.cageID);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
+				charSeries + spot.prop.cageID);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose, cage.prop.cageNFlies);
+		String sheetName = sheet.getSheetName();
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose, "");
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cage.prop.flyStrain);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.prop.flySex);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.prop.flyAge);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cage.prop.comment);
+		pt.y = y + EnumXLSColumnHeader.CAGE_COMMENT.getValue() + 1;
+		return pt;
 	}
 
 }
