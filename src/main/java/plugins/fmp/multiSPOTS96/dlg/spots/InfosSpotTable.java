@@ -34,7 +34,7 @@ public class InfosSpotTable extends JPanel {
 
 	private JButton duplicateRowAtCagePositionButton = new JButton("Row at cage pos");
 	private JButton duplicatePreviousButton = new JButton("Row above");
-	private JButton duplicateCageButton = new JButton("Cage");
+	private JButton duplicateCageButton = new JButton("Cage to all");
 	private JButton duplicateAllButton = new JButton("Cell to all");
 
 	private MultiSPOTS96 parent0 = null;

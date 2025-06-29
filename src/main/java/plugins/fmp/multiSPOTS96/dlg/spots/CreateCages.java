@@ -185,7 +185,7 @@ public class CreateCages extends JPanel {
 			polygon2D = exp.cagesArray.getPolygon2DEnclosingAllCages();
 		} else {
 			// Rectangle rect = exp.seqCamData.seq.getBounds2D();
-			Rectangle rect = new Rectangle(418, 416, 1305, 865);
+			Rectangle rect = new Rectangle(318, 125, 1260, 836);
 			List<Point2D> points = new ArrayList<Point2D>();
 			points.add(new Point2D.Double(rect.x, rect.y));
 			points.add(new Point2D.Double(rect.x, rect.y + rect.height));
