@@ -560,8 +560,8 @@ public class Experiment {
 			break;
 		case SPOT_STIM:
 		case SPOT_CONC:
-			if (replaceSpotsFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue))
-				save_MS96_cages();
+		case SPOT_VOLUME:
+			replaceSpotsFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue);
 			break;
 		default:
 			break;
@@ -755,7 +755,7 @@ public class Experiment {
 	private String getReferenceImageFullName() {
 		return resultsDirectory + File.separator + "referenceImage.jpg";
 	}
-	
+
 	public boolean loadCagesArray_File() {
 		boolean flag = load_MS96_cages();
 		if (flag) {
@@ -769,7 +769,7 @@ public class Experiment {
 		save_MS96_cages();
 		return save_MS96_spotsMeasures();
 	}
-	
+
 	public boolean loadSpotsArray_File() {
 		boolean flag = load_MS96_cages();
 		seqCamData.removeROIsContainingString("spot");
