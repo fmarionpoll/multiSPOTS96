@@ -1,6 +1,6 @@
 package plugins.fmp.multiSPOTS96.tools.toExcel;
 
-public enum EnumXLSExportType {
+public enum EnumXLSExport {
 
 	XYIMAGE("xy-image", "mm", "xy image"), XYTOPCAGE("xy-topcage", "mm", "xy top cage"),
 	XYTIPCAPS("xy-tipcaps", "mm", "xy tip capillaries"), ELLIPSEAXES("ellipse-axes", "mm", "Ellipse of axes"),
@@ -21,7 +21,7 @@ public enum EnumXLSExportType {
 	private String unit;
 	private String title;
 
-	EnumXLSExportType(String label, String unit, String title) {
+	EnumXLSExport(String label, String unit, String title) {
 		this.label = label;
 		this.unit = unit;
 		this.title = title;
@@ -39,8 +39,8 @@ public enum EnumXLSExportType {
 		return title;
 	}
 
-	public static EnumXLSExportType findByText(String abbr) {
-		for (EnumXLSExportType v : values()) {
+	public static EnumXLSExport findByText(String abbr) {
+		for (EnumXLSExport v : values()) {
 			if (v.toString().equals(abbr))
 				return v;
 		}

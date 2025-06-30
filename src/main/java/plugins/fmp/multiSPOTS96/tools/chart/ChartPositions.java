@@ -23,7 +23,7 @@ import icy.gui.util.GuiUtil;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.FlyPositions;
 import plugins.fmp.multiSPOTS96.tools.MaxMinDouble;
-import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 
 public class ChartPositions extends IcyFrame {
 	public JPanel mainChartPanel = null;
@@ -48,7 +48,7 @@ public class ChartPositions extends IcyFrame {
 		pt = new Point(rectv.x + deltapt.x, rectv.y + deltapt.y);
 	}
 
-	public void displayData(List<Cage> cageList, EnumXLSExportType option) {
+	public void displayData(List<Cage> cageList, EnumXLSExport option) {
 		List<XYSeriesCollection> xyDataSetList = new ArrayList<XYSeriesCollection>();
 		MaxMinDouble yMaxMin = new MaxMinDouble();
 		int count = 0;
@@ -94,7 +94,7 @@ public class ChartPositions extends IcyFrame {
 		mainChartFrame.setVisible(true);
 	}
 
-	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumXLSExportType option, XYSeries seriesXY) {
+	private MaxMinDouble addPointsToXYSeries(Cage cage, EnumXLSExport option, XYSeries seriesXY) {
 		FlyPositions results = cage.flyPositions;
 		int itmax = results.flyPositionList.size();
 		MaxMinDouble yMaxMin = null;
@@ -156,7 +156,7 @@ public class ChartPositions extends IcyFrame {
 			globalXMax = indexT;
 	}
 
-	private ChartData getDataSet(Cage cage, EnumXLSExportType option) {
+	private ChartData getDataSet(Cage cage, EnumXLSExport option) {
 		XYSeriesCollection xyDataset = new XYSeriesCollection();
 		String name = cage.getRoi().getName();
 		XYSeries seriesXY = new XYSeries(name);

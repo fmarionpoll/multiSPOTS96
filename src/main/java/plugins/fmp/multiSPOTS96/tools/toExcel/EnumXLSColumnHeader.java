@@ -6,19 +6,29 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum EnumXLSColumnHeader {
-	PATH("Path", 0), DATE("Date", 1), EXP_BOXID("Box_ID", 2), CAM("Cam", 3), EXP_EXPT("Expmt", 4), CAGEID("Cage_ID", 5),
-	EXP_STIM("Stim", 6), EXP_CONC("Conc", 7), EXP_STRAIN("Strain", 8), EXP_SEX("Sex", 9), EXP_COND1("Cond1", 10),
-	EXP_COND2("Cond2", 11), CAGEPOS("Position", 12), SPOT_VOLUME("Spot_ul", 13), SPOT_PIXELS("Spot_npixels", 14),
-	CHOICE_NOCHOICE("Choice", 15), SPOT_STIM("Spot_stimulus", 16), SPOT_CONC("Spot_concentration", 17),
-	SPOT_NFLIES("Nflies", 18), SPOT_CAGEID("Cage", 19), DUM4("Dum4", 20), CAGE_STRAIN("Cage_strain", 21),
-	CAGE_SEX("Cage_sex", 22), CAGE_AGE("Cage_age", 23), CAGE_COMMENT("Cage_comment", 24);
+	PATH("Path", 0, EnumXLSMeasure.COMMON), DATE("Date", 1, EnumXLSMeasure.COMMON),
+	EXP_BOXID("Box_ID", 2, EnumXLSMeasure.COMMON), CAM("Cam", 3, EnumXLSMeasure.COMMON),
+	EXP_EXPT("Expmt", 4, EnumXLSMeasure.COMMON), CAGEID("Cage_ID", 5, EnumXLSMeasure.COMMON),
+	EXP_STIM("Stim", 6, EnumXLSMeasure.COMMON), EXP_CONC("Conc", 7, EnumXLSMeasure.COMMON),
+	EXP_STRAIN("Strain", 8, EnumXLSMeasure.COMMON), EXP_SEX("Sex", 9, EnumXLSMeasure.COMMON),
+	EXP_COND1("Cond1", 10, EnumXLSMeasure.COMMON), EXP_COND2("Cond2", 11, EnumXLSMeasure.COMMON),
+	CAGEPOS("Position", 12, EnumXLSMeasure.COMMON), SPOT_VOLUME("Spot_ul", 13, EnumXLSMeasure.COMMON),
+	SPOT_PIXELS("Spot_npixels", 14, EnumXLSMeasure.COMMON),
+	CHOICE_NOCHOICE("Choice", 15, EnumXLSMeasure.COMMON), SPOT_STIM("Spot_stimulus", 16, EnumXLSMeasure.COMMON),
+	SPOT_CONC("Spot_concentration", 17, EnumXLSMeasure.COMMON),
+	SPOT_NFLIES("Nflies", 18, EnumXLSMeasure.COMMON), SPOT_CAGEID("Cage", 19, EnumXLSMeasure.COMMON),
+	DUM4("Dum4", 20, EnumXLSMeasure.COMMON), CAGE_STRAIN("Cage_strain", 21, EnumXLSMeasure.COMMON),
+	CAGE_SEX("Cage_sex", 22, EnumXLSMeasure.COMMON), CAGE_AGE("Cage_age", 23, EnumXLSMeasure.COMMON),
+	CAGE_COMMENT("Cage_comment", 24, EnumXLSMeasure.COMMON);
 
 	private final String name;
 	private final int value;
+	private final EnumXLSMeasure type;
 
-	EnumXLSColumnHeader(String label, int value) {
+	EnumXLSColumnHeader(String label, int value, EnumXLSMeasure type) {
 		this.name = label;
 		this.value = value;
+		this.type = type;
 	}
 
 	public String getName() {
@@ -45,6 +55,10 @@ public enum EnumXLSColumnHeader {
 
 	public String toString() {
 		return name;
+	}
+
+	public EnumXLSMeasure toType() {
+		return type;
 	}
 
 	public static EnumXLSColumnHeader findByText(String abbr) {

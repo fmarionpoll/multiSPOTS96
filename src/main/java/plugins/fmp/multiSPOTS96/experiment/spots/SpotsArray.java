@@ -24,7 +24,7 @@ import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
-import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 
 public class SpotsArray {
 	public ArrayList<Spot> spotsList = new ArrayList<Spot>();
@@ -259,7 +259,7 @@ public class SpotsArray {
 
 	// ------------------------------------------------
 
-	public double getScalingFactorToPhysicalUnits(EnumXLSExportType xlsoption) {
+	public double getScalingFactorToPhysicalUnits(EnumXLSExport xlsoption) {
 		double scalingFactorToPhysicalUnits = 1.;
 		return scalingFactorToPhysicalUnits;
 	}

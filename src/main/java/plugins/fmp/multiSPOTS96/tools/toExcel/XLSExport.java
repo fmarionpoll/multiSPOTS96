@@ -31,7 +31,7 @@ public class XLSExport {
 
 	// ------------------------------------------------
 
-	private void outputStimAndConc_according_to_DataOption(SXSSFSheet sheet, EnumXLSExportType xlsExportOption,
+	private void outputStimAndConc_according_to_DataOption(SXSSFSheet sheet, EnumXLSExport xlsExportOption,
 			Spot spot, boolean transpose, int x, int y) {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.prop.stimulus);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.prop.concentration);
@@ -51,7 +51,7 @@ public class XLSExport {
 		return pt.y;
 	}
 
-	void writeTopRow_timeIntervals(SXSSFSheet sheet, int row, EnumXLSExportType xlsExport) {
+	void writeTopRow_timeIntervals(SXSSFSheet sheet, int row, EnumXLSExport xlsExport) {
 		writeTopRow_timeIntervals_Default(sheet, row);
 	}
 
@@ -83,7 +83,7 @@ public class XLSExport {
 		return workbook;
 	}
 
-	SXSSFSheet xlsGetSheet(String title, EnumXLSExportType xlsExport) {
+	SXSSFSheet xlsGetSheet(String title, EnumXLSExport xlsExport) {
 		SXSSFSheet sheet = workbook.getSheet(title);
 		if (sheet == null) {
 			sheet = workbook.createSheet(title);
@@ -93,7 +93,7 @@ public class XLSExport {
 		return sheet;
 	}
 
-	protected int getDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExportType exportType) {
+	protected int getDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExport exportType) {
 		options.exportType = exportType;
 
 		SXSSFSheet sheet = xlsGetSheet(exportType.toString(), exportType);
@@ -133,7 +133,7 @@ public class XLSExport {
 		return nOutputFrames;
 	}
 
-	private int xlsExportExperimentDataToSheet(Experiment exp, SXSSFSheet sheet, EnumXLSExportType xlsExportType,
+	private int xlsExportExperimentDataToSheet(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType,
 			int col0, String charSeries) {
 		Point pt = new Point(col0, 0);
 		pt = writeExperiment_separator(sheet, pt);
@@ -152,12 +152,12 @@ public class XLSExport {
 		return pt.x;
 	}
 
-	private XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, EnumXLSExportType xlsExportType) {
+	private XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, EnumXLSExport xlsExportType) {
 		int nOutputFrames = getNOutputFrames(exp);
 		XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
 		xlsResults.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportType, exp.seqCamData.binDuration_ms,
 				options.buildExcelStepMs);
-		if (options.relativeToT0 && xlsExportType != EnumXLSExportType.AREA_FLYPRESENT)
+		if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT)
 			xlsResults.relativeToT0();
 		return xlsResults;
 	}
@@ -190,7 +190,7 @@ public class XLSExport {
 	}
 
 	protected Point writeExperiment_spot_infos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
-			Spot spot, EnumXLSExportType xlsExportType) {
+			Spot spot, EnumXLSExport xlsExportType) {
 		int x = pt.x;
 		int y = pt.y;
 		boolean transpose = options.transpose;

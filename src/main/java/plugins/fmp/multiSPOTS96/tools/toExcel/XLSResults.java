@@ -20,11 +20,11 @@ public class XLSResults {
 	public int cageID = 0;
 	public int cagePosition = 0;
 	public Color color;
-	public EnumXLSExportType exportType = null;
+	public EnumXLSExport exportType = null;
 	public ArrayList<Double> dataValues = null;
 	public double[] valuesOut = null;
 
-	public XLSResults(String name, int nflies, int cageID, int cagePos, EnumXLSExportType exportType) {
+	public XLSResults(String name, int nflies, int cageID, int cagePos, EnumXLSExport exportType) {
 		this.name = name;
 		this.nflies = nflies;
 		this.cageID = cageID;
@@ -32,7 +32,7 @@ public class XLSResults {
 		this.exportType = exportType;
 	}
 
-	public XLSResults(Cage cage, Spot spot, EnumXLSExportType exportType, int nFrames) {
+	public XLSResults(Cage cage, Spot spot, EnumXLSExport exportType, int nFrames) {
 		this.name = spot.getRoi().getName();
 		this.color = spot.prop.color;
 		this.nflies = cage.prop.cageNFlies;
@@ -70,7 +70,7 @@ public class XLSResults {
 		nflies = 0;
 	}
 
-	public void transferMeasuresToValuesOut(double scalingFactorToPhysicalUnits, EnumXLSExportType xlsExport) {
+	public void transferMeasuresToValuesOut(double scalingFactorToPhysicalUnits, EnumXLSExport xlsExport) {
 		if (dimension == 0 || dataValues == null || dataValues.size() < 1)
 			return;
 

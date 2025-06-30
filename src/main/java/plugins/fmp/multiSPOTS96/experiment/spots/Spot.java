@@ -18,7 +18,7 @@ import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
-import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
@@ -97,7 +97,7 @@ public class Spot implements Comparable<Spot> {
 		return prop.sourceName;
 	}
 
-	public String getCagePosition(EnumXLSExportType xlsExportOption) {
+	public String getCagePosition(EnumXLSExport xlsExportOption) {
 		String value = null;
 		switch (xlsExportOption) {
 		case DISTANCE:
@@ -155,7 +155,7 @@ public class Spot implements Comparable<Spot> {
 		return pt;
 	}
 
-	private SpotMeasure getSpotArea(EnumXLSExportType option) {
+	private SpotMeasure getSpotArea(EnumXLSExport option) {
 		switch (option) {
 		case AREA_SUM:
 //		case AREA_SUM_LR:
@@ -184,14 +184,14 @@ public class Spot implements Comparable<Spot> {
 
 	// -----------------------------------------
 
-	public boolean isThereAnyMeasuresDone(EnumXLSExportType option) {
+	public boolean isThereAnyMeasuresDone(EnumXLSExport option) {
 		SpotMeasure spotArea = getSpotArea(option);
 		if (spotArea != null)
 			return spotArea.isThereAnyMeasuresDone();
 		return false;
 	}
 
-	public ArrayList<Double> getSpotMeasuresForXLSPass1(EnumXLSExportType option, long seriesBinMs, long outputBinMs) {
+	public ArrayList<Double> getSpotMeasuresForXLSPass1(EnumXLSExport option, long seriesBinMs, long outputBinMs) {
 		SpotMeasure spotArea = getSpotArea(option);
 		if (spotArea != null)
 			return spotArea.getLevel2D_Y_subsampled(seriesBinMs, outputBinMs);

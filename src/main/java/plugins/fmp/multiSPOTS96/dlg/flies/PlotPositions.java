@@ -22,7 +22,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.FlyPositions;
 import plugins.fmp.multiSPOTS96.tools.chart.ChartPositions;
-import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 
 public class PlotPositions extends JPanel implements SequenceListener {
 	/**
@@ -88,13 +88,13 @@ public class PlotPositions extends JPanel implements SequenceListener {
 		exp.seqCamData.seq.addListener(this);
 
 		if (moveCheckbox.isSelected()) {
-			displayYPos("flies Y positions", ypositionsChart, rectv, ptRelative, exp, EnumXLSExportType.XYTOPCAGE);
+			displayYPos("flies Y positions", ypositionsChart, rectv, ptRelative, exp, EnumXLSExport.XYTOPCAGE);
 			ptRelative.y += deltay;
 		}
 
 		if (distanceCheckbox.isSelected()) {
 			displayYPos("distance between positions at t+1 and t", distanceChart, rectv, ptRelative, exp,
-					EnumXLSExportType.DISTANCE);
+					EnumXLSExport.DISTANCE);
 			ptRelative.y += deltay;
 		}
 
@@ -105,7 +105,7 @@ public class PlotPositions extends JPanel implements SequenceListener {
 				posSeries.moveThreshold = threshold;
 				posSeries.computeIsAlive();
 			}
-			displayYPos("flies alive", aliveChart, rectv, ptRelative, exp, EnumXLSExportType.ISALIVE);
+			displayYPos("flies alive", aliveChart, rectv, ptRelative, exp, EnumXLSExport.ISALIVE);
 			ptRelative.y += deltay;
 		}
 
@@ -114,13 +114,13 @@ public class PlotPositions extends JPanel implements SequenceListener {
 				FlyPositions posSeries = cage.flyPositions;
 				posSeries.computeSleep();
 			}
-			displayYPos("flies asleep", sleepChart, rectv, ptRelative, exp, EnumXLSExportType.SLEEP);
+			displayYPos("flies asleep", sleepChart, rectv, ptRelative, exp, EnumXLSExport.SLEEP);
 			ptRelative.y += deltay;
 		}
 	}
 
 	private void displayYPos(String title, ChartPositions iChart, Rectangle rectv, Point ptRelative, Experiment exp,
-			EnumXLSExportType option) {
+			EnumXLSExport option) {
 		if (iChart == null || !iChart.mainChartPanel.isValid()) {
 			iChart = new ChartPositions();
 			iChart.createPanel(title);

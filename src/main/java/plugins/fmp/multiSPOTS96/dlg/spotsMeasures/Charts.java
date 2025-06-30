@@ -24,7 +24,7 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CageString;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.chart.ChartSpots;
-import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 
 public class Charts extends JPanel implements SequenceListener {
@@ -38,10 +38,10 @@ public class Charts extends JPanel implements SequenceListener {
 	private JButton axisOptionsButton = new JButton("Axis options");
 	private ChartOptions graphOptions = null;
 
-	private EnumXLSExportType[] measures = new EnumXLSExportType[] { EnumXLSExportType.AREA_SUM,
-			EnumXLSExportType.AREA_SUMCLEAN // , EnumXLSExportType.AREA_DIFF
+	private EnumXLSExport[] measures = new EnumXLSExport[] { EnumXLSExport.AREA_SUM,
+			EnumXLSExport.AREA_SUMCLEAN // , EnumXLSExportType.AREA_DIFF
 	};
-	private JComboBox<EnumXLSExportType> exportTypeComboBox = new JComboBox<EnumXLSExportType>(measures);
+	private JComboBox<EnumXLSExport> exportTypeComboBox = new JComboBox<EnumXLSExport>(measures);
 	private JCheckBox relativeToCheckbox = new JCheckBox("relative to t0", false);
 
 	private JRadioButton displayAllButton = new JRadioButton("all cages");
@@ -147,13 +147,13 @@ public class Charts extends JPanel implements SequenceListener {
 
 	public void displayChartPanels(Experiment exp) {
 		exp.seqCamData.seq.removeListener(this);
-		EnumXLSExportType exportType = (EnumXLSExportType) exportTypeComboBox.getSelectedItem();
+		EnumXLSExport exportType = (EnumXLSExport) exportTypeComboBox.getSelectedItem();
 		if (isThereAnyDataToDisplay(exp, exportType))
 			chartSpots = plotSpotMeasuresToChart(exp, exportType, chartSpots);
 		exp.seqCamData.seq.addListener(this);
 	}
 
-	private ChartSpots plotSpotMeasuresToChart(Experiment exp, EnumXLSExportType exportType, ChartSpots iChart) {
+	private ChartSpots plotSpotMeasuresToChart(Experiment exp, EnumXLSExport exportType, ChartSpots iChart) {
 		if (iChart != null)
 			iChart.mainChartFrame.dispose();
 
@@ -193,7 +193,7 @@ public class Charts extends JPanel implements SequenceListener {
 		chartSpots = null;
 	}
 
-	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExportType option) {
+	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExport option) {
 		boolean flag = false;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {

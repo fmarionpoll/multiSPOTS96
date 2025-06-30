@@ -31,7 +31,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExportType;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportForChart;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResultsArray;
@@ -95,10 +95,10 @@ public class ChartSpots extends IcyFrame {
 
 		XLSResultsArray xlsResultsArray = getDataAsResultsArray(exp, xlsExportOptions);
 		XLSResultsArray xlsResultsArray2 = null;
-		if (xlsExportOptions.exportType == EnumXLSExportType.AREA_SUMCLEAN) {
-			xlsExportOptions.exportType = EnumXLSExportType.AREA_SUM;
+		if (xlsExportOptions.exportType == EnumXLSExport.AREA_SUMCLEAN) {
+			xlsExportOptions.exportType = EnumXLSExport.AREA_SUM;
 			xlsResultsArray2 = getDataAsResultsArray(exp, xlsExportOptions);
-			xlsExportOptions.exportType = EnumXLSExportType.AREA_SUMCLEAN;
+			xlsExportOptions.exportType = EnumXLSExport.AREA_SUMCLEAN;
 		}
 
 		// ---------------------------

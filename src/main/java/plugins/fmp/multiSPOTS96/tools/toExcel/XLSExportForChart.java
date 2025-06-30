@@ -72,7 +72,7 @@ public class XLSExportForChart extends XLSExport {
 //		return rowListForOneExp;
 //	}
 
-	private XLSResultsArray getSpotsDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
+	private XLSResultsArray getSpotsDescriptorsForOneExperiment(Experiment exp, EnumXLSExport xlsOption) {
 		if (expAll == null)
 			return null;
 

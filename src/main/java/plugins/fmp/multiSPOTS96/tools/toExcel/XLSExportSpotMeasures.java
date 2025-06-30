@@ -37,9 +37,9 @@ public class XLSExportSpotMeasures extends XLSExport {
 
 				int collast = column;
 				if (options.spotAreas) {
-					collast = getDataAndExport(exp, column, charSeries, EnumXLSExportType.AREA_SUM);
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.AREA_FLYPRESENT);
-					getDataAndExport(exp, column, charSeries, EnumXLSExportType.AREA_SUMCLEAN);
+					collast = getDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_SUM);
+					getDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_FLYPRESENT);
+					getDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_SUMCLEAN);
 				}
 				column = collast;
 				iSeries++;

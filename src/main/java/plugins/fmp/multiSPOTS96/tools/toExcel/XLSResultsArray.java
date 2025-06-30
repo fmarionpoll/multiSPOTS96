@@ -41,7 +41,7 @@ public class XLSResultsArray {
 
 	// ---------------------------------------------------
 
-	public void getSpotsArrayResults_T0(CagesArray cagesArray, EnumXLSExportType exportType, int nOutputFrames,
+	public void getSpotsArrayResults_T0(CagesArray cagesArray, EnumXLSExport exportType, int nOutputFrames,
 			long kymoBinCol_Ms, XLSExportOptions xlsExportOptions) {
 		xlsExportOptions.exportType = exportType;
 		buildSpotsDataForPass1(cagesArray, nOutputFrames, kymoBinCol_Ms, xlsExportOptions);
@@ -62,7 +62,7 @@ public class XLSResultsArray {
 				XLSResults results = new XLSResults(cage, spot, xlsExportOptions.exportType, nOutputFrames);
 				results.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
 						xlsExportOptions.buildExcelStepMs);
-				if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExportType.AREA_FLYPRESENT)
+				if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT)
 					results.relativeToT0();
 				results.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
 				resultsList.add(results);
