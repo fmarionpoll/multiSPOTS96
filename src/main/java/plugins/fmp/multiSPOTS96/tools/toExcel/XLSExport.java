@@ -31,12 +31,6 @@ public class XLSExport {
 
 	// ------------------------------------------------
 
-	private void outputStimAndConc_according_to_DataOption(SXSSFSheet sheet, EnumXLSExport xlsExportOption, Spot spot,
-			boolean transpose, int x, int y) {
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.prop.stimulus);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.prop.concentration);
-	}
-
 	int writeTopRow_descriptors(SXSSFSheet sheet) {
 		Point pt = new Point(0, 0);
 		int x = 0;
@@ -140,6 +134,7 @@ public class XLSExport {
 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
+			cage.updateSpotsStimulus_i();
 			for (Spot spot : cage.spotsArray.spotsList) {
 				pt.y = 0;
 				pt = writeExperiment_spot_infos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
@@ -201,6 +196,7 @@ public class XLSExport {
 		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 		String date = df.format(exp.chainImageFirst_ms);
 		String name0 = path.toString();
+
 		int pos = name0.indexOf("cam");
 		String cam = "-";
 		if (pos > 0) {
@@ -227,7 +223,8 @@ public class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_PIXELS.getValue(), transpose, spot.prop.spotNPixels);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose,
 				spot.getCagePosition(xlsExportType));
-		outputStimAndConc_according_to_DataOption(sheet, xlsExportType, spot, transpose, x, y);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.prop.stimulus);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.prop.concentration);
 
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEID.getValue(), transpose, spot.prop.cageID);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEROW.getValue(), transpose, spot.prop.cageRow);
@@ -235,13 +232,13 @@ public class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
 				charSeries + spot.prop.cageID);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose, cage.prop.cageNFlies);
-		String sheetName = sheet.getSheetName();
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose, "");
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cage.prop.flyStrain);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.prop.flySex);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.prop.flyAge);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cage.prop.comment);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, sheetName);
+//		String sheetName = sheet.getSheetName();
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, spot.prop.stimulus_i);
 
 		pt.y = y + EnumXLSColumnHeader.DUM4.getValue() + 1;
 		return pt;

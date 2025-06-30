@@ -24,6 +24,7 @@ public class SpotProperties {
 	// public int spotNFlies = 1;
 	public String stimulus = new String("..");
 	public String concentration = new String("..");
+	public String stimulus_i = new String("..");
 
 	public double spotVolume = .5;
 	public int spotNPixels = 1;

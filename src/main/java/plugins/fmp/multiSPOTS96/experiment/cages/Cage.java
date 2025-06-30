@@ -328,4 +328,20 @@ public class Cage implements Comparable<Cage> {
 		}
 	}
 
+	public void updateSpotsStimulus_i() {
+		ArrayList<String> stimulusArray = new ArrayList<String>(8);
+		for (Spot spot : spotsArray.spotsList) {
+			String test = spot.prop.stimulus;
+			stimulusArray.add(test);
+			spot.prop.stimulus_i = test + "_" + findNumberOfIdenticalItems(test, stimulusArray);
+		}
+	}
+
+	private int findNumberOfIdenticalItems(String test, ArrayList<String> array) {
+		int items = 0;
+		for (String element : array)
+			if (element.equals(test))
+				items++;
+		return items;
+	}
 }
