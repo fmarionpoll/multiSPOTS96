@@ -1,7 +1,7 @@
 package plugins.fmp.multiSPOTS96.tools.toExcel;
 
 public enum EnumXLSMeasure {
-	CAP("capillary"), MOVE("move"), COMMON("common");
+	SPOT("spot"), MOVE("move"), COMMON("common");
 
 	private String label;
 
