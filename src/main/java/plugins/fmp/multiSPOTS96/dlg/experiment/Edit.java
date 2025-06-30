@@ -105,7 +105,6 @@ public class Edit extends JPanel {
 			exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
 			exp.save_MS96_cages();
 			exp.save_MS96_experiment();
-
 		}
 	}
 

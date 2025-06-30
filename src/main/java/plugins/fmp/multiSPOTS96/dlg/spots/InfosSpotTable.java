@@ -168,6 +168,20 @@ public class InfosSpotTable extends JPanel {
 			}
 	}
 
+	private void transferFromSpot(Experiment exp, Spot spotTo, Spot spotFrom) {
+		int iID = exp.cagesArray.getSpotGlobalPosition(spotTo);
+		int columnIndex = 2;
+		spotTable.spotTableModel.setValueAt(spotFrom.prop.spotVolume, iID, columnIndex);
+		columnIndex = 5;
+		spotTable.spotTableModel.setValueAt(spotFrom.prop.cageRow, iID, columnIndex);
+		columnIndex = 7;
+		spotTable.spotTableModel.setValueAt(spotFrom.prop.stimulus, iID, columnIndex);
+		columnIndex = 8;
+		spotTable.spotTableModel.setValueAt(spotFrom.prop.concentration, iID, columnIndex);
+		columnIndex = 9;
+		spotTable.spotTableModel.setValueAt(spotFrom.prop.color, iID, columnIndex);
+	}
+
 	private void duplicatePos(Experiment exp) {
 		int rowIndex = spotTable.getSelectedRow();
 		if (rowIndex < 0)
@@ -188,15 +202,7 @@ public class InfosSpotTable extends JPanel {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				if (spot.prop.cagePosition != cagePosition)
 					continue;
-				int iID = exp.cagesArray.getSpotGlobalPosition(spot);
-				int columnIndex = 4;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.spotVolume, iID, columnIndex);
-				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.stimulus, iID, columnIndex);
-				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.concentration, iID, columnIndex);
-				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.color, iID, columnIndex);
+				transferFromSpot(exp, spot, spotFrom);
 			}
 		}
 	}
@@ -223,15 +229,7 @@ public class InfosSpotTable extends JPanel {
 			System.out.println("spot not found or invalid: " + spotName);
 			return;
 		}
-		int iID = exp.cagesArray.getSpotGlobalPosition(spotTo);
-		int columnIndex = 4;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.spotVolume, iID, columnIndex);
-		columnIndex++;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.stimulus, iID, columnIndex);
-		columnIndex++;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.concentration, iID, columnIndex);
-		columnIndex++;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.color, iID, columnIndex);
+		transferFromSpot(exp, spotTo, spotFrom);
 	}
 
 	private void duplicateAll(Experiment exp) {
@@ -267,15 +265,7 @@ public class InfosSpotTable extends JPanel {
 				if (i >= cageFrom.spotsArray.spotsList.size())
 					continue;
 				Spot spotFrom = cageFrom.spotsArray.spotsList.get(i);
-				int iID = exp.cagesArray.getSpotGlobalPosition(spot);
-				int columnIndex = 4;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.spotVolume, iID, columnIndex);
-				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.stimulus, iID, columnIndex);
-				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.concentration, iID, columnIndex);
-				columnIndex++;
-				spotTable.spotTableModel.setValueAt(spotFrom.prop.color, iID, columnIndex);
+				transferFromSpot(exp, spot, spotFrom);
 			}
 		}
 	}

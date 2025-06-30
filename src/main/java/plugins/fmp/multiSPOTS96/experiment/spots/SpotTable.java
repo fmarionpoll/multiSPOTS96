@@ -36,13 +36,16 @@ public class SpotTable extends JTable {
 
 		TableColumnModel columnModel = getColumnModel();
 
-		columnModel.getColumn(1).setPreferredWidth(15);
-		columnModel.getColumn(2).setPreferredWidth(15);
-		columnModel.getColumn(3).setPreferredWidth(15);
-		columnModel.getColumn(4).setPreferredWidth(25);
-		columnModel.getColumn(5).setPreferredWidth(15);
-		columnModel.getColumn(6).setPreferredWidth(10);
-		columnModel.getColumn(7).setPreferredWidth(10);
+		columnModel.getColumn(0).setPreferredWidth(45);
+		columnModel.getColumn(1).setPreferredWidth(6);
+		columnModel.getColumn(2).setPreferredWidth(6);
+		columnModel.getColumn(3).setPreferredWidth(6);
+		columnModel.getColumn(4).setPreferredWidth(6);
+		columnModel.getColumn(5).setPreferredWidth(6);
+		columnModel.getColumn(6).setPreferredWidth(6);
+		columnModel.getColumn(7).setPreferredWidth(25);
+		columnModel.getColumn(8).setPreferredWidth(25);
+		columnModel.getColumn(9).setPreferredWidth(8);
 	}
 
 }

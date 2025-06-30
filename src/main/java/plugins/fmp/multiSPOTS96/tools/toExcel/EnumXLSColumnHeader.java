@@ -13,13 +13,13 @@ public enum EnumXLSColumnHeader {
 	EXP_STRAIN("Strain", 8, EnumXLSMeasure.COMMON), EXP_SEX("Sex", 9, EnumXLSMeasure.COMMON),
 	EXP_COND1("Cond1", 10, EnumXLSMeasure.COMMON), EXP_COND2("Cond2", 11, EnumXLSMeasure.COMMON),
 	CAGEPOS("Position", 12, EnumXLSMeasure.COMMON), SPOT_VOLUME("Spot_ul", 13, EnumXLSMeasure.COMMON),
-	SPOT_PIXELS("Spot_npixels", 14, EnumXLSMeasure.COMMON),
-	CHOICE_NOCHOICE("Choice", 15, EnumXLSMeasure.COMMON), SPOT_STIM("Spot_stimulus", 16, EnumXLSMeasure.COMMON),
-	SPOT_CONC("Spot_concentration", 17, EnumXLSMeasure.COMMON),
+	SPOT_PIXELS("Spot_npixels", 14, EnumXLSMeasure.COMMON), CHOICE_NOCHOICE("Choice", 15, EnumXLSMeasure.COMMON),
+	SPOT_STIM("Spot_stimulus", 16, EnumXLSMeasure.COMMON), SPOT_CONC("Spot_concentration", 17, EnumXLSMeasure.COMMON),
 	SPOT_NFLIES("Nflies", 18, EnumXLSMeasure.COMMON), SPOT_CAGEID("Cage", 19, EnumXLSMeasure.COMMON),
-	DUM4("Dum4", 20, EnumXLSMeasure.COMMON), CAGE_STRAIN("Cage_strain", 21, EnumXLSMeasure.COMMON),
-	CAGE_SEX("Cage_sex", 22, EnumXLSMeasure.COMMON), CAGE_AGE("Cage_age", 23, EnumXLSMeasure.COMMON),
-	CAGE_COMMENT("Cage_comment", 24, EnumXLSMeasure.COMMON);
+	SPOT_CAGEROW("cageRow", 20, EnumXLSMeasure.COMMON), SPOT_CAGECOL("cageCol", 21, EnumXLSMeasure.COMMON),
+	CAGE_STRAIN("Cage_strain", 22, EnumXLSMeasure.COMMON), CAGE_SEX("Cage_sex", 23, EnumXLSMeasure.COMMON),
+	CAGE_AGE("Cage_age", 24, EnumXLSMeasure.COMMON), CAGE_COMMENT("Cage_comment", 25, EnumXLSMeasure.COMMON),
+	DUM4("Dum4", 26, EnumXLSMeasure.COMMON);
 
 	private final String name;
 	private final int value;
