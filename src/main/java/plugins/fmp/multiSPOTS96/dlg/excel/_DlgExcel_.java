@@ -17,8 +17,9 @@ import icy.system.thread.ThreadUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresCage;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportSpotMeasures;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresSpot;
 
 public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 	/**
@@ -28,7 +29,8 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 	public PopupPanel capPopupPanel = null;
 	private JTabbedPane tabsPane = new JTabbedPane();
 	public Options tabCommonOptions = new Options();
-	private SpotsAreas tabAreas = new SpotsAreas();
+	private SpotsAreas spotsAreas = new SpotsAreas();
+	private CagesAreas cagesAreas = new CagesAreas();
 	// TODO _CAGES private Move tabMove = new Move();
 	private MultiSPOTS96 parent0 = null;
 
@@ -46,9 +48,13 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 		tabsPane.addTab("Common options", null, tabCommonOptions, "Define common options");
 		tabCommonOptions.addPropertyChangeListener(this);
 
-		tabAreas.init(capLayout);
-		tabsPane.addTab("Spots", null, tabAreas, "Export measures made on spots to file");
-		tabAreas.addPropertyChangeListener(this);
+		spotsAreas.init(capLayout);
+		tabsPane.addTab("Spots", null, spotsAreas, "Export measures made on spots to file");
+		spotsAreas.addPropertyChangeListener(this);
+
+		cagesAreas.init(capLayout);
+		tabsPane.addTab("Cages", null, cagesAreas, "Export measures made on cages to file");
+		cagesAreas.addPropertyChangeListener(this);
 
 // TODO _CAGES tabMove.init(capLayout);
 // TODO _CAGES tabsPane.addTab("Move", null, tabMove, "Export fly positions to file");
@@ -77,12 +83,25 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 			String file = defineXlsFileName(exp, "_spotsareas.xlsx");
 			if (file == null)
 				return;
-			updateParametersCurrentExperiment(exp);
+			updateExperrimentsParameters(exp);
 			ThreadUtil.bgRun(new Runnable() {
 				@Override
 				public void run() {
-					XLSExportSpotMeasures xlsExport2 = new XLSExportSpotMeasures();
-					xlsExport2.exportToFile(file, getLevelsOptions());
+					XLSExportMeasuresSpot xlsExport = new XLSExportMeasuresSpot();
+					xlsExport.exportToFile(file, getSpotsOptions());
+				}
+			});
+
+		} else if (evt.getPropertyName().equals("EXPORT_CAGESMEASURES")) {
+			String file = defineXlsFileName(exp, "_cagesareas.xlsx");
+			if (file == null)
+				return;
+			updateExperrimentsParameters(exp);
+			ThreadUtil.bgRun(new Runnable() {
+				@Override
+				public void run() {
+					XLSExportMeasuresCage xlsExport = new XLSExportMeasuresCage();
+					xlsExport.exportToFile(file, getCagesOptions());
 				}
 			});
 		}
@@ -96,19 +115,25 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 		return Dialog.saveFileAs(tentativeName, directory.getParent().toString(), "xlsx");
 	}
 
-	private void updateParametersCurrentExperiment(Experiment exp) {
+	private void updateExperrimentsParameters(Experiment exp) {
 		parent0.dlgExperiment.tabInfos.getExperimentInfosFromDialog(exp.expProperties);
 	}
 
-	private XLSExportOptions getLevelsOptions() {
+	private XLSExportOptions getSpotsOptions() {
 		XLSExportOptions options = new XLSExportOptions();
 		options.spotAreas = true;
-		options.sum = tabAreas.sumCheckBox.isSelected();
-		options.nPixels = tabAreas.nPixelsCheckBox.isSelected();
-		options.lrPI = tabAreas.lrPICheckBox.isSelected();
-		options.lrPIThreshold = (double) tabAreas.lrPIThresholdJSpinner.getValue();
-		options.sumPerCage = tabAreas.sumPerCageCheckBox.isSelected();
-		options.relativeToT0 = tabAreas.t0CheckBox.isSelected();
+		options.sum = spotsAreas.sumCheckBox.isSelected();
+		options.nPixels = spotsAreas.nPixelsCheckBox.isSelected();
+		options.relativeToT0 = spotsAreas.t0CheckBox.isSelected();
+		getCommonOptions(options);
+		return options;
+	}
+
+	private XLSExportOptions getCagesOptions() {
+		XLSExportOptions options = new XLSExportOptions();
+		options.spotAreas = true;
+		options.sum = cagesAreas.sumCheckBox.isSelected();
+		options.nPixels = cagesAreas.nPixelsCheckBox.isSelected();
 		getCommonOptions(options);
 		return options;
 	}

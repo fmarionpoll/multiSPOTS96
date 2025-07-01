@@ -21,7 +21,6 @@ public class SpotProperties {
 	public int spotArrayIndex = -1;
 	public Color color = Color.GREEN;
 
-	// public int spotNFlies = 1;
 	public String stimulus = new String("..");
 	public String concentration = new String("..");
 	public String stimulus_i = new String("..");

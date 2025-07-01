@@ -30,7 +30,6 @@ public class Cage implements Comparable<Cage> {
 	public int kymographIndex = -1;
 	public BooleanMask2D cageMask2D = null;
 	public FlyPositions flyPositions = new FlyPositions();
-
 	public CageProperties prop = new CageProperties();
 	public SpotsArray spotsArray = new SpotsArray();
 
@@ -230,24 +229,21 @@ public class Cage implements Comparable<Cage> {
 		this.prop.cageNFlies = nFlies;
 	}
 
-	public int addEllipseSpot(int spotIndex, Point2D.Double center, int radius) {
-
+	public int addEllipseSpot(Point2D.Double center, int radius) {
 		if (spotsArray.spotsList == null)
 			spotsArray.spotsList = new ArrayList<Spot>(1);
 		int index = spotsArray.spotsList.size();
-		Spot spot = createEllipseSpot(spotIndex, index, center, radius);
+		Spot spot = createEllipseSpot(index, center, radius);
 		spot.prop.cagePosition = spotsArray.spotsList.size();
 		spotsArray.spotsList.add(spot);
 		return spotsArray.spotsList.size();
 	}
 
-	private Spot createEllipseSpot(int spotArrayIndex, int cagePosition, Point2D.Double center, int radius) {
+	private Spot createEllipseSpot(int cagePosition, Point2D.Double center, int radius) {
 		Ellipse2D ellipse = new Ellipse2D.Double(center.x, center.y, 2 * radius, 2 * radius);
 		ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
-		roiEllipse.setName(SpotString.createSpotString(prop.cageID, cagePosition, spotArrayIndex));
-
+		roiEllipse.setName(SpotString.createSpotString(prop.cageID, cagePosition));
 		Spot spot = new Spot(roiEllipse);
-		spot.prop.spotArrayIndex = spotArrayIndex;
 		spot.prop.cageID = prop.cageID;
 		spot.prop.cagePosition = cagePosition;
 		spot.prop.spotRadius = radius;

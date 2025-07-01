@@ -87,19 +87,6 @@ public class XLSExport {
 		return sheet;
 	}
 
-	protected int getDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExport exportType) {
-		options.exportType = exportType;
-
-		SXSSFSheet sheet = xlsGetSheet(exportType.toString(), exportType);
-		int colmax = xlsExportExperimentDataToSheet(exp, sheet, exportType, col0, charSeries);
-		if (options.onlyalive) {
-			sheet = xlsGetSheet(exportType.toString() + "_alive", exportType);
-			xlsExportExperimentDataToSheet(exp, sheet, exportType, col0, charSeries);
-		}
-
-		return colmax;
-	}
-
 	private void exportError(Experiment expi, int nOutputFrames) {
 		String error = "XLSExport:ExportError() ERROR in " + expi.getResultsDirectory() + "\n nOutputFrames="
 				+ nOutputFrames + " kymoFirstCol_Ms=" + expi.seqCamData.binFirst_ms + " kymoLastCol_Ms="
@@ -127,27 +114,7 @@ public class XLSExport {
 		return nOutputFrames;
 	}
 
-	private int xlsExportExperimentDataToSheet(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType, int col0,
-			String charSeries) {
-		Point pt = new Point(col0, 0);
-		pt = writeExperiment_separator(sheet, pt);
-
-		for (Cage cage : exp.cagesArray.cagesList) {
-			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
-			cage.updateSpotsStimulus_i();
-			for (Spot spot : cage.spotsArray.spotsList) {
-				pt.y = 0;
-				pt = writeExperiment_spot_infos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
-				XLSResults xlsResults = getSpotResults(exp, cage, spot, xlsExportType);
-				xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
-				writeXLSResult(sheet, pt, xlsResults);
-				pt.x++;
-			}
-		}
-		return pt.x;
-	}
-
-	private XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, EnumXLSExport xlsExportType) {
+	XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, EnumXLSExport xlsExportType) {
 		int nOutputFrames = getNOutputFrames(exp);
 		XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
 		xlsResults.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportType, exp.seqCamData.binDuration_ms,
@@ -157,7 +124,7 @@ public class XLSExport {
 		return xlsResults;
 	}
 
-	private void writeXLSResult(SXSSFSheet sheet, Point pt, XLSResults xlsResult) {
+	void writeXLSResult(SXSSFSheet sheet, Point pt, XLSResults xlsResult) {
 		boolean transpose = options.transpose;
 		if (xlsResult.valuesOut == null)
 			return;

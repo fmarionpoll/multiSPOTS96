@@ -31,9 +31,8 @@ public class SpotString {
 		return index;
 	}
 
-	static public String createSpotString(int cageID, int cagePosition, int spotArrayIndex) {
-		return "spot_" + String.format("%03d", cageID) + "_" + String.format("%03d", cagePosition) + "_"
-				+ String.format("%03d", spotArrayIndex);
+	static public String createSpotString(int cageID, int cagePosition) {
+		return "spot_" + String.format("%03d", cageID) + "_" + String.format("%03d", cagePosition);
 	}
 
 }

@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-public class SpotsAreas extends JPanel {
+public class CagesAreas extends JPanel {
 	/**
 	 * 
 	 */
@@ -17,9 +17,8 @@ public class SpotsAreas extends JPanel {
 
 	JButton exportToXLSButton2 = new JButton("save XLS");
 
-	JCheckBox sumCheckBox = new JCheckBox("area", true);
-	JCheckBox nPixelsCheckBox = new JCheckBox("n pixels", true);
-	JCheckBox t0CheckBox = new JCheckBox("(t0-t)/t0", true);
+	JCheckBox sumCheckBox = new JCheckBox("sum", true);
+	JCheckBox nPixelsCheckBox = new JCheckBox("pi", true);
 
 	void init(GridLayout capLayout) {
 		setLayout(capLayout);
@@ -29,10 +28,10 @@ public class SpotsAreas extends JPanel {
 		JPanel panel0 = new JPanel(flowLayout0);
 		panel0.add(sumCheckBox);
 		panel0.add(nPixelsCheckBox);
-		panel0.add(t0CheckBox);
 		add(panel0);
 
 		JPanel panel1 = new JPanel(flowLayout0);
+
 		add(panel1);
 
 		FlowLayout flowLayout2 = new FlowLayout(FlowLayout.RIGHT);
@@ -48,9 +47,10 @@ public class SpotsAreas extends JPanel {
 		exportToXLSButton2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				firePropertyChange("EXPORT_SPOTSMEASURES", false, true);
+				firePropertyChange("EXPORT_CAGESMEASURES", false, true);
 			}
 		});
+
 	}
 
 }

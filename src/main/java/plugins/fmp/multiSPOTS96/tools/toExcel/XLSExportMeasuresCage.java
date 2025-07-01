@@ -1,14 +1,18 @@
 package plugins.fmp.multiSPOTS96.tools.toExcel;
 
+import java.awt.Point;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
-public class XLSExportSpotMeasures extends XLSExport {
+public class XLSExportMeasuresCage extends XLSExport {
 	public void exportToFile(String filename, XLSExportOptions opt) {
 		System.out.println("XLSExpoportSpotAreas:exportToFile() - start output");
 		options = opt;
@@ -37,9 +41,9 @@ public class XLSExportSpotMeasures extends XLSExport {
 
 				int collast = column;
 				if (options.spotAreas) {
-					collast = getDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_SUM);
-					getDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_FLYPRESENT);
-					getDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_SUMCLEAN);
+					collast = getCageDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_SUM);
+					getCageDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_FLYPRESENT);
+					getCageDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_SUMCLEAN);
 				}
 				column = collast;
 				iSeries++;
@@ -55,5 +59,36 @@ public class XLSExportSpotMeasures extends XLSExport {
 			e.printStackTrace();
 		}
 		System.out.println("XLSExpoportSpotAreas:exportToFile() XLS output finished");
+	}
+
+	protected int getCageDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExport exportType) {
+		options.exportType = exportType;
+		SXSSFSheet sheet = xlsGetSheet(exportType.toString(), exportType);
+		int colmax = xlsExportExperimentCageDataToSheet(exp, sheet, exportType, col0, charSeries);
+		if (options.onlyalive) {
+			sheet = xlsGetSheet(exportType.toString() + "_alive", exportType);
+			xlsExportExperimentCageDataToSheet(exp, sheet, exportType, col0, charSeries);
+		}
+		return colmax;
+	}
+
+	int xlsExportExperimentCageDataToSheet(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType, int col0,
+			String charSeries) {
+		Point pt = new Point(col0, 0);
+		pt = writeExperiment_separator(sheet, pt);
+
+		for (Cage cage : exp.cagesArray.cagesList) {
+			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
+			cage.updateSpotsStimulus_i();
+			for (Spot spot : cage.spotsArray.spotsList) {
+				pt.y = 0;
+//				pt = writeExperiment_spot_infos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
+//				XLSResults xlsResults = getSpotResults(exp, cage, spot, xlsExportType);
+//				xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
+//				writeXLSResult(sheet, pt, xlsResults);
+//				pt.x++;
+			}
+		}
+		return pt.x;
 	}
 }

@@ -13,7 +13,6 @@ import icy.image.IcyBufferedImage;
 import icy.roi.BooleanMask2D;
 import icy.roi.ROI2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
@@ -32,10 +31,8 @@ public class Spot implements Comparable<Spot> {
 	public String spotFilenameTIFF = null;
 	public IcyBufferedImage spotImage = null;
 	public BooleanMask2D mask2DSpot = null;
-
 	public SpotProperties prop = new SpotProperties();
 
-	public BuildSeriesOptions limitsOptions = new BuildSeriesOptions();
 	public SpotMeasure sum_in = new SpotMeasure("sum");
 	public SpotMeasure sum_clean = new SpotMeasure("clean");
 	public SpotMeasure flyPresent = new SpotMeasure("flyPresent");
@@ -69,7 +66,6 @@ public class Spot implements Comparable<Spot> {
 	public void copySpot(Spot spotFrom, boolean bMeasures) {
 		prop.copy(spotFrom.prop);
 		spotROI2D = (ROI2DShape) spotFrom.spotROI2D.getCopy();
-		limitsOptions = spotFrom.limitsOptions;
 		if (bMeasures) {
 			sum_in.copyLevel2D(spotFrom.sum_in);
 			sum_clean.copyLevel2D(spotFrom.sum_clean);
@@ -158,10 +154,8 @@ public class Spot implements Comparable<Spot> {
 	private SpotMeasure getSpotArea(EnumXLSExport option) {
 		switch (option) {
 		case AREA_SUM:
-//		case AREA_SUM_LR:
 			return sum_in;
 		case AREA_SUMCLEAN:
-//		case AREA_SUMCLEAN_LR:
 			return sum_clean;
 		case AREA_FLYPRESENT:
 			return flyPresent;
@@ -239,7 +233,6 @@ public class Spot implements Comparable<Spot> {
 			spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
 			if (spotROI2D != null)
 				spotROI2D.setColor(prop.color);
-			limitsOptions.loadFromXML(nodeMeta);
 			loadFromXML_SpotAlongT(node);
 		}
 		return flag;

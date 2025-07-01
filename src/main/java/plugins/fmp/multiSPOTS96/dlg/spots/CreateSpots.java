@@ -141,7 +141,6 @@ public class CreateSpots extends JPanel {
 
 	private void createSpotsForAllCages(Experiment exp, ROI2DGrid roiGrid, Point2D.Double referenceCagePosition) {
 		ArrayList<ROI2DPolygonPlus> listSelectedAreas = roiGrid.getSelectedAreaRois();
-		int spotIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			ROI2D cageRoi = cage.getRoi();
 			ROI2DGrid cageGrid = createGrid(cageRoi);
@@ -151,8 +150,7 @@ public class CreateSpots extends JPanel {
 				Rectangle2D rect = roiP.getBounds2D();
 				Point2D.Double center = (Double) roiP.getPosition2D();
 				int radius = (int) (rect.getHeight() / 2);
-				cage.addEllipseSpot(spotIndex, center, radius);
-				spotIndex++;
+				cage.addEllipseSpot(center, radius);
 			}
 			cage.getRoi().setSelected(false);
 		}
