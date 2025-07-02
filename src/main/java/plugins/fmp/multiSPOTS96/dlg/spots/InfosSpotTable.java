@@ -30,7 +30,7 @@ public class InfosSpotTable extends JPanel {
 	private SpotTable spotTable = null;
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
-	private JButton nPixelsButton = new JButton("Get n pixels");
+	private JButton getNPixelsButton = new JButton("Get n pixels");
 
 	private JButton duplicateRowAtCagePositionButton = new JButton("Row at cage pos");
 	private JButton duplicatePreviousButton = new JButton("Row above");
@@ -48,7 +48,7 @@ public class InfosSpotTable extends JPanel {
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(copyButton);
 		panel1.add(pasteButton);
-		panel1.add(nPixelsButton);
+		panel1.add(getNPixelsButton);
 		topPanel.add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
@@ -101,7 +101,7 @@ public class InfosSpotTable extends JPanel {
 			}
 		});
 
-		nPixelsButton.addActionListener(new ActionListener() {
+		getNPixelsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
@@ -154,7 +154,7 @@ public class InfosSpotTable extends JPanel {
 	}
 
 	private void measureNPixelsForAllSpots(Experiment exp) {
-		int columnIndex = 3;
+		int columnIndex = 1;
 		for (Cage cage : exp.cagesArray.cagesList)
 			for (Spot spot : cage.spotsArray.spotsList) {
 				try {

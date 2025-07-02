@@ -84,6 +84,18 @@ public class Spot implements Comparable<Spot> {
 		flyPresent.addMeasures(spotFrom.flyPresent);
 	}
 
+	public void computePI(Spot spot1, Spot spot2) {
+		sum_in.computePI(spot1.sum_in, spot2.sum_in);
+		sum_clean.computePI(spot1.sum_clean, spot2.sum_clean);
+		flyPresent.combineIsPresent(spot1.flyPresent, spot2.flyPresent);
+	}
+
+	public void computeSUM(Spot spot1, Spot spot2) {
+		sum_in.computeSUM(spot1.sum_in, spot2.sum_in);
+		sum_clean.computeSUM(spot1.sum_clean, spot2.sum_clean);
+		flyPresent.combineIsPresent(spot1.flyPresent, spot2.flyPresent);
+	}
+
 	public ROI2D getRoi() {
 		return spotROI2D;
 	}

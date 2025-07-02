@@ -79,17 +79,19 @@ public class XLSExportMeasuresCage extends XLSExport {
 		pt = writeExperiment_separator(sheet, pt);
 
 		for (Cage cage : exp.cagesArray.cagesList) {
-			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 			ArrayList<Spot> spotsList = cage.combineSpotsWithSameStimulusConcentration();
-			if(spotsList.size() < 2) {
-				System.out.println("failed to combine data from cage "+cage.getRoi().getName());
+			if (spotsList.size() < 2) {
+				System.out.println("failed to combine data from cage " + cage.getRoi().getName() + " - file "
+						+ exp.getCameraImagesDirectory());
 				continue;
 			}
 			Spot spotPI = cage.createSpotPI(spotsList.get(0), spotsList.get(1));
 			spotsList.add(spotPI);
-			Spot spotSUM = cage.createSpotSUM(spotsList.get(0), spotsList.get(1)); 
+			Spot spotSUM = cage.createSpotSUM(spotsList.get(0), spotsList.get(1));
 			spotsList.add(spotSUM);
 //			spots_build_PI_and_SUM();
+			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
+
 			for (Spot spot : spotsList) {
 //				for (EnumXLSExport type: typeArray) {
 				pt.y = 0;

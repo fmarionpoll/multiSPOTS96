@@ -362,21 +362,23 @@ public class Cage implements Comparable<Cage> {
 
 	public Spot createSpotPI(Spot spot1, Spot spot2) {
 		Spot spotPI = new Spot();
+		spotPI.prop.cageID = spot1.prop.cageID;
 		spotPI.prop.sourceName = "PI";
 		spotPI.prop.stimulus = "PI";
 		spotPI.prop.concentration = spot1.getCombinedSimulusConcentrationFields() + " / "
 				+ spot2.getCombinedSimulusConcentrationFields();
-
+		spotPI.computePI(spot1, spot2);
 		return spotPI;
 	}
 
 	public Spot createSpotSUM(Spot spot1, Spot spot2) {
 		Spot spotSUM = new Spot();
+		spotSUM.prop.cageID = spot1.prop.cageID;
 		spotSUM.prop.sourceName = "SUM";
 		spotSUM.prop.stimulus = "SUM";
 		spotSUM.prop.concentration = spot1.getCombinedSimulusConcentrationFields() + " / "
 				+ spot2.getCombinedSimulusConcentrationFields();
-
+		spotSUM.computeSUM(spot1, spot2);
 		return spotSUM;
 	}
 }

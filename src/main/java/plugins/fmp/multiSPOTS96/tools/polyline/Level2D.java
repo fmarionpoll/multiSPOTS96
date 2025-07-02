@@ -2,6 +2,7 @@ package plugins.fmp.multiSPOTS96.tools.polyline;
 
 import java.awt.geom.Point2D;
 import java.util.List;
+
 import icy.type.geom.Polyline2D;
 
 public class Level2D extends Polyline2D {
@@ -117,11 +118,19 @@ public class Level2D extends Polyline2D {
 			ypoints[i] = ypoints[i] * mult;
 		}
 	}
-	
+
 	public void add_Y(Level2D source) {
 		int nyPoints = source.npoints;
-		if (nyPoints != npoints) {
-			System.out.println("npoints="+npoints+ " source npoints="+nyPoints);
+		if (nyPoints > npoints) {
+			double[] tmp;
+
+			tmp = new double[(nyPoints * 2) + 1];
+			System.arraycopy(xpoints, 0, tmp, 0, npoints);
+			xpoints = tmp;
+
+			tmp = new double[(npoints * 2) + 1];
+			System.arraycopy(ypoints, 0, tmp, 0, npoints);
+			ypoints = tmp;
 		}
 		for (int i = 0; i < nyPoints; i++) {
 			ypoints[i] += source.ypoints[i];
@@ -133,5 +142,28 @@ public class Level2D extends Polyline2D {
 			if (ypoints[i] > 0)
 				ypoints[i] = 1;
 		}
+	}
+
+	public void computePI_Y(Level2D data1, Level2D data2) {
+		int nyPoints = data1.npoints;
+		for (int i = 0; i < nyPoints; i++) {
+			double sum = data1.ypoints[i] + data2.ypoints[i];
+			if (sum != 0.)
+				ypoints[i] = (data1.ypoints[i] - data2.ypoints[i]) / sum;
+			else
+				ypoints[i] = 0.;
+		}
+	}
+
+	public void computeSUM_Y(Level2D data1, Level2D data2) {
+		int nyPoints = data1.npoints;
+		for (int i = 0; i < nyPoints; i++)
+			ypoints[i] = data1.ypoints[i] + data2.ypoints[i];
+	}
+
+	public void computeIsPresent_Y(Level2D data1, Level2D data2) {
+		int nyPoints = data1.npoints;
+		for (int i = 0; i < nyPoints; i++)
+			ypoints[i] = data1.ypoints[i] + data2.ypoints[i] > 0 ? 1 : 0;
 	}
 }

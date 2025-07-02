@@ -20,7 +20,7 @@ public class SpotMeasure {
 	private ROI2DPolyLine roi = null;
 	private double factor = 1.;
 
-	private String name = "noname";
+	private String name = "no_name";
 
 	// -------------------------
 
@@ -41,13 +41,14 @@ public class SpotMeasure {
 	void copyMeasures(SpotMeasure source) {
 		if (source.getLevel2D() != null)
 			setLevel2D(source.getLevel2D().clone());
+
 		if (source.values != null && source.values.length > 0) {
 			values = new double[source.values.length];
 			for (int i = 0; i < source.values.length; i++) {
 				values[i] = source.values[i];
 			}
-		} 
-		
+		}
+
 		if (source.isPresent != null && source.isPresent.length > 0) {
 			isPresent = new int[source.isPresent.length];
 			for (int i = 0; i < source.isPresent.length; i++) {
@@ -58,21 +59,64 @@ public class SpotMeasure {
 
 	void addMeasures(SpotMeasure source) {
 		level2D.add_Y(source.getLevel2D());
-		
-		if (source.values != null && source.values.length > 0) {
-			if (values == null)
-				values = new double[source.values.length];
-			for (int i = 0; i < source.values.length; i++) {
-				values[i] += source.values[i];
+		if (source.values != null && source.values.length > 0)
+			add(values, source.values);
+		if (source.isPresent != null && source.isPresent.length > 0)
+			add(isPresent, source.isPresent);
+	}
+
+	private void add(int[] dest, int[] source) {
+		if (dest == null)
+			dest = new int[source.length];
+		for (int i = 0; i < source.length; i++)
+			dest[i] += source[i];
+	}
+
+	private void add(double[] dest, double[] source) {
+		if (dest == null)
+			dest = new double[source.length];
+		for (int i = 0; i < source.length; i++)
+			dest[i] += source[i];
+	}
+
+	void computePI(SpotMeasure measure1, SpotMeasure measure2) {
+		if (level2D.npoints != measure1.level2D.npoints) {
+			level2D = new Level2D(measure1.level2D.npoints);
+		}
+		level2D.computePI_Y(measure1.level2D, measure2.level2D);
+
+		if (measure1.values != null && measure1.values.length > 0 && measure2.values != null
+				&& measure2.values.length > 0) {
+			values = new double[measure1.values.length];
+			for (int i = 0; i < measure1.values.length; i++) {
+				double sum = measure1.values[i] + measure2.values[i];
+				if (sum > 0)
+					values[i] = (measure1.values[i] - measure2.values[i]) / sum;
+				else
+					values[i] = 0;
 			}
 		}
-		if (source.isPresent != null && source.isPresent.length > 0) {
-			if (isPresent == null)
-				isPresent = new int[source.isPresent.length];
-			for (int i = 0; i < source.isPresent.length; i++) {
-				isPresent[i] += source.isPresent[i];
-			}
+	}
+
+	void computeSUM(SpotMeasure measure1, SpotMeasure measure2) {
+		if (level2D.npoints != measure1.level2D.npoints) {
+			level2D = new Level2D(measure1.level2D.npoints);
 		}
+		level2D.computeSUM_Y(measure1.level2D, measure2.level2D);
+
+		if (measure1.values != null && measure1.values.length > 0 && measure2.values != null
+				&& measure2.values.length > 0) {
+			values = new double[measure1.values.length];
+			for (int i = 0; i < measure1.values.length; i++)
+				values[i] = measure1.values[i] + measure2.values[i];
+		}
+	}
+
+	void combineIsPresent(SpotMeasure measure1, SpotMeasure measure2) {
+		if (level2D.npoints != measure1.level2D.npoints) {
+			level2D = new Level2D(measure1.level2D.npoints);
+		}
+		level2D.computeIsPresent_Y(measure1.level2D, measure2.level2D);
 	}
 
 	void clearLevel2D() {
