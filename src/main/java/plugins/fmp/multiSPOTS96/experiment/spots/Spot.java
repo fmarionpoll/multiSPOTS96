@@ -36,6 +36,7 @@ public class Spot implements Comparable<Spot> {
 	public SpotMeasure sum_in = new SpotMeasure("sum");
 	public SpotMeasure sum_clean = new SpotMeasure("clean");
 	public SpotMeasure flyPresent = new SpotMeasure("flyPresent");
+
 	public boolean valid = true;
 	public boolean okToAnalyze = true;
 
@@ -54,6 +55,10 @@ public class Spot implements Comparable<Spot> {
 	public Spot() {
 	}
 
+	public Spot(Spot spotFrom, boolean bMeasures) {
+		copySpot(spotFrom, bMeasures);
+	}
+
 	@Override
 	public int compareTo(Spot o) {
 		if (o != null)
@@ -67,10 +72,16 @@ public class Spot implements Comparable<Spot> {
 		prop.copy(spotFrom.prop);
 		spotROI2D = (ROI2DShape) spotFrom.spotROI2D.getCopy();
 		if (bMeasures) {
-			sum_in.copyLevel2D(spotFrom.sum_in);
-			sum_clean.copyLevel2D(spotFrom.sum_clean);
-			flyPresent.copyLevel2D(spotFrom.flyPresent);
+			sum_in.copyMeasures(spotFrom.sum_in);
+			sum_clean.copyMeasures(spotFrom.sum_clean);
+			flyPresent.copyMeasures(spotFrom.flyPresent);
 		}
+	}
+
+	public void addMeasures(Spot spotFrom) {
+		sum_in.addMeasures(spotFrom.sum_in);
+		sum_clean.addMeasures(spotFrom.sum_clean);
+		flyPresent.addMeasures(spotFrom.flyPresent);
 	}
 
 	public ROI2D getRoi() {
@@ -91,6 +102,10 @@ public class Spot implements Comparable<Spot> {
 
 	public String getName() {
 		return prop.sourceName;
+	}
+
+	public String getCombinedSimulusConcentrationFields() {
+		return new String(prop.stimulus + "_" + prop.concentration);
 	}
 
 	public String getCagePosition(EnumXLSExport xlsExportOption) {

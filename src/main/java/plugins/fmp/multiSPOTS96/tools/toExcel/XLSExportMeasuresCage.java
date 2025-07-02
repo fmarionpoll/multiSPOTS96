@@ -3,6 +3,7 @@ package plugins.fmp.multiSPOTS96.tools.toExcel;
 import java.awt.Point;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -79,16 +80,22 @@ public class XLSExportMeasuresCage extends XLSExport {
 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
-			cage.updateSpotsStimulus_i();
-			for (Spot spot : cage.spotsArray.spotsList) {
+			ArrayList<Spot> spotsList = cage.combineSpotsWithSameStimulusConcentration();
+			spotsList.add(cage.createSpotPI(spotsList.get(0), spotsList.get(1)));
+			spotsList.add(cage.createSpotSUM(spotsList.get(0), spotsList.get(1)));
+//			spots_build_PI_and_SUM();
+			for (Spot spot : spotsList) {
+//				for (EnumXLSExport type: typeArray) {
 				pt.y = 0;
-//				pt = writeExperiment_spot_infos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
-//				XLSResults xlsResults = getSpotResults(exp, cage, spot, xlsExportType);
-//				xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
-//				writeXLSResult(sheet, pt, xlsResults);
-//				pt.x++;
+				pt = writeExperiment_spot_infos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
+				XLSResults xlsResults = getSpotResults(exp, cage, spot, xlsExportType);
+				xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
+				writeXLSResult(sheet, pt, xlsResults);
+				pt.x++;
+//				}
 			}
 		}
 		return pt.x;
 	}
+
 }

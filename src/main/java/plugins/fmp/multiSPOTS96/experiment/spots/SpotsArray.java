@@ -526,6 +526,8 @@ public class SpotsArray {
 		return true;
 	}
 
+	// ----------------------------------
+
 	public void setFilterOfSpotsToAnalyze(boolean setFilter, BuildSeriesOptions options) {
 		for (Spot spot : spotsList) {
 			spot.okToAnalyze = true;

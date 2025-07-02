@@ -38,6 +38,36 @@ public class SpotMeasure {
 			setLevel2D(sourceSpotMeasure.getLevel2D().clone());
 	}
 
+	void copyMeasures(SpotMeasure source) {
+		if (source.getLevel2D() != null)
+			setLevel2D(source.getLevel2D().clone());
+		if (source.values.length > 0) {
+			values = new double[source.values.length];
+			for (int i = 0; i < source.values.length; i++) {
+				values[i] = source.values[i];
+			}
+		}
+		if (source.isPresent.length > 0) {
+			isPresent = new int[source.isPresent.length];
+			for (int i = 0; i < source.isPresent.length; i++) {
+				isPresent[i] = source.isPresent[i];
+			}
+		}
+	}
+
+	void addMeasures(SpotMeasure source) {
+		if (source.values.length > 0) {
+			for (int i = 0; i < source.values.length; i++) {
+				values[i] += source.values[i];
+			}
+		}
+		if (source.isPresent.length > 0) {
+			for (int i = 0; i < source.isPresent.length; i++) {
+				isPresent[i] += source.isPresent[i];
+			}
+		}
+	}
+
 	void clearLevel2D() {
 		setLevel2D(new Level2D());
 	}

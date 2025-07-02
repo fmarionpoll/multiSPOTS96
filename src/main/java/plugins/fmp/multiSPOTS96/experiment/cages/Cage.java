@@ -340,4 +340,43 @@ public class Cage implements Comparable<Cage> {
 				items++;
 		return items;
 	}
+
+	public ArrayList<Spot> combineSpotsWithSameStimulusConcentration() {
+		ArrayList<Spot> spotsList = new ArrayList<Spot>(2);
+		for (Spot spotSource : spotsArray.spotsList) {
+			String test = spotSource.getCombinedSimulusConcentrationFields();
+			boolean found = false;
+			for (Spot spot : spotsList) {
+				if (test.equals(spot.getCombinedSimulusConcentrationFields())) {
+					found = true;
+					spot.addMeasures(spotSource);
+					break;
+				}
+			}
+			if (!found) {
+				spotsList.add(new Spot(spotSource, true));
+			}
+		}
+		return spotsList;
+	}
+
+	public Spot createSpotPI(Spot spot1, Spot spot2) {
+		Spot spotPI = new Spot();
+		spotPI.prop.sourceName = "PI";
+		spotPI.prop.stimulus = "PI";
+		spotPI.prop.concentration = spot1.getCombinedSimulusConcentrationFields() + " / "
+				+ spot2.getCombinedSimulusConcentrationFields();
+
+		return spotPI;
+	}
+
+	public Spot createSpotSUM(Spot spot1, Spot spot2) {
+		Spot spotSUM = new Spot();
+		spotSUM.prop.sourceName = "SUM";
+		spotSUM.prop.stimulus = "SUM";
+		spotSUM.prop.concentration = spot1.getCombinedSimulusConcentrationFields() + " / "
+				+ spot2.getCombinedSimulusConcentrationFields();
+
+		return spotSUM;
+	}
 }
