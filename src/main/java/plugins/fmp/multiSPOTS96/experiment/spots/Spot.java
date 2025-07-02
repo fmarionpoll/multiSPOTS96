@@ -101,6 +101,9 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	public String getName() {
+		if (prop.sourceName == null) {
+			prop.sourceName = getRoi().getName();
+		}
 		return prop.sourceName;
 	}
 

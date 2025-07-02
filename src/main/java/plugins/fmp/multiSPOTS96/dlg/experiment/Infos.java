@@ -82,18 +82,6 @@ public class Infos extends JPanel {
 		// line 1
 		c.gridy = 1;
 		c.gridx = 0;
-		add(comment1Check, c);
-		c.gridx += delta1;
-		add(stimCombo, c);
-		c.gridx += delta2;
-		add(comment2Check, c);
-		c.gridx += delta1;
-		add(concCombo, c);
-		c.gridx += delta2;
-		add(saveButton, c);
-		// line 2
-		c.gridy = 2;
-		c.gridx = 0;
 		add(strainCheck, c);
 		c.gridx += delta1;
 		add(strainCombo, c);
@@ -101,6 +89,18 @@ public class Infos extends JPanel {
 		add(sexCheck, c);
 		c.gridx += delta1;
 		add(sexCombo, c);
+		c.gridx += delta2;
+		add(saveButton, c);
+		// line 2
+		c.gridy = 2;
+		c.gridx = 0;
+		add(comment1Check, c);
+		c.gridx += delta1;
+		add(stimCombo, c);
+		c.gridx += delta2;
+		add(comment2Check, c);
+		c.gridx += delta1;
+		add(concCombo, c);
 		c.gridx += delta2;
 		add(duplicateButton, c);
 		// line 3

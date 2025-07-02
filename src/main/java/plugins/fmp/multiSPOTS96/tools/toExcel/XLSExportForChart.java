@@ -98,6 +98,7 @@ public class XLSExportForChart extends XLSExport {
 				rowResults.stimulus = spot.prop.stimulus;
 				rowResults.concentration = spot.prop.concentration;
 				rowResults.cageID = spot.prop.cageID;
+				rowResults.name = spot.getName();
 				rowListForOneExp.resultsList.add(rowResults);
 			}
 		}

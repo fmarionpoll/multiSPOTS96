@@ -117,6 +117,16 @@ public class Level2D extends Polyline2D {
 			ypoints[i] = ypoints[i] * mult;
 		}
 	}
+	
+	public void add_Y(Level2D source) {
+		int nyPoints = source.npoints;
+		if (nyPoints != npoints) {
+			System.out.println("npoints="+npoints+ " source npoints="+nyPoints);
+		}
+		for (int i = 0; i < nyPoints; i++) {
+			ypoints[i] += source.ypoints[i];
+		}
+	}
 
 	public void threshold_Y(double value) {
 		for (int i = 0; i < npoints; i++) {

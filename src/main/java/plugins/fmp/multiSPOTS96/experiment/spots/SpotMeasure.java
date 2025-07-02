@@ -41,13 +41,14 @@ public class SpotMeasure {
 	void copyMeasures(SpotMeasure source) {
 		if (source.getLevel2D() != null)
 			setLevel2D(source.getLevel2D().clone());
-		if (source.values.length > 0) {
+		if (source.values != null && source.values.length > 0) {
 			values = new double[source.values.length];
 			for (int i = 0; i < source.values.length; i++) {
 				values[i] = source.values[i];
 			}
-		}
-		if (source.isPresent.length > 0) {
+		} 
+		
+		if (source.isPresent != null && source.isPresent.length > 0) {
 			isPresent = new int[source.isPresent.length];
 			for (int i = 0; i < source.isPresent.length; i++) {
 				isPresent[i] = source.isPresent[i];
@@ -56,12 +57,18 @@ public class SpotMeasure {
 	}
 
 	void addMeasures(SpotMeasure source) {
-		if (source.values.length > 0) {
+		level2D.add_Y(source.getLevel2D());
+		
+		if (source.values != null && source.values.length > 0) {
+			if (values == null)
+				values = new double[source.values.length];
 			for (int i = 0; i < source.values.length; i++) {
 				values[i] += source.values[i];
 			}
 		}
-		if (source.isPresent.length > 0) {
+		if (source.isPresent != null && source.isPresent.length > 0) {
+			if (isPresent == null)
+				isPresent = new int[source.isPresent.length];
 			for (int i = 0; i < source.isPresent.length; i++) {
 				isPresent[i] += source.isPresent[i];
 			}
@@ -155,10 +162,10 @@ public class SpotMeasure {
 		return arrayDouble;
 	}
 
-	List<Double> getLevel2D_Y() {
+	ArrayList<Double> getLevel2D_Y() {
 		if (getLevel2D() == null || getLevel2D().npoints == 0)
 			return null;
-		List<Double> arrayDouble = new ArrayList<Double>(getLevel2D().ypoints.length);
+		ArrayList<Double> arrayDouble = new ArrayList<Double>(getLevel2D().ypoints.length);
 		for (double i : getLevel2D().ypoints)
 			arrayDouble.add(i);
 		return arrayDouble;
