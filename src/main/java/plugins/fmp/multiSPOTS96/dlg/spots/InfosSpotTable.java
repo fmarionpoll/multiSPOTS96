@@ -34,6 +34,7 @@ public class InfosSpotTable extends JPanel {
 
 	private JButton duplicateRowAtCagePositionButton = new JButton("Row at cage pos");
 	private JButton duplicatePreviousButton = new JButton("Row above");
+	private JButton duplicateNextButton = new JButton("Row below");
 	private JButton duplicateCageButton = new JButton("Cage to all");
 	private JButton duplicateAllButton = new JButton("Cell to all");
 
@@ -57,6 +58,7 @@ public class InfosSpotTable extends JPanel {
 		panel2.add(duplicateAllButton);
 		panel2.add(duplicateCageButton);
 		panel2.add(duplicatePreviousButton);
+		panel2.add(duplicateNextButton);
 
 		topPanel.add(panel2);
 
@@ -133,7 +135,16 @@ public class InfosSpotTable extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
-					duplicatePreviousRow(exp);
+					duplicateRelativeRow(exp, -1);
+			}
+		});
+
+		duplicateNextButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null)
+					duplicateRelativeRow(exp, 1);
 			}
 		});
 
@@ -207,13 +218,13 @@ public class InfosSpotTable extends JPanel {
 		}
 	}
 
-	private void duplicatePreviousRow(Experiment exp) {
+	private void duplicateRelativeRow(Experiment exp, int delta) {
 		int rowTo = spotTable.getSelectedRow();
 		if (rowTo < 0)
 			return;
 
-		int rowFrom = rowTo - 1;
-		if (rowFrom < 0)
+		int rowFrom = rowTo + delta;
+		if (rowFrom < 0 || rowFrom > spotTable.getRowCount())
 			return;
 
 		String spotName = (String) spotTable.getValueAt(rowFrom, 0);

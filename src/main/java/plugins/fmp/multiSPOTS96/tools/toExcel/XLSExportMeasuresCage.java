@@ -89,7 +89,7 @@ public class XLSExportMeasuresCage extends XLSExport {
 			spotsList.add(spotPI);
 			Spot spotSUM = cage.createSpotSUM(spotsList.get(0), spotsList.get(1));
 			spotsList.add(spotSUM);
-//			spots_build_PI_and_SUM();
+
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 
 			for (Spot spot : spotsList) {
