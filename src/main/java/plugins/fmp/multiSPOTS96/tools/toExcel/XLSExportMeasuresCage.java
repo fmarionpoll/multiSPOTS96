@@ -81,6 +81,10 @@ public class XLSExportMeasuresCage extends XLSExport {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 			ArrayList<Spot> spotsList = cage.combineSpotsWithSameStimulusConcentration();
+			if(spotsList.size() < 2) {
+				System.out.println("failed to combine data from cage "+cage.getRoi().getName());
+				continue;
+			}
 			Spot spotPI = cage.createSpotPI(spotsList.get(0), spotsList.get(1));
 			spotsList.add(spotPI);
 			Spot spotSUM = cage.createSpotSUM(spotsList.get(0), spotsList.get(1)); 

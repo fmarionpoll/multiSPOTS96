@@ -75,7 +75,7 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1750959624945"/>
+<key name="lastUpdateCheckTime" value="1751456065576"/>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; branch 'master' of https://github.com/fmarionpoll/multiSPOTS96.git
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
@@ -99,10 +99,10 @@
 </section>
 <section name="online"/>
 </section>
-<key name="id" value="178084012"/>
+<key name="id" value="191163406"/>
 <key name="os" value="win64"/>
-<key name="clientCpuNumber" value="16"/>
-<key name="clientTotalMemory" value="67880230912"/>
+<key name="clientCpuNumber" value="4"/>
+<key name="clientTotalMemory" value="17056403456"/>
 <key name="appFolder" value="C:/Users/fred/.m2/repository/org/bioimageanalysis/icy/icy-kernel/2.5.1"/>
 <section name="loader">
 <section name="entry0">
@@ -156,14 +156,14 @@
 <section name="gui.histo">
 <key name="logView" value="true"/>
 </section>
-<key name="lastUploadDate" value="1750959622939"/>
+<key name="lastUploadDate" value="1751456397635"/>
 </section>
 <section name="plugins">
 <section name="fmp">
 <section name="multiSPOTS96">
 <section name="MultiSPOTS96">
 <section name="gui">
-<key name="lastUsedPath" value="D:\Thomas\data\2025-06-05-caf 1mM"/>
+<key name="lastUsedPath" value="C:\Users\fred\Desktop\2025-06-05-caf 1mM"/>
 </section>
 </section>
 </section>
@@ -171,21 +171,21 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="75"/>
-<key name="YE" value="3"/>
-<key name="WidthE" value="3116"/>
-<key name="HeightE" value="1368"/>
+<key name="XE" value="310"/>
+<key name="YE" value="52"/>
+<key name="WidthE" value="1979"/>
+<key name="HeightE" value="1203"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="2808"/>
+<key name="XC" value="1671"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="300"/>
-<key name="HeightC" value="1206"/>
+<key name="HeightC" value="1041"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -203,7 +203,7 @@
 <key name="XI" value="904"/>
 <key name="YI" value="35"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="1116"/>
+<key name="HeightC" value="951"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -221,7 +221,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="1116"/>
+<key name="HeightC" value="951"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>
