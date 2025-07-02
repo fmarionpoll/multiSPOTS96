@@ -81,7 +81,7 @@ public class XLSExportMeasuresCage extends XLSExport {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			ArrayList<Spot> spotsList = cage.combineSpotsWithSameStimulusConcentration();
 			if (spotsList.size() < 2) {
-				System.out.println("failed to combine data from cage " + cage.getRoi().getName() + " - file "
+				System.out.println("Only 1 stimulus in cage " + cage.getRoi().getName() + " - file "
 						+ exp.getCameraImagesDirectory());
 				continue;
 			}
@@ -93,14 +93,12 @@ public class XLSExportMeasuresCage extends XLSExport {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 
 			for (Spot spot : spotsList) {
-//				for (EnumXLSExport type: typeArray) {
 				pt.y = 0;
 				pt = writeExperiment_spot_infos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
 				XLSResults xlsResults = getSpotResults(exp, cage, spot, xlsExportType);
 				xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
 				writeXLSResult(sheet, pt, xlsResults);
 				pt.x++;
-//				}
 			}
 		}
 		return pt.x;

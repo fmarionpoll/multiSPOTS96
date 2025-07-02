@@ -80,6 +80,7 @@ public class XLSExportMeasuresSpot extends XLSExport {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 			cage.updateSpotsStimulus_i();
+
 			for (Spot spot : cage.spotsArray.spotsList) {
 				pt.y = 0;
 				pt = writeExperiment_spot_infos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
