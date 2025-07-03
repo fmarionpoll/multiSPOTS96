@@ -360,25 +360,34 @@ public class SpotsArray {
 			if (data[0].equals("#")) {
 				switch (data[1]) {
 				case "SPOTS_ARRAY":
-					csvLoadSpotsDescription(bufferedReader, sep);
+					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_ARRAY 
+					||  option ==EnumSpotMeasures.SPOTS_DESCRIPTION)
+						csvLoadSpotsDescription(bufferedReader, sep);
 					break;
 				case "SPOTS":
-					csvLoadSpotsArray(bufferedReader, sep);
+					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_ARRAY 
+					||  option ==EnumSpotMeasures.SPOTS_DESCRIPTION)
+						csvLoadSpotsArray(bufferedReader, sep);
 					break;
 				case "AREA_SUM":
-					csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_SUM, sep);
+					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_MEASURES)
+						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_SUM, sep);
 					break;
 				case "AREA_OUT":
-					csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_OUT, sep);
+					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_MEASURES)
+						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_OUT, sep);
 					break;
 				case "AREA_DIFF":
-					csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_DIFF, sep);
+					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_MEASURES)
+						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_DIFF, sep);
 					break;
 				case "AREA_SUMCLEAN":
-					csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_SUMCLEAN, sep);
+					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_MEASURES)
+						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_SUMCLEAN, sep);
 					break;
 				case "AREA_FLYPRESENT":
-					csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_FLYPRESENT, sep);
+					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_MEASURES)
+						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_FLYPRESENT, sep);
 					break;
 				default:
 					break;

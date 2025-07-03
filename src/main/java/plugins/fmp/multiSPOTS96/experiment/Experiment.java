@@ -779,9 +779,8 @@ public class Experiment {
 
 	public boolean saveSpotsArray_file() {
 //		parent0.dlgExperiment.getExperimentInfosFromDialog(exp);
-		boolean flag = save_MS96_experiment();
 		cagesArray.transferROIsFromSequenceToCageSpots(seqCamData);
-		flag &= save_MS96_cages();
+		boolean flag = save_MS96_cages();
 		flag &= save_MS96_spotsMeasures();
 		return flag;
 	}

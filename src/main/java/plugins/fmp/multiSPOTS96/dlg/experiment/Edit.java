@@ -108,6 +108,13 @@ public class Edit extends JPanel {
 			exp.save_MS96_experiment();
 			exp.save_MS96_cages();
 		}
+		
+		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		if (exp != null) {
+			exp.load_MS96_spotsMeasures();
+			parent0.dlgMeasure.tabCharts.displayChartPanels(exp);
+		}
+		
 	}
 
 }
