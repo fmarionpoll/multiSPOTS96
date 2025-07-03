@@ -34,11 +34,11 @@ public class BuildSpotsMeasures extends BuildSeries {
 	// --------------------------------------------
 
 	void analyzeExperiment(Experiment exp) {
+		getTimeLimitsOfSequence(exp);
 		loadExperimentDataToMeasureSpots(exp);
 		exp.cagesArray.setFilterOfSpotsToAnalyze(true, options);
-
 		openViewers(exp);
-		getTimeLimitsOfSequence(exp);
+
 		if (measureSpots(exp))
 			saveComputation(exp);
 
@@ -48,6 +48,9 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 	private boolean loadExperimentDataToMeasureSpots(Experiment exp) {
 		boolean flag = exp.load_MS96_cages();
+		if (exp.seqCamData.binDuration_ms == 0)
+			exp.loadFileIntervalsFromSeqCamData();
+
 		exp.seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
 		return flag;
 	}
@@ -61,6 +64,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 		exp.cagesArray.transferSumToSumClean();
 		exp.cagesArray.initLevel2DMeasures();
+
 		exp.save_MS96_experiment();
 		exp.save_MS96_spotsMeasures();
 	}

@@ -75,7 +75,7 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1751518980547"/>
+<key name="lastUpdateCheckTime" value="1751562900700"/>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; branch 'master' of https://github.com/fmarionpoll/multiSPOTS96.git
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
@@ -171,21 +171,21 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="139"/>
-<key name="YE" value="17"/>
-<key name="WidthE" value="2378"/>
-<key name="HeightE" value="1318"/>
+<key name="XE" value="3440"/>
+<key name="YE" value="0"/>
+<key name="WidthE" value="1920"/>
+<key name="HeightE" value="1200"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="2070"/>
+<key name="XC" value="1612"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
 <key name="WidthC" value="300"/>
-<key name="HeightC" value="1156"/>
+<key name="HeightC" value="1038"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -203,7 +203,7 @@
 <key name="XI" value="904"/>
 <key name="YI" value="35"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="1066"/>
+<key name="HeightC" value="948"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -221,7 +221,7 @@
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
 <key name="WidthC" value="292"/>
-<key name="HeightC" value="1066"/>
+<key name="HeightC" value="948"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>

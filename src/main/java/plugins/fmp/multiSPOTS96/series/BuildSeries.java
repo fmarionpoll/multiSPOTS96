@@ -152,7 +152,10 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 
 	protected void getTimeLimitsOfSequence(Experiment exp) {
 		exp.getFileIntervalsFromSeqCamData();
+		if (exp.seqCamData.binImage_ms == 0)
+			exp.loadFileIntervalsFromSeqCamData();
 		exp.seqCamData.binDuration_ms = exp.seqCamData.binImage_ms;
+
 		if (options.isFrameFixed) {
 			exp.seqCamData.binFirst_ms = options.t_Ms_First;
 			exp.seqCamData.binLast_ms = options.t_Ms_Last;
