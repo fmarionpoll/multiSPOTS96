@@ -146,7 +146,7 @@ public class Spot implements Comparable<Spot> {
 		return value;
 	}
 
-	public String getSpotField(EnumXLSColumnHeader fieldEnumCode) {
+	public String getField(EnumXLSColumnHeader fieldEnumCode) {
 		String stringValue = null;
 		switch (fieldEnumCode) {
 		case SPOT_STIM:
@@ -155,19 +155,26 @@ public class Spot implements Comparable<Spot> {
 		case SPOT_CONC:
 			stringValue = prop.concentration;
 			break;
+		case SPOT_VOLUME:
+			stringValue = String.valueOf(prop.spotVolume);
+			break;
 		default:
 			break;
 		}
 		return stringValue;
 	}
 
-	public void setSpotField(EnumXLSColumnHeader fieldEnumCode, String stringValue) {
+	public void setField(EnumXLSColumnHeader fieldEnumCode, String stringValue) {
 		switch (fieldEnumCode) {
 		case SPOT_STIM:
 			prop.stimulus = stringValue;
 			break;
 		case SPOT_CONC:
 			prop.concentration = stringValue;
+			break;
+		case SPOT_VOLUME:
+			double value = Double.valueOf(stringValue);
+			prop.spotVolume = value;
 			break;
 		default:
 			break;

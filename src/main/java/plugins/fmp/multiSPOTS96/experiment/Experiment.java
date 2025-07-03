@@ -530,7 +530,13 @@ public class Experiment {
 			break;
 		case SPOT_STIM:
 		case SPOT_CONC:
+		case SPOT_VOLUME:
 			addSpotsValues(fieldEnumCode, textList);
+			break;
+		case CAGE_SEX:
+		case CAGE_STRAIN:
+		case CAGE_AGE:
+			addCagesValues(fieldEnumCode, textList);
 			break;
 		default:
 			break;
@@ -562,6 +568,11 @@ public class Experiment {
 		case SPOT_CONC:
 		case SPOT_VOLUME:
 			replaceSpotsFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue);
+			break;
+		case CAGE_SEX:
+		case CAGE_STRAIN:
+		case CAGE_AGE:
+			replaceCageFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue);
 			break;
 		default:
 			break;
@@ -711,11 +722,26 @@ public class Experiment {
 		boolean flag = false;
 		for (Cage cage : cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
-				if (spot.getSpotField(fieldEnumCode).equals(oldValue)) {
-					spot.setSpotField(fieldEnumCode, newValue);
+				if (spot.getField(fieldEnumCode).equals(oldValue)) {
+					spot.setField(fieldEnumCode, newValue);
 					flag = true;
 				}
 			}
+		}
+		return flag;
+	}
+
+	private boolean replaceCageFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
+			String newValue) {
+		if (cagesArray.cagesList.size() == 0)
+			load_MS96_cages();
+		boolean flag = false;
+		for (Cage cage : cagesArray.cagesList) {
+			if (cage.getField(fieldEnumCode).equals(oldValue)) {
+				cage.setField(fieldEnumCode, newValue);
+				flag = true;
+			}
+
 		}
 		return flag;
 	}
@@ -732,7 +758,14 @@ public class Experiment {
 			load_MS96_cages();
 		for (Cage cage : cagesArray.cagesList)
 			for (Spot spot : cage.spotsArray.spotsList)
-				addValue(spot.getSpotField(fieldEnumCode), textList);
+				addValue(spot.getField(fieldEnumCode), textList);
+	}
+
+	private void addCagesValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
+		if (cagesArray.cagesList.size() == 0)
+			load_MS96_cages();
+		for (Cage cage : cagesArray.cagesList)
+			addValue(cage.getField(fieldEnumCode), textList);
 	}
 
 	private void addValue(String text, List<String> textList) {

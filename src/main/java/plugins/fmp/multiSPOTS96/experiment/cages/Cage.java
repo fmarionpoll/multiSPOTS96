@@ -19,6 +19,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
@@ -107,6 +108,41 @@ public class Cage implements Comparable<Cage> {
 		spotsArray.pasteSpots(cageTo.spotsArray, bMeasures);
 		if (bMeasures)
 			flyPositions.copyXYTaSeries(cageTo.flyPositions);
+	}
+
+	public String getField(EnumXLSColumnHeader fieldEnumCode) {
+		String stringValue = null;
+		switch (fieldEnumCode) {
+		case CAGE_SEX:
+			stringValue = prop.flySex;
+			break;
+		case CAGE_AGE:
+			stringValue = String.valueOf(prop.flyAge);
+			break;
+		case CAGE_STRAIN:
+			stringValue = prop.flyStrain;
+			break;
+		default:
+			break;
+		}
+		return stringValue;
+	}
+
+	public void setField(EnumXLSColumnHeader fieldEnumCode, String stringValue) {
+		switch (fieldEnumCode) {
+		case CAGE_SEX:
+			prop.flySex = stringValue;
+			break;
+		case CAGE_AGE:
+			int ageValue = Integer.valueOf(stringValue);
+			prop.flyAge = ageValue;
+			break;
+		case CAGE_STRAIN:
+			prop.flyStrain = stringValue;
+			break;
+		default:
+			break;
+		}
 	}
 
 	public ROI2DRectangle getRoiRectangleFromPositionAtT(int t) {

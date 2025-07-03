@@ -27,7 +27,8 @@ public class Edit extends JPanel {
 			new EnumXLSColumnHeader[] { EnumXLSColumnHeader.EXP_EXPT, EnumXLSColumnHeader.EXP_BOXID,
 					EnumXLSColumnHeader.EXP_STIM, EnumXLSColumnHeader.EXP_CONC, EnumXLSColumnHeader.EXP_STRAIN,
 					EnumXLSColumnHeader.EXP_SEX, EnumXLSColumnHeader.EXP_COND1, EnumXLSColumnHeader.EXP_COND2,
-					EnumXLSColumnHeader.SPOT_STIM, EnumXLSColumnHeader.SPOT_CONC, EnumXLSColumnHeader.SPOT_VOLUME });
+					EnumXLSColumnHeader.SPOT_STIM, EnumXLSColumnHeader.SPOT_CONC, EnumXLSColumnHeader.SPOT_VOLUME,
+					EnumXLSColumnHeader.CAGE_SEX, EnumXLSColumnHeader.CAGE_STRAIN, EnumXLSColumnHeader.CAGE_AGE });
 
 	private JComboBox<String> fieldOldValuesCombo = new JComboBox<String>();
 	private JTextField newValueTextField = new JTextField(10);
@@ -108,13 +109,13 @@ public class Edit extends JPanel {
 			exp.save_MS96_experiment();
 			exp.save_MS96_cages();
 		}
-		
+
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
 			exp.load_MS96_spotsMeasures();
 			parent0.dlgMeasure.tabCharts.displayChartPanels(exp);
 		}
-		
+
 	}
 
 }
