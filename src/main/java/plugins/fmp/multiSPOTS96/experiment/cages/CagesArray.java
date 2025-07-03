@@ -864,7 +864,6 @@ public class CagesArray {
 
 	public boolean save_SpotsAll(String directory) {
 		boolean flag = getSpotsArrayFromAllCages().save_SpotsAll(directory);
-
 		return flag;
 	}
 

@@ -75,7 +75,7 @@
 </section>
 <section name="export"/>
 </section>
-<key name="lastUpdateCheckTime" value="1751456065576"/>
+<key name="lastUpdateCheckTime" value="1751518980547"/>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; branch 'master' of https://github.com/fmarionpoll/multiSPOTS96.git
 <key name="sequencePersistence" value="false"/>
 <key name="virtualMode" value="true"/>
@@ -163,7 +163,7 @@
 <section name="multiSPOTS96">
 <section name="MultiSPOTS96">
 <section name="gui">
-<key name="lastUsedPath" value="D:\Thomas\data"/>
+<key name="lastUsedPath" value="D:\Thomas\data\2025-06-03-caf 3mM-"/>
 </section>
 </section>
 </section>
@@ -171,21 +171,21 @@
 </section>
 <section name="frame">
 <section name="main">
-<key name="XE" value="73"/>
-<key name="YE" value="100"/>
-<key name="WidthE" value="2443"/>
-<key name="HeightE" value="1255"/>
+<key name="XE" value="941"/>
+<key name="YE" value="58"/>
+<key name="WidthE" value="2378"/>
+<key name="HeightE" value="1318"/>
 <key name="MaximizedE" value="false"/>
 </section>
 <section name="inspector">
-<key name="XC" value="2135"/>
+<key name="XC" value="2370"/>
 <key name="YC" value="0"/>
 <key name="XE" value="600"/>
 <key name="YE" value="140"/>
 <key name="XI" value="600"/>
 <key name="YI" value="140"/>
-<key name="WidthC" value="300"/>
-<key name="HeightC" value="1093"/>
+<key name="WidthC" value="0"/>
+<key name="HeightC" value="1156"/>
 <key name="WidthE" value="300"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="300"/>
@@ -202,8 +202,8 @@
 <key name="YE" value="100"/>
 <key name="XI" value="904"/>
 <key name="YI" value="35"/>
-<key name="WidthC" value="292"/>
-<key name="HeightC" value="1003"/>
+<key name="WidthC" value="-8"/>
+<key name="HeightC" value="1066"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="600"/>
 <key name="WidthI" value="400"/>
@@ -220,8 +220,8 @@
 <key name="YE" value="200"/>
 <key name="XI" value="200"/>
 <key name="YI" value="200"/>
-<key name="WidthC" value="292"/>
-<key name="HeightC" value="1003"/>
+<key name="WidthC" value="-8"/>
+<key name="HeightC" value="1066"/>
 <key name="WidthE" value="400"/>
 <key name="HeightE" value="300"/>
 <key name="WidthI" value="400"/>

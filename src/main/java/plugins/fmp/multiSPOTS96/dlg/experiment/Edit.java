@@ -102,9 +102,11 @@ public class Edit extends JPanel {
 			Experiment exp = editExpList.getItemAt(i);
 			exp.load_MS96_experiment();
 			exp.load_MS96_cages();
+
 			exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
-			exp.save_MS96_cages();
+
 			exp.save_MS96_experiment();
+			exp.save_MS96_cages();
 		}
 	}
 

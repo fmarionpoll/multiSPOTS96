@@ -71,8 +71,7 @@ public class SpotsArray {
 		if (directory == null)
 			return false;
 
-		csvSaveSpots(directory);
-		return true;
+		return csvSaveSpots(directory);
 	}
 
 	// ---------------------------------
@@ -401,7 +400,7 @@ public class SpotsArray {
 				Spot spot = getSpotFromName(data[0]);
 				if (spot == null)
 					spot = new Spot();
-				spot.prop.csvImportProperties(data);
+//				spot.prop.csvImportProperties(data); // TODO check if possible
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
