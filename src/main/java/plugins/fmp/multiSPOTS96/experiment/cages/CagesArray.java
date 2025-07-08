@@ -824,7 +824,7 @@ public class CagesArray {
 	}
 
 	public long getROI2DTIntervalsStartAt(int selectedItem) {
-		if (cagesListTimeIntervals == null)
+		if (cagesListTimeIntervals == null )
 			addROI2DTInterval(0);
 		return cagesListTimeIntervals.getTIntervalAt(selectedItem).start;
 	}

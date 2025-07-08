@@ -304,7 +304,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		int intervalT = (int) exp.cagesArray.getROI2DTIntervalsStartAt(selectedRow);
 		List<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
-			if (!roi.getName().contains("line"))
+			if (!roi.getName().contains("spot"))
 				continue;
 			Spot spot = exp.cagesArray.getSpotFromROIName(roi.getName());
 			if (spot != null) {
