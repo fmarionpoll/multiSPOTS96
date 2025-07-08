@@ -395,6 +395,48 @@ public class CagesArray {
 		return cageFound;
 	}
 
+	public Cage getCageFromNumber(int number) {
+		Cage cageFound = null;
+		for (Cage cage : cagesList) {
+			if (number == cage.prop.cageID) {
+				cageFound = cage;
+				break;
+			}
+		}
+		return cageFound;
+	}
+
+	public Cage getCageFromID(int cageID) {
+		for (Cage cage : cagesList) {
+			if (cage.prop.cageID == cageID)
+				return cage;
+		}
+		return null;
+	}
+	
+	public Cage getCageFromName(String name) {
+		for (Cage cage : cagesList) {
+			if (cage.getRoi().getName().equals(name))
+				return cage;
+		}
+		return null;
+	}
+
+	public Cage getCageFromSpotName(String name) {
+		int cageID = SpotString.getCageIDFromSpotName(name);
+		return getCageFromID(cageID);
+	}
+
+	public Cage getCageFromSpotROIName(String name) {
+		for (Cage cage : cagesList) {
+			for (Spot spot : cage.spotsArray.spotsList) {
+				if (spot.getRoi().getName().contains(name))
+					return cage;
+			}
+		}
+		return null;
+	}
+
 	// --------------
 
 	public void transferCagesToSequenceAsROIs(SequenceCamData seqCamData) {
@@ -422,28 +464,6 @@ public class CagesArray {
 				continue;
 			seqCamData.seq.removeROI(roi);
 		}
-	}
-
-	public Cage getCageFromNumber(int number) {
-		Cage cageFound = null;
-		for (Cage cage : cagesList) {
-			if (number == cage.prop.cageID) {
-				cageFound = cage;
-				break;
-			}
-		}
-		return cageFound;
-	}
-
-	public Cage getCageFromID(int cageID) {
-		Cage cageFound = null;
-		for (Cage cage : cagesList) {
-			if (cageID == cage.prop.cageID) {
-				cageFound = cage;
-				break;
-			}
-		}
-		return cageFound;
 	}
 
 	public List<ROI2D> getPositionsAsListOfROI2DRectanglesAtT(int t) {
@@ -544,11 +564,11 @@ public class CagesArray {
 	public Polygon2D getPolygon2DEnclosingAllCages() {
 		if (cagesList.size() < 1 || cagesList.get(0).getRoi() == null)
 			return null;
-		Polygon2D polygon = getCoordinatesOfROI(cagesList.get(0).getRoi());
+		Polygon2D polygon = getROIPolygon2D(cagesList.get(0).getRoi());
 		for (Cage cage : cagesList) {
 			int col = cage.prop.arrayColumn;
 			int row = cage.prop.arrayRow;
-			Polygon2D n = getCoordinatesOfROI(cage.getRoi());
+			Polygon2D n = getROIPolygon2D(cage.getRoi());
 			if (col == 0 && row == 0) {
 				transferPointToPolygon(0, polygon, n);
 			} else if (col >= (nCagesAlongX - 1) && row == 0) {
@@ -567,7 +587,7 @@ public class CagesArray {
 		dest.ypoints[i] = source.ypoints[i];
 	}
 
-	private Polygon2D getCoordinatesOfROI(ROI2D roi) {
+	private Polygon2D getROIPolygon2D(ROI2D roi) {
 		Polygon2D polygon = null;
 		if (roi instanceof ROI2DPolygon) {
 			polygon = ((ROI2DPolygon) roi).getPolygon2D();
@@ -626,16 +646,6 @@ public class CagesArray {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				if (spot.getRoi().getName().contains(name))
 					return spot;
-			}
-		}
-		return null;
-	}
-
-	public Cage getCageFromSpotROIName(String name) {
-		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				if (spot.getRoi().getName().contains(name))
-					return cage;
 			}
 		}
 		return null;
@@ -885,19 +895,6 @@ public class CagesArray {
 			}
 		}
 		return spotsArray;
-	}
-
-	public Cage getCageFromSpotRoiName(String name) {
-		int cageID = SpotString.getCageIDFromSpotName(name);
-		return getCageFromCageID(cageID);
-	}
-
-	public Cage getCageFromCageID(int cageID) {
-		for (Cage cage : cagesList) {
-			if (cage.prop.cageID == cageID)
-				return cage;
-		}
-		return null;
 	}
 
 	public void mapSpotsToCagesColumnRow() {

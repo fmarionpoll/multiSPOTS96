@@ -386,7 +386,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 				String name = roi.getName();
 				if (!name.contains("spot"))
 					continue;
-				Cage cage = exp.cagesArray.getCageFromSpotRoiName(name);
+				Cage cage = exp.cagesArray.getCageFromSpotName(name);
 				Iterator<Spot> iterator = cage.spotsArray.spotsList.iterator();
 				while (iterator.hasNext()) {
 					Spot spot = iterator.next();
@@ -408,7 +408,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 				String name = roi.getName();
 				if (!name.contains("spot"))
 					continue;
-				Cage cage = exp.cagesArray.getCageFromSpotRoiName(name);
+				Cage cage = exp.cagesArray.getCageFromSpotName(name);
 				ArrayList<Spot> spotsToDuplicate = new ArrayList<Spot>();
 				Iterator<Spot> iterator = cage.spotsArray.spotsList.iterator();
 				while (iterator.hasNext()) {

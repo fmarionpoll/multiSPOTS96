@@ -148,7 +148,7 @@ public class ChartSpots extends IcyFrame {
 						Spot clickedSpot = getSpotFromClickedChart(e);
 						if (clickedSpot != null) {
 							chartSelectClickedSpot(exp, xlsExportOptions, clickedSpot);
-							Cage cage = exp.cagesArray.getCageFromCageID(clickedSpot.prop.cageID);
+							Cage cage = exp.cagesArray.getCageFromID(clickedSpot.prop.cageID);
 							parent0.dlgSpots.tabInfos.selectCage(cage);
 							parent0.dlgSpots.tabInfos.selectSpot(clickedSpot);
 						}

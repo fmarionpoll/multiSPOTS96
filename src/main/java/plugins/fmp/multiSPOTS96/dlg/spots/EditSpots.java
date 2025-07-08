@@ -237,7 +237,7 @@ public class EditSpots extends JPanel {
 				ROI2D roi = spot.getRoi();
 				exp.seqCamData.seq.removeROI(roi);
 				int cageID = spot.prop.cageID;
-				Cage cage = exp.cagesArray.getCageFromCageID(cageID);
+				Cage cage = exp.cagesArray.getCageFromID(cageID);
 				cage.spotsArray.removeSpotFromArray(spot);
 			}
 		}

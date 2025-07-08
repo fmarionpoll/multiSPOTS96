@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -18,12 +19,14 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import icy.gui.frame.IcyFrame;
+import icy.roi.ROI;
 import icy.roi.ROI2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CageTable;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
+
 
 public class InfosCageTable extends JPanel implements ListSelectionListener {
 	/**
@@ -34,6 +37,8 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 	private CageTable cageTable = null;
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
+	private JButton selectedCageButton = new JButton("Locate selected cage");
+	
 	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
 //	private JButton colorizeCagesRoiButton = new JButton("Set cell color according to nflies");
 	private MultiSPOTS96 parent0 = null;
@@ -58,6 +63,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(copyButton);
 		panel1.add(pasteButton);
+		panel1.add(selectedCageButton);
 		topPanel.add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
@@ -131,18 +137,33 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 			}
 		});
 
-//		colorizeCagesRoiButton.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(final ActionEvent e) {
-//				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-//				if (exp != null) {
-//					for (Cage cage : exp.cagesArray.cagesList) {
-//						cage.prop.color = cageTable.cageTableModel.colorTable[cage.prop.cageNFlies % 2];
-//						cage.getRoi().setColor(cage.prop.color);
-//					}
-//				}
-//			}
-//		});
+		selectedCageButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					ArrayList<ROI> roiList = exp.seqCamData.seq.getSelectedROIs();
+					if (roiList.size() > 0) {
+						Cage cage = null;
+						for (ROI roi: roiList) {
+							String name = roi.getName();
+							if (name.contains("cage")) {
+								cage = exp.cagesArray.getCageFromName(name);
+								break;
+							}
+							if (name.contains("spot")) {
+								cage = exp.cagesArray.getCageFromSpotROIName(name);
+								break;
+							}
+						}
+
+						if (cage != null) {
+							selectRowFromCage(cage);
+						}
+					}
+				}
+			}
+		});
 
 		cageTable.cageTableModel.fireTableDataChanged();
 	}

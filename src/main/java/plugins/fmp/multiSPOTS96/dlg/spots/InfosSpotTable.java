@@ -172,8 +172,12 @@ public class InfosSpotTable extends JPanel { //implements GlobalSequenceListener
 				if (exp != null) {
 					ArrayList<ROI> roiList = exp.seqCamData.seq.getSelectedROIs();
 					if (roiList.size() > 0) {
-						Spot spot = exp.cagesArray.getSpotFromROIName(roiList.get(0).getName());
-						selectRowFromSpot(spot);
+						for (ROI roi: roiList) {
+							if (!roi.getName().contains("spot"))
+								continue;
+							Spot spot = exp.cagesArray.getSpotFromROIName(roiList.get(0).getName());
+							selectRowFromSpot(spot);
+						}
 					}
 				}
 			}
@@ -287,7 +291,7 @@ public class InfosSpotTable extends JPanel { //implements GlobalSequenceListener
 
 		Spot spotFromSelectedRow = exp.cagesArray.getSpotAtGlobalIndex(rowIndex);
 		int cageIDFrom = spotFromSelectedRow.prop.cageID;
-		Cage cageFrom = exp.cagesArray.getCageFromSpotRoiName(spotFromSelectedRow.getRoi().getName());
+		Cage cageFrom = exp.cagesArray.getCageFromSpotName(spotFromSelectedRow.getRoi().getName());
 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			if (cage.prop.cageID == cageIDFrom)
