@@ -132,7 +132,7 @@ public class SpotTableModel extends AbstractTableModel {
 		}
 	}
 
-	private Spot getSpotAt(int rowIndex) {
+	public Spot getSpotAt(int rowIndex) {
 		Spot spot = null;
 		if (expList != null && expList.getSelectedIndex() >= 0) {
 			Experiment exp = (Experiment) expList.getSelectedItem();

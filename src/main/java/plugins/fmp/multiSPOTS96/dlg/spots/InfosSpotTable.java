@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -14,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import icy.gui.frame.IcyFrame;
+import icy.roi.ROI;
+
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
@@ -21,7 +24,9 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotTable;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 
-public class InfosSpotTable extends JPanel {
+public class InfosSpotTable extends JPanel { //implements GlobalSequenceListener, ROIListener { 
+//, 
+//SequenceListener {
 	/**
 	 * 
 	 */
@@ -31,6 +36,7 @@ public class InfosSpotTable extends JPanel {
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton getNPixelsButton = new JButton("Get n pixels");
+	private JButton selectedSpotButton = new JButton("Locate selected spot");
 
 	private JButton duplicateRowAtCagePositionButton = new JButton("Row at cage pos");
 	private JButton duplicatePreviousButton = new JButton("Row above");
@@ -50,6 +56,7 @@ public class InfosSpotTable extends JPanel {
 		panel1.add(copyButton);
 		panel1.add(pasteButton);
 		panel1.add(getNPixelsButton);
+		panel1.add(selectedSpotButton);
 		topPanel.add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
@@ -79,7 +86,7 @@ public class InfosSpotTable extends JPanel {
 
 		pasteButton.setEnabled(false);
 	}
-
+	
 	private void defineActionListeners() {
 		copyButton.addActionListener(new ActionListener() {
 			@Override
@@ -157,6 +164,21 @@ public class InfosSpotTable extends JPanel {
 				}
 			}
 		});
+		
+		selectedSpotButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					ArrayList<ROI> roiList = exp.seqCamData.seq.getSelectedROIs();
+					if (roiList.size() > 0) {
+						Spot spot = exp.cagesArray.getSpotFromROIName(roiList.get(0).getName());
+						selectRowFromSpot(spot);
+					}
+				}
+			}
+		});
+		
 		spotTable.spotTableModel.fireTableDataChanged();
 	}
 
@@ -299,4 +321,6 @@ public class InfosSpotTable extends JPanel {
 			spotTable.scrollRectToVisible(rect);
 		}
 	}
+
+	
 }
