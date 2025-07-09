@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -27,7 +28,6 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CageTable;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 
-
 public class InfosCageTable extends JPanel implements ListSelectionListener {
 	/**
 	 * 
@@ -38,8 +38,8 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 	private JButton copyButton = new JButton("Copy table");
 	private JButton pasteButton = new JButton("Paste");
 	private JButton selectedCageButton = new JButton("Locate selected cage");
-	
-	private JButton duplicateAllButton = new JButton("Duplicate cell to all");
+
+	private JButton duplicateAllButton = new JButton("Cage to all");
 //	private JButton colorizeCagesRoiButton = new JButton("Set cell color according to nflies");
 	private MultiSPOTS96 parent0 = null;
 	private CagesArray cagesArrayCopy = null;
@@ -67,6 +67,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 		topPanel.add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
+		panel2.add(new JLabel("Duplicate:"));
 		panel2.add(duplicateAllButton);
 //		panel2.add(colorizeCagesRoiButton);
 		topPanel.add(panel2);
@@ -145,7 +146,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 					ArrayList<ROI> roiList = exp.seqCamData.seq.getSelectedROIs();
 					if (roiList.size() > 0) {
 						Cage cage = null;
-						for (ROI roi: roiList) {
+						for (ROI roi : roiList) {
 							String name = roi.getName();
 							if (name.contains("cage")) {
 								cage = exp.cagesArray.getCageFromName(name);

@@ -54,14 +54,15 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 	int step = 1;
 	int maxLast = 99999999;
 	JSpinner indexCurrentFrameJSpinner = new JSpinner(new SpinnerNumberModel(val, min, max, step));
-	
+
 	private JButton addItemButton = new JButton("Add");
 	private JButton deleteItemButton = new JButton("Delete");
 	private JButton saveSpotsButton = new JButton("Save ROIs positions");
 	private JCheckBox showFrameButton = new JCheckBox("Show frame");
 	private JButton fitToFrameButton = new JButton("Fit ROIs to frame");
+	JCheckBox cagesCheckBox = new JCheckBox("cages", false);
+	JCheckBox spotsCheckBox = new JCheckBox("spots", true);
 	private JTable tableView = new JTable();
-	
 
 	private final String dummyname = "perimeter_enclosing";
 	private ROI2DPolygon envelopeRoi = null;
@@ -74,7 +75,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		this.parent0 = parent0;
 		tableModelTIntervals = new TableModelTIntervals(parent0.expListCombo);
 
-		JPanel topPanel = new JPanel(new GridLayout(3, 1));
+		JPanel topPanel = new JPanel(new GridLayout(4, 1));
 		FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
 
 		JPanel panel0 = new JPanel(flowLayout);
@@ -85,7 +86,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		indexCurrentFrameJSpinner.setPreferredSize(dimension);
 		panel0.add(indexCurrentFrameJSpinner);
 		topPanel.add(panel0);
-		
+
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(addItemButton);
 		panel1.add(deleteItemButton);
@@ -98,8 +99,12 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		topPanel.add(panel2);
 
 		JPanel panel3 = new JPanel(flowLayout);
-		panel3.add(saveSpotsButton);
+		panel3.add(cagesCheckBox);
+		panel3.add(spotsCheckBox);
 		topPanel.add(panel3);
+
+		cagesCheckBox.setEnabled(false);
+		spotsCheckBox.setEnabled(false);
 
 		tableView.setModel(tableModelTIntervals);
 		tableView.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -140,7 +145,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 				}
 			}
 		});
-		
+
 		fitToFrameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {

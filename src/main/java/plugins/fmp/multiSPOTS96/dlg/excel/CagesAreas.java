@@ -40,6 +40,9 @@ public class CagesAreas extends JPanel {
 		panel2.add(exportToXLSButton2);
 		add(panel2);
 
+		sumCheckBox.setEnabled(false);
+		nPixelsCheckBox.setEnabled(false);
+
 		defineActionListeners();
 	}
 

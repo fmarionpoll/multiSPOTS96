@@ -27,7 +27,7 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Cage implements Comparable<Cage> {
 	private ROI2D cageROI2D = null;
-	private ArrayList<ROI2DAlongT> listRoiAlongT = new ArrayList<ROI2DAlongT>();
+	private ArrayList<ROI2DAlongT> listCageRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
 	public BooleanMask2D cageMask2D = null;
 	public FlyPositions flyPositions = new FlyPositions();
@@ -65,7 +65,7 @@ public class Cage implements Comparable<Cage> {
 
 	public void setRoi(ROI2DShape roi) {
 		cageROI2D = roi;
-		listRoiAlongT.clear();
+		listCageRoiAlongT.clear();
 	}
 
 	public String getCageNumberFromRoiName() {
@@ -307,17 +307,17 @@ public class Cage implements Comparable<Cage> {
 
 	public List<ROI2DAlongT> getROIAlongTList() {
 
-		if (listRoiAlongT.size() < 1)
+		if (listCageRoiAlongT.size() < 1)
 			initROIAlongTList();
-		return listRoiAlongT;
+		return listCageRoiAlongT;
 	}
 
 	public ROI2DAlongT getROIAtT(long t) {
-		if (listRoiAlongT.size() < 1)
+		if (listCageRoiAlongT.size() < 1)
 			initROIAlongTList();
 
 		ROI2DAlongT spotRoi = null;
-		for (ROI2DAlongT item : listRoiAlongT) {
+		for (ROI2DAlongT item : listCageRoiAlongT) {
 			if (t < item.getT())
 				break;
 			spotRoi = item;
@@ -327,17 +327,17 @@ public class Cage implements Comparable<Cage> {
 
 	public void removeROIAlongTListItem(long t) {
 		ROI2DAlongT itemFound = null;
-		for (ROI2DAlongT item : listRoiAlongT) {
+		for (ROI2DAlongT item : listCageRoiAlongT) {
 			if (t != item.getT())
 				continue;
 			itemFound = item;
 		}
 		if (itemFound != null)
-			listRoiAlongT.remove(itemFound);
+			listCageRoiAlongT.remove(itemFound);
 	}
 
 	private void initROIAlongTList() {
-		listRoiAlongT.add(new ROI2DAlongT(0, cageROI2D));
+		listCageRoiAlongT.add(new ROI2DAlongT(0, cageROI2D));
 	}
 
 	public void mapSpotsToCageColumnRow() {

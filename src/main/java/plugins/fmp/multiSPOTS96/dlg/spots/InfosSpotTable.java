@@ -16,7 +16,6 @@ import javax.swing.JScrollPane;
 
 import icy.gui.frame.IcyFrame;
 import icy.roi.ROI;
-
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
@@ -24,7 +23,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotTable;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 
-public class InfosSpotTable extends JPanel { //implements GlobalSequenceListener, ROIListener { 
+public class InfosSpotTable extends JPanel { // implements GlobalSequenceListener, ROIListener {
 //, 
 //SequenceListener {
 	/**
@@ -66,7 +65,6 @@ public class InfosSpotTable extends JPanel { //implements GlobalSequenceListener
 		panel2.add(duplicateCageButton);
 		panel2.add(duplicatePreviousButton);
 		panel2.add(duplicateNextButton);
-
 		topPanel.add(panel2);
 
 		JPanel tablePanel = new JPanel();
@@ -86,7 +84,7 @@ public class InfosSpotTable extends JPanel { //implements GlobalSequenceListener
 
 		pasteButton.setEnabled(false);
 	}
-	
+
 	private void defineActionListeners() {
 		copyButton.addActionListener(new ActionListener() {
 			@Override
@@ -164,7 +162,7 @@ public class InfosSpotTable extends JPanel { //implements GlobalSequenceListener
 				}
 			}
 		});
-		
+
 		selectedSpotButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -172,17 +170,26 @@ public class InfosSpotTable extends JPanel { //implements GlobalSequenceListener
 				if (exp != null) {
 					ArrayList<ROI> roiList = exp.seqCamData.seq.getSelectedROIs();
 					if (roiList.size() > 0) {
-						for (ROI roi: roiList) {
-							if (!roi.getName().contains("spot"))
+						Spot spot = null;
+						for (ROI roi : roiList) {
+							String name = roi.getName();
+							if (name.contains("spot")) {
+								spot = exp.cagesArray.getSpotFromROIName(name);
 								continue;
-							Spot spot = exp.cagesArray.getSpotFromROIName(roiList.get(0).getName());
-							selectRowFromSpot(spot);
+							}
+							if (name.contains("cage")) {
+								Cage cage = exp.cagesArray.getCageFromName(name);
+								spot = cage.spotsArray.spotsList.get(0);
+								break;
+							}
 						}
+						if (spot != null)
+							selectRowFromSpot(spot);
 					}
 				}
 			}
 		});
-		
+
 		spotTable.spotTableModel.fireTableDataChanged();
 	}
 
@@ -326,5 +333,4 @@ public class InfosSpotTable extends JPanel { //implements GlobalSequenceListener
 		}
 	}
 
-	
 }

@@ -33,6 +33,7 @@ public class Edit extends JPanel {
 	private JComboBox<String> fieldOldValuesCombo = new JComboBox<String>();
 	private JTextField newValueTextField = new JTextField(10);
 	private JButton applyButton = new JButton("Apply");
+
 	private MultiSPOTS96 parent0 = null;
 	JComboBoxExperiment editExpList = new JComboBoxExperiment();
 

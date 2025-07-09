@@ -24,7 +24,7 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 public class Spot implements Comparable<Spot> {
 
 	private ROI2DShape spotROI2D = null;
-	private ArrayList<ROI2DAlongT> listRoiAlongT = new ArrayList<ROI2DAlongT>();
+	private ArrayList<ROI2DAlongT> listSpotRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
 	public int spotCamData_T = -1;
 	public int spotKymograph_T = -1;
@@ -102,7 +102,7 @@ public class Spot implements Comparable<Spot> {
 
 	public void setRoi(ROI2DShape roi) {
 		this.spotROI2D = roi;
-		listRoiAlongT.clear();
+		listSpotRoiAlongT.clear();
 	}
 
 	public void setName(int cageID, int spotID) {
@@ -276,7 +276,7 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	private boolean loadFromXML_SpotAlongT(Node node) {
-		listRoiAlongT.clear();
+		listSpotRoiAlongT.clear();
 		final Node nodeMeta2 = XMLUtil.getElement(node, ID_INTERVALS);
 		if (nodeMeta2 == null)
 			return false;
@@ -286,10 +286,10 @@ public class Spot implements Comparable<Spot> {
 				Node node_i = XMLUtil.setElement(nodeMeta2, ID_INTERVAL + i);
 				ROI2DAlongT roiInterval = new ROI2DAlongT();
 				roiInterval.loadFromXML(node_i);
-				listRoiAlongT.add(roiInterval);
+				listSpotRoiAlongT.add(roiInterval);
 
 				if (i == 0) {
-					spotROI2D = (ROI2DShape) listRoiAlongT.get(0).getRoi_in();
+					spotROI2D = (ROI2DShape) listSpotRoiAlongT.get(0).getRoi_in();
 				}
 			}
 		}
@@ -315,12 +315,12 @@ public class Spot implements Comparable<Spot> {
 		final Node nodeMeta2 = XMLUtil.setElement(node, ID_INTERVALS);
 		if (nodeMeta2 == null)
 			return false;
-		int nitems = listRoiAlongT.size();
+		int nitems = listSpotRoiAlongT.size();
 		XMLUtil.setElementIntValue(nodeMeta2, ID_NINTERVALS, nitems);
 		if (nitems > 0) {
 			for (int i = 0; i < nitems; i++) {
 				Node node_i = XMLUtil.setElement(nodeMeta2, ID_INTERVAL + i);
-				listRoiAlongT.get(i).saveToXML(node_i);
+				listSpotRoiAlongT.get(i).saveToXML(node_i);
 			}
 		}
 		return true;
@@ -329,17 +329,17 @@ public class Spot implements Comparable<Spot> {
 	// --------------------------------------------
 
 	public List<ROI2DAlongT> getROIAlongTList() {
-		if (listRoiAlongT.size() < 1)
+		if (listSpotRoiAlongT.size() < 1)
 			initROIAlongTList();
-		return listRoiAlongT;
+		return listSpotRoiAlongT;
 	}
 
 	public ROI2DAlongT getROIAtT(long t) {
-		if (listRoiAlongT.size() < 1)
+		if (listSpotRoiAlongT.size() < 1)
 			initROIAlongTList();
 
 		ROI2DAlongT spotRoi = null;
-		for (ROI2DAlongT item : listRoiAlongT) {
+		for (ROI2DAlongT item : listSpotRoiAlongT) {
 			if (t < item.getT())
 				break;
 			spotRoi = item;
@@ -349,17 +349,17 @@ public class Spot implements Comparable<Spot> {
 
 	public void removeROIAlongTListItem(long t) {
 		ROI2DAlongT itemFound = null;
-		for (ROI2DAlongT item : listRoiAlongT) {
+		for (ROI2DAlongT item : listSpotRoiAlongT) {
 			if (t != item.getT())
 				continue;
 			itemFound = item;
 		}
 		if (itemFound != null)
-			listRoiAlongT.remove(itemFound);
+			listSpotRoiAlongT.remove(itemFound);
 	}
 
 	private void initROIAlongTList() {
-		listRoiAlongT.add(new ROI2DAlongT(0, spotROI2D));
+		listSpotRoiAlongT.add(new ROI2DAlongT(0, spotROI2D));
 	}
 
 	// --------------------------------------------
