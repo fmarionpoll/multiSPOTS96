@@ -36,6 +36,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.TableModelTIntervals;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -264,8 +265,13 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		long intervalT = v.getPositionT();
 
-		if (exp.cagesArray.findROI2DTIntervalStart(intervalT) < 0) {
-			exp.cagesArray.addROI2DTInterval(intervalT);
+		if (exp.cagesArray.findCagesListFirstTInterval(intervalT) < 0) {
+			exp.cagesArray.addCagesListTInterval(intervalT);
+		}
+
+		SpotsArray spotsArray = exp.cagesArray.getSpotsArrayFromAllCages();
+		if (spotsArray.spotsList.size() > 0) {
+
 		}
 	}
 
@@ -277,8 +283,8 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		long intervalT = v.getPositionT();
 
-		if (exp.cagesArray.findROI2DTIntervalStart(intervalT) >= 0) {
-			exp.cagesArray.deleteROI2DTInterval(intervalT);
+		if (exp.cagesArray.findCagesListFirstTInterval(intervalT) >= 0) {
+			exp.cagesArray.deleteCagesListTInterval(intervalT);
 		}
 	}
 
@@ -288,7 +294,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 			return;
 		Sequence seq = exp.seqCamData.seq;
 
-		int intervalT = (int) exp.cagesArray.getROI2DTIntervalsStartAt(selectedRow);
+		int intervalT = (int) exp.cagesArray.getCagesListTIntervalsAt(selectedRow);
 		seq.removeAllROI();
 		List<ROI2D> listRois = new ArrayList<ROI2D>();
 		for (Cage cage : exp.cagesArray.cagesList)
@@ -306,7 +312,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 			return;
 		Sequence seq = exp.seqCamData.seq;
 
-		int intervalT = (int) exp.cagesArray.getROI2DTIntervalsStartAt(selectedRow);
+		int intervalT = (int) exp.cagesArray.getCagesListTIntervalsAt(selectedRow);
 		List<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (!roi.getName().contains("spot"))

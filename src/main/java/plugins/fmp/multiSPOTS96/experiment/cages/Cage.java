@@ -305,8 +305,7 @@ public class Cage implements Comparable<Cage> {
 
 	// --------------------------------------------
 
-	public List<ROI2DAlongT> getROIAlongTList() {
-
+	public List<ROI2DAlongT> getListROIAlongT() {
 		if (listCageRoiAlongT.size() < 1)
 			initROIAlongTList();
 		return listCageRoiAlongT;

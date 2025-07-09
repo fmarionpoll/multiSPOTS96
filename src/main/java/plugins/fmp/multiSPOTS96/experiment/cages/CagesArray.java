@@ -413,7 +413,7 @@ public class CagesArray {
 		}
 		return null;
 	}
-	
+
 	public Cage getCageFromName(String name) {
 		for (Cage cage : cagesList) {
 			if (cage.getRoi().getName().equals(name))
@@ -816,7 +816,7 @@ public class CagesArray {
 		if (cagesListTimeIntervals == null) {
 			cagesListTimeIntervals = new TIntervalsArray();
 			for (Cage cage : cagesList) {
-				for (ROI2DAlongT roiFK : cage.getROIAlongTList()) {
+				for (ROI2DAlongT roiFK : cage.getListROIAlongT()) {
 					TInterval interval = new TInterval(roiFK.getT(), (long) -1);
 					cagesListTimeIntervals.addIfNew(interval);
 				}
@@ -825,36 +825,36 @@ public class CagesArray {
 		return cagesListTimeIntervals;
 	}
 
-	public int findROI2DTIntervalStart(long intervalT) {
+	public int findCagesListFirstTInterval(long intervalT) {
 		if (cagesListTimeIntervals == null) {
 			cagesListTimeIntervals = new TIntervalsArray();
-			addROI2DTInterval(0);
+			addCagesListTInterval(0);
 		}
 		return cagesListTimeIntervals.findStartItem(intervalT);
 	}
 
-	public long getROI2DTIntervalsStartAt(int selectedItem) {
-		if (cagesListTimeIntervals == null )
-			addROI2DTInterval(0);
+	public long getCagesListTIntervalsAt(int selectedItem) {
+		if (cagesListTimeIntervals == null)
+			addCagesListTInterval(0);
 		return cagesListTimeIntervals.getTIntervalAt(selectedItem).start;
 	}
 
-	public int addROI2DTInterval(long start) {
+	public int addCagesListTInterval(long start) {
 		long end = -1;
 		TInterval interval = new TInterval(start, end);
 		int item = cagesListTimeIntervals.addIfNew(interval);
 
 		for (Cage cage : cagesList) {
-			List<ROI2DAlongT> listROI2DForKymo = cage.getROIAlongTList();
+			List<ROI2DAlongT> listCageRoiAlongT = cage.getListROIAlongT();
 			ROI2D roi = cage.getRoi();
 			if (item > 0)
-				roi = (ROI2D) listROI2DForKymo.get(item - 1).getRoi_in().getCopy();
-			listROI2DForKymo.add(item, new ROI2DAlongT(start, roi));
+				roi = (ROI2D) listCageRoiAlongT.get(item - 1).getRoi_in().getCopy();
+			listCageRoiAlongT.add(item, new ROI2DAlongT(start, roi));
 		}
 		return item;
 	}
 
-	public void deleteROI2DTInterval(long start) {
+	public void deleteCagesListTInterval(long start) {
 		cagesListTimeIntervals.deleteIntervalStartingAt(start);
 		for (Cage cage : cagesList)
 			cage.removeROIAlongTListItem(start);

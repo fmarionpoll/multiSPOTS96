@@ -298,7 +298,7 @@ public class SpotsArray {
 
 	// ------------------------------------------------
 
-	public TIntervalsArray getKymoIntervalsFromSpots() {
+	public TIntervalsArray getSpotsListTIntervals() {
 		if (spotsListTimeIntervals == null) {
 			spotsListTimeIntervals = new TIntervalsArray();
 			for (Spot spot : spotsList) {
@@ -311,15 +311,15 @@ public class SpotsArray {
 		return spotsListTimeIntervals;
 	}
 
-	public int findKymoROI2DIntervalStart(long intervalT) {
+	public int findSpotsListFirstTInterval(long intervalT) {
 		return spotsListTimeIntervals.findStartItem(intervalT);
 	}
 
-	public long getKymoROI2DIntervalsStartAt(int selectedItem) {
+	public long getSpotsListTIntervalAt(int selectedItem) {
 		return spotsListTimeIntervals.getTIntervalAt(selectedItem).start;
 	}
 
-	public int addKymoROI2DInterval(long start) {
+	public int addSpotsListTInterval(long start) {
 		TInterval interval = new TInterval(start, (long) -1);
 		int item = spotsListTimeIntervals.addIfNew(interval);
 
@@ -333,7 +333,7 @@ public class SpotsArray {
 		return item;
 	}
 
-	public void deleteKymoROI2DInterval(long start) {
+	public void deleteSpotsListTimeInterval(long start) {
 		spotsListTimeIntervals.deleteIntervalStartingAt(start);
 		for (Spot spot : spotsList)
 			spot.removeROIAlongTListItem(start);
