@@ -812,19 +812,6 @@ public class CagesArray {
 
 	// ------------------------------------------------
 
-	public TIntervalsArray getTIntervalsFromSpots() {
-		if (cagesListTimeIntervals == null) {
-			cagesListTimeIntervals = new TIntervalsArray();
-			for (Cage cage : cagesList) {
-				for (ROI2DAlongT roiFK : cage.getListROIAlongT()) {
-					TInterval interval = new TInterval(roiFK.getT(), (long) -1);
-					cagesListTimeIntervals.addIfNew(interval);
-				}
-			}
-		}
-		return cagesListTimeIntervals;
-	}
-
 	public int findCagesListFirstTInterval(long intervalT) {
 		if (cagesListTimeIntervals == null) {
 			cagesListTimeIntervals = new TIntervalsArray();
@@ -850,14 +837,21 @@ public class CagesArray {
 			if (item > 0)
 				roi = (ROI2D) listCageRoiAlongT.get(item - 1).getRoi_in().getCopy();
 			listCageRoiAlongT.add(item, new ROI2DAlongT(start, roi));
+
+			if (cage.spotsArray.findSpotsListFirstTInterval(start) < 0) {
+				cage.spotsArray.addSpotsListTInterval(start);
+			}
+
 		}
 		return item;
 	}
 
 	public void deleteCagesListTInterval(long start) {
 		cagesListTimeIntervals.deleteIntervalStartingAt(start);
-		for (Cage cage : cagesList)
+		for (Cage cage : cagesList) {
 			cage.removeROIAlongTListItem(start);
+			cage.spotsArray.deleteSpotsListTInterval(start);
+		}
 	}
 
 	// --------------------------------------------------

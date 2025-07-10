@@ -312,15 +312,22 @@ public class SpotsArray {
 	}
 
 	public int findSpotsListFirstTInterval(long intervalT) {
+		if (spotsListTimeIntervals == null) {
+			spotsListTimeIntervals = new TIntervalsArray();
+			addSpotsListTInterval(0);
+		}
 		return spotsListTimeIntervals.findStartItem(intervalT);
 	}
 
 	public long getSpotsListTIntervalAt(int selectedItem) {
+		if (spotsListTimeIntervals == null)
+			addSpotsListTInterval(0);
 		return spotsListTimeIntervals.getTIntervalAt(selectedItem).start;
 	}
 
 	public int addSpotsListTInterval(long start) {
-		TInterval interval = new TInterval(start, (long) -1);
+		long end = -1;
+		TInterval interval = new TInterval(start, end);
 		int item = spotsListTimeIntervals.addIfNew(interval);
 
 		for (Spot spot : spotsList) {
@@ -333,7 +340,7 @@ public class SpotsArray {
 		return item;
 	}
 
-	public void deleteSpotsListTimeInterval(long start) {
+	public void deleteSpotsListTInterval(long start) {
 		spotsListTimeIntervals.deleteIntervalStartingAt(start);
 		for (Spot spot : spotsList)
 			spot.removeROIAlongTListItem(start);
@@ -360,33 +367,33 @@ public class SpotsArray {
 			if (data[0].equals("#")) {
 				switch (data[1]) {
 				case "SPOTS_ARRAY":
-					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_ARRAY 
-					||  option ==EnumSpotMeasures.SPOTS_DESCRIPTION)
+					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_ARRAY
+							|| option == EnumSpotMeasures.SPOTS_DESCRIPTION)
 						csvLoadSpotsDescription(bufferedReader, sep);
 					break;
 				case "SPOTS":
-					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_ARRAY 
-					||  option ==EnumSpotMeasures.SPOTS_DESCRIPTION)
+					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_ARRAY
+							|| option == EnumSpotMeasures.SPOTS_DESCRIPTION)
 						csvLoadSpotsArray(bufferedReader, sep);
 					break;
 				case "AREA_SUM":
-					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_MEASURES)
+					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_MEASURES)
 						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_SUM, sep);
 					break;
 				case "AREA_OUT":
-					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_MEASURES)
+					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_MEASURES)
 						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_OUT, sep);
 					break;
 				case "AREA_DIFF":
-					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_MEASURES)
+					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_MEASURES)
 						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_DIFF, sep);
 					break;
 				case "AREA_SUMCLEAN":
-					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_MEASURES)
+					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_MEASURES)
 						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_SUMCLEAN, sep);
 					break;
 				case "AREA_FLYPRESENT":
-					if (option ==EnumSpotMeasures.ALL ||  option ==EnumSpotMeasures.SPOTS_MEASURES)
+					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_MEASURES)
 						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_FLYPRESENT, sep);
 					break;
 				default:

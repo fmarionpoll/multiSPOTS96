@@ -16,7 +16,7 @@ public class TableModelTIntervals extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JComboBoxExperiment expList = null;
-	private final String columnNames[] = { "Starting at frame", "End frame" };
+	private final String columnNames[] = { "Starting at frame" };
 	private ArrayList<TInterval> intervals = null;
 
 	public TableModelTIntervals(JComboBoxExperiment expList) {
@@ -56,10 +56,10 @@ public class TableModelTIntervals extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		TInterval interval = intervals.get(rowIndex);
 		Long value;
-		if (columnIndex == 1)
-			value = interval.end;
-		else
+		if (columnIndex == 0)
 			value = interval.start;
+		else
+			value = interval.end;
 		return value;
 	}
 
@@ -71,10 +71,10 @@ public class TableModelTIntervals extends AbstractTableModel {
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		TInterval interval = intervals.get(rowIndex);
-		if (columnIndex == 1)
-			interval.end = (long) aValue;
-		else
+		if (columnIndex == 0)
 			interval.start = (long) aValue;
+		else
+			interval.end = (long) aValue;
 	}
 
 }

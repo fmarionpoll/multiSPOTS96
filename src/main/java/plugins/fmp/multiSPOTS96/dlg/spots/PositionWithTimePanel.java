@@ -36,7 +36,6 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.TableModelTIntervals;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -212,11 +211,17 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		Sequence seq = exp.seqCamData.seq;
 		ArrayList<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
-			if (!roi.getName().contains("spot"))
-				continue;
-			Point2D point2d = roi.getPosition2D();
-			roi.setPosition2D(new Point2D.Double(point2d.getX() + deltaX, point2d.getY() + deltaY));
+			if (roi.getName().contains("spot") && spotsCheckBox.isSelected())
+				shiftRoi(roi, deltaX, deltaY);
+			if (roi.getName().contains("cage") && cagesCheckBox.isSelected())
+				shiftRoi(roi, deltaX, deltaY);
+
 		}
+	}
+
+	private void shiftRoi(ROI2D roi, double deltaX, double deltaY) {
+		Point2D point2d = roi.getPosition2D();
+		roi.setPosition2D(new Point2D.Double(point2d.getX() + deltaX, point2d.getY() + deltaY));
 	}
 
 	private void showFrame(boolean show) {
@@ -264,14 +269,8 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 
 		Viewer v = exp.seqCamData.seq.getFirstViewer();
 		long intervalT = v.getPositionT();
-
 		if (exp.cagesArray.findCagesListFirstTInterval(intervalT) < 0) {
 			exp.cagesArray.addCagesListTInterval(intervalT);
-		}
-
-		SpotsArray spotsArray = exp.cagesArray.getSpotsArrayFromAllCages();
-		if (spotsArray.spotsList.size() > 0) {
-
 		}
 	}
 
@@ -307,6 +306,8 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 	}
 
 	private void saveSpots(int selectedRow) {
+		if (selectedRow < 0)
+			return;
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
@@ -315,12 +316,20 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		int intervalT = (int) exp.cagesArray.getCagesListTIntervalsAt(selectedRow);
 		List<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
-			if (!roi.getName().contains("spot"))
-				continue;
-			Spot spot = exp.cagesArray.getSpotFromROIName(roi.getName());
-			if (spot != null) {
-				ROI2D roilocal = (ROI2D) roi.getCopy();
-				spot.getROIAtT(intervalT).setRoi_in(roilocal);
+			String name = roi.getName();
+			if (name.contains("spot") && spotsCheckBox.isSelected()) {
+				Spot spot = exp.cagesArray.getSpotFromROIName(name);
+				if (spot != null) {
+					ROI2D roilocal = (ROI2D) roi.getCopy();
+					spot.getROIAtT(intervalT).setRoi_in(roilocal);
+				}
+			}
+			if (name.contains("cage") && cagesCheckBox.isSelected()) {
+				Cage cage = exp.cagesArray.getCageFromName(name);
+				if (cage != null) {
+					ROI2D roilocal = (ROI2D) roi.getCopy();
+					cage.getROIAtT(intervalT).setRoi_in(roilocal);
+				}
 			}
 		}
 	}
