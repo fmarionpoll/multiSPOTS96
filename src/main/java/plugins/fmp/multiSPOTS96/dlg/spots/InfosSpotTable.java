@@ -13,9 +13,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import icy.gui.frame.IcyFrame;
 import icy.roi.ROI;
+import icy.roi.ROI2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
@@ -23,7 +27,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotTable;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 
-public class InfosSpotTable extends JPanel { // implements GlobalSequenceListener, ROIListener {
+public class InfosSpotTable extends JPanel implements ListSelectionListener { // implements GlobalSequenceListener, ROIListener {
 //, 
 //SequenceListener {
 	/**
@@ -70,6 +74,7 @@ public class InfosSpotTable extends JPanel { // implements GlobalSequenceListene
 		JPanel tablePanel = new JPanel();
 		spotTable = new SpotTable(parent0);
 		tablePanel.add(new JScrollPane(spotTable));
+		spotTable.getSelectionModel().addListSelectionListener(this);
 
 		dialogFrame = new IcyFrame("Spots properties", true, true);
 		dialogFrame.add(topPanel, BorderLayout.NORTH);
@@ -167,26 +172,8 @@ public class InfosSpotTable extends JPanel { // implements GlobalSequenceListene
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) {
-					ArrayList<ROI> roiList = exp.seqCamData.seq.getSelectedROIs();
-					if (roiList.size() > 0) {
-						Spot spot = null;
-						for (ROI roi : roiList) {
-							String name = roi.getName();
-							if (name.contains("spot")) {
-								spot = exp.cagesArray.getSpotFromROIName(name);
-								continue;
-							}
-							if (name.contains("cage")) {
-								Cage cage = exp.cagesArray.getCageFromName(name);
-								spot = cage.spotsArray.spotsList.get(0);
-								break;
-							}
-						}
-						if (spot != null)
-							selectRowFromSpot(spot);
-					}
-				}
+				if (exp != null) 
+					locateSelectedROI(exp);
 			}
 		});
 
@@ -195,6 +182,27 @@ public class InfosSpotTable extends JPanel { // implements GlobalSequenceListene
 
 	void close() {
 		dialogFrame.close();
+	}
+	
+	private void locateSelectedROI(Experiment exp) {
+		ArrayList<ROI> roiList = exp.seqCamData.seq.getSelectedROIs();
+		if (roiList.size() > 0) {
+			Spot spot = null;
+			for (ROI roi : roiList) {
+				String name = roi.getName();
+				if (name.contains("spot")) {
+					spot = exp.cagesArray.getSpotFromROIName(name);
+					continue;
+				}
+				if (name.contains("cage")) {
+					Cage cage = exp.cagesArray.getCageFromName(name);
+					spot = cage.spotsArray.spotsList.get(0);
+					break;
+				}
+			}
+			if (spot != null)
+				selectRowFromSpot(spot);
+		}
 	}
 
 	private void measureNPixelsForAllSpots(Experiment exp) {
@@ -331,6 +339,26 @@ public class InfosSpotTable extends JPanel { // implements GlobalSequenceListene
 			rect.height = rect.height * 2;
 			spotTable.scrollRectToVisible(rect);
 		}
+	}
+	
+	void selectSpot(Spot spot) {
+		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		if (exp != null) {
+			ROI2D roi = spot.getRoi();
+			exp.seqCamData.seq.setFocusedROI(roi);
+			exp.seqCamData.centerOnRoi(roi);
+			roi.setSelected(true);
+		}
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		if (e.getValueIsAdjusting())
+			return;
+
+		ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+		int minIndex = lsm.getMinSelectionIndex();
+		selectSpot( spotTable.spotTableModel.getSpotAt(minIndex));
 	}
 
 }

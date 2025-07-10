@@ -615,9 +615,12 @@ public class CagesArray {
 
 	public void transferROIsFromSequenceToCageSpots(SequenceCamData seqCamData) {
 		List<ROI2D> listSeqRois = seqCamData.getROIsContainingString("spot");
+//		int T = 0;
+//		Viewer v = seqCamData.seq.getFirstViewer();
+//		if (v != null)
+//			T = v.getPositionT();
 		Collections.sort(listSeqRois, new Comparators.ROI_Name());
 		for (Cage cage : cagesList) {
-
 			Iterator<Spot> iteratorSpots = cage.spotsArray.spotsList.iterator();
 			while (iteratorSpots.hasNext()) {
 				Spot spot = iteratorSpots.next();
