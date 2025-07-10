@@ -746,8 +746,6 @@ public class CagesArray {
 	}
 
 	public TIntervalsArray getCagesListTimeIntervals() {
-//		Cage cage = cagesList.get(0);
-//		TIntervalsArray intervals = cage.spotsArray.getKymoIntervalsFromSpots();
 		return cagesListTimeIntervals;
 	}
 
