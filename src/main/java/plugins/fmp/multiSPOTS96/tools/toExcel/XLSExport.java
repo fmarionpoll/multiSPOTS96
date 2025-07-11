@@ -177,14 +177,14 @@ public class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
 
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_BOXID);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_EXPT);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_STIM);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_CONC);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_STRAIN);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_SEX);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_COND1);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.expProperties, EnumXLSColumnHeader.EXP_COND2);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_BOXID);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_EXPT);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_STIM);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_CONC);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_STRAIN);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_SEX);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_COND1);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_COND2);
 
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_VOLUME.getValue(), transpose, spot.prop.spotVolume);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_PIXELS.getValue(), transpose, spot.prop.spotNPixels);

@@ -271,7 +271,6 @@ public class SpotMeasure {
 		roi.setName(roiname);
 		roi.setT(t);
 		setROI2DColorAndStrokeFromName();
-//		roi.setStroke(.5);  
 		return roi;
 	}
 

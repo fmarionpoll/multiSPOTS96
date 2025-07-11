@@ -193,7 +193,7 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 				if (i == j)
 					continue;
 				Experiment expj = getItemAt(j);
-				if (!expi.expProperties.isSameProperties(expj.expProperties))
+				if (!expi.prop.isSameProperties(expj.prop))
 					continue;
 				if (expj.chainToNextExperiment != null || expj.chainToPreviousExperiment != null)
 					continue;

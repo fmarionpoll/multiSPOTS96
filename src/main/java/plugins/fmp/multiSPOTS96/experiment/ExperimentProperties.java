@@ -10,19 +10,16 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
 public class ExperimentProperties {
 
-//	public ArrayList<Stimulus> arrayStimulus = new ArrayList<Stimulus>();
-//	public ArrayList<Concentration> arrayConcentration = new ArrayList<Concentration>();
-
 	public String ffield_boxID = new String("..");
 	public String ffield_experiment = new String("..");
-	public String ffield_stim = new String("..");
-	public String ffield_conc = new String("..");
+	public String field_stim1 = new String("..");
+	public String field_conc1 = new String("..");
 	public String field_comment1 = new String("..");
 	public String field_comment2 = new String("..");
 	public String field_strain = new String("..");
 	public String field_sex = new String("..");
-	public String field_cond1 = new String("..");
-	public String field_cond2 = new String("..");
+	public String field_stim2 = new String("..");
+	public String field_conc2 = new String("..");
 
 	private final static String ID_BOXID = "boxID";
 	private final static String ID_EXPERIMENT = "experiment";
@@ -39,39 +36,39 @@ public class ExperimentProperties {
 	public void saveXML_Properties(Node node) {
 		XMLUtil.setElementValue(node, ID_BOXID, ffield_boxID);
 		XMLUtil.setElementValue(node, ID_EXPERIMENT, ffield_experiment);
-		XMLUtil.setElementValue(node, ID_STIM, ffield_stim);
-		XMLUtil.setElementValue(node, ID_CONC, ffield_conc);
+		XMLUtil.setElementValue(node, ID_STIM, field_stim1);
+		XMLUtil.setElementValue(node, ID_CONC, field_conc1);
 
 		XMLUtil.setElementValue(node, ID_COMMENT1, field_comment1);
 		XMLUtil.setElementValue(node, ID_COMMENT2, field_comment2);
 		XMLUtil.setElementValue(node, ID_STRAIN, field_strain);
 		XMLUtil.setElementValue(node, ID_SEX, field_sex);
-		XMLUtil.setElementValue(node, ID_COND1, field_cond1);
-		XMLUtil.setElementValue(node, ID_COND2, field_cond2);
+		XMLUtil.setElementValue(node, ID_COND1, field_stim2);
+		XMLUtil.setElementValue(node, ID_COND2, field_conc2);
 	}
 
 	public void loadXML_Properties(Node node) {
 		ffield_boxID = XMLUtil.getElementValue(node, ID_BOXID, "..");
 		ffield_experiment = XMLUtil.getElementValue(node, ID_EXPERIMENT, "..");
-		ffield_stim = XMLUtil.getElementValue(node, ID_STIM, "..");
-		ffield_conc = XMLUtil.getElementValue(node, ID_CONC, "..");
+		field_stim1 = XMLUtil.getElementValue(node, ID_STIM, "..");
+		field_conc1 = XMLUtil.getElementValue(node, ID_CONC, "..");
 
 		field_comment1 = XMLUtil.getElementValue(node, ID_COMMENT1, "..");
 		field_comment2 = XMLUtil.getElementValue(node, ID_COMMENT2, "..");
 		field_strain = XMLUtil.getElementValue(node, ID_STRAIN, "..");
 		field_sex = XMLUtil.getElementValue(node, ID_SEX, "..");
-		field_cond1 = XMLUtil.getElementValue(node, ID_COND1, "..");
-		field_cond2 = XMLUtil.getElementValue(node, ID_COND2, "..");
+		field_stim2 = XMLUtil.getElementValue(node, ID_COND1, "..");
+		field_conc2 = XMLUtil.getElementValue(node, ID_COND2, "..");
 	}
 
 	public String getExperimentField(EnumXLSColumnHeader fieldEnumCode) {
 		String strField = null;
 		switch (fieldEnumCode) {
 		case EXP_STIM:
-			strField = ffield_stim;
+			strField = field_stim1;
 			break;
 		case EXP_CONC:
-			strField = ffield_conc;
+			strField = field_conc1;
 			break;
 		case EXP_EXPT:
 			strField = ffield_experiment;
@@ -86,10 +83,10 @@ public class ExperimentProperties {
 			strField = field_sex;
 			break;
 		case EXP_COND1:
-			strField = field_cond1;
+			strField = field_stim2;
 			break;
 		case EXP_COND2:
-			strField = field_cond2;
+			strField = field_conc2;
 			break;
 		default:
 			break;
@@ -100,10 +97,10 @@ public class ExperimentProperties {
 	public void setExperimentFieldNoTest(EnumXLSColumnHeader fieldEnumCode, String newValue) {
 		switch (fieldEnumCode) {
 		case EXP_STIM:
-			ffield_stim = newValue;
+			field_stim1 = newValue;
 			break;
 		case EXP_CONC:
-			ffield_conc = newValue;
+			field_conc1 = newValue;
 			break;
 		case EXP_EXPT:
 			ffield_experiment = newValue;
@@ -118,10 +115,10 @@ public class ExperimentProperties {
 			field_sex = newValue;
 			break;
 		case EXP_COND1:
-			field_cond1 = newValue;
+			field_stim2 = newValue;
 			break;
 		case EXP_COND2:
-			field_cond2 = newValue;
+			field_conc2 = newValue;
 			break;
 		default:
 			break;
@@ -173,8 +170,8 @@ public class ExperimentProperties {
 
 	public String csvExportExperimentProperties(String csvSep) {
 		StringBuffer sbf = new StringBuffer();
-		List<String> row3 = Arrays.asList(ffield_boxID, ffield_experiment, ffield_stim, ffield_conc, field_comment1,
-				field_comment2, field_strain, field_sex, field_cond1, field_cond2);
+		List<String> row3 = Arrays.asList(ffield_boxID, ffield_experiment, field_stim1, field_conc1, field_comment1,
+				field_comment2, field_strain, field_sex, field_stim2, field_conc2);
 		sbf.append(String.join(csvSep, row3));
 		sbf.append("\n");
 		return sbf.toString();
@@ -186,9 +183,9 @@ public class ExperimentProperties {
 		i++;
 		ffield_experiment = data[i];
 		i++;
-		ffield_stim = data[i];
+		field_stim1 = data[i];
 		i++;
-		ffield_conc = data[i];
+		field_conc1 = data[i];
 		i++;
 		field_comment1 = data[i];
 		i++;
@@ -198,8 +195,8 @@ public class ExperimentProperties {
 		i++;
 		field_sex = data[i];
 		i++;
-		field_cond1 = data[i];
+		field_stim2 = data[i];
 		i++;
-		field_cond2 = data[i];
+		field_conc2 = data[i];
 	}
 }

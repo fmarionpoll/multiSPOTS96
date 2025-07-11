@@ -22,9 +22,9 @@ public class Options extends JPanel {
 	private static final long serialVersionUID = 1814896922714679663L;
 	JCheckBox exportAllFilesCheckBox = new JCheckBox("all experiments", true);
 	JCheckBox transposeCheckBox = new JCheckBox("transpose", true);
-	public JCheckBox collateSeriesCheckBox = new JCheckBox("collate series", false);
-	JCheckBox padIntervalsCheckBox = new JCheckBox("pad intervals", false);
-	JCheckBox onlyAliveCheckBox = new JCheckBox("dead=empty", false);
+//	public JCheckBox collateSeriesCheckBox = new JCheckBox("collate series", false);
+//	JCheckBox padIntervalsCheckBox = new JCheckBox("pad intervals", false);
+//	JCheckBox onlyAliveCheckBox = new JCheckBox("dead=empty", false);
 
 	JSpinner binSize = new JSpinner(new SpinnerNumberModel(1., 1., 1000., 1.));
 	JComboBoxMs binUnit = new JComboBoxMs();
@@ -44,11 +44,11 @@ public class Options extends JPanel {
 		JPanel panel0 = new JPanel(layout1);
 		panel0.add(exportAllFilesCheckBox);
 		panel0.add(transposeCheckBox);
-		panel0.add(collateSeriesCheckBox);
-		panel0.add(padIntervalsCheckBox);
-		panel0.add(onlyAliveCheckBox);
+//		panel0.add(collateSeriesCheckBox);
+//		panel0.add(padIntervalsCheckBox);
+//		panel0.add(onlyAliveCheckBox);
 		add(panel0);
-		padIntervalsCheckBox.setEnabled(false);
+//		padIntervalsCheckBox.setEnabled(false);
 
 		JPanel panel1 = new JPanel(layout1);
 		panel1.add(new JLabel("Analyze "));
@@ -77,14 +77,14 @@ public class Options extends JPanel {
 	}
 
 	private void defineActionListeners() {
-		collateSeriesCheckBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				JCheckBox cb = (JCheckBox) event.getSource();
-				boolean isSelected = cb.isSelected();
-				padIntervalsCheckBox.setEnabled(isSelected);
-			}
-		});
+//		collateSeriesCheckBox.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent event) {
+//				JCheckBox cb = (JCheckBox) event.getSource();
+//				boolean isSelected = cb.isSelected();
+//				padIntervalsCheckBox.setEnabled(isSelected);
+//			}
+//		});
 
 		isFixedFrameButton.addActionListener(new ActionListener() {
 			@Override

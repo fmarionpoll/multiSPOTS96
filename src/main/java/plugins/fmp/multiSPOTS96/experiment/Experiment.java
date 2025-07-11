@@ -41,7 +41,7 @@ public class Experiment {
 	public FileTime firstImage_FileTime;
 	public FileTime lastImage_FileTime;
 
-	public ExperimentProperties expProperties = new ExperimentProperties();
+	public ExperimentProperties prop = new ExperimentProperties();
 	public int col = -1;
 	public Experiment chainToPreviousExperiment = null;
 	public Experiment chainToNextExperiment = null;
@@ -373,7 +373,7 @@ public class Experiment {
 		seqCamData.binDuration_ms = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
 
 		ugly_checkOffsetValues();
-		expProperties.loadXML_Properties(node);
+		prop.loadXML_Properties(node);
 		return true;
 	}
 
@@ -398,7 +398,7 @@ public class Experiment {
 			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, seqCamData.binLast_ms);
 			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, seqCamData.binDuration_ms);
 
-			expProperties.saveXML_Properties(node);
+			prop.saveXML_Properties(node);
 
 			if (camDataImagesDirectory == null)
 				camDataImagesDirectory = seqCamData.getImagesDirectory();
@@ -526,7 +526,7 @@ public class Experiment {
 		case EXP_SEX:
 		case EXP_COND1:
 		case EXP_COND2:
-			addValue(expProperties.getExperimentField(fieldEnumCode), textList);
+			addValue(prop.getExperimentField(fieldEnumCode), textList);
 			break;
 		case SPOT_STIM:
 		case SPOT_CONC:
@@ -545,9 +545,9 @@ public class Experiment {
 
 	public boolean replaceExperimentFieldIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
-		boolean flag = expProperties.getExperimentField(fieldEnumCode).equals(oldValue);
+		boolean flag = prop.getExperimentField(fieldEnumCode).equals(oldValue);
 		if (flag) {
-			expProperties.setExperimentFieldNoTest(fieldEnumCode, newValue);
+			prop.setExperimentFieldNoTest(fieldEnumCode, newValue);
 		}
 		return flag;
 	}

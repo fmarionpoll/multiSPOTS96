@@ -16,6 +16,7 @@ public class SpotsAreas extends JPanel {
 	private static final long serialVersionUID = 1290058998782225526L;
 
 	JButton exportToXLSButton2 = new JButton("save XLS");
+	JButton exportQToXLSButton = new JButton("save XLS as Query");
 
 	JCheckBox sumCheckBox = new JCheckBox("area", true);
 	JCheckBox nPixelsCheckBox = new JCheckBox("n pixels", true);
@@ -39,6 +40,7 @@ public class SpotsAreas extends JPanel {
 		flowLayout2.setVgap(0);
 		JPanel panel2 = new JPanel(flowLayout2);
 		panel2.add(exportToXLSButton2);
+		panel2.add(exportQToXLSButton);
 		add(panel2);
 
 		defineActionListeners();
@@ -49,6 +51,13 @@ public class SpotsAreas extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				firePropertyChange("EXPORT_SPOTSMEASURES", false, true);
+			}
+		});
+
+		exportQToXLSButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				firePropertyChange("EXPORT_SPOTSMEASURES_AS_Q", false, true);
 			}
 		});
 	}

@@ -395,6 +395,25 @@ public class Cage implements Comparable<Cage> {
 		return spotsList;
 	}
 
+	public Spot combineSpotsWith(String stim, String conc) {
+		Spot spotCombined = null;
+		int nfound = 0;
+		for (Spot spotSource : spotsArray.spotsList) {
+			if (stim.equals(spotSource.prop.stimulus) && conc.equals(spotSource.prop.concentration)) {
+				if (spotCombined == null) {
+					spotCombined = new Spot(spotSource, true);
+				} else {
+					spotCombined.addMeasures(spotSource);
+				}
+				nfound++;
+			}
+		}
+		System.out.println(stim + " _ " + conc + " :" + "nfound=" + nfound);
+//		if (nfound > 0)
+//			spotCombined.divideMeasures(nfound); // TODO
+		return spotCombined;
+	}
+
 	public Spot createSpotPI(Spot spot1, Spot spot2) {
 		Spot spotPI = new Spot();
 		spotPI.prop.cageID = spot1.prop.cageID;
