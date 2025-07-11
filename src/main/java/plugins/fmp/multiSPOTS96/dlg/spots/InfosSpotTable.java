@@ -344,10 +344,21 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 	void selectSpot(Spot spot) {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			ROI2D roi = spot.getRoi();
-			exp.seqCamData.seq.setFocusedROI(roi);
-			exp.seqCamData.centerOnRoi(roi);
-			roi.setSelected(true);
+			String name = spot.getName();
+			ROI2D roiSpot = spot.getRoi();
+			if (name == null)
+				name = roiSpot.getName();
+			Cage cage = exp.cagesArray.getCageFromName(name);
+			ROI2D cageRoi = cage.getRoi();
+			if (cageRoi != null)
+				exp.seqCamData.centerOnRoi(cageRoi);
+			else
+				System.out.println("cage roi not found");
+			
+			
+			exp.seqCamData.seq.setFocusedROI(roiSpot);
+			//exp.seqCamData.centerOnRoi(roi);
+			roiSpot.setSelected(true);
 		}
 	}
 
