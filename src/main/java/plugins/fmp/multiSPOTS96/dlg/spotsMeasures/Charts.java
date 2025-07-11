@@ -42,7 +42,7 @@ public class Charts extends JPanel implements SequenceListener {
 			EnumXLSExport.AREA_SUMCLEAN // , EnumXLSExportType.AREA_DIFF
 	};
 	private JComboBox<EnumXLSExport> exportTypeComboBox = new JComboBox<EnumXLSExport>(measures);
-	private JCheckBox relativeToCheckbox = new JCheckBox("relative to t0", false);
+	private JCheckBox relativeToCheckbox = new JCheckBox("relative to max", false);
 
 	private JRadioButton displayAllButton = new JRadioButton("all cages");
 	private JRadioButton displaySelectedButton = new JRadioButton("cage selected");

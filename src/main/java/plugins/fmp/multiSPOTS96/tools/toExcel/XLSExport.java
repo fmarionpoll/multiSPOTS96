@@ -120,7 +120,7 @@ public class XLSExport {
 		xlsResults.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportType, exp.seqCamData.binDuration_ms,
 				options.buildExcelStepMs);
 		if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT)
-			xlsResults.relativeToT0();
+			xlsResults.relativeToMaximum(); //relativeToT0();
 		return xlsResults;
 	}
 

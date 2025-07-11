@@ -96,6 +96,38 @@ public class XLSResults {
 			valuesOut[i] = sourceRow.valuesOut[i];
 	}
 
+	public List<Double> relativeToMaximum() {
+		if (dataValues == null || dataValues.size() < 1)
+			return null;
+
+		double value0 = dataValues.get(0);
+		if (value0 > 0 && value0 > dataValues.get(1) && dataValues.get(1) > dataValues.get(2))
+			relativeToValue(value0);
+		else {
+			value0 = median(0, 3);
+			double value1 = median(0, 5);
+			if (value0 > 0 && value0 > value1)
+				relativeToValue(value0);
+			else if (value1 > 0)
+				relativeToValue(value1);
+		}
+		return dataValues;
+	}
+	
+	public double getMaximum() {
+		double maximum = 0.;
+		if (dataValues == null || dataValues.size() < 1)
+			return maximum;
+
+		maximum = dataValues.get(0);;
+		for (int index = 0; index < dataValues.size(); index++) {
+			double value = dataValues.get(index);
+			maximum = Math.max(maximum, value);
+		}
+	
+		return maximum;
+	}
+	
 	public List<Double> relativeToT0() {
 		if (dataValues == null || dataValues.size() < 1)
 			return null;
@@ -152,32 +184,32 @@ public class XLSResults {
 		return true;
 	}
 
-	void addDataToValOutEvap(XLSResults result) {
-		if (result.valuesOut.length > valuesOut.length) {
-			System.out.println("XLSResults:addDataToValOutEvap() Error: from len=" + result.valuesOut.length
-					+ " to len=" + valuesOut.length);
-			return;
-		}
-		for (int i = 0; i < result.valuesOut.length; i++)
-			valuesOut[i] += result.valuesOut[i];
-		nflies++;
-	}
+//	void addDataToValOutEvap(XLSResults result) {
+//		if (result.valuesOut.length > valuesOut.length) {
+//			System.out.println("XLSResults:addDataToValOutEvap() Error: from len=" + result.valuesOut.length
+//					+ " to len=" + valuesOut.length);
+//			return;
+//		}
+//		for (int i = 0; i < result.valuesOut.length; i++)
+//			valuesOut[i] += result.valuesOut[i];
+//		nflies++;
+//	}
 
-	void averageEvaporation() {
-		if (nflies == 0)
-			return;
-		for (int i = 0; i < valuesOut.length; i++)
-			valuesOut[i] = valuesOut[i] / nflies;
-		nflies = 1;
-	}
+//	void averageEvaporation() {
+//		if (nflies == 0)
+//			return;
+//		for (int i = 0; i < valuesOut.length; i++)
+//			valuesOut[i] = valuesOut[i] / nflies;
+//		nflies = 1;
+//	}
 
-	void subtractEvap(XLSResults evap) {
-		if (valuesOut == null)
-			return;
-		int len = Math.min(valuesOut.length, evap.valuesOut.length);
-		for (int i = 0; i < len; i++)
-			valuesOut[i] -= evap.valuesOut[i];
-	}
+//	void subtractEvap(XLSResults evap) {
+//		if (valuesOut == null)
+//			return;
+//		int len = Math.min(valuesOut.length, evap.valuesOut.length);
+//		for (int i = 0; i < len; i++)
+//			valuesOut[i] -= evap.valuesOut[i];
+//	}
 
 	void sumValues_out(XLSResults dataToAdd) {
 		int len = Math.min(valuesOut.length, dataToAdd.valuesOut.length);

@@ -19,7 +19,7 @@ public class SpotsAreas extends JPanel {
 
 	JCheckBox sumCheckBox = new JCheckBox("area", true);
 	JCheckBox nPixelsCheckBox = new JCheckBox("n pixels", true);
-	JCheckBox t0CheckBox = new JCheckBox("(t0-t)/t0", true);
+	JCheckBox t0CheckBox = new JCheckBox("(max-t)/max", true);
 
 	void init(GridLayout capLayout) {
 		setLayout(capLayout);

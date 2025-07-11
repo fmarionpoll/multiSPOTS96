@@ -63,7 +63,7 @@ public class XLSResultsArray {
 				results.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
 						xlsExportOptions.buildExcelStepMs);
 				if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT)
-					results.relativeToT0();
+					results.relativeToMaximum(); //relativeToT0();
 				results.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
 				resultsList.add(results);
 			}
