@@ -78,21 +78,9 @@ public class Filter extends JPanel {
 		c.gridx += delta2;
 		add(applyButton, c);
 
-		// line 1
-		c.gridy = 1;
-		c.gridx = 0;
-		add(comment1Check, c);
-		c.gridx += delta1;
-		add(cmt1Combo, c);
-		c.gridx += delta2;
-		add(comment2Check, c);
-		c.gridx += delta1;
-		add(comt2Combo, c);
-		c.gridx += delta2;
-		add(clearButton, c);
 
 		// line 2
-		c.gridy = 2;
+		c.gridy = 1;
 		c.gridx = 0;
 		add(strainCheck, c);
 		c.gridx += delta1;
@@ -101,7 +89,21 @@ public class Filter extends JPanel {
 		add(sexCheck, c);
 		c.gridx += delta1;
 		add(sexCombo, c);
+		c.gridx += delta2;
+		add(clearButton, c);
+		
+		// line 1
+		c.gridy = 2;
+		c.gridx = 0;
+		add(comment1Check, c);
+		c.gridx += delta1;
+		add(cmt1Combo, c);
+		c.gridx += delta2;
+		add(comment2Check, c);
+		c.gridx += delta1;
+		add(comt2Combo, c);
 
+				
 		// line 3
 		c.gridy = 3;
 		c.gridx = 0;
