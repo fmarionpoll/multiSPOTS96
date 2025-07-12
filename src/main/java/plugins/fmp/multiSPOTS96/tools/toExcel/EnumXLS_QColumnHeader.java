@@ -15,7 +15,7 @@ public enum EnumXLS_QColumnHeader {
 	CAGE_STRAIN("Cage_strain", 12, EnumXLSMeasure.COMMON), CAGE_SEX("Cage_sex", 13, EnumXLSMeasure.COMMON),
 	CAGE_AGE("Cage_age", 14, EnumXLSMeasure.COMMON), CAGE_COMMENT("Cage_comment", 15, EnumXLSMeasure.COMMON),
 	DUM4("Dum4", 16, EnumXLSMeasure.COMMON), VAL_TIME("time", 17, EnumXLSMeasure.COMMON),
-	VAL_STIM1("stim1_conc1", 18, EnumXLSMeasure.COMMON), VAL_STIM2("stim2_conc2", 19, EnumXLSMeasure.COMMON),
+	VAL_STIM1("value1", 18, EnumXLSMeasure.COMMON), VAL_STIM2("value2", 19, EnumXLSMeasure.COMMON),
 	VAL_SUM("sum", 20, EnumXLSMeasure.COMMON), VAL_PI("PI", 21, EnumXLSMeasure.COMMON);
 
 	private final String name;
