@@ -230,7 +230,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExport {
 			return exp.prop.field_conc2;
 
 		case CAGE_POS:
-			return Integer.toString(cage.prop.cagePosition);
+			return Integer.toString(cage.prop.arrayIndex);
 		case CAGE_NFLIES:
 			return Integer.toString(cage.prop.cageNFlies);
 		case CAGE_STRAIN:
