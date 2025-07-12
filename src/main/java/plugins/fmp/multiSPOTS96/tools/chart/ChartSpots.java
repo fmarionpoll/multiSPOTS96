@@ -43,15 +43,15 @@ public class ChartSpots extends IcyFrame {
 	private JPanel mainChartPanel = null;
 	public IcyFrame mainChartFrame = null;
 
-	private Range yRange = null;
-	private Range xRange = null;
+	public Range yRange = null;
+	public Range xRange = null;
 
 	private Point graphLocation = new Point(0, 0);
 
 	private int nPanelsAlongX = 1;
 	private int nPanelsAlongY = 1;
 
-	private ChartPanel[][] chartPanelArray = null;
+	public CageChartPair[][] chartPanelArray = null;
 	private Experiment experiment = null;
 	private MultiSPOTS96 parent = null;
 
@@ -77,7 +77,7 @@ public class ChartSpots extends IcyFrame {
 				true);
 		JScrollPane scrollPane = new JScrollPane(mainChartPanel);
 		mainChartFrame.add(scrollPane);
-		chartPanelArray = new ChartPanel[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
+		chartPanelArray = new CageChartPair[exp.cagesArray.nCagesAlongY][exp.cagesArray.nCagesAlongX];
 	}
 
 	private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions xlsExportOptions) {
@@ -149,8 +149,9 @@ public class ChartSpots extends IcyFrame {
 					continue;
 				}
 
-				chartPanelArray[row][col] = createChartPanelForCage(chartCage, cage, xlsResultsArray, xlsResultsArray2,
-						row, col, xlsExportOptions);
+				ChartPanel chart = createChartPanelForCage(chartCage, cage, xlsResultsArray, xlsResultsArray2, row, col,
+						xlsExportOptions);
+				chartPanelArray[row][col] = new CageChartPair(chart, cage);
 				indexCage++;
 			}
 		}
@@ -165,9 +166,10 @@ public class ChartSpots extends IcyFrame {
 		JFreeChart chart = new JFreeChart(null, null, cageXYPlot, false);
 
 		// Store cage data in chart properties instead of string ID
-		chart.putClientProperty("cage", cage);
-		chart.putClientProperty("row", row);
-		chart.putClientProperty("col", col);
+//		chart.putClientProperty("cage", cage);
+//		chart.putClientProperty("row", row);
+//		chart.putClientProperty("col", col);
+		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.prop.cagePosition);
 
 		ChartPanel panel = new ChartPanel(chart, 200, 100, 50, 25, 1200, 600, true, true, true, true, false, true);
 
@@ -181,11 +183,11 @@ public class ChartSpots extends IcyFrame {
 			int indexCage = xlsExportOptions.cageIndexFirst;
 			int row = indexCage / experiment.cagesArray.nCagesAlongX;
 			int col = indexCage % experiment.cagesArray.nCagesAlongX;
-			mainChartPanel.add(chartPanelArray[row][col]);
+			mainChartPanel.add(chartPanelArray[row][col].getChartPanel());
 		} else {
 			for (int row = 0; row < nPanelsAlongY; row++) {
 				for (int col = 0; col < nPanelsAlongX; col++) {
-					JPanel chartPanel = chartPanelArray[row][col];
+					JPanel chartPanel = chartPanelArray[row][col].getChartPanel();
 					if (chartPanel == null) {
 						chartPanel = new JPanel();
 					}
@@ -218,7 +220,11 @@ public class ChartSpots extends IcyFrame {
 		}
 
 		JFreeChart chart = e.getChart();
-		Cage cage = (Cage) chart.getClientProperty("cage");
+		// Cage cage = (Cage) chart.getClientProperty("cage");
+		String[] chartID = chart.getID().split(":");
+		int row = Integer.valueOf(chartID[1]);
+		int col = Integer.valueOf(chartID[3]);
+		Cage cage = chartPanelArray[row][col].getCage();
 		if (cage == null) {
 			LOGGER.warning("Clicked chart has no associated cage");
 			return null;
@@ -324,7 +330,7 @@ public class ChartSpots extends IcyFrame {
 		return mainChartFrame;
 	}
 
-	public ChartPanel[][] getChartPanelArray() {
+	public CageChartPair[][] getChartPanelArray() {
 		return chartPanelArray;
 	}
 

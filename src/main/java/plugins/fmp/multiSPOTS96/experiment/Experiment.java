@@ -50,10 +50,6 @@ public class Experiment {
 
 	private final static String ID_VERSION = "version";
 	private final static String ID_VERSIONNUM = "1.0.0";
-	private final static String ID_TIMEFIRSTIMAGE = "fileTimeImageFirstMinute";
-	private final static String ID_TIMELASTIMAGE = "fileTimeImageLastMinute";
-
-	private final static String ID_BINT0 = "indexBinT0";
 	private final static String ID_FRAMEFIRST = "indexFrameFirst";
 	private final static String ID_NFRAMES = "nFrames";
 	private final static String ID_FRAMEDELTA = "indexFrameDelta";
@@ -101,9 +97,9 @@ public class Experiment {
 		String fileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
 		load_MS96_experiment(fileName);
 
-		seqCamData.getImageLoader().setImagesDirectory(eADF.getCameraImagesDirectory());
-		List<String> imagesList = ExperimentDirectories
-				.getImagesListFromPathV2(seqCamData.getImageLoader().getImagesDirectory(), "jpg");
+		ImageLoader imgLoader = seqCamData.getImageLoader();
+		imgLoader.setImagesDirectory(eADF.getCameraImagesDirectory());
+		List<String> imagesList = ExperimentDirectories.getImagesListFromPathV2(imgLoader.getImagesDirectory(), "jpg");
 		seqCamData.loadImageList(imagesList);
 		if (eADF.cameraImagesList.size() > 1)
 			getFileIntervalsFromSeqCamData();
@@ -265,17 +261,19 @@ public class Experiment {
 	public void loadFileIntervalsFromSeqCamData() {
 		if (seqCamData != null) {
 			seqCamData.setImagesDirectory(camDataImagesDirectory);
-			firstImage_FileTime = seqCamData
-					.getFileTimeFromStructuredName((int) seqCamData.getImageLoader().getAbsoluteIndexFirstImage());
-			lastImage_FileTime = seqCamData
-					.getFileTimeFromStructuredName(seqCamData.getImageLoader().getNTotalFrames() - 1);
+			int t0 = (int) seqCamData.getImageLoader().getAbsoluteIndexFirstImage();
+			firstImage_FileTime = seqCamData.getFileTimeFromStructuredName(t0);
+			int t1 = seqCamData.getImageLoader().getNTotalFrames() - 1;
+			lastImage_FileTime = seqCamData.getFileTimeFromStructuredName(t1);
+
 			if (firstImage_FileTime != null && lastImage_FileTime != null) {
 				seqCamData.setFirstImageMs(firstImage_FileTime.toMillis());
 				seqCamData.setLastImageMs(lastImage_FileTime.toMillis());
-				if (seqCamData.getImageLoader().getNTotalFrames() > 1)
-					seqCamData.getTimeManager()
-							.setBinImage_ms((seqCamData.getLastImageMs() - seqCamData.getFirstImageMs())
-									/ (seqCamData.getImageLoader().getNTotalFrames() - 1));
+
+				if (seqCamData.getImageLoader().getNTotalFrames() > 1) {
+					long binMs = (seqCamData.getLastImageMs() - seqCamData.getFirstImageMs()) / t1;
+					seqCamData.getTimeManager().setBinImage_ms(binMs);
+				}
 				if (seqCamData.getTimeManager().getBinImage_ms() == 0)
 					System.out.println("Experiment:loadFileIntervalsFromSeqCamData() error / file interval size");
 			} else {
@@ -359,23 +357,30 @@ public class Experiment {
 		if (!version.equals(ID_VERSIONNUM))
 			return false;
 
-		seqCamData.setFirstImageMs(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0));
-		seqCamData.setLastImageMs(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0));
-		if (seqCamData.getLastImageMs() <= 0) {
-			seqCamData.setFirstImageMs(XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGE, 0) * 60000);
-			seqCamData.setLastImageMs(XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGE, 0) * 60000);
-		}
+		ImageLoader imgLoader = seqCamData.getImageLoader();
+		long frameFirst = XMLUtil.getElementLongValue(node, ID_FRAMEFIRST, 0);
+		if (frameFirst < 0)
+			frameFirst = 0;
+		imgLoader.setAbsoluteIndexFirstImage(frameFirst);
+		long nImages = XMLUtil.getElementLongValue(node, ID_NFRAMES, -1);
+		imgLoader.setFixedNumberOfImages(nImages);
+		imgLoader.setNTotalFrames((int) (nImages - frameFirst));
 
-		seqCamData.getImageLoader().setAbsoluteIndexFirstImage(XMLUtil.getElementLongValue(node, ID_FRAMEFIRST, -1));
-		if (seqCamData.getImageLoader().getAbsoluteIndexFirstImage() < 0)
-			seqCamData.getImageLoader().setAbsoluteIndexFirstImage(XMLUtil.getElementLongValue(node, ID_BINT0, -1));
-		if (seqCamData.getImageLoader().getAbsoluteIndexFirstImage() < 0)
-			seqCamData.getImageLoader().setAbsoluteIndexFirstImage(0);
-		seqCamData.getImageLoader().setFixedNumberOfImages(XMLUtil.getElementLongValue(node, ID_NFRAMES, -1));
-		seqCamData.getTimeManager().setDeltaImage(XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1));
-		seqCamData.getTimeManager().setBinFirst_ms(XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1));
-		seqCamData.getTimeManager().setBinLast_ms(XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1));
-		seqCamData.getTimeManager().setBinDurationMs(XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1));
+		TimeManager timeManager = seqCamData.getTimeManager();
+		long firstMs = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0);
+		timeManager.setFirstImageMs(firstMs);
+		long lastMs = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0);
+		timeManager.setLastImageMs(lastMs);
+		long durationMs = lastMs - firstMs;
+		timeManager.setDurationMs(durationMs);
+		long frameDelta = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
+		timeManager.setDeltaImage(frameDelta);
+		long binFirstMs = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
+		timeManager.setBinFirst_ms(binFirstMs);
+		long binLastMs = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
+		timeManager.setBinLast_ms(binLastMs);
+		long binDurationMs = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
+		timeManager.setBinDurationMs(binDurationMs);
 
 		ugly_checkOffsetValues();
 		prop.loadXML_Properties(node);
@@ -391,17 +396,18 @@ public class Experiment {
 				return false;
 
 			XMLUtil.setElementValue(node, ID_VERSION, ID_VERSIONNUM);
-			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, seqCamData.getFirstImageMs());
-			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, seqCamData.getLastImageMs());
 
-			XMLUtil.setElementLongValue(node, ID_FRAMEFIRST, seqCamData.getImageLoader().getAbsoluteIndexFirstImage());
-			XMLUtil.setElementLongValue(node, ID_BINT0, seqCamData.getImageLoader().getAbsoluteIndexFirstImage());
-			XMLUtil.setElementLongValue(node, ID_NFRAMES, seqCamData.getImageLoader().getFixedNumberOfImages());
-			XMLUtil.setElementLongValue(node, ID_FRAMEDELTA, seqCamData.getTimeManager().getDeltaImage());
+			ImageLoader imgLoader = seqCamData.getImageLoader();
+			XMLUtil.setElementLongValue(node, ID_FRAMEFIRST, imgLoader.getAbsoluteIndexFirstImage());
+			XMLUtil.setElementLongValue(node, ID_NFRAMES, imgLoader.getFixedNumberOfImages());
 
-			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, seqCamData.getTimeManager().getBinFirst_ms());
-			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, seqCamData.getTimeManager().getBinLast_ms());
-			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, seqCamData.getTimeManager().getBinDurationMs());
+			TimeManager timeManager = seqCamData.getTimeManager();
+			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, timeManager.getFirstImageMs());
+			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, timeManager.getLastImageMs());
+			XMLUtil.setElementLongValue(node, ID_FRAMEDELTA, timeManager.getDeltaImage());
+			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, timeManager.getBinFirst_ms());
+			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, timeManager.getBinLast_ms());
+			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, timeManager.getBinDurationMs());
 
 			prop.saveXML_Properties(node);
 
@@ -794,12 +800,14 @@ public class Experiment {
 		return resultsDirectory + File.separator + "referenceImage.jpg";
 	}
 
-	public boolean loadCagesArray_File() {
-		boolean flag = load_MS96_cages();
-		if (flag) {
-			cagesArray.transferCagesToSequenceAsROIs(seqCamData);
-		}
-		return flag;
+	public void transferCagesROI_toSequence() {
+		seqCamData.removeROIsContainingString("cage");
+		cagesArray.transferCagesToSequenceAsROIs(seqCamData);
+	}
+
+	public void transferSpotsROI_toSequence() {
+		seqCamData.removeROIsContainingString("spot");
+		cagesArray.transferCageSpotsToSequenceAsROIs(seqCamData);
 	}
 
 	public boolean saveCagesArray_File() {
@@ -808,15 +816,8 @@ public class Experiment {
 		return save_MS96_spotsMeasures();
 	}
 
-	public boolean loadSpotsArray_File() {
-		boolean flag = load_MS96_cages();
-		seqCamData.removeROIsContainingString("spot");
-		cagesArray.transferCageSpotsToSequenceAsROIs(seqCamData);
-		return flag;
-	}
-
 	public boolean saveSpotsArray_file() {
-//		parent0.dlgExperiment.getExperimentInfosFromDialog(exp);
+		;
 		cagesArray.transferROIsFromSequenceToCageSpots(seqCamData);
 		boolean flag = save_MS96_cages();
 		flag &= save_MS96_spotsMeasures();

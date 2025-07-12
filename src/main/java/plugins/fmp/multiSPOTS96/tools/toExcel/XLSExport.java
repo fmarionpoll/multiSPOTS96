@@ -13,6 +13,8 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.ImageLoader;
+import plugins.fmp.multiSPOTS96.experiment.TimeManager;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
@@ -87,28 +89,31 @@ public class XLSExport {
 		return sheet;
 	}
 
-	private void exportError(Experiment expi, int nOutputFrames) {
-		String error = "XLSExport:ExportError() ERROR in " + expi.getResultsDirectory() + "\n nOutputFrames="
-				+ nOutputFrames + " kymoFirstCol_Ms=" + expi.seqCamData.getTimeManager().getBinFirst_ms()
-				+ " kymoLastCol_Ms=" + expi.seqCamData.getTimeManager().getBinLast_ms();
+	private void exportError(Experiment exp, int nOutputFrames) {
+		String error = "XLSExport:ExportError() ERROR in " + exp.getResultsDirectory() + "\n nOutputFrames="
+				+ nOutputFrames + " kymoFirstCol_Ms=" + exp.seqCamData.getTimeManager().getBinFirst_ms()
+				+ " kymoLastCol_Ms=" + exp.seqCamData.getTimeManager().getBinLast_ms();
 		System.out.println(error);
 	}
 
-	protected int getNOutputFrames(Experiment expi) {
-		int nOutputFrames = (int) ((expi.seqCamData.getTimeManager().getBinLast_ms()
-				- expi.seqCamData.getTimeManager().getBinFirst_ms()) / options.buildExcelStepMs + 1);
+	protected int getNOutputFrames(Experiment exp) {
+		TimeManager timeManager = exp.seqCamData.getTimeManager();
+		ImageLoader imgLoader = exp.seqCamData.getImageLoader();
+		long durationMs = timeManager.getBinLast_ms() - timeManager.getBinFirst_ms();
+		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
 		if (nOutputFrames <= 1) {
-			if (expi.seqKymos.imageWidthMax == 0)
-				expi.zloadKymographs();
-			expi.seqCamData.getTimeManager().setBinLast_ms(expi.seqCamData.getTimeManager().getBinFirst_ms()
-					+ expi.seqKymos.imageWidthMax * expi.seqCamData.getTimeManager().getBinDurationMs());
-			if (expi.seqCamData.getTimeManager().getBinLast_ms() <= 0)
-				exportError(expi, -1);
-			nOutputFrames = (int) ((expi.seqCamData.getTimeManager().getBinLast_ms()
-					- expi.seqCamData.getTimeManager().getBinFirst_ms()) / options.buildExcelStepMs + 1);
+			if (exp.seqKymos != null && exp.seqKymos.imageWidthMax == 0)
+				exp.zloadKymographs();
+
+			long binLastMs = timeManager.getBinFirst_ms()
+					+ imgLoader.getNTotalFrames() * timeManager.getBinDurationMs();
+			timeManager.setBinLast_ms(binLastMs);
+			if (binLastMs <= 0)
+				exportError(exp, -1);
+			nOutputFrames = (int) ((binLastMs - timeManager.getBinFirst_ms()) / options.buildExcelStepMs + 1);
 			if (nOutputFrames <= 1) {
-				nOutputFrames = expi.seqCamData.getImageLoader().getNTotalFrames();
-				exportError(expi, nOutputFrames);
+				nOutputFrames = imgLoader.getNTotalFrames();
+				exportError(exp, nOutputFrames);
 			}
 		}
 		return nOutputFrames;
@@ -117,8 +122,8 @@ public class XLSExport {
 	XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, EnumXLSExport xlsExportType) {
 		int nOutputFrames = getNOutputFrames(exp);
 		XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
-		xlsResults.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportType, exp.seqCamData.getTimeManager().getBinDurationMs(),
-				options.buildExcelStepMs);
+		xlsResults.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportType,
+				exp.seqCamData.getTimeManager().getBinDurationMs(), options.buildExcelStepMs);
 		if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT)
 			xlsResults.relativeToMaximum(); // relativeToT0();
 		return xlsResults;

@@ -110,7 +110,7 @@ public class ChartOptions extends JPanel {
 
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartPanel chartPanel = chartSpots.chartPanelArray[row][column];
+				ChartPanel chartPanel = chartSpots.chartPanelArray[row][column].getChartPanel();
 				if (chartPanel == null)
 					continue;
 				XYPlot plot = (XYPlot) chartPanel.getChart().getPlot();
@@ -144,7 +144,7 @@ public class ChartOptions extends JPanel {
 		double lower = (double) lowerXSpinner.getValue();
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartPanel chartPanel = chartSpots.chartPanelArray[row][column];
+				ChartPanel chartPanel = chartSpots.chartPanelArray[row][column].getChartPanel();
 				if (chartPanel == null)
 					continue;
 				XYPlot xyPlot = (XYPlot) chartPanel.getChart().getPlot();
@@ -163,7 +163,7 @@ public class ChartOptions extends JPanel {
 		double lower = (double) lowerYSpinner.getValue();
 		for (int column = 0; column < ncolumns; column++) {
 			for (int row = 0; row < nrows; row++) {
-				ChartPanel chartPanel = chartSpots.chartPanelArray[row][column];
+				ChartPanel chartPanel = chartSpots.chartPanelArray[row][column].getChartPanel();
 				if (chartPanel == null)
 					continue;
 				XYPlot xyPlot = (XYPlot) chartPanel.getChart().getPlot();

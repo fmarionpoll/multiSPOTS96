@@ -123,26 +123,6 @@ public class XLSExportForChart extends XLSExport {
 		return getSpotsDataFromOneExperimentSeries_v2parms(exp, options);
 	}
 
-//
-//	private XLSResultsArray getSpotDataFromOneExperimentSeries_v3parms(Experiment exp,
-//			EnumXLSExportType xlsExportType) {
-//		XLSResultsArray rowListForOneExp = getSingleSpotDescriptorsForOneExperiment(exp, xlsExportType);
-//		Experiment expi = exp.getFirstChainedExperiment(true);
-//
-//		while (expi != null) {
-//			int nOutputFrames = getNOutputFrames(expi);
-//			if (nOutputFrames > 1) {
-//				XLSResultsArray resultsArrayList = new XLSResultsArray(expi.cagesArray.getTotalNumberOfSpots());
-//				options.compensateEvaporation = false;
-//				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames, exp.seqCamData.getTimeManager().getBinDurationMs(),
-//						options);
-//				addResultsTo_rowsForOneExp(rowListForOneExp, expi, resultsArrayList);
-//			}
-//			expi = expi.chainToNextExperiment;
-//		}
-//		return rowListForOneExp;
-//	}
-
 	private XLSResultsArray getSpotsDataFromOneExperimentSeries_v2parms(Experiment exp, XLSExportOptions options) {
 		XLSResultsArray rowListForOneExp = getSpotsDescriptorsForOneExperiment(exp, options.exportType);
 		Experiment expi = exp.getFirstChainedExperiment(true);
@@ -151,8 +131,8 @@ public class XLSExportForChart extends XLSExport {
 			if (nOutputFrames > 1) {
 				XLSResultsArray resultsArrayList = new XLSResultsArray(expi.cagesArray.getTotalNumberOfSpots());
 				options.compensateEvaporation = false;
-				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames, exp.seqCamData.getTimeManager().getBinDurationMs(),
-						options);
+				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames,
+						exp.seqCamData.getTimeManager().getBinDurationMs(), options);
 				addResultsTo_rowsForOneExp(rowListForOneExp, expi, resultsArrayList);
 			}
 			expi = expi.chainToNextExperiment;
@@ -175,8 +155,6 @@ public class XLSExportForChart extends XLSExport {
 			XLSResultsArray resultsArrayList) {
 		if (resultsArrayList.resultsList.size() < 1)
 			return;
-
-//		EnumXLSExportType xlsoption = resultsArrayList.getRow(0).exportType;
 
 		long offsetChain = expi.seqCamData.getFirstImageMs() - expi.chainImageFirst_ms;
 		long start_Ms = expi.seqCamData.getTimeManager().getBinFirst_ms() + offsetChain; // TODO check when collate?
@@ -203,18 +181,6 @@ public class XLSExportForChart extends XLSExport {
 			XLSResults results = getResultsArrayWithThatName(row.name, resultsArrayList);
 			if (results != null && results.valuesOut != null) {
 				double dvalue = 0.;
-//				switch (xlsoption) {
-//				case TOPLEVEL:
-//				case TOPLEVEL_LR:
-//				case TOPLEVELDELTA:
-//				case TOPLEVELDELTA_LR:
-//					if (options.collateSeries && options.padIntervals && expi.chainToPreviousExperiment != null)
-//						dvalue = padWithLastPreviousValue(row, to_first_index);
-//					break;
-//				default:
-//					break;
-//				}
-
 				int icolTo = 0;
 				if (options.collateSeries || options.absoluteTime)
 					icolTo = to_first_index;

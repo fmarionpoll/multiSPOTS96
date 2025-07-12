@@ -22,6 +22,7 @@ public class TimeManager {
 
 	private long firstImage_ms = 0;
 	private long lastImage_ms = 0;
+	private long duration_ms = 0;
 	private long binImage_ms = 0;
 	private long[] camImages_array_ms = null;
 
@@ -173,6 +174,14 @@ public class TimeManager {
 
 	public void setLastImageMs(long timeMs) {
 		this.lastImage_ms = timeMs;
+	}
+
+	public long getDurationMs() {
+		return duration_ms;
+	}
+
+	public void setDurationMs(long timeMs) {
+		this.duration_ms = timeMs;
 	}
 
 	public long getBinDurationMs() {

@@ -25,7 +25,7 @@ public class ImageLoader {
 	private long absoluteIndexFirstImage = 0;
 	private long fixedNumberOfImages = -1;
 	private String fileName = null;
-	private int ntotalFrames = 0;
+	private int nTotalFrames = 0;
 
 	public ImageLoader() {
 	}
@@ -71,6 +71,7 @@ public class ImageLoader {
 			return false;
 		}
 		Sequence seq = loadSequenceFromImagesList(imagesList);
+		nTotalFrames = (int) (seq.getSizeT() - absoluteIndexFirstImage);
 		seqCamData.attachSequence(seq);
 		return (seq != null);
 	}
@@ -92,6 +93,8 @@ public class ImageLoader {
 		}
 		List<String> clippedList = clipImagesList(images);
 		setImagesList(clippedList);
+		fixedNumberOfImages = images.size();
+		nTotalFrames = clippedList.size();
 		Sequence seq = loadSequenceFromImagesList(imagesList);
 		seqCamData.attachSequence(seq);
 	}
@@ -207,10 +210,10 @@ public class ImageLoader {
 	}
 
 	public void setNTotalFrames(int nTotalFrames) {
-		this.ntotalFrames = nTotalFrames;
+		this.nTotalFrames = nTotalFrames;
 	}
 
 	public int getNTotalFrames() {
-		return ntotalFrames;
+		return nTotalFrames;
 	}
 }
