@@ -3,6 +3,8 @@ package plugins.fmp.multiSPOTS96.tools.toExcel;
 import java.awt.Point;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -13,6 +15,8 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
 public class XLSExportMeasuresCagesAsQuery extends XLSExport {
+	ArrayList<EnumXLS_QColumnHeader> headers = new ArrayList<EnumXLS_QColumnHeader>();
+
 	public void exportToFile(String filename, XLSExportOptions opt) {
 		System.out.println("XLSExpoportSpotAreas:exportToFile() - start output");
 		options = opt;
@@ -22,6 +26,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExport {
 //		expList.chainExperimentsUsingKymoIndexes(options.collateSeries);
 //		expList.setFirstImageForAllExperiments(options.collateSeries);
 //		expAll = expList.get_MsTime_of_StartAndEnd_AllExperiments(options);
+		initHeadersArray();
 
 		ProgressFrame progress = new ProgressFrame("Export data to Excel");
 		int nbexpts = expList.getItemCount();
@@ -61,10 +66,30 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExport {
 		System.out.println("XLSExpoportSpotAreas:exportToFile() XLS output finished");
 	}
 
+	private void initHeadersArray() {
+		headers.add(EnumXLS_QColumnHeader.DATE);
+		headers.add(EnumXLS_QColumnHeader.EXP_BOXID);
+		headers.add(EnumXLS_QColumnHeader.EXP_EXPT);
+		headers.add(EnumXLS_QColumnHeader.EXP_STIM1);
+		headers.add(EnumXLS_QColumnHeader.EXP_CONC1);
+		headers.add(EnumXLS_QColumnHeader.EXP_STIM2);
+		headers.add(EnumXLS_QColumnHeader.EXP_CONC2);
+		headers.add(EnumXLS_QColumnHeader.CAGE_STRAIN);
+		headers.add(EnumXLS_QColumnHeader.CAGE_NFLIES);
+		headers.add(EnumXLS_QColumnHeader.CAGE_POS);
+		headers.add(EnumXLS_QColumnHeader.VAL_TIME);
+		headers.add(EnumXLS_QColumnHeader.VAL_STIM1);
+		headers.add(EnumXLS_QColumnHeader.VAL_STIM2);
+		headers.add(EnumXLS_QColumnHeader.VAL_SUM);
+		headers.add(EnumXLS_QColumnHeader.VAL_PI);
+		for (int i = 0; i < headers.size(); i++)
+			headers.get(i).setValue(i);
+	}
+
 	protected int getCageDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExport exportType) {
 		options.exportType = exportType;
 		SXSSFSheet sheet = xlsGetQSheet(exportType.toString(), exportType);
-		int colmax = xlsExportExperimentCageDataToSheet(exp, sheet, exportType, col0, charSeries);
+		int colmax = xlsExportExperimentCageDataToSheet(sheet, exp, exportType, col0, charSeries);
 //		if (options.onlyalive) {
 //			sheet = xlsGetSheet(exportType.toString() + "_alive", exportType);
 //			xlsExportExperimentCageDataToSheet(exp, sheet, exportType, col0, charSeries);
@@ -76,7 +101,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExport {
 		SXSSFSheet sheet = workbook.getSheet(title);
 		if (sheet == null) {
 			sheet = workbook.createSheet(title);
-			int row = writeTopRow_Qdescriptors(sheet);
+			writeTopRow_Qdescriptors(sheet);
 		}
 		return sheet;
 	}
@@ -86,7 +111,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExport {
 		int x = 0;
 		boolean transpose = options.transpose;
 		int nextcol = -1;
-		for (EnumXLS_QColumnHeaders dumb : EnumXLS_QColumnHeaders.values()) {
+		for (EnumXLS_QColumnHeader dumb : headers) {
 			XLSUtils.setValue(sheet, x, dumb.getValue(), transpose, dumb.getName());
 			if (nextcol < dumb.getValue())
 				nextcol = dumb.getValue();
@@ -95,7 +120,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExport {
 		return pt.y;
 	}
 
-	int xlsExportExperimentCageDataToSheet(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType, int col0,
+	int xlsExportExperimentCageDataToSheet(SXSSFSheet sheet, Experiment exp, EnumXLSExport xlsExportType, int col0,
 			String charSeries) {
 		Point pt = new Point(col0, 0);
 		String stim1 = exp.prop.field_stim1;
@@ -104,28 +129,124 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExport {
 		String conc2 = exp.prop.field_conc2;
 
 		for (Cage cage : exp.cagesArray.cagesList) {
-
+			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 			Spot spot1 = cage.combineSpotsWith(stim1, conc1);
 			Spot spot2 = cage.combineSpotsWith(stim2, conc2);
-			Spot spotPI = cage.createSpotPI(spot1, spot2);
-			Spot spotSUM = cage.createSpotSUM(spot1, spot2);
 
-			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
-			/*
-			 * for (int t = 0; t < duration; t++) { pt.y = 0; writeCageInfosToXLS(sheet, pt,
-			 * exp, charSeries, cage, xlsExportType); writeDataToXLS(t, spot1, spot2,
-			 * spotPI, spotSUM, xlsExportType); pt.x++; }
-			 */
-//			for (Spot spot : spotsList) {
-//				pt.y = 0;
-//				pt = writeExperiment_spot_infos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
-//				XLSResults xlsResults = getSpotResults(exp, cage, spot, xlsExportType);
-//				xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
-//				writeXLSResult(sheet, pt, xlsResults);
-//				pt.x++;
-//			}
+			XLSResults xlsStim1 = getResultForCage(exp, cage, spot1, scalingFactorToPhysicalUnits, xlsExportType);
+			XLSResults xlsStim2 = getResultForCage(exp, cage, spot2, scalingFactorToPhysicalUnits, xlsExportType);
+			XLSResults xlsPI = getResultForCage(exp, cage, cage.createSpotPI(spot1, spot2),
+					scalingFactorToPhysicalUnits, xlsExportType);
+			XLSResults xlsSUM = getResultForCage(exp, cage, cage.createSpotSUM(spot1, spot2),
+					scalingFactorToPhysicalUnits, xlsExportType);
+
+			int duration = xlsStim1.dimension;
+
+			for (int t = 0; t < duration; t++) {
+				pt.y = 0;
+				writeCageInfosToXLS(sheet, pt, exp, charSeries, cage, xlsExportType);
+				writeDataAtTToXLS(sheet, pt, t, xlsStim1, xlsStim2, xlsPI, xlsSUM, xlsExportType);
+				pt.x++;
+			}
 		}
+		pt.x++;
 		return pt.x;
+	}
+
+	XLSResults getResultForCage(Experiment exp, Cage cage, Spot spot, double scaling, EnumXLSExport xlsExportType) {
+		XLSResults xlsResults = getSpotResults(exp, cage, spot, xlsExportType);
+		xlsResults.transferMeasuresToValuesOut(scaling, xlsExportType);
+		return xlsResults;
+	}
+
+	void writeCageInfosToXLS(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
+			EnumXLSExport xlsExportType) {
+		boolean transpose = options.transpose;
+		for (int i = 0; i < headers.size(); i++) {
+			;
+			String dummy = getDescriptor(exp, cage, headers.get(i));
+			XLSUtils.setValue(sheet, pt, transpose, dummy);
+			pt.y++;
+		}
+	}
+
+	void writeDataAtTToXLS(SXSSFSheet sheet, Point pt, int t, XLSResults xlsStim1, XLSResults xlsStim2,
+			XLSResults xlsPI, XLSResults xlsSUM, EnumXLSExport xlsExportType) {
+		writeDataToXLS(sheet, pt, t, xlsStim1);
+		pt.y++;
+		writeDataToXLS(sheet, pt, t, xlsStim2);
+		pt.y++;
+		writeDataToXLS(sheet, pt, t, xlsPI);
+		pt.y++;
+		writeDataToXLS(sheet, pt, t, xlsSUM);
+		pt.y++;
+	}
+
+	void writeDataToXLS(SXSSFSheet sheet, Point pt, int t, XLSResults xlsResult) {
+		if (xlsResult == null)
+			return;
+
+		double value = xlsResult.valuesOut[t];
+		boolean transpose = options.transpose;
+		if (!Double.isNaN(value)) {
+			XLSUtils.setValue(sheet, pt, transpose, value);
+		}
+	}
+
+	String getDescriptor(Experiment exp, Cage cage, EnumXLS_QColumnHeader col) {
+		String dummy = null;
+		switch (col) {
+		case DATE:
+			SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+			return df.format(exp.chainImageFirst_ms);
+
+		case EXP_BOXID:
+			return exp.prop.ffield_boxID;
+		case CAGEID:
+			return Integer.toString(cage.prop.cageID);
+		case EXP_EXPT:
+			return exp.prop.ffield_experiment;
+		case EXP_STRAIN:
+			return exp.prop.field_strain;
+		case EXP_SEX:
+			return exp.prop.field_sex;
+		case EXP_STIM1:
+			return exp.prop.field_stim1;
+		case EXP_CONC1:
+			return exp.prop.field_conc1;
+		case EXP_STIM2:
+			return exp.prop.field_stim2;
+		case EXP_CONC2:
+			return exp.prop.field_conc2;
+
+		case CAGE_POS:
+			return Integer.toString(cage.prop.cagePosition);
+		case CAGE_NFLIES:
+			return Integer.toString(cage.prop.cageNFlies);
+		case CAGE_STRAIN:
+			return cage.prop.flyStrain;
+		case CAGE_SEX:
+			return cage.prop.flySex;
+		case CAGE_AGE:
+			return Integer.toString(cage.prop.flyAge);
+		case CAGE_COMMENT:
+			return cage.prop.comment;
+//		case DUM4:
+//			break;
+//		case VAL_TIME:
+//			break;
+//		case VAL_STIM1:
+//			break;
+//		case VAL_STIM2:
+//			break;
+//		case VAL_SUM:
+//			break;
+//		case VAL_PI:
+//			break;
+		default:
+			break;
+		}
+		return dummy;
 	}
 
 }

@@ -229,17 +229,6 @@ public class Spot implements Comparable<Spot> {
 		return null;
 	}
 
-	public void cropSpotMeasuresToNPoints(int npoints) {
-		cropSpotMeasureToNPoints(sum_in, npoints);
-		cropSpotMeasureToNPoints(sum_clean, npoints);
-		cropSpotMeasureToNPoints(flyPresent, npoints);
-	}
-
-	private void cropSpotMeasureToNPoints(SpotMeasure spotMeasure, int npoints) {
-		if (spotMeasure.getLevel2DNPoints() > 0)
-			spotMeasure.cropLevel2DToNPoints(npoints);
-	}
-
 	public void restoreClippedSpotMeasures() {
 		restoreClippedMeasures(sum_in);
 		restoreClippedMeasures(sum_clean);
