@@ -244,7 +244,7 @@ public class Infos extends JPanel {
 	}
 
 	void zoomToUpperCorner(Experiment exp) {
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.seqCamData.getSequence();
 		Viewer v = seq.getFirstViewer();
 		if (v != null) {
 			Canvas2D canvas = (Canvas2D) v.getCanvas();

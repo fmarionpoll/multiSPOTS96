@@ -50,7 +50,8 @@ public class BuildSpotsKymos extends BuildSeries {
 
 	private boolean loadExperimentDataToBuildKymos(Experiment exp) {
 		boolean flag = exp.load_MS96_cages();
-		exp.seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
+		exp.seqCamData.attachSequence(
+				exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
 		return flag;
 	}
 
@@ -63,7 +64,7 @@ public class BuildSpotsKymos extends BuildSeries {
 
 		ProgressFrame progressBar = new ProgressFrame("Save kymographs");
 
-		int nframes = exp.seqKymos.seq.getSizeT();
+		int nframes = exp.seqKymos.getSequence().getSizeT();
 		int nCPUs = SystemUtil.getNumberOfCPUs();
 		final Processor processor = new Processor(nCPUs);
 		processor.setThreadName("buildkymo2");
@@ -72,7 +73,7 @@ public class BuildSpotsKymos extends BuildSeries {
 		futuresArray.clear();
 
 		SpotsArray spotsArray = exp.cagesArray.getAllSpotsArray();
-		for (int t = 0; t < exp.seqKymos.seq.getSizeT(); t++) {
+		for (int t = 0; t < exp.seqKymos.getSequence().getSizeT(); t++) {
 			final int t_index = t;
 			futuresArray.add(processor.submit(new Runnable() {
 				@Override
@@ -109,9 +110,10 @@ public class BuildSpotsKymos extends BuildSeries {
 		stopFlag = false;
 
 		final int iiFirst = 0;
-		int iiLast = exp.seqCamData.fixedNumberOfImages > 0 ? (int) exp.seqCamData.fixedNumberOfImages
-				: exp.seqCamData.nTotalFrames;
-		final int iiDelta = (int) exp.seqKymos.deltaImage;
+		int iiLast = exp.seqCamData.getImageLoader().getFixedNumberOfImages() > 0
+				? (int) exp.seqCamData.getImageLoader().getFixedNumberOfImages()
+				: exp.seqCamData.getImageLoader().getNTotalFrames();
+		final int iiDelta = (int) exp.seqKymos.getTimeManager().getDeltaImage();
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack frame ");
 
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
@@ -160,21 +162,14 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	/*
-	private void analyzeImageWithSpot(IcyBufferedImageCursor cursorSource, Spot spot, int t, int sizeC) {
-		ROI2DAlongT roiT = spot.getROIAtT(t);
-		for (int chan = 0; chan < sizeC; chan++) {
-			IcyBufferedImageCursor cursor = new IcyBufferedImageCursor(spot.spotImage);
-			try {
-				for (int y = 0; y < roiT.mask2DPoints_in.length; y++) {
-					Point pt = roiT.mask2DPoints_in[y];
-					cursor.set(t, y, chan, cursorSource.get((int) pt.getX(), (int) pt.getY(), chan));
-				}
-			} finally {
-				cursor.commitChanges();
-			}
-		}
-	}
-	*/
+	 * private void analyzeImageWithSpot(IcyBufferedImageCursor cursorSource, Spot
+	 * spot, int t, int sizeC) { ROI2DAlongT roiT = spot.getROIAtT(t); for (int chan
+	 * = 0; chan < sizeC; chan++) { IcyBufferedImageCursor cursor = new
+	 * IcyBufferedImageCursor(spot.spotImage); try { for (int y = 0; y <
+	 * roiT.mask2DPoints_in.length; y++) { Point pt = roiT.mask2DPoints_in[y];
+	 * cursor.set(t, y, chan, cursorSource.get((int) pt.getX(), (int) pt.getY(),
+	 * chan)); } } finally { cursor.commitChanges(); } } }
+	 */
 
 	private void analyzeImageWithSpot2(IcyBufferedImageCursor cursorSource, Spot spot, int t, int sizeC) {
 		ROI2DAlongT roiT = spot.getROIAtT(t);
@@ -214,7 +209,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private void exportSpotImages_to_Kymograph(Experiment exp, final int sizeC) {
-		Sequence seqKymo = exp.seqKymos.seq;
+		Sequence seqKymo = exp.seqKymos.getSequence();
 		seqKymo.beginUpdate();
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("buildKymograph");
@@ -260,18 +255,19 @@ public class BuildSpotsKymos extends BuildSeries {
 		if (exp.seqKymos == null)
 			exp.seqKymos = new SequenceKymos();
 		SequenceKymos seqKymos = exp.seqKymos;
-		seqKymos.seq = new Sequence();
+		seqKymos.attachSequence(new Sequence());
 
 		SequenceCamData seqCamData = exp.seqCamData;
-		if (seqCamData.seq == null)
-			seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
+		if (seqCamData.getSequence() == null)
+			seqCamData.attachSequence(
+					exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
 
-		kymoImageWidth = exp.seqCamData.nTotalFrames;
-		int numC = seqCamData.seq.getSizeC();
+		kymoImageWidth = exp.seqCamData.getImageLoader().getNTotalFrames();
+		int numC = seqCamData.getSequence().getSizeC();
 		if (numC <= 0)
 			numC = 3;
 
-		DataType dataType = seqCamData.seq.getDataType_();
+		DataType dataType = seqCamData.getSequence().getDataType_();
 		if (dataType.toString().equals("undefined"))
 			dataType = DataType.UBYTE;
 
@@ -311,7 +307,7 @@ public class BuildSpotsKymos extends BuildSeries {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					seqData = newSequence("analyze stack starting with file " + exp.seqCamData.seq.getName(),
+					seqData = newSequence("analyze stack starting with file " + exp.seqCamData.getSequence().getName(),
 							exp.seqCamData.getSeqImage(0, 0));
 					vData = new ViewerFMP(seqData, true, true);
 				}

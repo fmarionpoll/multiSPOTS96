@@ -104,30 +104,32 @@ public class Create extends JPanel implements PropertyChangeListener {
 	}
 
 	private void setExptParms(Experiment exp) {
-		long bin_ms = exp.seqCamData.binImage_ms;
+		long bin_ms = exp.seqCamData.getTimeManager().getBinImage_ms();
 		if (exp.seqKymos == null)
 			exp.seqKymos = new SequenceKymos();
-		exp.seqKymos.absoluteIndexFirstImage = (long) kymosFrameFirstJSpinner.getValue();
-		exp.seqKymos.deltaImage = (long) kymosFrameDeltaJSpinner.getValue();
-		exp.seqKymos.binFirst_ms = exp.seqCamData.absoluteIndexFirstImage * bin_ms;
-		exp.seqKymos.binLast_ms = ((long) kymosFrameLastJSpinner.getValue()) * bin_ms;
+		exp.seqKymos.getImageLoader().setAbsoluteIndexFirstImage((long) kymosFrameFirstJSpinner.getValue());
+		exp.seqKymos.getTimeManager().setDeltaImage((long) kymosFrameDeltaJSpinner.getValue());
+		exp.seqKymos.getTimeManager()
+				.setBinFirst_ms(exp.seqCamData.getImageLoader().getAbsoluteIndexFirstImage() * bin_ms);
+		exp.seqKymos.getTimeManager().setBinLast_ms(((long) kymosFrameLastJSpinner.getValue()) * bin_ms);
 	}
 
 	public void getExptParms(Experiment exp) {
-		long bin_ms = exp.seqCamData.binImage_ms;
+		long bin_ms = exp.seqCamData.getTimeManager().getBinImage_ms();
 		if (bin_ms == 0) {
 			exp.loadFileIntervalsFromSeqCamData();
-			bin_ms = exp.seqCamData.binImage_ms;
+			bin_ms = exp.seqCamData.getTimeManager().getBinImage_ms();
 		}
 		if (exp.seqKymos == null) {
 			exp.seqKymos = new SequenceKymos();
 		}
-		long dFirst = exp.seqKymos.absoluteIndexFirstImage;
+		long dFirst = exp.seqKymos.getImageLoader().getAbsoluteIndexFirstImage();
 		kymosFrameFirstJSpinner.setValue(dFirst);
-		kymosFrameDeltaJSpinner.setValue(exp.seqCamData.deltaImage);
-		if (exp.seqCamData.binLast_ms <= 0)
-			exp.seqCamData.binLast_ms = (long) (exp.seqCamData.nTotalFrames) * bin_ms;
-		long dLast = (long) exp.seqCamData.binLast_ms / bin_ms;
+		kymosFrameDeltaJSpinner.setValue(exp.seqCamData.getTimeManager().getDeltaImage());
+		if (exp.seqCamData.getTimeManager().getBinLast_ms() <= 0)
+			exp.seqCamData.getTimeManager()
+					.setBinLast_ms((long) (exp.seqCamData.getImageLoader().getNTotalFrames()) * bin_ms);
+		long dLast = (long) exp.seqCamData.getTimeManager().getBinLast_ms() / bin_ms;
 		kymosFrameLastJSpinner.setValue(dLast);
 		exp.getFileIntervalsFromSeqCamData();
 	}
@@ -143,9 +145,9 @@ public class Create extends JPanel implements PropertyChangeListener {
 			options.expList.index1 = options.expList.index0;
 		options.isFrameFixed = false;
 		exp.loadFileIntervalsFromSeqCamData();
-		options.t_Ms_First = exp.seqCamData.firstImage_ms;
-		options.t_Ms_Last = exp.seqCamData.lastImage_ms;
-		options.t_Ms_BinDuration = exp.seqCamData.binImage_ms;
+		options.t_Ms_First = exp.seqCamData.getFirstImageMs();
+		options.t_Ms_Last = exp.seqCamData.getLastImageMs();
+		options.t_Ms_BinDuration = exp.seqCamData.getTimeManager().getBinImage_ms();
 		options.doCreateBinDir = true;
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = Experiment.BIN + options.t_Ms_BinDuration / 1000;

@@ -204,14 +204,15 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (sequenceEvent.getSourceType() == SequenceEventSourceType.SEQUENCE_DATA) {
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
-				if (exp.seqCamData.seq != null && sequenceEvent.getSequence() == exp.seqCamData.seq) {
-					Viewer v = exp.seqCamData.seq.getFirstViewer();
+				if (exp.seqCamData.getSequence() != null
+						&& sequenceEvent.getSequence() == exp.seqCamData.getSequence()) {
+					Viewer v = exp.seqCamData.getSequence().getFirstViewer();
 					int t = v.getPositionT();
 					v.setTitle(exp.seqCamData.getDecoratedImageName(t));
 				}
 				// TODO: check if the lines below are necessary
-				if (exp.seqKymos.seq != null && sequenceEvent.getSequence() == exp.seqKymos.seq) {
-					Viewer v = exp.seqKymos.seq.getFirstViewer();
+				if (exp.seqKymos.getSequence() != null && sequenceEvent.getSequence() == exp.seqKymos.getSequence()) {
+					Viewer v = exp.seqKymos.getSequence().getFirstViewer();
 					v.setTitle("dummy");
 				}
 			}
@@ -272,11 +273,11 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		boolean flag = true;
 		progressFrame.setMessage("Load image");
 		List<String> imagesList = (ArrayList<String>) ExperimentDirectories
-				.getImagesListFromPathV2(exp.seqCamData.imagesDirectory, "jpg");
+				.getImagesListFromPathV2(exp.seqCamData.getImagesDirectory(), "jpg");
 		exp.seqCamData.loadImageList(imagesList);
 		parent0.dlgExperiment.updateViewerForSequenceCam(exp);
 
-		exp.seqCamData.seq.addListener(this);
+		exp.seqCamData.getSequence().addListener(this);
 		if (exp.seqCamData != null) {
 			exp.load_MS96_cages();
 			exp.loadSpotsArray_File();

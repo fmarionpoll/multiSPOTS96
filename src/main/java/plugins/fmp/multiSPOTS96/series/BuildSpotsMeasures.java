@@ -48,10 +48,11 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 	private boolean loadExperimentDataToMeasureSpots(Experiment exp) {
 		boolean flag = exp.load_MS96_cages();
-		if (exp.seqCamData.binDuration_ms == 0)
+		if (exp.seqCamData.getTimeManager().getBinDurationMs() == 0)
 			exp.loadFileIntervalsFromSeqCamData();
 
-		exp.seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
+		exp.seqCamData.attachSequence(
+				exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
 		return flag;
 	}
 
@@ -97,8 +98,9 @@ public class BuildSpotsMeasures extends BuildSeries {
 		stopFlag = false;
 		exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList();
 		int iiFirst = 0;
-		int iiLast = exp.seqCamData.fixedNumberOfImages > 0 ? (int) exp.seqCamData.fixedNumberOfImages
-				: exp.seqCamData.nTotalFrames;
+		int iiLast = exp.seqCamData.getImageLoader().getFixedNumberOfImages() > 0
+				? (int) exp.seqCamData.getImageLoader().getFixedNumberOfImages()
+				: exp.seqCamData.getImageLoader().getNTotalFrames();
 		vData.setTitle(exp.seqCamData.getCSCamFileName() + ": " + iiFirst + "-" + iiLast);
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack");
 
@@ -199,7 +201,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 	}
 
 	private void initSpotsDataArrays(Experiment exp) {
-		int nFrames = exp.seqCamData.nTotalFrames;
+		int nFrames = exp.seqCamData.getImageLoader().getNTotalFrames();
 		int spotArrayGlobalIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			int spotPosition = 0;
@@ -218,8 +220,9 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 	private void initMasks2D(Experiment exp) {
 		SequenceCamData seqCamData = exp.seqCamData;
-		if (seqCamData.seq == null)
-			seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
+		if (seqCamData.getSequence() == null)
+			seqCamData.attachSequence(
+					exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				List<ROI2DAlongT> listRoiT = spot.getROIAlongTList();

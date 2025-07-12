@@ -143,7 +143,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					ArrayList<ROI> roiList = exp.seqCamData.seq.getSelectedROIs();
+					ArrayList<ROI> roiList = exp.seqCamData.getSequence().getSelectedROIs();
 					if (roiList.size() > 0) {
 						Cage cage = null;
 						for (ROI roi : roiList) {
@@ -189,7 +189,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 		if (exp != null) {
 			Cage cage = exp.cagesArray.getCageFromID(cageID);
 			ROI2D roi = cage.getRoi();
-			exp.seqCamData.seq.setFocusedROI(roi);
+			exp.seqCamData.getSequence().setFocusedROI(roi);
 			exp.seqCamData.centerOnRoi(roi);
 			roi.setSelected(true);
 		}

@@ -34,23 +34,23 @@ public class SequenceKymos extends SequenceCamData {
 
 	public SequenceKymos() {
 		super();
-		status = EnumStatus.KYMOGRAPH;
+		setStatus(EnumStatus.KYMOGRAPH);
 	}
 
 	public SequenceKymos(String name, IcyBufferedImage image) {
 		super(name, image);
-		status = EnumStatus.KYMOGRAPH;
+		setStatus(EnumStatus.KYMOGRAPH);
 	}
 
 	public SequenceKymos(List<String> listNames) {
 		super();
 		setImagesList(listNames);
-		status = EnumStatus.KYMOGRAPH;
+		setStatus(EnumStatus.KYMOGRAPH);
 	}
 
 	public void validateRois() {
-		List<ROI2D> listRois = seq.getROI2Ds();
-		int width = seq.getWidth();
+		List<ROI2D> listRois = getSequence().getROI2Ds();
+		int width = getSequence().getWidth();
 		for (ROI2D roi : listRois) {
 			if (!(roi instanceof ROI2DPolyLine))
 				continue;
@@ -104,13 +104,13 @@ public class SequenceKymos extends SequenceCamData {
 		}
 
 		if (myList.size() > 0) {
-			status = EnumStatus.KYMOGRAPH;
+			setStatus(EnumStatus.KYMOGRAPH);
 			myList = ExperimentDirectories.keepOnlyAcceptedNames_List(myList, "tiff");
 
 			// threaded by default here
 			loadImageList(myList);
 			setParentDirectoryAsCSCamFileName(myList.get(0));
-			status = EnumStatus.KYMOGRAPH;
+			setStatus(EnumStatus.KYMOGRAPH);
 		}
 		isRunning_loadImages = false;
 		return flag;
@@ -119,8 +119,8 @@ public class SequenceKymos extends SequenceCamData {
 	protected void setParentDirectoryAsCSCamFileName(String filename) {
 		if (filename != null) {
 			Path path = Paths.get(filename);
-			csFileName = path.getName(path.getNameCount() - 2).toString();
-			seq.setName(csFileName);
+			String csFileName = path.getName(path.getNameCount() - 2).toString();
+			getSequence().setName(csFileName);
 		}
 	}
 

@@ -347,7 +347,7 @@ public class CagesArray {
 	}
 
 	public List<ROI2D> getROIsWithCageName(SequenceCamData seqCamData) {
-		List<ROI2D> roiList = seqCamData.seq.getROI2Ds();
+		List<ROI2D> roiList = seqCamData.getSequence().getROI2Ds();
 		List<ROI2D> roisCageList = new ArrayList<ROI2D>();
 		for (ROI2D roi : roiList) {
 			String csName = roi.getName();
@@ -444,7 +444,7 @@ public class CagesArray {
 		List<ROI2D> cageROIList = new ArrayList<ROI2D>(cagesList.size());
 		for (Cage cage : cagesList)
 			cageROIList.add(cage.getRoi());
-		seqCamData.seq.addROIs(cageROIList, true);
+		seqCamData.getSequence().addROIs(cageROIList, true);
 	}
 
 	public void transferROIsFromSequenceToCages(SequenceCamData seqCamData) {
@@ -456,13 +456,13 @@ public class CagesArray {
 	}
 
 	public void removeAllRoiDetFromSequence(SequenceCamData seqCamData) {
-		ArrayList<ROI2D> seqlist = seqCamData.seq.getROI2Ds();
+		ArrayList<ROI2D> seqlist = seqCamData.getSequence().getROI2Ds();
 		for (ROI2D roi : seqlist) {
 			if (!(roi instanceof ROI2DShape))
 				continue;
 			if (!roi.getName().contains("det"))
 				continue;
-			seqCamData.seq.removeROI(roi);
+			seqCamData.getSequence().removeROI(roi);
 		}
 	}
 
@@ -609,14 +609,14 @@ public class CagesArray {
 					spotROIList.add(spot.getRoi());
 			}
 			Collections.sort(spotROIList, new Comparators.ROI2D_Name());
-			seqCamData.seq.addROIs(spotROIList, true);
+			seqCamData.getSequence().addROIs(spotROIList, true);
 		}
 	}
 
 	public void transferROIsFromSequenceToCageSpots(SequenceCamData seqCamData) {
 		List<ROI2D> listSeqRois = seqCamData.getROIsContainingString("spot");
 //		int T = 0;
-//		Viewer v = seqCamData.seq.getFirstViewer();
+//		Viewer v = seqCamData.getSequence().getFirstViewer();
 //		if (v != null)
 //			T = v.getPositionT();
 		Collections.sort(listSeqRois, new Comparators.ROI_Name());

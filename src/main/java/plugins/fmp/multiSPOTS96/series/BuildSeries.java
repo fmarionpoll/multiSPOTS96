@@ -133,11 +133,11 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		if (options.isFrameFixed) {
 			exp.cagesArray.detectFirst_Ms = options.t_Ms_First;
 			exp.cagesArray.detectLast_Ms = options.t_Ms_Last;
-			if (exp.cagesArray.detectLast_Ms > exp.seqCamData.lastImage_ms)
-				exp.cagesArray.detectLast_Ms = exp.seqCamData.lastImage_ms;
+			if (exp.cagesArray.detectLast_Ms > exp.seqCamData.getLastImageMs())
+				exp.cagesArray.detectLast_Ms = exp.seqCamData.getLastImageMs();
 		} else {
-			exp.cagesArray.detectFirst_Ms = exp.seqCamData.firstImage_ms;
-			exp.cagesArray.detectLast_Ms = exp.seqCamData.lastImage_ms;
+			exp.cagesArray.detectFirst_Ms = exp.seqCamData.getFirstImageMs();
+			exp.cagesArray.detectLast_Ms = exp.seqCamData.getLastImageMs();
 		}
 		exp.cagesArray.detect_threshold = options.threshold;
 
@@ -152,18 +152,21 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 
 	protected void getTimeLimitsOfSequence(Experiment exp) {
 		exp.getFileIntervalsFromSeqCamData();
-		if (exp.seqCamData.binImage_ms == 0)
+		if (exp.seqCamData.getTimeManager().getBinImage_ms() == 0)
 			exp.loadFileIntervalsFromSeqCamData();
-		exp.seqCamData.binDuration_ms = exp.seqCamData.binImage_ms;
+		exp.seqCamData.getTimeManager().setBinDurationMs(exp.seqCamData.getTimeManager().getBinImage_ms());
 
 		if (options.isFrameFixed) {
-			exp.seqCamData.binFirst_ms = options.t_Ms_First;
-			exp.seqCamData.binLast_ms = options.t_Ms_Last;
-			if (exp.seqCamData.binLast_ms + exp.seqCamData.firstImage_ms > exp.seqCamData.lastImage_ms)
-				exp.seqCamData.binLast_ms = exp.seqCamData.lastImage_ms - exp.seqCamData.firstImage_ms;
+			exp.seqCamData.getTimeManager().setBinFirst_ms(options.t_Ms_First);
+			exp.seqCamData.getTimeManager().setBinLast_ms(options.t_Ms_Last);
+			if (exp.seqCamData.getTimeManager().getBinLast_ms() + exp.seqCamData.getFirstImageMs() > exp.seqCamData
+					.getLastImageMs())
+				exp.seqCamData.getTimeManager()
+						.setBinLast_ms(exp.seqCamData.getLastImageMs() - exp.seqCamData.getFirstImageMs());
 		} else {
-			exp.seqCamData.binFirst_ms = 0;
-			exp.seqCamData.binLast_ms = exp.seqCamData.lastImage_ms - exp.seqCamData.firstImage_ms;
+			exp.seqCamData.getTimeManager().setBinFirst_ms(0);
+			exp.seqCamData.getTimeManager()
+					.setBinLast_ms(exp.seqCamData.getLastImageMs() - exp.seqCamData.getFirstImageMs());
 		}
 	}
 
@@ -178,7 +181,8 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 	}
 
 	protected boolean zloadDrosoTrack(Experiment exp) {
-		exp.seqCamData.seq = exp.seqCamData.initSequenceFromFirstImage(exp.seqCamData.getImagesList(true));
+		exp.seqCamData.attachSequence(
+				exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
 		boolean flag = exp.load_MS96_cages();
 		return flag;
 	}
@@ -218,7 +222,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					seqNegative = newSequence("detectionImage", exp.seqCamData.refImage);
+					seqNegative = newSequence("detectionImage", exp.seqCamData.getReferenceImage());
 					vNegative = new ViewerFMP(seqNegative, false, true);
 					vNegative.setVisible(true);
 				}

@@ -90,8 +90,8 @@ public class Comparators {
 	public static class Experiment_Start implements Comparator<Experiment> {
 		@Override
 		public int compare(Experiment exp1, Experiment exp2) {
-			return Long.compare(exp1.seqCamData.firstImage_ms + exp1.seqCamData.binFirst_ms,
-					exp2.seqCamData.firstImage_ms + exp2.seqCamData.binFirst_ms);
+			return Long.compare(exp1.seqCamData.getFirstImageMs() + exp1.seqCamData.getFirstImageMs(),
+					exp2.seqCamData.getFirstImageMs() + exp2.seqCamData.getFirstImageMs());
 		}
 	}
 

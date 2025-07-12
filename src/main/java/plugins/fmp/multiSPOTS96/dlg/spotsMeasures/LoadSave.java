@@ -73,7 +73,7 @@ public class LoadSave extends JPanel {
 			exp.load_MS96_spotsMeasures();
 			exp.seqCamData.removeROIsContainingString("spot");
 			exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
-			exp.cagesArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqKymos.seq);
+			exp.cagesArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqKymos.getSequence());
 		}
 		return flag;
 	}

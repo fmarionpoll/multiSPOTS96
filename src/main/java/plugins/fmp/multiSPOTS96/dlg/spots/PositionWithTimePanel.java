@@ -136,12 +136,12 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 			public void stateChanged(ChangeEvent e) {
 				int newValue = (int) indexCurrentFrameJSpinner.getValue();
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				Viewer v = exp.seqCamData.seq.getFirstViewer();
+				Viewer v = exp.seqCamData.getSequence().getFirstViewer();
 				if (v != null) {
 					int icurrent = v.getPositionT();
 					if (icurrent != newValue)
 						v.setPositionT(newValue);
-					exp.seqCamData.currentFrame = newValue;
+					exp.seqCamData.setCurrentFrame(newValue);
 				}
 			}
 		});
@@ -208,7 +208,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.seqCamData.getSequence();
 		ArrayList<ROI2D> listRois = seq.getROI2Ds();
 		for (ROI2D roi : listRois) {
 			if (roi.getName().contains("spot") && spotsCheckBox.isSelected())
@@ -230,11 +230,11 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 			return;
 
 		if (show) {
-			int t = exp.seqCamData.seq.getFirstViewer().getPositionT();
+			int t = exp.seqCamData.getSequence().getFirstViewer().getPositionT();
 			// TODO select current interval and return only rois2D from that interval
 			addFrameAroundSpots(t, exp);
 		} else
-			removeFrameAroundSpots(exp.seqCamData.seq);
+			removeFrameAroundSpots(exp.seqCamData.getSequence());
 	}
 
 	private void addFrameAroundSpots(int t, Experiment exp) {
@@ -247,14 +247,14 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		}
 		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(listRoisAtT);
 
-		removeFrameAroundSpots(exp.seqCamData.seq);
+		removeFrameAroundSpots(exp.seqCamData.getSequence());
 		envelopeRoi_initial = new ROI2DPolygon(polygon);
 		envelopeRoi = new ROI2DPolygon(polygon);
 		envelopeRoi.setName(dummyname);
 		envelopeRoi.setColor(Color.YELLOW);
 
-		exp.seqCamData.seq.addROI(envelopeRoi);
-		exp.seqCamData.seq.setSelectedROI(envelopeRoi);
+		exp.seqCamData.getSequence().addROI(envelopeRoi);
+		exp.seqCamData.getSequence().setSelectedROI(envelopeRoi);
 	}
 
 	private void removeFrameAroundSpots(Sequence seq) {
@@ -267,7 +267,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		if (exp == null)
 			return;
 
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Viewer v = exp.seqCamData.getSequence().getFirstViewer();
 		long intervalT = v.getPositionT();
 		if (exp.cagesArray.findCagesListFirstTInterval(intervalT) < 0) {
 			exp.cagesArray.addCagesListTInterval(intervalT);
@@ -279,7 +279,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		if (exp == null)
 			return;
 
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Viewer v = exp.seqCamData.getSequence().getFirstViewer();
 		long intervalT = v.getPositionT();
 
 		if (exp.cagesArray.findCagesListFirstTInterval(intervalT) >= 0) {
@@ -291,7 +291,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.seqCamData.getSequence();
 
 		int intervalT = (int) exp.cagesArray.getCagesListTIntervalsAt(selectedRow);
 		seq.removeAllROI();
@@ -311,7 +311,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp == null)
 			return;
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.seqCamData.getSequence();
 
 		int intervalT = (int) exp.cagesArray.getCagesListTIntervalsAt(selectedRow);
 		List<ROI2D> listRois = seq.getROI2Ds();

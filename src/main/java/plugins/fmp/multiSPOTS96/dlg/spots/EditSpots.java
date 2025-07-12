@@ -168,31 +168,31 @@ public class EditSpots extends JPanel {
 		if (show) {
 			setSpotsFrame(exp);
 		} else {
-			exp.seqCamData.seq.removeROI(roiPerimeter);
+			exp.seqCamData.getSequence().removeROI(roiPerimeter);
 		}
 	}
 
 	private void setSpotsFrame(Experiment exp) {
-		exp.seqCamData.seq.removeROI(roiPerimeter);
+		exp.seqCamData.getSequence().removeROI(roiPerimeter);
 		showSnake(exp, false);
 		if (roiPerimeter == null)
 			createRoiPerimeterEnclosingSpots(exp);
-		exp.seqCamData.seq.addROI(roiPerimeter);
-		exp.seqCamData.seq.setSelectedROI(roiPerimeter);
+		exp.seqCamData.getSequence().addROI(roiPerimeter);
+		exp.seqCamData.getSequence().setSelectedROI(roiPerimeter);
 
 		makeSureRectangleIsVisible(exp, roiPerimeter.getBounds());
 	}
 
 	private void makeSureRectangleIsVisible(Experiment exp, Rectangle rect) {
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Viewer v = exp.seqCamData.getSequence().getFirstViewer();
 		Canvas2D canvas = (Canvas2D) v.getCanvas();
 		canvas.centerOn(rect);
 	}
 
 	private void showSnake(Experiment exp, boolean show) {
-		exp.seqCamData.seq.removeROI(roiSnake);
+		exp.seqCamData.getSequence().removeROI(roiSnake);
 		if (show) {
-			exp.seqCamData.seq.removeROI(roiPerimeter);
+			exp.seqCamData.getSequence().removeROI(roiPerimeter);
 			enclosedSpots = exp.cagesArray.getSpotsEnclosed(roiPerimeter);
 			if (enclosedSpots.size() > 0) {
 				ArrayList<Point2D> listPoint = new ArrayList<Point2D>();
@@ -203,15 +203,15 @@ public class EditSpots extends JPanel {
 				}
 				roiSnake = new ROI2DPolyLine(listPoint);
 				roiSnake.setName("snake");
-				exp.seqCamData.seq.addROI(roiSnake);
-				exp.seqCamData.seq.setSelectedROI(roiSnake);
+				exp.seqCamData.getSequence().addROI(roiSnake);
+				exp.seqCamData.getSequence().setSelectedROI(roiSnake);
 
 				exp.seqCamData.displaySpecificROIs(false, "spot");
 				makeSureRectangleIsVisible(exp, roiSnake.getBounds());
 			}
 		} else {
 			roiSnake = null;
-			exp.seqCamData.seq.addROI(roiPerimeter);
+			exp.seqCamData.getSequence().addROI(roiPerimeter);
 			exp.seqCamData.displaySpecificROIs(true, "spot");
 		}
 	}
@@ -265,10 +265,10 @@ public class EditSpots extends JPanel {
 		if (enclosedSpots.size() > 0) {
 			for (Spot spot : enclosedSpots) {
 				ROI2DShape roi = (ROI2DShape) spot.getRoi();
-				exp.seqCamData.seq.removeROI(roi);
+				exp.seqCamData.getSequence().removeROI(roi);
 				roi = (ROI2DShape) ROI2DUtilities.resizeROI(roi, delta);
 				spot.setRoi(roi);
-				exp.seqCamData.seq.addROI(roi);
+				exp.seqCamData.getSequence().addROI(roi);
 			}
 		} else {
 			ConfirmDialog.confirm("At least one spot must be selected");
@@ -278,8 +278,8 @@ public class EditSpots extends JPanel {
 	public void clearTemporaryROIs() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			exp.seqCamData.seq.removeROI(roiSnake);
-			exp.seqCamData.seq.removeROI(roiPerimeter);
+			exp.seqCamData.getSequence().removeROI(roiSnake);
+			exp.seqCamData.getSequence().removeROI(roiPerimeter);
 			roiSnake = null;
 			roiPerimeter = null;
 			displaySnakeCheckBox.setSelected(false);

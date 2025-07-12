@@ -81,7 +81,7 @@ public class ExperimentUtils {
 					}
 				}
 				if (!found)
-					exp.seqCamData.seq.addROI(spot.getRoi());
+					exp.seqCamData.getSequence().addROI(spot.getRoi());
 			}
 		}
 	}
@@ -101,7 +101,7 @@ public class ExperimentUtils {
 				}
 			}
 			if (!found)
-				exp.seqCamData.seq.addROI(cage.getRoi());
+				exp.seqCamData.getSequence().addROI(cage.getRoi());
 		}
 	}
 
@@ -110,10 +110,10 @@ public class ExperimentUtils {
 			return;
 
 		List<ROI2D> roisCages = exp.seqCamData.getROIsContainingString("cage");
-		exp.seqCamData.seq.removeROIs(roisCages, false);
+		exp.seqCamData.getSequence().removeROIs(roisCages, false);
 
 		List<ROI2D> roisSpots = exp.seqCamData.getROIsContainingString("spot");
-		exp.seqCamData.seq.removeROIs(roisSpots, false);
+		exp.seqCamData.getSequence().removeROIs(roisSpots, false);
 
 	}
 }

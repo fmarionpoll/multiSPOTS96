@@ -130,7 +130,7 @@ public class Charts extends JPanel implements SequenceListener {
 
 	private Rectangle getInitialUpperLeftPosition(Experiment exp) {
 		Rectangle rectv = new Rectangle(50, 500, 10, 10);
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Viewer v = exp.seqCamData.getSequence().getFirstViewer();
 		if (v != null) {
 			rectv = v.getBounds();
 			rectv.translate(0, rectv.height);
@@ -146,11 +146,11 @@ public class Charts extends JPanel implements SequenceListener {
 	}
 
 	public void displayChartPanels(Experiment exp) {
-		exp.seqCamData.seq.removeListener(this);
+		exp.seqCamData.getSequence().removeListener(this);
 		EnumXLSExport exportType = (EnumXLSExport) exportTypeComboBox.getSelectedItem();
 		if (isThereAnyDataToDisplay(exp, exportType))
 			chartSpots = plotSpotMeasuresToChart(exp, exportType, chartSpots);
-		exp.seqCamData.seq.addListener(this);
+		exp.seqCamData.getSequence().addListener(this);
 	}
 
 	private ChartSpots plotSpotMeasuresToChart(Experiment exp, EnumXLSExport exportType, ChartSpots iChart) {

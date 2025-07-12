@@ -133,11 +133,11 @@ public class Edit extends JPanel implements PropertyChangeListener {
 
 	void cutAndInterpolate(Experiment exp) {
 		SequenceKymos seqKymos = exp.seqKymos;
-		ROI2D roiRect = seqKymos.seq.getSelectedROI2D();
+		ROI2D roiRect = seqKymos.getSequence().getSelectedROI2D();
 		if (roiRect == null)
 			return;
 
-		int t = seqKymos.seq.getFirstViewer().getPositionT();
+		int t = seqKymos.getSequence().getFirstViewer().getPositionT();
 		Spot spot = exp.cagesArray.getSpotAtGlobalIndex(t);
 		String optionSelected = (String) roiTypeCombo.getSelectedItem();
 		if (optionSelected.contains("sum"))
@@ -150,11 +150,11 @@ public class Edit extends JPanel implements PropertyChangeListener {
 
 	void compensate(Experiment exp) {
 		SequenceKymos seqKymos = exp.seqKymos;
-		ROI2D roiRect = seqKymos.seq.getSelectedROI2D();
+		ROI2D roiRect = seqKymos.getSequence().getSelectedROI2D();
 		if (roiRect == null)
 			return;
 
-		int t = seqKymos.seq.getFirstViewer().getPositionT();
+		int t = seqKymos.getSequence().getFirstViewer().getPositionT();
 		Spot spot = exp.cagesArray.getSpotAtGlobalIndex(t);
 		String optionSelected = (String) roiTypeCombo.getSelectedItem();
 		if (optionSelected.contains("sum"))

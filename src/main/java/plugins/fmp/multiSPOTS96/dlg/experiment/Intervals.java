@@ -103,13 +103,14 @@ public class Intervals extends JPanel implements ItemListener {
 			public void stateChanged(ChangeEvent e) {
 				long newValue = (long) indexFirstImageJSpinner.getValue();
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null && exp.seqCamData.absoluteIndexFirstImage != newValue) {
-					exp.seqCamData.absoluteIndexFirstImage = newValue;
+				if (exp != null && exp.seqCamData.getImageLoader().getAbsoluteIndexFirstImage() != newValue) {
+					exp.seqCamData.getImageLoader().setAbsoluteIndexFirstImage(newValue);
 					List<String> imagesList = ExperimentDirectories
-							.getImagesListFromPathV2(exp.seqCamData.imagesDirectory, "jpg");
+							.getImagesListFromPathV2(exp.seqCamData.getImageLoader().getImagesDirectory(), "jpg");
 					exp.seqCamData.loadImageList(imagesList);
-					long bin_ms = exp.seqCamData.binImage_ms;
-					exp.seqCamData.binFirst_ms = exp.seqCamData.absoluteIndexFirstImage * bin_ms;
+					long bin_ms = exp.seqCamData.getTimeManager().getBinImage_ms();
+					exp.seqCamData.getTimeManager()
+							.setBinFirst_ms(exp.seqCamData.getImageLoader().getAbsoluteIndexFirstImage() * bin_ms);
 					exp.save_MS96_experiment();
 				}
 			}
@@ -119,14 +120,14 @@ public class Intervals extends JPanel implements ItemListener {
 			public void stateChanged(ChangeEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				long newValue = (long) fixedNumberOfImagesJSpinner.getValue();
-				if (exp != null && exp.seqCamData.fixedNumberOfImages != newValue) {
-					exp.seqCamData.fixedNumberOfImages = newValue;
+				if (exp != null && exp.seqCamData.getImageLoader().getFixedNumberOfImages() != newValue) {
+					exp.seqCamData.getImageLoader().setFixedNumberOfImages(newValue);
 					List<String> imagesList = (ArrayList<String>) ExperimentDirectories
-							.getImagesListFromPathV2(exp.seqCamData.imagesDirectory, "jpg");
+							.getImagesListFromPathV2(exp.seqCamData.getImageLoader().getImagesDirectory(), "jpg");
 					exp.seqCamData.loadImageList(imagesList);
-					long bin_ms = exp.seqCamData.binImage_ms;
-					exp.seqCamData.binLast_ms = ((long) (fixedNumberOfImagesJSpinner.getValue())
-							- exp.seqCamData.absoluteIndexFirstImage) * bin_ms;
+					long bin_ms = exp.seqCamData.getTimeManager().getBinImage_ms();
+					exp.seqCamData.getTimeManager().setBinLast_ms((long) (fixedNumberOfImagesJSpinner.getValue())
+							- exp.seqCamData.getImageLoader().getAbsoluteIndexFirstImage() * bin_ms);
 				}
 			}
 		});
@@ -136,9 +137,11 @@ public class Intervals extends JPanel implements ItemListener {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					long bin_ms = (long) (((double) binSizeJSpinner.getValue()) * binUnit.getMsUnitValue());
-					exp.seqCamData.binImage_ms = bin_ms;
-					exp.seqCamData.binFirst_ms = exp.seqCamData.absoluteIndexFirstImage * bin_ms;
-					exp.seqCamData.binLast_ms = (exp.seqCamData.fixedNumberOfImages - 1) * bin_ms;
+					exp.seqCamData.getTimeManager().setBinImage_ms(bin_ms);
+					exp.seqCamData.getTimeManager()
+							.setBinFirst_ms(exp.seqCamData.getImageLoader().getAbsoluteIndexFirstImage() * bin_ms);
+					exp.seqCamData.getTimeManager()
+							.setBinLast_ms((exp.seqCamData.getImageLoader().getFixedNumberOfImages() - 1) * bin_ms);
 				}
 			}
 		});
@@ -146,17 +149,20 @@ public class Intervals extends JPanel implements ItemListener {
 	}
 
 	private void setExperimentParameters(Experiment exp) {
-		exp.seqCamData.binImage_ms = (long) (((double) binSizeJSpinner.getValue()) * binUnit.getMsUnitValue());
-		long bin_ms = exp.seqCamData.binImage_ms;
-		exp.seqCamData.absoluteIndexFirstImage = (long) indexFirstImageJSpinner.getValue();
-		exp.seqCamData.binFirst_ms = exp.seqCamData.absoluteIndexFirstImage * bin_ms;
-		if (exp.seqCamData.fixedNumberOfImages > 0)
-			exp.seqCamData.binLast_ms = (exp.seqCamData.fixedNumberOfImages - 1) * bin_ms;
+		exp.seqCamData.getTimeManager()
+				.setBinImage_ms((long) (((double) binSizeJSpinner.getValue()) * binUnit.getMsUnitValue()));
+		long bin_ms = exp.seqCamData.getTimeManager().getBinImage_ms();
+		exp.seqCamData.getImageLoader().setAbsoluteIndexFirstImage((long) indexFirstImageJSpinner.getValue());
+		exp.seqCamData.getTimeManager()
+				.setBinFirst_ms(exp.seqCamData.getImageLoader().getAbsoluteIndexFirstImage() * bin_ms);
+		if (exp.seqCamData.getImageLoader().getFixedNumberOfImages() > 0)
+			exp.seqCamData.getTimeManager()
+					.setBinLast_ms((exp.seqCamData.getImageLoader().getFixedNumberOfImages() - 1) * bin_ms);
 		else
-			exp.seqCamData.binLast_ms = (exp.seqCamData.nTotalFrames - 1) * bin_ms;
+			exp.seqCamData.getTimeManager().setBinLast_ms((exp.seqCamData.getImageLoader().getNTotalFrames() - 1) * bin_ms);
 		// tentative
 
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Viewer v = exp.seqCamData.getSequence().getFirstViewer();
 		if (v != null)
 			v.close();
 		parent0.dlgBrowse.loadSaveExperiment.closeCurrentExperiment();
@@ -165,18 +171,18 @@ public class Intervals extends JPanel implements ItemListener {
 
 	public void getExptParms(Experiment exp) {
 		refreshBinSize(exp);
-		long bin_ms = exp.seqCamData.binImage_ms;
-		long dFirst = exp.seqCamData.absoluteIndexFirstImage;
+		long bin_ms = exp.seqCamData.getTimeManager().getBinImage_ms();
+		long dFirst = exp.seqCamData.getImageLoader().getAbsoluteIndexFirstImage();
 		indexFirstImageJSpinner.setValue(dFirst);
-		if (exp.seqCamData.binLast_ms <= 0)
-			exp.seqCamData.binLast_ms = (long) (exp.seqCamData.nTotalFrames - 1) * bin_ms;
-		fixedNumberOfImagesJSpinner.setValue(exp.seqCamData.fixedNumberOfImages);
+		if (exp.seqCamData.getTimeManager().getBinLast_ms() <= 0)
+			exp.seqCamData.getTimeManager().setBinLast_ms((long) (exp.seqCamData.getImageLoader().getNTotalFrames() - 1) * bin_ms);
+		fixedNumberOfImagesJSpinner.setValue(exp.seqCamData.getImageLoader().getFixedNumberOfImages());
 	}
 
 	private void refreshBinSize(Experiment exp) {
 		exp.loadFileIntervalsFromSeqCamData();
 		binUnit.setSelectedIndex(1);
-		binSizeJSpinner.setValue(exp.seqCamData.binImage_ms / (double) binUnit.getMsUnitValue());
+		binSizeJSpinner.setValue(exp.seqCamData.getTimeManager().getBinImage_ms() / (double) binUnit.getMsUnitValue());
 	}
 
 	@Override
@@ -191,7 +197,7 @@ public class Intervals extends JPanel implements ItemListener {
 					if (!clipped) {
 						fixedNumberOfImagesJSpinner.setValue((long) -1);
 					} else {
-						fixedNumberOfImagesJSpinner.setValue((long) exp.seqCamData.nTotalFrames);
+						fixedNumberOfImagesJSpinner.setValue((long) exp.seqCamData.getImageLoader().getNTotalFrames());
 					}
 				}
 			}

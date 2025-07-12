@@ -185,7 +185,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 	}
 	
 	private void locateSelectedROI(Experiment exp) {
-		ArrayList<ROI> roiList = exp.seqCamData.seq.getSelectedROIs();
+		ArrayList<ROI> roiList = exp.seqCamData.getSequence().getSelectedROIs();
 		if (roiList.size() > 0) {
 			Spot spot = null;
 			for (ROI roi : roiList) {
@@ -358,7 +358,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 			} else
 				System.out.println("cage is null");
 			
-			exp.seqCamData.seq.setFocusedROI(roiSpot);
+			exp.seqCamData.getSequence().setFocusedROI(roiSpot);
 			//exp.seqCamData.centerOnRoi(roi);
 			roiSpot.setSelected(true);
 		}

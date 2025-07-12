@@ -245,13 +245,13 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 
 	public void updateOverlay(Experiment exp) {
 		if (overlayThreshold == null) {
-			overlayThreshold = new OverlayThreshold(exp.seqCamData.seq);
+			overlayThreshold = new OverlayThreshold(exp.seqCamData.getSequence());
 		} else {
-			exp.seqCamData.seq.removeOverlay(overlayThreshold);
-			overlayThreshold.setSequence(exp.seqCamData.seq);
+			exp.seqCamData.getSequence().removeOverlay(overlayThreshold);
+			overlayThreshold.setSequence(exp.seqCamData.getSequence());
 		}
-		overlayThreshold.setReferenceImage(exp.seqCamData.refImage);
-		exp.seqCamData.seq.addOverlay(overlayThreshold);
+		overlayThreshold.setReferenceImage(exp.seqCamData.getReferenceImage());
+		exp.seqCamData.getSequence().addOverlay(overlayThreshold);
 	}
 
 	private void displayTransform(Experiment exp) {
@@ -262,14 +262,14 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		} else {
 			removeOverlay(exp);
 			spotsOverlayCheckBox.setSelected(false);
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
 			canvas.transformsComboStep1.setSelectedIndex(0);
 		}
 		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
 	}
 
 	private void updateTransformFunctionsOfCanvas(Experiment exp) {
-		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
 		if (canvas.transformsComboStep1.getItemCount() < (spotsTransformsComboBox.getItemCount() + 1)) {
 			canvas.updateTransformsComboStep1(transforms);
 		}
@@ -310,7 +310,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
 		options.binSubDirectory = exp.getBinSubDirectory();
 
-		options.fromFrame = exp.seqCamData.currentFrame;
+		options.fromFrame = exp.seqCamData.getCurrentFrame();
 
 		options.transformop = (ImageTransformEnums) spotsTransformsComboBox.getSelectedItem();
 		int iselected = allCellsComboBox.getSelectedIndex() - 1;
@@ -375,13 +375,13 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	}
 
 	void removeOverlay(Experiment exp) {
-		if (exp.seqCamData != null && exp.seqCamData.seq != null)
-			exp.seqCamData.seq.removeOverlay(overlayThreshold);
+		if (exp.seqCamData != null && exp.seqCamData.getSequence() != null)
+			exp.seqCamData.getSequence().removeOverlay(overlayThreshold);
 	}
 
 	void deleteSelectedSpot(Experiment exp) {
-		if (exp.seqCamData.seq != null) {
-			ArrayList<ROI2D> listROIs = exp.seqCamData.seq.getSelectedROI2Ds();
+		if (exp.seqCamData.getSequence() != null) {
+			ArrayList<ROI2D> listROIs = exp.seqCamData.getSequence().getSelectedROI2Ds();
 			for (ROI2D roi : listROIs) {
 				String name = roi.getName();
 				if (!name.contains("spot"))
@@ -402,8 +402,8 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	}
 
 	void duplicateSelectedSpot(Experiment exp) {
-		if (exp.seqCamData.seq != null) {
-			ArrayList<ROI2D> listROIs = exp.seqCamData.seq.getSelectedROI2Ds();
+		if (exp.seqCamData.getSequence() != null) {
+			ArrayList<ROI2D> listROIs = exp.seqCamData.getSequence().getSelectedROI2Ds();
 			for (ROI2D roi : listROIs) {
 				String name = roi.getName();
 				if (!name.contains("spot"))
@@ -426,7 +426,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 						pos.setLocation(pos.getX() + 5, pos.getY() + 5);
 						cage.addEllipseSpot(pos, radius);
 						Spot newSpot = cage.spotsArray.spotsList.get(cage.spotsArray.spotsList.size() - 1);
-						exp.seqCamData.seq.addROI(newSpot.getRoi());
+						exp.seqCamData.getSequence().addROI(newSpot.getRoi());
 					}
 				}
 			}

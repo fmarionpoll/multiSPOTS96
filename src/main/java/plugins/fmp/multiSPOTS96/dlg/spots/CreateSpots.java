@@ -135,7 +135,7 @@ public class CreateSpots extends JPanel {
 		for (ROI2DPolygonPlus roi : listCarres) {
 			roi.isSelected = roi.isSelected();
 			if (!roi.isSelected)
-				exp.seqCamData.seq.removeROI(roi);
+				exp.seqCamData.getSequence().removeROI(roi);
 		}
 	}
 
@@ -158,9 +158,9 @@ public class CreateSpots extends JPanel {
 
 	void changeGrid(Experiment exp, Cage cage) {
 		if (roiGrid != null)
-			roiGrid.clearGridRois(exp.seqCamData.seq);
+			roiGrid.clearGridRois(exp.seqCamData.getSequence());
 		roiGrid = createGrid(cage.getRoi());
-		exp.seqCamData.seq.addROIs(roiGrid.getAreaRois(), false);
+		exp.seqCamData.getSequence().addROIs(roiGrid.getAreaRois(), false);
 	}
 
 	private ROI2DGrid createGrid(ROI2D roi) {

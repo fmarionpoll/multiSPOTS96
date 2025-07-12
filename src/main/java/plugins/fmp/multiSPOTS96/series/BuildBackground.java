@@ -53,7 +53,7 @@ public class BuildBackground extends BuildSeries {
 					seqData = newSequence("data recorded", exp.seqCamData.getSeqImage(0, 0));
 					vData = new ViewerFMP(seqData, true, true);
 
-					seqReference = newSequence("referenceImage", exp.seqCamData.refImage);
+					seqReference = newSequence("referenceImage", exp.seqCamData.getReferenceImage());
 					exp.seqReference = seqReference;
 					vReference = new ViewerFMP(seqReference, true, true);
 				}
@@ -93,12 +93,14 @@ public class BuildBackground extends BuildSeries {
 		transformOptions.backgroundImage = imageIORead(
 				exp.seqCamData.getFileNameFromImageList(options.backgroundFirst));
 
-		long first_ms = exp.cagesArray.detectFirst_Ms + (options.backgroundFirst * exp.seqCamData.binImage_ms);
-		final int t_first = (int) ((first_ms - exp.cagesArray.detectFirst_Ms) / exp.seqCamData.binImage_ms);
+		long first_ms = exp.cagesArray.detectFirst_Ms
+				+ (options.backgroundFirst * exp.seqCamData.getTimeManager().getBinImage_ms());
+		final int t_first = (int) ((first_ms - exp.cagesArray.detectFirst_Ms)
+				/ exp.seqCamData.getTimeManager().getBinImage_ms());
 
 		int t_last = options.backgroundFirst + options.backgroundNFrames;
-		if (t_last > exp.seqCamData.nTotalFrames)
-			t_last = exp.seqCamData.nTotalFrames;
+		if (t_last > exp.seqCamData.getImageLoader().getNTotalFrames())
+			t_last = exp.seqCamData.getImageLoader().getNTotalFrames();
 
 		for (int t = t_first + 1; t <= t_last && !stopFlag; t++) {
 			IcyBufferedImage currentImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t));
@@ -111,7 +113,7 @@ public class BuildBackground extends BuildSeries {
 			if (transformOptions.npixels_changed < 10)
 				break;
 		}
-		exp.seqCamData.refImage = IcyBufferedImageUtil.getCopy(seqReference.getFirstImage());
+		exp.seqCamData.setReferenceImage(IcyBufferedImageUtil.getCopy(seqReference.getFirstImage()));
 		progress.close();
 	}
 

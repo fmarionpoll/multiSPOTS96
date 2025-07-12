@@ -39,9 +39,9 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResultsArray;
 
 public class ChartSpots extends IcyFrame {
 	private static final Logger LOGGER = Logger.getLogger(ChartSpots.class.getName());
-	
+
 	private JPanel mainChartPanel = null;
-	private IcyFrame mainChartFrame = null;
+	public IcyFrame mainChartFrame = null;
 
 	private Range yRange = null;
 	private Range xRange = null;
@@ -61,10 +61,10 @@ public class ChartSpots extends IcyFrame {
 		if (exp == null) {
 			throw new NullPointerException("Experiment cannot be null");
 		}
-		
+
 		this.parent = parent0;
 		this.experiment = exp;
-		
+
 		mainChartPanel = new JPanel();
 		nPanelsAlongX = exp.cagesArray.nCagesAlongX;
 		nPanelsAlongY = exp.cagesArray.nCagesAlongY;
@@ -115,20 +115,20 @@ public class ChartSpots extends IcyFrame {
 		// Setup and display chart frame
 		displayChartFrame();
 	}
-	
+
 	private XLSResultsArray prepareSecondaryDataIfNeeded(Experiment exp, XLSExportOptions xlsExportOptions) {
 		if (xlsExportOptions.exportType != EnumXLSExport.AREA_SUMCLEAN) {
 			return null;
 		}
-		
+
 		XLSExportOptions tempOptions = new XLSExportOptions();
 		tempOptions.copy(xlsExportOptions);
 		tempOptions.exportType = EnumXLSExport.AREA_SUM;
 		return getDataAsResultsArray(exp, tempOptions);
 	}
-	
-	private void createChartPanels(ChartCageSpots chartCage, XLSResultsArray xlsResultsArray, 
-								  XLSResultsArray xlsResultsArray2, XLSExportOptions xlsExportOptions) {
+
+	private void createChartPanels(ChartCageSpots chartCage, XLSResultsArray xlsResultsArray,
+			XLSResultsArray xlsResultsArray2, XLSExportOptions xlsExportOptions) {
 		int indexCage = 0;
 		for (int row = 0; row < experiment.cagesArray.nCagesAlongY; row++) {
 			for (int col = 0; col < experiment.cagesArray.nCagesAlongX; col++) {
@@ -136,48 +136,46 @@ public class ChartSpots extends IcyFrame {
 					indexCage++;
 					continue;
 				}
-				
+
 				Cage cage = experiment.cagesArray.getCageFromRowColCoordinates(row, col);
 				if (cage == null || cage.spotsArray.spotsList.size() < 1) {
 					continue;
 				}
 
 				int cageID = cage.prop.cageID;
-				if (xlsExportOptions.cageIndexFirst >= 0 && 
-					(cageID < xlsExportOptions.cageIndexFirst || cageID > xlsExportOptions.cageIndexLast)) {
+				if (xlsExportOptions.cageIndexFirst >= 0
+						&& (cageID < xlsExportOptions.cageIndexFirst || cageID > xlsExportOptions.cageIndexLast)) {
 					indexCage++;
 					continue;
 				}
 
-				chartPanelArray[row][col] = createChartPanelForCage(
-					chartCage, cage, xlsResultsArray, xlsResultsArray2, row, col, xlsExportOptions);
+				chartPanelArray[row][col] = createChartPanelForCage(chartCage, cage, xlsResultsArray, xlsResultsArray2,
+						row, col, xlsExportOptions);
 				indexCage++;
 			}
 		}
 	}
-	
-	private ChartPanel createChartPanelForCage(ChartCageSpots chartCage, Cage cage, 
-											  XLSResultsArray xlsResultsArray, XLSResultsArray xlsResultsArray2,
-											  int row, int col, XLSExportOptions xlsExportOptions) {
+
+	private ChartPanel createChartPanelForCage(ChartCageSpots chartCage, Cage cage, XLSResultsArray xlsResultsArray,
+			XLSResultsArray xlsResultsArray2, int row, int col, XLSExportOptions xlsExportOptions) {
 		XYSeriesCollection xyDataSetList = chartCage.combineResults(cage, xlsResultsArray, xlsResultsArray2);
-		XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList, 
-			setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions));
+		XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList,
+				setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions));
 
 		JFreeChart chart = new JFreeChart(null, null, cageXYPlot, false);
-		
+
 		// Store cage data in chart properties instead of string ID
 		chart.putClientProperty("cage", cage);
 		chart.putClientProperty("row", row);
 		chart.putClientProperty("col", col);
 
-		ChartPanel panel = new ChartPanel(chart, 200, 100, 50, 25, 1200, 600, 
-			true, true, true, true, false, true);
-			
+		ChartPanel panel = new ChartPanel(chart, 200, 100, 50, 25, 1200, 600, true, true, true, true, false, true);
+
 		panel.addChartMouseListener(new SpotChartMouseListener(experiment, xlsExportOptions));
-		
+
 		return panel;
 	}
-	
+
 	private void arrangePanelsInDisplay(XLSExportOptions xlsExportOptions) {
 		if (xlsExportOptions.cageIndexFirst == xlsExportOptions.cageIndexLast) {
 			int indexCage = xlsExportOptions.cageIndexFirst;
@@ -196,7 +194,7 @@ public class ChartSpots extends IcyFrame {
 			}
 		}
 	}
-	
+
 	private void displayChartFrame() {
 		mainChartFrame.pack();
 		mainChartFrame.setLocation(graphLocation);
@@ -240,7 +238,7 @@ public class ChartSpots extends IcyFrame {
 		ChartEntity chartEntity = e.getEntity();
 
 		if (chartEntity != null && chartEntity instanceof XYItemEntity) {
-			spotFound = getSpotFromXYItemEntity((XYItemEntity)chartEntity);
+			spotFound = getSpotFromXYItemEntity((XYItemEntity) chartEntity);
 		} else if (subplotIndex >= 0) {
 			XYDataset xyDataset = xyPlot.getDataset(0);
 			description = (String) xyDataset.getSeriesKey(0);
@@ -254,12 +252,12 @@ public class ChartSpots extends IcyFrame {
 			LOGGER.warning("Failed to find spot from clicked chart");
 			return null;
 		}
-		
+
 		int index = experiment.cagesArray.getSpotGlobalPosition(spotFound);
 		spotFound.spotKymograph_T = index;
 		return spotFound;
 	}
-	
+
 	private Spot getSpotFromXYItemEntity(XYItemEntity xyItemEntity) {
 		int seriesIndex = xyItemEntity.getSeriesIndex();
 		XYDataset xyDataset = xyItemEntity.getDataset();
@@ -271,28 +269,29 @@ public class ChartSpots extends IcyFrame {
 			LOGGER.warning("Graph clicked but source not found - description (roiName)=" + description);
 			return null;
 		}
-		
+
 		spotFound.spotCamData_T = xyItemEntity.getItem();
 		return spotFound;
 	}
 
 	private void chartSelectSpot(Experiment exp, Spot spot) {
 		ROI2D roi = spot.getRoi();
-		exp.seqCamData.seq.setFocusedROI(roi);
+		exp.seqCamData.getSequence().setFocusedROI(roi);
 		exp.seqCamData.centerOnRoi(roi);
 	}
 
 	private void selectT(Experiment exp, XLSExportOptions xlsExportOptions, Spot spot) {
-		Viewer v = exp.seqCamData.seq.getFirstViewer();
+		Viewer v = exp.seqCamData.getSequence().getFirstViewer();
 		if (v != null && spot != null && spot.spotCamData_T > 0) {
-			int frameIndex = (int) (spot.spotCamData_T * xlsExportOptions.buildExcelStepMs / exp.seqCamData.binDuration_ms);
+			int frameIndex = (int) (spot.spotCamData_T * xlsExportOptions.buildExcelStepMs
+					/ exp.seqCamData.getTimeManager().getBinDurationMs());
 			v.setPositionT(frameIndex);
 		}
 	}
 
 	private void chartSelectKymograph(Experiment exp, Spot spot) {
 		if (exp.seqKymos != null) {
-			Viewer v = exp.seqKymos.seq.getFirstViewer();
+			Viewer v = exp.seqKymos.getSequence().getFirstViewer();
 			if (v != null && spot != null) {
 				v.setPositionT(spot.spotKymograph_T);
 			}
@@ -303,7 +302,7 @@ public class ChartSpots extends IcyFrame {
 		chartSelectSpot(exp, clickedSpot);
 		selectT(exp, xlsExportOptions, clickedSpot);
 		chartSelectKymograph(exp, clickedSpot);
-		exp.seqCamData.seq.setSelectedROI(clickedSpot.getRoi());
+		exp.seqCamData.getSequence().setSelectedROI(clickedSpot.getRoi());
 
 		String spotName = clickedSpot.getRoi().getName();
 		Cage cage = exp.cagesArray.getCageFromSpotROIName(spotName);
@@ -314,40 +313,40 @@ public class ChartSpots extends IcyFrame {
 			LOGGER.warning("Could not find cage for spot: " + spotName);
 		}
 	}
-	
+
 	// Accessors for testing and external use
-	
+
 	public JPanel getMainChartPanel() {
 		return mainChartPanel;
 	}
-	
+
 	public IcyFrame getMainChartFrame() {
 		return mainChartFrame;
 	}
-	
+
 	public ChartPanel[][] getChartPanelArray() {
 		return chartPanelArray;
 	}
-	
+
 	public int getPanelsAlongX() {
 		return nPanelsAlongX;
 	}
-	
+
 	public int getPanelsAlongY() {
 		return nPanelsAlongY;
 	}
-	
+
 	// Inner class for chart mouse handling
-	
+
 	private class SpotChartMouseListener implements ChartMouseListener {
 		private final Experiment experiment;
 		private final XLSExportOptions xlsOptions;
-		
+
 		public SpotChartMouseListener(Experiment exp, XLSExportOptions options) {
 			this.experiment = exp;
 			this.xlsOptions = options;
 		}
-		
+
 		@Override
 		public void chartMouseClicked(ChartMouseEvent e) {
 			Spot clickedSpot = getSpotFromClickedChart(e);
@@ -360,7 +359,7 @@ public class ChartSpots extends IcyFrame {
 				}
 			}
 		}
-		
+
 		@Override
 		public void chartMouseMoved(ChartMouseEvent e) {
 			// No action needed

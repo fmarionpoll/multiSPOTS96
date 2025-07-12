@@ -40,8 +40,8 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 		Experiment expAll = new Experiment();
 		Experiment exp0 = getItemAt(0);
 		if (options.fixedIntervals) {
-			expAll.seqCamData.firstImage_ms = options.startAll_Ms;
-			expAll.seqCamData.lastImage_ms = options.endAll_Ms;
+			expAll.seqCamData.getTimeManager().setFirstImageMs(options.startAll_Ms);
+			expAll.seqCamData.setLastImageMs(options.endAll_Ms);
 		} else {
 			if (options.absoluteTime) {
 				Experiment expFirst = exp0.getFirstChainedExperiment(options.collateSeries);
@@ -57,35 +57,39 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 					if (expAll.lastImage_FileTime.compareTo(expLast.lastImage_FileTime) < 0)
 						expAll.setFileTimeImageLast(expLast.lastImage_FileTime);
 				}
-				expAll.seqCamData.firstImage_ms = expAll.firstImage_FileTime.toMillis();
-				expAll.seqCamData.lastImage_ms = expAll.lastImage_FileTime.toMillis();
+				expAll.seqCamData.setFirstImageMs(expAll.firstImage_FileTime.toMillis());
+				expAll.seqCamData.setLastImageMs(expAll.lastImage_FileTime.toMillis());
 			} else {
-				expAll.seqCamData.firstImage_ms = 0;
-				expAll.seqCamData.lastImage_ms = exp0.seqCamData.binLast_ms - exp0.seqCamData.binFirst_ms;
+				expAll.seqCamData.setFirstImageMs(0);
+				expAll.seqCamData.setLastImageMs(exp0.seqCamData.getTimeManager().getBinLast_ms()
+						- exp0.seqCamData.getTimeManager().getBinFirst_ms());
 				long firstOffset_Ms = 0;
 				long lastOffset_Ms = 0;
 
 				for (int i = 0; i < getItemCount(); i++) {
 					Experiment exp = getItemAt(i);
 					Experiment expFirst = exp.getFirstChainedExperiment(options.collateSeries);
-					firstOffset_Ms = expFirst.seqCamData.binFirst_ms + expFirst.seqCamData.firstImage_ms;
-					exp.chainImageFirst_ms = expFirst.seqCamData.firstImage_ms + expFirst.seqCamData.binFirst_ms;
+					firstOffset_Ms = expFirst.seqCamData.getTimeManager().getBinFirst_ms()
+							+ expFirst.seqCamData.getFirstImageMs();
+					exp.chainImageFirst_ms = expFirst.seqCamData.getFirstImageMs()
+							+ expFirst.seqCamData.getTimeManager().getBinFirst_ms();
 
 					Experiment expLast = exp.getLastChainedExperiment(options.collateSeries);
-					if (expLast.seqCamData.binLast_ms <= 0) {
-						expLast.seqCamData.binLast_ms = expLast.seqCamData.lastImage_ms
-								- expLast.seqCamData.firstImage_ms;
+					if (expLast.seqCamData.getTimeManager().getBinLast_ms() <= 0) {
+						expLast.seqCamData.getTimeManager().setBinLast_ms(
+								expLast.seqCamData.getLastImageMs() - expLast.seqCamData.getFirstImageMs());
 					}
-					lastOffset_Ms = expLast.seqCamData.binLast_ms + expLast.seqCamData.firstImage_ms;
+					lastOffset_Ms = expLast.seqCamData.getTimeManager().getBinLast_ms()
+							+ expLast.seqCamData.getFirstImageMs();
 
 					long diff = lastOffset_Ms - firstOffset_Ms;
 					if (diff < 1) {
 						System.out.println("ExperimentCombo:get_MsTime_of_StartAndEnd_AllExperiments() Expt # " + i
 								+ ": FileTime difference between last and first image < 1; set dt between images = 1 ms");
-						diff = exp.seqCamData.seq.getSizeT();
+						diff = exp.seqCamData.getSequence().getSizeT();
 					}
-					if (expAll.seqCamData.lastImage_ms < diff)
-						expAll.seqCamData.lastImage_ms = diff;
+					if (expAll.seqCamData.getLastImageMs() < diff)
+						expAll.seqCamData.setLastImageMs(diff);
 				}
 			}
 		}
@@ -167,7 +171,8 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 		for (int i = 0; i < getItemCount(); i++) {
 			Experiment expi = getItemAt(i);
 			Experiment expFirst = expi.getFirstChainedExperiment(collate);
-			expi.chainImageFirst_ms = expFirst.seqCamData.firstImage_ms + expFirst.seqCamData.binFirst_ms;
+			expi.chainImageFirst_ms = expFirst.seqCamData.getFirstImageMs()
+					+ expFirst.seqCamData.getTimeManager().getBinFirst_ms();
 		}
 	}
 

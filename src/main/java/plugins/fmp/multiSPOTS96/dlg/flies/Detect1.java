@@ -128,8 +128,8 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 				if (exp != null) {
 					if (overlayCheckBox.isSelected()) {
 						if (overlayThreshold1 == null)
-							overlayThreshold1 = new OverlayThreshold(exp.seqCamData.seq);
-						exp.seqCamData.seq.addOverlay(overlayThreshold1);
+							overlayThreshold1 = new OverlayThreshold(exp.seqCamData.getSequence());
+						exp.seqCamData.getSequence().addOverlay(overlayThreshold1);
 						updateOverlay(exp);
 					} else
 						removeOverlay(exp);
@@ -164,12 +164,12 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 		if (seqCamData == null)
 			return;
 		if (overlayThreshold1 == null)
-			overlayThreshold1 = new OverlayThreshold(seqCamData.seq);
+			overlayThreshold1 = new OverlayThreshold(seqCamData.getSequence());
 		else {
-			seqCamData.seq.removeOverlay(overlayThreshold1);
-			overlayThreshold1.setSequence(seqCamData.seq);
+			seqCamData.getSequence().removeOverlay(overlayThreshold1);
+			overlayThreshold1.setSequence(seqCamData.getSequence());
 		}
-		seqCamData.seq.addOverlay(overlayThreshold1);
+		seqCamData.getSequence().addOverlay(overlayThreshold1);
 		boolean ifGreater = true;
 		ImageTransformEnums transformOp = (ImageTransformEnums) transformComboBox.getSelectedItem();
 		overlayThreshold1.setThresholdSingle(exp.cagesArray.detect_threshold, transformOp, ifGreater);
@@ -177,8 +177,8 @@ public class Detect1 extends JPanel implements ChangeListener, ItemListener, Pro
 	}
 
 	public void removeOverlay(Experiment exp) {
-		if (exp.seqCamData != null && exp.seqCamData.seq != null)
-			exp.seqCamData.seq.removeOverlay(overlayThreshold1);
+		if (exp.seqCamData != null && exp.seqCamData.getSequence() != null)
+			exp.seqCamData.getSequence().removeOverlay(overlayThreshold1);
 	}
 
 	@Override

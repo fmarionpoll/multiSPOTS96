@@ -112,7 +112,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null)
-					exp.saveReferenceImage(exp.seqCamData.refImage);
+					exp.saveReferenceImage(exp.seqCamData.getReferenceImage());
 			}
 		});
 
@@ -140,8 +140,8 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 				if (exp != null) {
 					if (overlayCheckBox.isSelected()) {
 						if (ov == null)
-							ov = new OverlayThreshold(exp.seqCamData.seq);
-						exp.seqCamData.seq.addOverlay(ov);
+							ov = new OverlayThreshold(exp.seqCamData.getSequence());
+						exp.seqCamData.getSequence().addOverlay(ov);
 						updateOverlay(exp);
 					} else
 						removeOverlay(exp);
@@ -167,7 +167,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 			boolean flag = exp.loadReferenceImage();
 			if (flag) {
 				Viewer v = new Viewer(exp.seqReference, true);
-				Rectangle rectv = exp.seqCamData.seq.getFirstViewer().getBoundsInternal();
+				Rectangle rectv = exp.seqCamData.getSequence().getFirstViewer().getBoundsInternal();
 				v.setBounds(rectv);
 			} else {
 				MessageDialog.showDialog("Reference file not found on disk", MessageDialog.ERROR_MESSAGE);
@@ -180,15 +180,15 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 		if (seqCamData == null)
 			return;
 		if (ov == null) {
-			ov = new OverlayThreshold(seqCamData.seq);
-			int t = exp.seqCamData.currentFrame;
-			exp.seqCamData.refImage = IcyBufferedImageUtil.getCopy(exp.seqCamData.getSeqImage(t, 0));
+			ov = new OverlayThreshold(seqCamData.getSequence());
+			int t = exp.seqCamData.getCurrentFrame();
+			exp.seqCamData.setReferenceImage(IcyBufferedImageUtil.getCopy(exp.seqCamData.getSeqImage(t, 0)));
 		} else {
-			seqCamData.seq.removeOverlay(ov);
-			ov.setSequence(seqCamData.seq);
+			seqCamData.getSequence().removeOverlay(ov);
+			ov.setSequence(seqCamData.getSequence());
 		}
-		ov.setReferenceImage(exp.seqCamData.refImage);
-		seqCamData.seq.addOverlay(ov);
+		ov.setReferenceImage(exp.seqCamData.getReferenceImage());
+		seqCamData.getSequence().addOverlay(ov);
 
 		boolean ifGreater = true;
 		ImageTransformEnums transformOp = ImageTransformEnums.NONE; // SUBTRACT; //SUBTRACT_REF;
@@ -198,8 +198,8 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 	}
 
 	private void removeOverlay(Experiment exp) {
-		if (exp.seqCamData != null && exp.seqCamData.seq != null)
-			exp.seqCamData.seq.removeOverlay(ov);
+		if (exp.seqCamData != null && exp.seqCamData.getSequence() != null)
+			exp.seqCamData.getSequence().removeOverlay(ov);
 	}
 
 	private BuildSeriesOptions initTrackParameters() {
@@ -216,7 +216,7 @@ public class Detect2Background extends JPanel implements ChangeListener, Propert
 		options.backgroundThreshold = (int) backgroundThresholdSpinner.getValue();
 		options.backgroundNFrames = (int) backgroundNFramesSpinner.getValue();
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-		options.backgroundFirst = (int) exp.seqCamData.currentFrame;
+		options.backgroundFirst = (int) exp.seqCamData.getCurrentFrame();
 
 		options.forceBuildBackground = true;
 		options.detectFlies = false;

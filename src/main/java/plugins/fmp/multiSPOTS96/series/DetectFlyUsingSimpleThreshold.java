@@ -64,11 +64,11 @@ public class DetectFlyUsingSimpleThreshold extends BuildSeries {
 		ImageTransformInterface transformFunction = options.transformop.getFunction();
 
 		int t_previous = 0;
-		int totalFrames = exp.seqCamData.nTotalFrames;
+		int totalFrames = exp.seqCamData.getImageLoader().getNTotalFrames();
 
 		for (int index = 0; index < totalFrames; index++) {
 			int t_from = index;
-			String title = "Frame #" + t_from + "/" + exp.seqCamData.nTotalFrames;
+			String title = "Frame #" + t_from + "/" + exp.seqCamData.getImageLoader().getNTotalFrames();
 			progressBar.setMessage(title);
 
 			IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));

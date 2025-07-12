@@ -138,7 +138,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null && viewButton2.isSelected()) {
 					int index = fliesTransformsComboBox.getSelectedIndex();
-					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer()
+					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
 							.getCanvas();
 					updateTransformFunctions2OfCanvas(canvas);
 					if (!viewButton2.isSelected())
@@ -285,13 +285,13 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	private void displayTransform2(Experiment exp) {
 		boolean displayCheckOverlay = false;
 		if (viewButton2.isSelected()) {
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
 			updateTransformFunctions2OfCanvas(canvas);
 			displayCheckOverlay = true;
 		} else {
 			removeOverlays(exp);
 			spotsOverlayCheckBox.setSelected(false);
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
 			canvas.transformsComboStep1.setSelectedIndex(0);
 
 		}
@@ -320,7 +320,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	}
 
 	private void updateCanvasFunction(SequenceCamData seqCamData, int index) {
-		Viewer v = seqCamData.seq.getFirstViewer();
+		Viewer v = seqCamData.getSequence().getFirstViewer();
 		if (v == null)
 			return;
 		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) v.getCanvas();

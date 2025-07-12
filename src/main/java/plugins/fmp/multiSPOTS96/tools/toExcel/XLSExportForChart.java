@@ -29,7 +29,7 @@ public class XLSExportForChart extends XLSExport {
 	void writeTopRow_timeIntervals_Default(SXSSFSheet sheet, int row) {
 		boolean transpose = options.transpose;
 		Point pt = new Point(0, row);
-		long duration = expAll.seqCamData.lastImage_ms - expAll.seqCamData.firstImage_ms;
+		long duration = expAll.seqCamData.getLastImageMs() - expAll.seqCamData.getFirstImageMs();
 		long interval = 0;
 		while (interval < duration) {
 			int i = (int) (interval / options.buildExcelUnitMs);
@@ -55,7 +55,7 @@ public class XLSExportForChart extends XLSExport {
 //			expi = expi.chainToNextExperiment;
 //		}
 //
-//		int nFrames = (int) ((expAll.seqCamData.lastImage_ms - expAll.seqCamData.firstImage_ms)
+//		int nFrames = (int) ((expAll.seqCamData.getLastImageMs() - expAll.seqCamData.getFirstImageMs())
 //				/ options.buildExcelStepMs + 1);
 //		int nspots = expAll.cagesArray.getTotalNumberOfSpots();
 //		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
@@ -88,7 +88,7 @@ public class XLSExportForChart extends XLSExport {
 			expi = expi.chainToNextExperiment;
 		}
 
-		int nFrames = (int) ((expAll.seqCamData.lastImage_ms - expAll.seqCamData.firstImage_ms)
+		int nFrames = (int) ((expAll.seqCamData.getLastImageMs() - expAll.seqCamData.getFirstImageMs())
 				/ options.buildExcelStepMs + 1);
 		int nspots = expAll.cagesArray.getTotalNumberOfSpots();
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
@@ -110,16 +110,16 @@ public class XLSExportForChart extends XLSExport {
 //			XLSExportOptions options) {
 //		this.options = options;
 //		expAll = new Experiment();
-//		expAll.seqCamData.lastImage_ms = exp.seqCamData.lastImage_ms;
-//		expAll.seqCamData.firstImage_ms = exp.seqCamData.firstImage_ms;
+//		expAll.seqCamData.getLastImageMs() = exp.seqCamData.getLastImageMs();
+//		expAll.seqCamData.setFirstImageMs( exp.seqCamData.getFirstImageMs());
 //		return getSpotDataFromOneExperimentSeries_v3parms(exp, exportType);
 //	}
 
 	public XLSResultsArray getSpotsDataFromOneExperiment_v2parms(Experiment exp, XLSExportOptions options) {
 		this.options = options;
 		expAll = new Experiment();
-		expAll.seqCamData.lastImage_ms = exp.seqCamData.lastImage_ms;
-		expAll.seqCamData.firstImage_ms = exp.seqCamData.firstImage_ms;
+		expAll.seqCamData.setLastImageMs(exp.seqCamData.getLastImageMs());
+		expAll.seqCamData.setFirstImageMs(exp.seqCamData.getFirstImageMs());
 		return getSpotsDataFromOneExperimentSeries_v2parms(exp, options);
 	}
 
@@ -134,7 +134,7 @@ public class XLSExportForChart extends XLSExport {
 //			if (nOutputFrames > 1) {
 //				XLSResultsArray resultsArrayList = new XLSResultsArray(expi.cagesArray.getTotalNumberOfSpots());
 //				options.compensateEvaporation = false;
-//				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames, exp.seqCamData.binDuration_ms,
+//				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames, exp.seqCamData.getTimeManager().getBinDurationMs(),
 //						options);
 //				addResultsTo_rowsForOneExp(rowListForOneExp, expi, resultsArrayList);
 //			}
@@ -151,7 +151,7 @@ public class XLSExportForChart extends XLSExport {
 			if (nOutputFrames > 1) {
 				XLSResultsArray resultsArrayList = new XLSResultsArray(expi.cagesArray.getTotalNumberOfSpots());
 				options.compensateEvaporation = false;
-				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames, exp.seqCamData.binDuration_ms,
+				resultsArrayList.getSpotsArrayResults1(expi.cagesArray, nOutputFrames, exp.seqCamData.getTimeManager().getBinDurationMs(),
 						options);
 				addResultsTo_rowsForOneExp(rowListForOneExp, expi, resultsArrayList);
 			}
@@ -178,17 +178,17 @@ public class XLSExportForChart extends XLSExport {
 
 //		EnumXLSExportType xlsoption = resultsArrayList.getRow(0).exportType;
 
-		long offsetChain = expi.seqCamData.firstImage_ms - expi.chainImageFirst_ms;
-		long start_Ms = expi.seqCamData.binFirst_ms + offsetChain; // TODO check when collate?
-		long end_Ms = expi.seqCamData.binLast_ms + offsetChain;
+		long offsetChain = expi.seqCamData.getFirstImageMs() - expi.chainImageFirst_ms;
+		long start_Ms = expi.seqCamData.getTimeManager().getBinFirst_ms() + offsetChain; // TODO check when collate?
+		long end_Ms = expi.seqCamData.getTimeManager().getBinLast_ms() + offsetChain;
 		if (options.fixedIntervals) {
 			if (start_Ms < options.startAll_Ms)
 				start_Ms = options.startAll_Ms;
-			if (start_Ms > expi.seqCamData.lastImage_ms)
+			if (start_Ms > expi.seqCamData.getLastImageMs())
 				return;
 			if (end_Ms > options.endAll_Ms)
 				end_Ms = options.endAll_Ms;
-			if (end_Ms > expi.seqCamData.firstImage_ms)
+			if (end_Ms > expi.seqCamData.getFirstImageMs())
 				return;
 		}
 

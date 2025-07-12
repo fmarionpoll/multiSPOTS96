@@ -47,13 +47,13 @@ public class DetectFlyFromCleanBackground extends BuildSeries {
 		ProgressFrame progressBar = new ProgressFrame("Detecting flies...");
 		ImageTransformOptions transformOptions = new ImageTransformOptions();
 		transformOptions.transformOption = ImageTransformEnums.SUBTRACT_REF;
-		transformOptions.backgroundImage = IcyBufferedImageUtil.getCopy(exp.seqCamData.refImage);
+		transformOptions.backgroundImage = IcyBufferedImageUtil.getCopy(exp.seqCamData.getReferenceImage());
 		ImageTransformInterface transformFunction = transformOptions.transformOption.getFunction();
 
-		int totalFrames = exp.seqCamData.nTotalFrames;
+		int totalFrames = exp.seqCamData.getImageLoader().getNTotalFrames();
 		for (int index = 0; index < totalFrames; index++) {
 			int t_from = index;
-			String title = "Frame #" + t_from + "/" + exp.seqCamData.nTotalFrames;
+			String title = "Frame #" + t_from + "/" + exp.seqCamData.getImageLoader().getNTotalFrames();
 			progressBar.setMessage(title);
 
 			IcyBufferedImage workImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t_from));

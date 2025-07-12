@@ -122,7 +122,7 @@ public class ShapeSpots extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null && exp.seqKymos != null) {
 					int index = spotsTransformsComboBox.getSelectedIndex();
-					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer()
+					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
 							.getCanvas();
 					updateTransformFunctionsOfCanvas(exp);
 					if (!spotsViewButton.isSelected()) {
@@ -192,17 +192,17 @@ public class ShapeSpots extends JPanel {
 
 	void updateOverlay(Experiment exp) {
 		if (overlayThreshold == null)
-			overlayThreshold = new OverlayThreshold(exp.seqCamData.seq);
+			overlayThreshold = new OverlayThreshold(exp.seqCamData.getSequence());
 		else {
-			exp.seqCamData.seq.removeOverlay(overlayThreshold);
-			overlayThreshold.setSequence(exp.seqCamData.seq);
+			exp.seqCamData.getSequence().removeOverlay(overlayThreshold);
+			overlayThreshold.setSequence(exp.seqCamData.getSequence());
 		}
-		exp.seqCamData.seq.addOverlay(overlayThreshold);
+		exp.seqCamData.getSequence().addOverlay(overlayThreshold);
 	}
 
 	void removeOverlay(Experiment exp) {
-		if (exp.seqCamData != null && exp.seqCamData.seq != null)
-			exp.seqCamData.seq.removeOverlay(overlayThreshold);
+		if (exp.seqCamData != null && exp.seqCamData.getSequence() != null)
+			exp.seqCamData.getSequence().removeOverlay(overlayThreshold);
 	}
 
 	void updateOverlayThreshold() {
@@ -255,14 +255,14 @@ public class ShapeSpots extends JPanel {
 		} else {
 			removeOverlay(exp);
 			spotsOverlayCheckBox.setSelected(false);
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
 			canvas.transformsComboStep1.setSelectedIndex(0);
 		}
 		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
 	}
 
 	private void updateTransformFunctionsOfCanvas(Experiment exp) {
-		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.seq.getFirstViewer().getCanvas();
+		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
 		if (canvas.transformsComboStep1.getItemCount() < (spotsTransformsComboBox.getItemCount() + 1)) {
 			canvas.updateTransformsComboStep1(transforms);
 		}
@@ -277,7 +277,7 @@ public class ShapeSpots extends JPanel {
 		transformOptions.setSingleThreshold(options.spotThreshold, options.spotThresholdUp);
 		ImageTransformInterface transformFunction = options.transform01.getFunction();
 
-		Sequence seq = exp.seqCamData.seq;
+		Sequence seq = exp.seqCamData.getSequence();
 		int t = seq.getFirstViewer().getPositionT();
 
 		IcyBufferedImage sourceImage = seq.getImage(t, 0);
@@ -289,7 +289,7 @@ public class ShapeSpots extends JPanel {
 				if (detectSelectedROIs && !roi_in.isSelected())
 					continue;
 
-				exp.seqCamData.seq.removeROI(roi_in);
+				exp.seqCamData.getSequence().removeROI(roi_in);
 				try {
 					spot.mask2DSpot = spot.getRoi().getBooleanMask2D(0, 0, 1, true);
 				} catch (InterruptedException e) {
@@ -305,7 +305,7 @@ public class ShapeSpots extends JPanel {
 					roi_new.setColor(spot.getRoi().getColor());
 					spot.setRoi(roi_new);
 				}
-				exp.seqCamData.seq.addROI(spot.getRoi());
+				exp.seqCamData.getSequence().addROI(spot.getRoi());
 			}
 		}
 	}
@@ -319,7 +319,7 @@ public class ShapeSpots extends JPanel {
 					continue;
 
 				String roiName = roi_in.getName();
-				exp.seqCamData.seq.removeROI(roi_in);
+				exp.seqCamData.getSequence().removeROI(roi_in);
 				Point2D point = new Point2D.Double(spot.prop.spotXCoord, spot.prop.spotYCoord);
 				double x = point.getX() - spot.prop.spotRadius;
 				double y = point.getY() - spot.prop.spotRadius;
@@ -327,14 +327,14 @@ public class ShapeSpots extends JPanel {
 				ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
 				roiEllipse.setName(roiName);
 				spot.setRoi(roiEllipse);
-				exp.seqCamData.seq.addROI(spot.getRoi());
+				exp.seqCamData.getSequence().addROI(spot.getRoi());
 			}
 		}
 	}
 
 	private void replaceRoi(Experiment exp, Spot spot, ROI2D roi_old, ROI2D roi_new) {
-		exp.seqCamData.seq.removeROI(roi_new);
-		exp.seqCamData.seq.removeROI(roi_old);
+		exp.seqCamData.getSequence().removeROI(roi_new);
+		exp.seqCamData.getSequence().removeROI(roi_old);
 		roi_new.setName(roi_old.getName());
 		roi_new.setColor(roi_old.getColor());
 		spot.setRoi((ROI2DShape) roi_new);
@@ -343,11 +343,11 @@ public class ShapeSpots extends JPanel {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		exp.seqCamData.seq.addROI(roi_new);
+		exp.seqCamData.getSequence().addROI(roi_new);
 	}
 
 	void cutAndInterpolate(Experiment exp) {
-		ROI2D roi = exp.seqCamData.seq.getSelectedROI2D();
+		ROI2D roi = exp.seqCamData.getSequence().getSelectedROI2D();
 		if (roi == null)
 			return;
 

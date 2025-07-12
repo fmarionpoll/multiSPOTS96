@@ -85,7 +85,7 @@ public class _DlgKymos_ extends JPanel implements PropertyChangeListener, Change
 			return;
 		int iselected = tabsPane.getSelectedIndex();
 		if (iselected == 0) {
-			Viewer v = exp.seqCamData.seq.getFirstViewer();
+			Viewer v = exp.seqCamData.getSequence().getFirstViewer();
 			if (v != null)
 				v.toFront();
 			parent0.dlgExperiment.tabsPane.setSelectedIndex(0);

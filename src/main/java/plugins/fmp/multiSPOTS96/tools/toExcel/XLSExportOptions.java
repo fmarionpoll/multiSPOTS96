@@ -61,4 +61,64 @@ public class XLSExportOptions {
 	public boolean trim_alive = false;
 	public boolean compensateEvaporation = false;
 	public EnumXLSExport exportType;
+
+	public void copy(XLSExportOptions xlsExportOptions) {
+		this.xyImage = xlsExportOptions.xyImage;
+		this.xyCage = xlsExportOptions.xyCage;
+		this.xyCapillaries = xlsExportOptions.xyCapillaries;
+		this.ellipseAxes = xlsExportOptions.ellipseAxes;
+
+		this.distance = xlsExportOptions.distance;
+		this.alive = xlsExportOptions.alive;
+		this.sleep = xlsExportOptions.sleep;
+		this.sleepThreshold = xlsExportOptions.sleepThreshold;
+
+		this.topLevel = xlsExportOptions.topLevel;
+		this.topLevelDelta = xlsExportOptions.topLevelDelta;
+		this.bottomLevel = xlsExportOptions.bottomLevel;
+		this.derivative = xlsExportOptions.derivative;
+		this.lrPI = xlsExportOptions.lrPI;
+		this.lrPIThreshold = xlsExportOptions.lrPIThreshold;
+
+		this.spotAreas = xlsExportOptions.spotAreas;
+		this.sum = xlsExportOptions.sum;
+		this.sum2 = xlsExportOptions.sum2;
+		this.nPixels = xlsExportOptions.nPixels;
+
+		this.autocorrelation = xlsExportOptions.autocorrelation;
+		this.crosscorrelation = xlsExportOptions.crosscorrelation;
+		this.crosscorrelationLR = xlsExportOptions.crosscorrelationLR;
+		this.nBinsCorrelation = xlsExportOptions.nBinsCorrelation;
+
+		this.sumPerCage = xlsExportOptions.sumPerCage;
+		this.subtractT0 = xlsExportOptions.subtractT0;
+		this.relativeToT0 = xlsExportOptions.relativeToT0;
+		this.relativeToMedianT0 = xlsExportOptions.relativeToMedianT0;
+		this.medianT0FromNPoints = xlsExportOptions.medianT0FromNPoints;
+		this.onlyalive = xlsExportOptions.onlyalive;
+
+		this.transpose = xlsExportOptions.transpose;
+		this.duplicateSeries = xlsExportOptions.duplicateSeries;
+		this.buildExcelStepMs = xlsExportOptions.buildExcelStepMs;
+		this.buildExcelUnitMs = xlsExportOptions.buildExcelUnitMs;
+		this.fixedIntervals = xlsExportOptions.fixedIntervals;
+		this.startAll_Ms = xlsExportOptions.startAll_Ms;
+		this.endAll_Ms = xlsExportOptions.endAll_Ms;
+		this.exportAllFiles = xlsExportOptions.exportAllFiles;
+		this.absoluteTime = xlsExportOptions.absoluteTime;
+		this.collateSeries = xlsExportOptions.collateSeries;
+		this.padIntervals = xlsExportOptions.padIntervals;
+
+		this.experimentIndexFirst = xlsExportOptions.experimentIndexFirst;
+		this.experimentIndexLast = xlsExportOptions.experimentIndexLast;
+		this.cageIndexFirst = xlsExportOptions.cageIndexFirst;
+		this.cageIndexLast = xlsExportOptions.cageIndexLast;
+		this.seriesIndexFirst = xlsExportOptions.seriesIndexFirst;
+		this.seriesIndexLast = xlsExportOptions.seriesIndexLast;
+		this.expList = xlsExportOptions.expList;
+
+		this.trim_alive = xlsExportOptions.trim_alive;
+		this.compensateEvaporation = xlsExportOptions.compensateEvaporation;
+		this.exportType = xlsExportOptions.exportType;
+	}
 }

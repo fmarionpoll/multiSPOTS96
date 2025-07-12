@@ -13,7 +13,7 @@ public class BuildMedianFromSpotMeasure extends BuildSeries {
 			return;
 
 		exp.zloadKymographs();
-		int imageHeight = exp.seqKymos.seq.getHeight();
+		int imageHeight = exp.seqKymos.getSequence().getHeight();
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				spot.buildRunningMedianFromSumLevel2D(imageHeight);
