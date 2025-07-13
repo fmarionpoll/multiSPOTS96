@@ -282,21 +282,16 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	}
 
 	private void displayTransform2(Experiment exp) {
-//		boolean displayCheckOverlay = false;
 		if (viewButton2.isSelected()) {
 			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
 					.getCanvas();
 			updateTransformFunctions2OfCanvas(canvas);
-//			displayCheckOverlay = true;
 		} else {
 			removeOverlays(exp);
-//			spotsOverlayCheckBox.setSelected(false);
 			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
 					.getCanvas();
 			canvas.transformsComboStep1.setSelectedIndex(0);
-
 		}
-//		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
 	}
 
 	private void displayOverlays(boolean displayOn, Experiment exp) {
@@ -308,8 +303,9 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	}
 
 	private void setOverlays(Experiment exp) {
-		if (exp.seqCamData != null)
+		if (exp.seqCamData != null) {
 			exp.seqCamData.updateOverlay();
+		}
 		if (exp.seqKymos != null)
 			exp.seqKymos.updateOverlay();
 	}

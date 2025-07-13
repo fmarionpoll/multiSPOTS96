@@ -11,7 +11,7 @@ public class SumDiff extends ImageTransformFunctionAbstract implements ImageTran
 
 	@Override
 	public IcyBufferedImage getTransformedImage(IcyBufferedImage sourceImage, ImageTransformOptions options) {
-		if (sourceImage.getSizeC() < 3)
+		if (sourceImage == null || sourceImage.getSizeC() < 3)
 			return null;
 		IcyBufferedImage img2 = new IcyBufferedImage(sourceImage.getWidth(), sourceImage.getHeight(), 3,
 				sourceImage.getDataType_());

@@ -60,7 +60,6 @@ public class ViewerManager {
 			overlayThresholdCam.setSequence(seq);
 		}
 		seq.addOverlay(overlayThresholdCam);
-		// TODO: update displays? ----------------------------
 	}
 
 	public void removeOverlay(Sequence seq) {
@@ -72,10 +71,8 @@ public class ViewerManager {
 
 	public void updateOverlayThreshold(int threshold, ImageTransformEnums transform, boolean ifGreater) {
 		if (overlayThresholdCam == null) {
-//            LOGGER.warning("Cannot update overlay threshold: overlay is null");
 			return;
 		}
-
 		overlayThresholdCam.setThresholdSingle(threshold, transform, ifGreater);
 		overlayThresholdCam.painterChanged();
 	}

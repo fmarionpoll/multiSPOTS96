@@ -18,6 +18,8 @@ public class ThresholdColors extends ImageTransformFunctionAbstract implements I
 		if (options.colorarray.size() == 0)
 			return null;
 
+		if (sourceImage == null)
+			return null;
 		if (sourceImage.getSizeC() < 3) {
 			System.out
 					.print("Failed operation: attempt to compute threshold from image with less than 3 color channels");
