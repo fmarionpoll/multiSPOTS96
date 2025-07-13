@@ -105,8 +105,12 @@ public class Create extends JPanel implements PropertyChangeListener {
 
 	private void setExptParms(Experiment exp) {
 		long bin_ms = exp.seqCamData.getTimeManager().getBinImage_ms();
-		if (exp.seqKymos == null)
-			exp.seqKymos = new SequenceKymos();
+		if (exp.seqKymos == null) {
+			// Use builder pattern with quality processing for dialog operations
+			exp.seqKymos = SequenceKymos.kymographBuilder()
+				.withConfiguration(KymographConfiguration.qualityProcessing())
+				.build();
+		}
 		exp.seqKymos.getImageLoader().setAbsoluteIndexFirstImage((long) kymosFrameFirstJSpinner.getValue());
 		exp.seqKymos.getTimeManager().setDeltaImage((long) kymosFrameDeltaJSpinner.getValue());
 		exp.seqKymos.getTimeManager()
@@ -121,7 +125,10 @@ public class Create extends JPanel implements PropertyChangeListener {
 			bin_ms = exp.seqCamData.getTimeManager().getBinImage_ms();
 		}
 		if (exp.seqKymos == null) {
-			exp.seqKymos = new SequenceKymos();
+			// Use builder pattern with default configuration for parameter retrieval
+			exp.seqKymos = SequenceKymos.kymographBuilder()
+				.withConfiguration(KymographConfiguration.defaultConfiguration())
+				.build();
 		}
 		long dFirst = exp.seqKymos.getImageLoader().getAbsoluteIndexFirstImage();
 		kymosFrameFirstJSpinner.setValue(dFirst);

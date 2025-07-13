@@ -71,19 +71,32 @@ public class Experiment {
 	// ----------------------------------
 
 	public Experiment() {
-		seqCamData = new SequenceCamData();
-		seqKymos = new SequenceKymos();
+		// Use builder pattern for modern initialization
+		seqCamData = SequenceCamData.builder()
+			.withStatus(EnumStatus.FILESTACK)
+			.build();
+		seqKymos = SequenceKymos.kymographBuilder()
+			.withConfiguration(KymographConfiguration.defaultConfiguration())
+			.build();
 	}
 
 	public Experiment(String expDirectory) {
-		seqCamData = new SequenceCamData();
-		seqKymos = new SequenceKymos();
+		// Use builder pattern with specific directory configuration
+		seqCamData = SequenceCamData.builder()
+			.withStatus(EnumStatus.FILESTACK)
+			.build();
+		seqKymos = SequenceKymos.kymographBuilder()
+			.withConfiguration(KymographConfiguration.defaultConfiguration())
+			.build();
 		this.resultsDirectory = expDirectory;
 	}
 
 	public Experiment(SequenceCamData seqCamData) {
 		this.seqCamData = seqCamData;
-		this.seqKymos = new SequenceKymos();
+		// Use builder for kymographs with default configuration
+		this.seqKymos = SequenceKymos.kymographBuilder()
+			.withConfiguration(KymographConfiguration.defaultConfiguration())
+			.build();
 		resultsDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
 		load_MS96_experiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML));
@@ -93,7 +106,10 @@ public class Experiment {
 		camDataImagesDirectory = eADF.getCameraImagesDirectory();
 		resultsDirectory = eADF.getResultsDirectory();
 		binSubDirectory = eADF.getBinSubDirectory();
-		seqCamData = new SequenceCamData();
+		// Use builder pattern for modern sequence initialization
+		seqCamData = SequenceCamData.builder()
+			.withStatus(EnumStatus.FILESTACK)
+			.build();
 		String fileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
 		load_MS96_experiment(fileName);
 
@@ -105,7 +121,11 @@ public class Experiment {
 			getFileIntervalsFromSeqCamData();
 
 		if (eADF.kymosImagesList != null && eADF.kymosImagesList.size() > 0) {
-			seqKymos = new SequenceKymos(eADF.kymosImagesList);
+			// Use builder pattern with image list and quality configuration
+			seqKymos = SequenceKymos.kymographBuilder()
+				.withImageList(eADF.kymosImagesList)
+				.withConfiguration(KymographConfiguration.qualityProcessing())
+				.build();
 		}
 	}
 
@@ -203,13 +223,21 @@ public class Experiment {
 	}
 
 	public boolean zopenPositionsMeasures() {
-		if (seqCamData == null)
-			seqCamData = new SequenceCamData();
+		if (seqCamData == null) {
+			// Use builder pattern for initialization
+			seqCamData = SequenceCamData.builder()
+				.withStatus(EnumStatus.FILESTACK)
+				.build();
+		}
 		load_MS96_experiment();
 		getFileIntervalsFromSeqCamData();
 
-		if (seqKymos == null)
-			seqKymos = new SequenceKymos();
+		if (seqKymos == null) {
+			// Use builder pattern for kymographs initialization
+			seqKymos = SequenceKymos.kymographBuilder()
+				.withConfiguration(KymographConfiguration.defaultConfiguration())
+				.build();
+		}
 
 		return zxmlReadDrosoTrack(null);
 	}
@@ -226,7 +254,11 @@ public class Experiment {
 		List<String> imagesList = ExperimentDirectories.getImagesListFromPathV2(camDataImagesDirectory, "jpg");
 		seqCamData = null;
 		if (imagesList.size() > 0) {
-			seqCamData = new SequenceCamData();
+			// Use builder pattern with images directory and list
+			seqCamData = SequenceCamData.builder()
+				.withImagesDirectory(camDataImagesDirectory)
+				.withStatus(EnumStatus.FILESTACK)
+				.build();
 			seqCamData.setImagesList(imagesList);
 			seqCamData.attachSequence(seqCamData.getImageLoader().loadSequenceFromImagesList(imagesList));
 		}
@@ -495,12 +527,21 @@ public class Experiment {
 //	}
 
 	public boolean zloadKymographs() {
-		if (seqKymos == null)
-			seqKymos = new SequenceKymos();
-		List<ImageFileDescriptor> myList = seqKymos.loadListOfPotentialKymographsFromSpots(getKymosBinFullDirectory(),
-				cagesArray);
-		ImageFileDescriptor.getExistingFileNames(myList);
-		return seqKymos.loadKymographImagesFromList(myList, true);
+		if (seqKymos == null) {
+			// Use builder pattern with quality processing configuration
+			seqKymos = SequenceKymos.kymographBuilder()
+				.withConfiguration(KymographConfiguration.qualityProcessing())
+				.build();
+		}
+		// Use modern API for creating file list and loading kymographs
+		List<ImageFileDescriptor> fileList = seqKymos.createKymographFileList(getKymosBinFullDirectory(), cagesArray);
+		ImageFileDescriptor.getExistingFileNames(fileList);
+		
+		// Use modern loading API with size adjustment - use deprecated method for dimensions
+		Rectangle maxDimensions = seqKymos.getMaxSizeofTiffFiles(fileList);
+		ImageProcessingResult result = seqKymos.loadKymographs(fileList, 
+			ImageAdjustmentOptions.withSizeAdjustment(maxDimensions));
+		return result.isSuccess();
 	}
 
 	// ------------------------------------------------

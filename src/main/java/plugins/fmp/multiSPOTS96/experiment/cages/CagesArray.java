@@ -20,6 +20,7 @@ import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
+import plugins.fmp.multiSPOTS96.experiment.ROIOperation;
 import plugins.fmp.multiSPOTS96.experiment.TInterval;
 import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
@@ -440,7 +441,9 @@ public class CagesArray {
 	// --------------
 
 	public void transferCagesToSequenceAsROIs(SequenceCamData seqCamData) {
-		seqCamData.removeROIsContainingString("cage");
+		// Use modern ROI operation for removing existing cage ROIs
+		seqCamData.processROIs(ROIOperation.removeROIs("cage"));
+		
 		List<ROI2D> cageROIList = new ArrayList<ROI2D>(cagesList.size());
 		for (Cage cage : cagesList)
 			cageROIList.add(cage.getRoi());
@@ -448,7 +451,8 @@ public class CagesArray {
 	}
 
 	public void transferROIsFromSequenceToCages(SequenceCamData seqCamData) {
-		List<ROI2D> roiList = seqCamData.getROIsContainingString("cage");
+		// Use modern ROI finding API
+		List<ROI2D> roiList = seqCamData.findROIs("cage");
 		Collections.sort(roiList, new Comparators.ROI2D_Name());
 		addMissingCages(roiList);
 		removeOrphanCages(roiList);
@@ -614,7 +618,8 @@ public class CagesArray {
 	}
 
 	public void transferROIsFromSequenceToCageSpots(SequenceCamData seqCamData) {
-		List<ROI2D> listSeqRois = seqCamData.getROIsContainingString("spot");
+		// Use modern ROI finding API
+		List<ROI2D> listSeqRois = seqCamData.findROIs("spot");
 //		int T = 0;
 //		Viewer v = seqCamData.getSequence().getFirstViewer();
 //		if (v != null)

@@ -252,8 +252,12 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private void initArraysToBuildKymographImages(Experiment exp) {
-		if (exp.seqKymos == null)
-			exp.seqKymos = new SequenceKymos();
+		if (exp.seqKymos == null) {
+			// Use builder pattern with quality processing configuration for kymograph building
+			exp.seqKymos = SequenceKymos.kymographBuilder()
+				.withConfiguration(KymographConfiguration.qualityProcessing())
+				.build();
+		}
 		SequenceKymos seqKymos = exp.seqKymos;
 		seqKymos.attachSequence(new Sequence());
 
