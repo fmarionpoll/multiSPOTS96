@@ -500,17 +500,6 @@ public class Experiment {
 
 	final String csvSep = ";";
 
-//	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
-//		try {
-//			csvWriter.append(expProperties.csvExportExperimentSectionHeader(csvSep));
-//			csvWriter.append(expProperties.csvExportExperimentProperties(csvSep));
-//			csvWriter.append("#" + csvSep + "#\n");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return true;
-//	}
-
 	public boolean zloadKymographs() {
 		if (seqKymos == null) {
 			// Use builder pattern with quality processing configuration
