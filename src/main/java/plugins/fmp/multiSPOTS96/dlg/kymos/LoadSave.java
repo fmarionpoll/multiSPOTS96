@@ -142,8 +142,8 @@ public class LoadSave extends JPanel {
 		} else
 			exp.setBinSubDirectory(localString);
 
-		List<ImageFileDescriptor> myList = exp.seqKymos
-				.loadListOfPotentialKymographsFromSpots(exp.getKymosBinFullDirectory(), exp.cagesArray);
+		List<ImageFileDescriptor> myList = exp.seqKymos.createKymographFileList(exp.getKymosBinFullDirectory(),
+				exp.cagesArray);
 		int nItems = ImageFileDescriptor.getExistingFileNames(myList);
 		if (nItems > 0) {
 			flag = seqKymos.loadKymographImagesFromList(myList, true);
