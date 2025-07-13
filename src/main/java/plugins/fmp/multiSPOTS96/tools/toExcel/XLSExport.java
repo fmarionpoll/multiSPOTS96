@@ -102,7 +102,7 @@ public class XLSExport {
 		long durationMs = timeManager.getBinLast_ms() - timeManager.getBinFirst_ms();
 		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
 		if (nOutputFrames <= 1) {
-			if (exp.seqKymos != null && exp.seqKymos.imageWidthMax == 0)
+			if (exp.seqKymos != null && exp.seqKymos.getKymographInfo().getMaxWidth() == 0)
 				exp.zloadKymographs();
 
 			long binLastMs = timeManager.getBinFirst_ms()

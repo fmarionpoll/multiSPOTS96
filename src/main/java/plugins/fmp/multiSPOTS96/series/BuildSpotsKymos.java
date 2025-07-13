@@ -20,6 +20,7 @@ import icy.system.thread.Processor;
 import icy.type.DataType;
 import loci.formats.FormatException;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.KymographConfiguration;
 import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
@@ -253,10 +254,10 @@ public class BuildSpotsKymos extends BuildSeries {
 
 	private void initArraysToBuildKymographImages(Experiment exp) {
 		if (exp.seqKymos == null) {
-			// Use builder pattern with quality processing configuration for kymograph building
+			// Use builder pattern with quality processing configuration for kymograph
+			// building
 			exp.seqKymos = SequenceKymos.kymographBuilder()
-				.withConfiguration(KymographConfiguration.qualityProcessing())
-				.build();
+					.withConfiguration(KymographConfiguration.qualityProcessing()).build();
 		}
 		SequenceKymos seqKymos = exp.seqKymos;
 		seqKymos.attachSequence(new Sequence());

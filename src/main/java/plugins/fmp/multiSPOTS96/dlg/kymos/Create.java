@@ -19,6 +19,7 @@ import javax.swing.SwingConstants;
 import icy.util.StringUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.KymographConfiguration;
 import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.series.BuildSpotsKymos;
@@ -108,8 +109,7 @@ public class Create extends JPanel implements PropertyChangeListener {
 		if (exp.seqKymos == null) {
 			// Use builder pattern with quality processing for dialog operations
 			exp.seqKymos = SequenceKymos.kymographBuilder()
-				.withConfiguration(KymographConfiguration.qualityProcessing())
-				.build();
+					.withConfiguration(KymographConfiguration.qualityProcessing()).build();
 		}
 		exp.seqKymos.getImageLoader().setAbsoluteIndexFirstImage((long) kymosFrameFirstJSpinner.getValue());
 		exp.seqKymos.getTimeManager().setDeltaImage((long) kymosFrameDeltaJSpinner.getValue());
@@ -127,8 +127,7 @@ public class Create extends JPanel implements PropertyChangeListener {
 		if (exp.seqKymos == null) {
 			// Use builder pattern with default configuration for parameter retrieval
 			exp.seqKymos = SequenceKymos.kymographBuilder()
-				.withConfiguration(KymographConfiguration.defaultConfiguration())
-				.build();
+					.withConfiguration(KymographConfiguration.defaultConfiguration()).build();
 		}
 		long dFirst = exp.seqKymos.getImageLoader().getAbsoluteIndexFirstImage();
 		kymosFrameFirstJSpinner.setValue(dFirst);

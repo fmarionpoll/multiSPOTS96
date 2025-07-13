@@ -38,14 +38,19 @@ public class ExperimentDirectories {
 		return cameraImagesDirectory;
 	}
 
-	public static List<String> keepOnlyAcceptedNames_List(List<String> namesList, String strExtension) {
+	public static List<String> keepOnlyAcceptedNames_List(List<String> namesList, String[] strExtension) {
 		int count = namesList.size();
 		List<String> outList = new ArrayList<String>(count);
-		String ext = strExtension.toLowerCase();
+
 		for (String name : namesList) {
-			String nameGeneric = FileUtil.getGenericPath(name);
-			if (nameGeneric.toLowerCase().endsWith(ext))
-				outList.add(nameGeneric);
+			for (int i = 0; i < strExtension.length; i++) {
+				String ext = strExtension[i].toLowerCase();
+				String nameGeneric = FileUtil.getGenericPath(name);
+				if (nameGeneric.toLowerCase().endsWith(ext)) {
+					outList.add(nameGeneric);
+					break;
+				}
+			}
 		}
 		Collections.sort(outList);
 		return outList;
@@ -114,7 +119,8 @@ public class ExperimentDirectories {
 					grabsDirectory = name;
 			}
 			if (imageFound) {
-				cameraImagesList = keepOnlyAcceptedNames_List(cameraImagesList, "jpg");
+				String[] ext = { "jpg" };
+				cameraImagesList = keepOnlyAcceptedNames_List(cameraImagesList, ext);
 				isOK = true;
 			} else if (grabsDirectory != null) {
 				cameraImagesList = getImagesListFromPath(grabsDirectory);
