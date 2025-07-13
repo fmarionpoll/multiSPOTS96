@@ -1,9 +1,6 @@
 package plugins.fmp.multiSPOTS96.tools.toExcel;
 
-import java.awt.Point;
 import java.util.Collections;
-
-import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
@@ -13,64 +10,6 @@ import plugins.fmp.multiSPOTS96.tools.Comparators;
 public class XLSExportForChart extends XLSExport {
 
 	// ------------------------------------------------
-
-	void writeTopRow_timeIntervals_Correl(SXSSFSheet sheet, int row) {
-		boolean transpose = options.transpose;
-		Point pt = new Point(0, row);
-		long interval = -options.nBinsCorrelation;
-		while (interval < options.nBinsCorrelation) {
-			int i = (int) interval;
-			XLSUtils.setValue(sheet, pt, transpose, "t" + i);
-			pt.y++;
-			interval += 1;
-		}
-	}
-
-	void writeTopRow_timeIntervals_Default(SXSSFSheet sheet, int row) {
-		boolean transpose = options.transpose;
-		Point pt = new Point(0, row);
-		long duration = expAll.seqCamData.getLastImageMs() - expAll.seqCamData.getFirstImageMs();
-		long interval = 0;
-		while (interval < duration) {
-			int i = (int) (interval / options.buildExcelUnitMs);
-			XLSUtils.setValue(sheet, pt, transpose, "t" + i);
-			pt.y++;
-			interval += options.buildExcelStepMs;
-		}
-	}
-
-//	private XLSResultsArray getSingleSpotDescriptorsForOneExperiment(Experiment exp, EnumXLSExportType xlsOption) {
-//		if (expAll == null)
-//			return null;
-//
-//		// loop to get all spots into expAll and init rows for this experiment
-//		expAll.cagesArray.copyCages(exp.cagesArray.cagesList, true);
-//		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
-//		expAll.expProperties.copyExperimentFieldsFrom(exp.expProperties);
-//		expAll.setResultsDirectory(exp.getResultsDirectory());
-//
-//		Experiment expi = exp.chainToNextExperiment;
-//		while (expi != null) {
-//			expAll.cagesArray.mergeSpotsLists(expi.cagesArray);
-//			expi = expi.chainToNextExperiment;
-//		}
-//
-//		int nFrames = (int) ((expAll.seqCamData.getLastImageMs() - expAll.seqCamData.getFirstImageMs())
-//				/ options.buildExcelStepMs + 1);
-//		int nspots = expAll.cagesArray.getTotalNumberOfSpots();
-//		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
-//		for (Cage cage : expAll.cagesArray.cagesList) {
-//			for (Spot spot : cage.spotsArray.spotsList) {
-//				XLSResults rowResults = new XLSResults(cage, spot, xlsOption, nFrames);
-//				rowResults.stimulus = spot.prop.stimulus;
-//				rowResults.concentration = spot.prop.concentration;
-//				rowResults.cageID = spot.prop.cageID;
-//				rowListForOneExp.resultsList.add(rowResults);
-//			}
-//		}
-//		Collections.sort(rowListForOneExp.resultsList, new Comparators.XLSResults_Name());
-//		return rowListForOneExp;
-//	}
 
 	private XLSResultsArray getSpotsDescriptorsForOneExperiment(Experiment exp, EnumXLSExport xlsOption) {
 		if (expAll == null)
@@ -105,15 +44,6 @@ public class XLSExportForChart extends XLSExport {
 		Collections.sort(rowListForOneExp.resultsList, new Comparators.XLSResults_Name());
 		return rowListForOneExp;
 	}
-//
-//	public XLSResultsArray getSpotDataFromOneExperiment_v3parms(Experiment exp, EnumXLSExportType exportType,
-//			XLSExportOptions options) {
-//		this.options = options;
-//		expAll = new Experiment();
-//		expAll.seqCamData.getLastImageMs() = exp.seqCamData.getLastImageMs();
-//		expAll.seqCamData.setFirstImageMs( exp.seqCamData.getFirstImageMs());
-//		return getSpotDataFromOneExperimentSeries_v3parms(exp, exportType);
-//	}
 
 	public XLSResultsArray getSpotsDataFromOneExperiment_v2parms(Experiment exp, XLSExportOptions options) {
 		this.options = options;

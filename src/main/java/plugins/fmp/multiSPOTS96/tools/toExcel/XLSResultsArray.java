@@ -8,9 +8,6 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
 public class XLSResultsArray {
 	ArrayList<XLSResults> resultsList = null;
-	XLSResults evapL = null;
-	XLSResults evapR = null;
-	boolean sameLR = true;
 	String stim = null;
 	String conc = null;
 	double lowestPiAllowed = -1.2;
@@ -63,7 +60,7 @@ public class XLSResultsArray {
 				results.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
 						xlsExportOptions.buildExcelStepMs);
 				if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT)
-					results.relativeToMaximum(); //relativeToT0();
+					results.relativeToMaximum(); // relativeToT0();
 				results.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
 				resultsList.add(results);
 			}

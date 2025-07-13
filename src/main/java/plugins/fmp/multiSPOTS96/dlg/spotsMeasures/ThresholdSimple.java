@@ -4,8 +4,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -54,7 +52,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	private JComboBox<ImageTransformEnums> spotsTransformsComboBox = new JComboBox<ImageTransformEnums>(transforms);
 	private JComboBox<String> spotsDirectionComboBox = new JComboBox<String>(directions);
 	private JSpinner spotsThresholdSpinner = new JSpinner(new SpinnerNumberModel(35, 0, 255, 1));
-	private JCheckBox spotsOverlayCheckBox = new JCheckBox("overlay");
+//	private JCheckBox spotsOverlayCheckBox = new JCheckBox("overlay");
 	private JToggleButton viewButton1 = new JToggleButton("View");
 	private JToggleButton viewButton2 = new JToggleButton("View");
 
@@ -85,7 +83,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		panel1.add(spotsDirectionComboBox);
 		panel1.add(spotsThresholdSpinner);
 		panel1.add(viewButton1);
-		panel1.add(spotsOverlayCheckBox);
+//		panel1.add(spotsOverlayCheckBox);
 		add(panel1);
 
 		JPanel panel2 = new JPanel(layoutLeft);
@@ -105,26 +103,28 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	}
 
 	private void declareListeners() {
-		spotsOverlayCheckBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) {
-					if (spotsOverlayCheckBox.isSelected()) {
-						setOverlays(exp);
-						updateOverlaysThreshold();
-					} else
-						removeOverlays(exp);
-				}
-			}
-		});
+//		spotsOverlayCheckBox.addItemListener(new ItemListener() {
+//			public void itemStateChanged(ItemEvent e) {
+//				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+//				if (exp != null) {
+//					if (spotsOverlayCheckBox.isSelected()) {
+//						setOverlays(exp);
+//						updateOverlaysThreshold();
+//					} else
+//						removeOverlays(exp);
+//				}
+//			}
+//		});
 
 		spotsTransformsComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					if (!viewButton1.isSelected())
-						viewButton1.setSelected(true);
+//					if (!viewButton1.isSelected()) {
+//						viewButton1.setSelected(true);
+//					}
+
 					int index = spotsTransformsComboBox.getSelectedIndex();
 					updateCanvasFunctions(exp, index);
 					updateOverlaysThreshold();
@@ -179,8 +179,10 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null)
+				if (exp != null) {
 					displayTransform1(exp);
+					displayOverlays(viewButton1.isSelected(), exp);
+				}
 			}
 		});
 
@@ -276,26 +278,33 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		options.flyThreshold = (int) fliesThresholdSpinner.getValue();
 		options.flyThresholdUp = (fliesDirectionComboBox.getSelectedIndex() == 1);
 
-//		options.detectL = topSpotCheckBox.isSelected();
-//		options.detectR = bottomSpotCheckBox.isSelected();
-
 		return options;
 	}
 
 	private void displayTransform2(Experiment exp) {
-		boolean displayCheckOverlay = false;
+//		boolean displayCheckOverlay = false;
 		if (viewButton2.isSelected()) {
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
+					.getCanvas();
 			updateTransformFunctions2OfCanvas(canvas);
-			displayCheckOverlay = true;
+//			displayCheckOverlay = true;
 		} else {
 			removeOverlays(exp);
-			spotsOverlayCheckBox.setSelected(false);
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
+//			spotsOverlayCheckBox.setSelected(false);
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
+					.getCanvas();
 			canvas.transformsComboStep1.setSelectedIndex(0);
 
 		}
-		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
+//		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
+	}
+
+	private void displayOverlays(boolean displayOn, Experiment exp) {
+		if (displayOn) {
+			setOverlays(exp);
+		} else {
+			removeOverlays(exp);
+		}
 	}
 
 	private void setOverlays(Experiment exp) {
@@ -330,16 +339,9 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 
 	private void displayTransform1(Experiment exp) {
 		int index = spotsTransformsComboBox.getSelectedIndex();
-		boolean displayCheckOverlay = false;
-		if (viewButton1.isSelected()) {
-			updateCanvasFunctions(exp, index);
-			displayCheckOverlay = true;
-		} else {
-			removeOverlays(exp);
-			spotsOverlayCheckBox.setSelected(false);
-			updateCanvasFunctions(exp, -1);
-		}
-		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
+		if (!viewButton1.isSelected())
+			index = -1;
+		updateCanvasFunctions(exp, index);
 	}
 
 	private void updateTransformFunctions1OfCanvas(Canvas2D_3Transforms canvas) {

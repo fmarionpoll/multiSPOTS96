@@ -98,9 +98,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 		stopFlag = false;
 		exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList();
 		int iiFirst = 0;
-		int iiLast = exp.seqCamData.getImageLoader().getFixedNumberOfImages() > 0
-				? (int) exp.seqCamData.getImageLoader().getFixedNumberOfImages()
-				: exp.seqCamData.getImageLoader().getNTotalFrames();
+		int iiLast = exp.seqCamData.getImageLoader().getNTotalFrames();
 		vData.setTitle(exp.seqCamData.getCSCamFileName() + ": " + iiFirst + "-" + iiLast);
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack");
 
@@ -121,7 +119,12 @@ public class BuildSpotsMeasures extends BuildSeries {
 			}
 
 			final int t = ii;
-			final IcyBufferedImage sourceImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t));
+			String fileName = exp.seqCamData.getFileNameFromImageList(t);
+			if (fileName == null) {
+				System.out.println("filename null at t=" + t);
+				continue;
+			}
+			final IcyBufferedImage sourceImage = imageIORead(fileName);
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
