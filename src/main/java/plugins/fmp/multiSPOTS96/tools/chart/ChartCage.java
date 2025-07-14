@@ -3,6 +3,7 @@ package plugins.fmp.multiSPOTS96.tools.chart;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.jfree.chart.ChartColor;
@@ -12,7 +13,11 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResults;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResultsArray;
 
@@ -193,7 +198,26 @@ public class ChartCage {
 		subplot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
 	}
 
-	XLSResultsArray xlsResultsArray = getXLSResultsFromCage(cage, xlsExportOptions);
+	XLSResultsArray getXLSResultsFromCage(Experiment exp, Cage cage, XLSExportOptions xlsExportOptions) {
+		XLSResultsArray xlsResultsArray = new XLSResultsArray();
+		
+		
+		ArrayList<Spot> spotsList = cage.combineSpotsWithSameStimulusConcentration();
+		EnumXLSExport xlsExportType = xlsExportOptions.exportType;
+		double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
+
+		for (Spot spot : spotsList) {
+			XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
+			xlsResults.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportType,
+					exp.seqCamData.getTimeManager().getBinDurationMs(), options.buildExcelStepMs);
+			if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT)
+				xlsResults.relativeToMaximum(); // relativeToT0();
+			
+			xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
+		}
+		
+		return xlsResultsArray;
+	}
 
 	/**
 	 * Extracts spot data from one cage in the results array.

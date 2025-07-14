@@ -296,7 +296,7 @@ public class ChartCageArray extends IcyFrame {
 	private ChartPanel createChartPanelForCage(ChartCage chartCage, Cage cage, int row, int col,
 			XLSExportOptions xlsExportOptions) {
 
-		XLSResultsArray xlsResultsArray = getXLSResultsFromCage(cage, xlsExportOptions);
+		XLSResultsArray xlsResultsArray = chartCage.getXLSResultsFromCage(experiment, cage, xlsExportOptions);
 		XYSeriesCollection xyDataSetList = chartCage.getSpotDataFromOneCage(xlsResultsArray, cage, "");
 
 		NumberAxis xAxis = setXaxis("", xlsExportOptions);
