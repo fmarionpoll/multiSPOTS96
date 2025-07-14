@@ -144,7 +144,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 					updateTransformFunctions2OfCanvas(canvas);
 					if (!viewButton2.isSelected())
 						viewButton2.setSelected(true);
-					canvas.transformsComboStep1.setSelectedIndex(index + 1);
+					canvas.setTransformStep1Index(index + 1);
 					updateOverlaysThreshold();
 				}
 			}
@@ -291,7 +291,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 			removeOverlays(exp);
 			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
 					.getCanvas();
-			canvas.transformsComboStep1.setSelectedIndex(0);
+			canvas.setTransformStep1Index(0);
 		}
 	}
 
@@ -334,7 +334,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 			return;
 		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) v.getCanvas();
 		updateTransformFunctions1OfCanvas(canvas);
-		canvas.transformsComboStep1.setSelectedIndex(index + 1);
+		canvas.setTransformStep1Index(index + 1);
 	}
 
 	private void displayTransform1(Experiment exp) {
@@ -345,7 +345,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	}
 
 	private void updateTransformFunctions1OfCanvas(Canvas2D_3Transforms canvas) {
-		if (canvas.transformsComboStep1.getItemCount() < (spotsTransformsComboBox.getItemCount() + 1)) {
+		if (canvas.getTransformStep1ItemCount() < (spotsTransformsComboBox.getItemCount() + 1)) {
 			canvas.updateTransformsComboStep1(transforms);
 		}
 		int index = spotsTransformsComboBox.getSelectedIndex();
@@ -353,7 +353,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	}
 
 	private void updateTransformFunctions2OfCanvas(Canvas2D_3Transforms canvas) {
-		if (canvas.transformsComboStep1.getItemCount() < (fliesDirectionComboBox.getItemCount() + 1)) {
+		if (canvas.getTransformStep1ItemCount() < (fliesDirectionComboBox.getItemCount() + 1)) {
 			canvas.updateTransformsComboStep1(transforms);
 		}
 		int index = fliesDirectionComboBox.getSelectedIndex();

@@ -20,6 +20,7 @@ import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DProcessingException;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 
@@ -165,10 +166,15 @@ public class BuildSpotsMeasures extends BuildSeries {
 			IcyBufferedImageCursor cursorToDetectFly, ROI2DAlongT roiT) {
 
 		ResultsThreshold result = new ResultsThreshold();
-		result.npoints_in = roiT.mask2DPoints_in.length;
+		Point[] maskPoints = roiT.getMaskPoints();
+		if (maskPoints == null) {
+			result.npoints_in = 0;
+			return result;
+		}
+		result.npoints_in = maskPoints.length;
 
-		for (int offset = 0; offset < roiT.mask2DPoints_in.length; offset++) {
-			Point pt = roiT.mask2DPoints_in[offset];
+		for (int offset = 0; offset < maskPoints.length; offset++) {
+			Point pt = maskPoints[offset];
 			int value = (int) cursorToMeasureArea.get((int) pt.getX(), (int) pt.getY(), 0);
 			int value_to_detect_fly = (int) cursorToDetectFly.get((int) pt.getX(), (int) pt.getY(), 0);
 
@@ -230,8 +236,14 @@ public class BuildSpotsMeasures extends BuildSeries {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				List<ROI2DAlongT> listRoiT = spot.getROIAlongTList();
 				for (ROI2DAlongT roiT : listRoiT) {
-					if (roiT.getMask2D_in() == null)
-						roiT.buildMask2DFromRoi_in();
+					if (!roiT.hasMaskData()) {
+						try {
+							roiT.buildMask2DFromInputRoi();
+						} catch (ROI2DProcessingException e) {
+							System.err.println("Error building mask for ROI at time " + roiT.getTimePoint() + ": " + e.getMessage());
+							e.printStackTrace();
+						}
+					}
 				}
 			}
 		}

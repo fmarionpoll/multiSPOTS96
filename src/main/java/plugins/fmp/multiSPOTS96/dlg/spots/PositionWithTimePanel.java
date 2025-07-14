@@ -38,6 +38,7 @@ import plugins.fmp.multiSPOTS96.experiment.cages.TableModelTIntervals;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class PositionWithTimePanel extends JPanel implements ListSelectionListener {
@@ -242,7 +243,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				ROI2DAlongT kymoROI2D = spot.getROIAtT(t);
-				listRoisAtT.add(kymoROI2D.getRoi_in());
+				listRoisAtT.add(kymoROI2D.getInputRoi());
 			}
 		}
 		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(listRoisAtT);
@@ -298,7 +299,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		List<ROI2D> listRois = new ArrayList<ROI2D>();
 		for (Cage cage : exp.cagesArray.cagesList)
 			for (Spot spot : cage.spotsArray.spotsList)
-				listRois.add(spot.getROIAtT((int) intervalT).getRoi_in());
+				listRois.add(spot.getROIAtT((int) intervalT).getInputRoi());
 		seq.addROIs(listRois, false);
 
 		Viewer v = seq.getFirstViewer();
@@ -321,14 +322,24 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 				Spot spot = exp.cagesArray.getSpotFromROIName(name);
 				if (spot != null) {
 					ROI2D roilocal = (ROI2D) roi.getCopy();
-					spot.getROIAtT(intervalT).setRoi_in(roilocal);
+					try {
+						spot.getROIAtT(intervalT).setInputRoi(roilocal);
+					} catch (ROI2DValidationException e) {
+						System.err.println("Error setting ROI for spot: " + e.getMessage());
+						e.printStackTrace();
+					}
 				}
 			}
 			if (name.contains("cage") && cagesCheckBox.isSelected()) {
 				Cage cage = exp.cagesArray.getCageFromName(name);
 				if (cage != null) {
 					ROI2D roilocal = (ROI2D) roi.getCopy();
-					cage.getROIAtT(intervalT).setRoi_in(roilocal);
+					try {
+						cage.getROIAtT(intervalT).setInputRoi(roilocal);
+					} catch (ROI2DValidationException e) {
+						System.err.println("Error setting ROI for cage: " + e.getMessage());
+						e.printStackTrace();
+					}
 				}
 			}
 		}

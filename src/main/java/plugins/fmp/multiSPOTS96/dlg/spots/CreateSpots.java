@@ -16,13 +16,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import icy.roi.ROI2D;
+import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentUtils;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGeometryException;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DPolygonPlus;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DProcessingException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class CreateSpots extends JPanel {
@@ -133,8 +137,8 @@ public class CreateSpots extends JPanel {
 	private void keepSelectedAreas(Experiment exp) {
 		ArrayList<ROI2DPolygonPlus> listCarres = roiGrid.getAreaRois();
 		for (ROI2DPolygonPlus roi : listCarres) {
-			roi.isSelected = roi.isSelected();
-			if (!roi.isSelected)
+			roi.setSelected(roi.isSelected());
+			if (!roi.getSelected())
 				exp.seqCamData.getSequence().removeROI(roi);
 		}
 	}
@@ -145,20 +149,32 @@ public class CreateSpots extends JPanel {
 			ROI2D cageRoi = cage.getRoi();
 			ROI2DGrid cageGrid = createGrid(cageRoi);
 			cage.spotsArray.spotsList.clear();
-			for (ROI2DPolygonPlus roi : listSelectedAreas) {
-				ROI2DPolygonPlus roiP = cageGrid.getAreaAt(roi.cagePosition);
+					for (ROI2DPolygonPlus roi : listSelectedAreas) {
+			try {
+				ROI2DPolygonPlus roiP = cageGrid.getAreaAt(roi.getCagePosition());
 				Rectangle2D rect = roiP.getBounds2D();
 				Point2D.Double center = (Double) roiP.getPosition2D();
 				int radius = (int) (rect.getHeight() / 2);
 				cage.addEllipseSpot(center, radius);
+			} catch (ROI2DValidationException e) {
+				System.err.println("Error getting area at position " + roi.getCagePosition() + ": " + e.getMessage());
+				e.printStackTrace();
 			}
+		}
 			cage.getRoi().setSelected(false);
 		}
 	}
 
 	void changeGrid(Experiment exp, Cage cage) {
-		if (roiGrid != null)
-			roiGrid.clearGridRois(exp.seqCamData.getSequence());
+		if (roiGrid != null) {
+			Sequence sequence = exp.seqCamData.getSequence();
+			try {
+				roiGrid.clearGridRois(sequence);
+			} catch (ROI2DValidationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		roiGrid = createGrid(cage.getRoi());
 		exp.seqCamData.getSequence().addROIs(roiGrid.getAreaRois(), false);
 	}
@@ -170,8 +186,18 @@ public class CreateSpots extends JPanel {
 			int n_columns = (int) nColumnsCombo.getSelectedItem();
 			int n_rows = (int) nRowsCombo.getSelectedItem();
 			grid = new ROI2DGrid();
-			grid.createGridFromFrame(polygon, n_columns, n_rows);
-			grid.gridToRois("carre", Color.RED, 1, 1);
+			try {
+				grid.createGridFromFrame(polygon, n_columns, n_rows);
+			} catch (ROI2DValidationException | ROI2DGeometryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				grid.gridToRois("carre", Color.RED, 1, 1);
+			} catch (ROI2DValidationException | ROI2DProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return grid;
 	}

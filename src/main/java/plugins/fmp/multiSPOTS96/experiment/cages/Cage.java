@@ -19,6 +19,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -164,7 +165,7 @@ public class Cage implements Comparable<Cage> {
 			if (!name.contains(filter))
 				continue;
 			Rectangle2D rect = ((ROI2DRectangle) roi).getRectangle();
-			int t = roi.getT();
+			int t = (int) roi.getT();
 			flyPositions.flyPositionList.get(t).rectPosition = rect;
 		}
 	}
@@ -317,7 +318,7 @@ public class Cage implements Comparable<Cage> {
 
 		ROI2DAlongT spotRoi = null;
 		for (ROI2DAlongT item : listCageRoiAlongT) {
-			if (t < item.getT())
+			if (t < item.getTimePoint())
 				break;
 			spotRoi = item;
 		}
@@ -327,7 +328,7 @@ public class Cage implements Comparable<Cage> {
 	public void removeROIAlongTListItem(long t) {
 		ROI2DAlongT itemFound = null;
 		for (ROI2DAlongT item : listCageRoiAlongT) {
-			if (t != item.getT())
+			if (t != item.getTimePoint())
 				continue;
 			itemFound = item;
 		}
@@ -336,7 +337,14 @@ public class Cage implements Comparable<Cage> {
 	}
 
 	private void initROIAlongTList() {
-		listCageRoiAlongT.add(new ROI2DAlongT(0, cageROI2D));
+		try {
+			listCageRoiAlongT.add(new ROI2DAlongT(0, cageROI2D));
+		} catch (ROI2DValidationException e) {
+			System.err.println("Error creating ROI2DAlongT for cage: " + e.getMessage());
+			e.printStackTrace();
+			// Create a default ROI2DAlongT without parameters as fallback
+			listCageRoiAlongT.add(new ROI2DAlongT());
+		}
 	}
 
 	public void mapSpotsToCageColumnRow() {

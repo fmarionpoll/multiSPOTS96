@@ -8,7 +8,7 @@ import icy.plugin.interface_.PluginCanvas;
 public class Canvas2D_3TransformsPlugin extends Plugin implements PluginCanvas {
 	@Override
 	public String getCanvasClassName() {
-		return Canvas2D_3TransformsPlugin.class.getName();
+		return Canvas2D_3Transforms.class.getName();
 	}
 
 	@Override

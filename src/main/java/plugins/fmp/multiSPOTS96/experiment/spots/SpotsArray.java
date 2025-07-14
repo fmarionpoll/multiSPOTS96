@@ -18,6 +18,7 @@ import org.w3c.dom.Node;
 
 import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.sequence.TInterval;
 import plugins.fmp.multiSPOTS96.experiment.sequence.TIntervalsArray;
@@ -303,7 +304,7 @@ public class SpotsArray {
 			spotsListTimeIntervals = new TIntervalsArray();
 			for (Spot spot : spotsList) {
 				for (ROI2DAlongT roiFK : spot.getROIAlongTList()) {
-					TInterval interval = new TInterval(roiFK.getT(), (long) -1);
+					TInterval interval = new TInterval(roiFK.getTimePoint(), (long) -1);
 					spotsListTimeIntervals.addIfNew(interval);
 				}
 			}
@@ -334,8 +335,13 @@ public class SpotsArray {
 			List<ROI2DAlongT> listROI2DForKymo = spot.getROIAlongTList();
 			ROI2D roi = spot.getRoi();
 			if (item > 0)
-				roi = (ROI2D) listROI2DForKymo.get(item - 1).getRoi_in().getCopy();
-			listROI2DForKymo.add(item, new ROI2DAlongT(start, roi));
+				roi = (ROI2D) listROI2DForKymo.get(item - 1).getInputRoi().getCopy();
+			try {
+				listROI2DForKymo.add(item, new ROI2DAlongT(start, roi));
+			} catch (ROI2DValidationException e) {
+				System.err.println("Error creating ROI2DAlongT for spot: " + e.getMessage());
+				e.printStackTrace();
+			}
 		}
 		return item;
 	}

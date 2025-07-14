@@ -29,6 +29,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.GaspardRigidRegistration;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DProcessingException;
 
 public class BuildSpotsKymos extends BuildSeries {
 	public Sequence seqData = new Sequence();
@@ -162,27 +163,22 @@ public class BuildSpotsKymos extends BuildSeries {
 		return true;
 	}
 
-	/*
-	 * private void analyzeImageWithSpot(IcyBufferedImageCursor cursorSource, Spot
-	 * spot, int t, int sizeC) { ROI2DAlongT roiT = spot.getROIAtT(t); for (int chan
-	 * = 0; chan < sizeC; chan++) { IcyBufferedImageCursor cursor = new
-	 * IcyBufferedImageCursor(spot.spotImage); try { for (int y = 0; y <
-	 * roiT.mask2DPoints_in.length; y++) { Point pt = roiT.mask2DPoints_in[y];
-	 * cursor.set(t, y, chan, cursorSource.get((int) pt.getX(), (int) pt.getY(),
-	 * chan)); } } finally { cursor.commitChanges(); } } }
-	 */
-
 	private void analyzeImageWithSpot2(IcyBufferedImageCursor cursorSource, Spot spot, int t, int sizeC) {
 		ROI2DAlongT roiT = spot.getROIAtT(t);
+		Point[] maskPoints = roiT.getMaskPoints();
+		if (maskPoints == null) {
+			return; // No mask points available
+		}
+		
 		for (int chan = 0; chan < sizeC; chan++) {
 			IcyBufferedImageCursor cursor = new IcyBufferedImageCursor(spot.spotImage);
 			try {
 				int i = 0;
-				for (int j = roiT.ymin; j < roiT.ymax; j++) {
+				for (int j = roiT.getYMin(); j < roiT.getYMax(); j++) {
 					double iSum = 0;
 					int iN = 0;
-					for (int y = 0; y < roiT.mask2DPoints_in.length; y++) {
-						Point pt = roiT.mask2DPoints_in[y];
+					for (int y = 0; y < maskPoints.length; y++) {
+						Point pt = maskPoints[y];
 						if (pt.y == j) {
 							iSum += cursorSource.get((int) pt.getX(), (int) pt.getY(), chan);
 							iN++;
@@ -280,14 +276,25 @@ public class BuildSpotsKymos extends BuildSeries {
 			for (Spot spot : cage.spotsArray.spotsList) {
 				int imageHeight = 0;
 				for (ROI2DAlongT roiT : spot.getROIAlongTList()) {
-					roiT.buildMask2DFromRoi_in();
+					try {
+						roiT.buildMask2DFromInputRoi();
+					} catch (ROI2DProcessingException e) {
+						System.err.println("Error building mask for ROI at time " + roiT.getTimePoint() + ": " + e.getMessage());
+						e.printStackTrace();
+						continue;
+					}
 
 					// TODO transform into ROIT and add to outer
 					// subtract booleanmap from booleantmap of roiT
 
-					int imageHeight_i = roiT.getMask2D_Height();
-					if (imageHeight_i > imageHeight)
-						imageHeight = imageHeight_i;
+					try {
+						int imageHeight_i = roiT.getMask2DHeight();
+						if (imageHeight_i > imageHeight)
+							imageHeight = imageHeight_i;
+					} catch (ROI2DProcessingException e) {
+						System.err.println("Error getting mask height for ROI at time " + roiT.getTimePoint() + ": " + e.getMessage());
+						e.printStackTrace();
+					}
 				}
 				spot.spotImage = new IcyBufferedImage(kymoImageWidth, imageHeight, numC, dataType);
 			}

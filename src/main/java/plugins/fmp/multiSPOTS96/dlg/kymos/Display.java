@@ -442,7 +442,7 @@ public class Display extends JPanel implements ViewerListener {
 		} else {
 			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqKymos.getSequence().getFirstViewer()
 					.getCanvas();
-			canvas.transformsComboStep2.setSelectedIndex(0);
+			canvas.setTransformStep2Index(0);
 		}
 	}
 

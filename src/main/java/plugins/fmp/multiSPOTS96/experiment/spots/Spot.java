@@ -15,6 +15,7 @@ import icy.roi.ROI2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
@@ -278,7 +279,7 @@ public class Spot implements Comparable<Spot> {
 				listSpotRoiAlongT.add(roiInterval);
 
 				if (i == 0) {
-					spotROI2D = (ROI2DShape) listSpotRoiAlongT.get(0).getRoi_in();
+					spotROI2D = (ROI2DShape) listSpotRoiAlongT.get(0).getInputRoi();
 				}
 			}
 		}
@@ -329,7 +330,7 @@ public class Spot implements Comparable<Spot> {
 
 		ROI2DAlongT spotRoi = null;
 		for (ROI2DAlongT item : listSpotRoiAlongT) {
-			if (t < item.getT())
+			if (t < item.getTimePoint())
 				break;
 			spotRoi = item;
 		}
@@ -339,7 +340,7 @@ public class Spot implements Comparable<Spot> {
 	public void removeROIAlongTListItem(long t) {
 		ROI2DAlongT itemFound = null;
 		for (ROI2DAlongT item : listSpotRoiAlongT) {
-			if (t != item.getT())
+			if (t != item.getTimePoint())
 				continue;
 			itemFound = item;
 		}
@@ -348,7 +349,14 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	private void initROIAlongTList() {
-		listSpotRoiAlongT.add(new ROI2DAlongT(0, spotROI2D));
+		try {
+			listSpotRoiAlongT.add(new ROI2DAlongT(0, spotROI2D));
+		} catch (ROI2DValidationException e) {
+			System.err.println("Error creating ROI2DAlongT for spot: " + e.getMessage());
+			e.printStackTrace();
+			// Create a default ROI2DAlongT without parameters as fallback
+			listSpotRoiAlongT.add(new ROI2DAlongT());
+		}
 	}
 
 	// --------------------------------------------

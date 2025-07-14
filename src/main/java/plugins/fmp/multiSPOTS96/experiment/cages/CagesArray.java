@@ -23,6 +23,7 @@ import plugins.fmp.multiSPOTS96.experiment.sequence.ROIOperation;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.sequence.TInterval;
 import plugins.fmp.multiSPOTS96.experiment.sequence.TIntervalsArray;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
@@ -849,8 +850,13 @@ public class CagesArray {
 			List<ROI2DAlongT> listCageRoiAlongT = cage.getListROIAlongT();
 			ROI2D roi = cage.getRoi();
 			if (item > 0)
-				roi = (ROI2D) listCageRoiAlongT.get(item - 1).getRoi_in().getCopy();
-			listCageRoiAlongT.add(item, new ROI2DAlongT(start, roi));
+				roi = (ROI2D) listCageRoiAlongT.get(item - 1).getInputRoi().getCopy();
+			try {
+				listCageRoiAlongT.add(item, new ROI2DAlongT(start, roi));
+			} catch (ROI2DValidationException e) {
+				System.err.println("Error creating ROI2DAlongT for cage: " + e.getMessage());
+				e.printStackTrace();
+			}
 
 			if (cage.spotsArray.findSpotsListFirstTInterval(start) < 0) {
 				cage.spotsArray.addSpotsListTInterval(start);
