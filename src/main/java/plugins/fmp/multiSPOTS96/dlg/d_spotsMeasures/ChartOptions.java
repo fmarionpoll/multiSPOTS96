@@ -21,7 +21,7 @@ import org.jfree.data.Range;
 import icy.gui.frame.IcyFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.tools.chart.ChartSpots;
+import plugins.fmp.multiSPOTS96.tools.chart.ChartCageArray;
 
 public class ChartOptions extends JPanel {
 	/**
@@ -30,7 +30,7 @@ public class ChartOptions extends JPanel {
 	private static final long serialVersionUID = 1L;
 	IcyFrame dialogFrame = null;
 	private MultiSPOTS96 parent0 = null;
-	private ChartSpots chartSpots = null;
+	private ChartCageArray chartSpots = null;
 	private JSpinner lowerXSpinner = new JSpinner(new SpinnerNumberModel(0., 0., 255., 1.));
 	private JSpinner upperXSpinner = new JSpinner(new SpinnerNumberModel(120., 0., 255., 1.));
 	private JSpinner lowerYSpinner = new JSpinner(new SpinnerNumberModel(0., 0., 255., 1.));
@@ -38,7 +38,7 @@ public class ChartOptions extends JPanel {
 	private JButton setYaxis = new JButton("set Y axis values");
 	private JButton setXaxis = new JButton("set X axis values");
 
-	public void initialize(MultiSPOTS96 parent0, ChartSpots chartSpots) {
+	public void initialize(MultiSPOTS96 parent0, ChartCageArray chartSpots) {
 		this.parent0 = parent0;
 		this.chartSpots = chartSpots;
 

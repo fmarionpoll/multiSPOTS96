@@ -23,7 +23,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CageString;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.tools.chart.ChartSpots;
+import plugins.fmp.multiSPOTS96.tools.chart.ChartCageArray;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 
@@ -32,14 +32,14 @@ public class Charts extends JPanel implements SequenceListener {
 	 * 
 	 */
 	private static final long serialVersionUID = -7079184380174992501L;
-	private ChartSpots chartSpots = null;
+	private ChartCageArray chartCageArray = null;
 	private MultiSPOTS96 parent0 = null;
 	private JButton displayResultsButton = new JButton("Display results");
 	private JButton axisOptionsButton = new JButton("Axis options");
 	private ChartOptions graphOptions = null;
 
-	private EnumXLSExport[] measures = new EnumXLSExport[] { EnumXLSExport.AREA_SUM,
-			EnumXLSExport.AREA_SUMCLEAN // , EnumXLSExportType.AREA_DIFF
+	private EnumXLSExport[] measures = new EnumXLSExport[] { EnumXLSExport.AREA_SUM, EnumXLSExport.AREA_SUMCLEAN // ,
+																													// EnumXLSExportType.AREA_DIFF
 	};
 	private JComboBox<EnumXLSExport> exportTypeComboBox = new JComboBox<EnumXLSExport>(measures);
 	private JCheckBox relativeToCheckbox = new JCheckBox("relative to max", false);
@@ -112,7 +112,7 @@ public class Charts extends JPanel implements SequenceListener {
 						graphOptions.close();
 					}
 					graphOptions = new ChartOptions();
-					graphOptions.initialize(parent0, chartSpots);
+					graphOptions.initialize(parent0, chartCageArray);
 					graphOptions.requestFocus();
 				}
 			}
@@ -149,11 +149,11 @@ public class Charts extends JPanel implements SequenceListener {
 		exp.seqCamData.getSequence().removeListener(this);
 		EnumXLSExport exportType = (EnumXLSExport) exportTypeComboBox.getSelectedItem();
 		if (isThereAnyDataToDisplay(exp, exportType))
-			chartSpots = plotSpotMeasuresToChart(exp, exportType, chartSpots);
+			chartCageArray = plotSpotMeasuresToChart(exp, exportType, chartCageArray);
 		exp.seqCamData.getSequence().addListener(this);
 	}
 
-	private ChartSpots plotSpotMeasuresToChart(Experiment exp, EnumXLSExport exportType, ChartSpots iChart) {
+	private ChartCageArray plotSpotMeasuresToChart(Experiment exp, EnumXLSExport exportType, ChartCageArray iChart) {
 		if (iChart != null)
 			iChart.mainChartFrame.dispose();
 
@@ -178,7 +178,7 @@ public class Charts extends JPanel implements SequenceListener {
 			xlsExportOptions.cageIndexLast = xlsExportOptions.cageIndexFirst;
 		}
 
-		iChart = new ChartSpots();
+		iChart = new ChartCageArray();
 		iChart.createPanel("Spots measures", exp, xlsExportOptions, parent0);
 		iChart.setChartSpotUpperLeftLocation(getInitialUpperLeftPosition(exp));
 		iChart.displayData(exp, xlsExportOptions);
@@ -188,9 +188,9 @@ public class Charts extends JPanel implements SequenceListener {
 	}
 
 	public void closeAllCharts() {
-		if (chartSpots != null)
-			chartSpots.mainChartFrame.dispose();
-		chartSpots = null;
+		if (chartCageArray != null)
+			chartCageArray.mainChartFrame.dispose();
+		chartCageArray = null;
 	}
 
 	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExport option) {

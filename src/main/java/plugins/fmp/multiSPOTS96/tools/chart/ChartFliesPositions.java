@@ -51,10 +51,10 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
  * @see plugins.fmp.multiSPOTS96.experiment.cages.Cage
  * @see plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport
  */
-public class ChartPositions extends IcyFrame {
+public class ChartFliesPositions extends IcyFrame {
 
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ChartPositions.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ChartFliesPositions.class.getName());
 
 	/** Default chart width in pixels */
 	private static final int DEFAULT_CHART_WIDTH = 100;
@@ -156,15 +156,15 @@ public class ChartPositions extends IcyFrame {
 	 * @param deltapt the offset from the rectangle
 	 * @throws IllegalArgumentException if rectv or deltapt is null
 	 */
-	public void setLocationRelativeToRectangle(Rectangle rectv, Point deltapt) {
-		if (rectv == null) {
-			throw new IllegalArgumentException("Reference rectangle cannot be null");
+	public void setLocationRelativeToPoint(Point originPoint, Point deltapt) {
+		if (originPoint == null) {
+			throw new IllegalArgumentException("Reference point cannot be null");
 		}
 		if (deltapt == null) {
 			throw new IllegalArgumentException("Delta point cannot be null");
 		}
 
-		pt = new Point(rectv.x + deltapt.x, rectv.y + deltapt.y);
+		pt = new Point(originPoint.x + deltapt.x, originPoint.y + deltapt.y);
 		LOGGER.fine("Set chart location to: " + pt);
 	}
 

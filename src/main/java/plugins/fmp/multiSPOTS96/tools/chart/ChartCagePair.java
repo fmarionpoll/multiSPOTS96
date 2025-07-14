@@ -30,10 +30,10 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
  * @see org.jfree.chart.ChartPanel
  * @see plugins.fmp.multiSPOTS96.experiment.cages.Cage
  */
-public class CageChartPair {
+public class ChartCagePair {
     
     /** Logger for this class */
-    private static final Logger LOGGER = Logger.getLogger(CageChartPair.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ChartCagePair.class.getName());
     
     /** The chart panel associated with this pair */
     private ChartPanel chartPanel;
@@ -48,7 +48,7 @@ public class CageChartPair {
      * @param cage the cage data to associate with the chart panel
      * @throws IllegalArgumentException if either parameter is null
      */
-    public CageChartPair(ChartPanel chartPanel, Cage cage) {
+    public ChartCagePair(ChartPanel chartPanel, Cage cage) {
         if (chartPanel == null) {
             throw new IllegalArgumentException("Chart panel cannot be null");
         }
@@ -172,7 +172,7 @@ public class CageChartPair {
             return false;
         }
         
-        CageChartPair other = (CageChartPair) obj;
+        ChartCagePair other = (ChartCagePair) obj;
         return this.getCageID() == other.getCageID();
     }
 

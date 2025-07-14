@@ -2,20 +2,19 @@ package plugins.fmp.multiSPOTS96.tools.toExcel;
 
 public enum EnumXLSExport {
 
-	XYIMAGE("xy-image", "mm", "xy image"), XYTOPCAGE("xy-topcage", "mm", "xy top cage"),
-	XYTIPCAPS("xy-tipcaps", "mm", "xy tip capillaries"), ELLIPSEAXES("ellipse-axes", "mm", "Ellipse of axes"),
-	DISTANCE("distance", "mm", "Distance between consecutive points"), ISALIVE("_alive", "yes/no", "Fly alive or not"),
-	SLEEP("sleep", "yes, no", "Fly sleeping"),
+	XYIMAGE("xy-image", "mm", "xy image"), //
+	XYTOPCAGE("xy-topcage", "mm", "xy top cage"), //
+	XYTIPCAPS("xy-tipcaps", "mm", "xy tip capillaries"), //
+	ELLIPSEAXES("ellipse-axes", "mm", "Ellipse of axes"), //
+	DISTANCE("distance", "mm", "Distance between consecutive points"), //
+	ISALIVE("_alive", "yes/no", "Fly alive or not"), //
+	SLEEP("sleep", "yes, no", "Fly sleeping"), //
 
-	AREA_SUM("AREA_SUM", "grey value", "Consumption (estimated/threshold)"),
-	AREA_SUMCLEAN("AREA_SUMCLEAN", "grey value - no fly", "Consumption (estimated/threshold)"),
-	AREA_OUT("AREA_OUT", "pixel grey value", "background"), AREA_DIFF("AREA_DIFF", "grey value - background", "diff"),
-
+	AREA_SUM("AREA_SUM", "grey value", "Consumption (estimated/threshold)"), //
+	AREA_SUMCLEAN("AREA_SUMCLEAN", "grey value - no fly", "Consumption (estimated/threshold)"), //
+	AREA_OUT("AREA_OUT", "pixel grey value", "background"), //
+	AREA_DIFF("AREA_DIFF", "grey value - background", "diff"), //
 	AREA_FLYPRESENT("AREA_FLYPRESENT", "boolean value", "Fly is present or not over the spot");
-//	AREA_CNTPIX("AREA_CNTPIX", "n pixels", "Spot n pixels over threshold"),
-//	AREA_SUM_LR("area sum_L+R", "sum grey", "SUM and PI"),
-//	AREA_SUMCLEAN_LR("area sumclean_L+R", "sumclean grey", "SUM and PI");
-//	AREA_CNTPIX_LR ("area cntpix_L+R", "n_pixels", "SUM and PI");
 
 	private String label;
 	private String unit;

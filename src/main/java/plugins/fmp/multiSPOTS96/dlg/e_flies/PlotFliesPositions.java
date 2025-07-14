@@ -21,19 +21,19 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.FlyPositions;
-import plugins.fmp.multiSPOTS96.tools.chart.ChartPositions;
+import plugins.fmp.multiSPOTS96.tools.chart.ChartFliesPositions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 
-public class PlotPositions extends JPanel implements SequenceListener {
+public class PlotFliesPositions extends JPanel implements SequenceListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7079184380174992501L;
 
-	private ChartPositions ypositionsChart = null;
-	private ChartPositions distanceChart = null;
-	private ChartPositions aliveChart = null;
-	private ChartPositions sleepChart = null;
+	private ChartFliesPositions ypositionsChart = null;
+	private ChartFliesPositions distanceChart = null;
+	private ChartFliesPositions aliveChart = null;
+	private ChartFliesPositions sleepChart = null;
 	private MultiSPOTS96 parent0 = null;
 
 	public JCheckBox moveCheckbox = new JCheckBox("y position", true);
@@ -119,12 +119,12 @@ public class PlotPositions extends JPanel implements SequenceListener {
 		}
 	}
 
-	private void displayYPos(String title, ChartPositions iChart, Rectangle rectv, Point ptRelative, Experiment exp,
+	private void displayYPos(String title, ChartFliesPositions iChart, Rectangle rectv, Point ptRelative, Experiment exp,
 			EnumXLSExport option) {
 		if (iChart == null || !iChart.getMainChartPanel().isValid()) {
-			iChart = new ChartPositions();
+			iChart = new ChartFliesPositions();
 			iChart.createPanel(title);
-			iChart.setLocationRelativeToRectangle(rectv, ptRelative);
+			iChart.setLocationRelativeToPoint(new Point(rectv.x, rectv.y), ptRelative);
 		}
 		iChart.displayData(exp.cagesArray.cagesList, option);
 		iChart.mainChartFrame.toFront();
@@ -137,7 +137,7 @@ public class PlotPositions extends JPanel implements SequenceListener {
 		close(sleepChart);
 	}
 
-	private void close(ChartPositions chart) {
+	private void close(ChartFliesPositions chart) {
 		if (chart != null) {
 			chart.mainChartFrame.close();
 			chart = null;

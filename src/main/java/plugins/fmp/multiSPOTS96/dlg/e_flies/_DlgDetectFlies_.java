@@ -24,7 +24,7 @@ public class _DlgDetectFlies_ extends JPanel implements PropertyChangeListener {
 	Detect2Flies tabDetect2Flies = new Detect2Flies();
 	Edit tabEdit = new Edit();
 	public LoadSavePositions tabFile = new LoadSavePositions();
-	public PlotPositions tabGraphics = new PlotPositions();
+	public PlotFliesPositions tabGraphics = new PlotFliesPositions();
 	public PopupPanel capPopupPanel = null;
 	JTabbedPane tabsPane = new JTabbedPane();
 	int previouslySelected = -1;
