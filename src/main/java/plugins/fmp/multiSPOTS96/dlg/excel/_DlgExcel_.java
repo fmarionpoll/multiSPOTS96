@@ -20,6 +20,7 @@ import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresCagesAsQuery;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresSpot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
+import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelExportException;
 
 public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 	/**
@@ -88,7 +89,12 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 				@Override
 				public void run() {
 					XLSExportMeasuresSpot xlsExport = new XLSExportMeasuresSpot();
-					xlsExport.exportToFile(file, getSpotsOptions());
+					try {
+						xlsExport.exportToFile(file, getSpotsOptions());
+					} catch (ExcelExportException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			});
 

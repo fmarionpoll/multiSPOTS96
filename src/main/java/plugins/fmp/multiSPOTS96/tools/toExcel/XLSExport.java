@@ -19,6 +19,28 @@ import plugins.fmp.multiSPOTS96.experiment.sequence.TimeManager;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
+/**
+ * Legacy Excel export class providing core functionality for Excel data export.
+ * This class is being refactored to use the new XLSExportBase template method pattern.
+ * 
+ * <p>Provides functionality for:
+ * <ul>
+ * <li>Workbook initialization and styling</li>
+ * <li>Sheet creation and management</li>
+ * <li>Data writing and formatting</li>
+ * <li>Time interval calculations</li>
+ * <li>Experiment data processing</li>
+ * </ul>
+ * 
+ * <p>This class uses Apache POI for Excel file generation and supports both
+ * standard and streaming workbook formats for large datasets.
+ * 
+ * @author MultiSPOTS96 Team
+ * @version 2.0
+ * @since 1.0
+ * @deprecated Use {@link XLSExportBase} and its subclasses for new implementations
+ */
+@Deprecated
 public class XLSExport {
 	protected XLSExportOptions options = null;
 	protected Experiment expAll = null;
@@ -33,6 +55,13 @@ public class XLSExport {
 
 	// ------------------------------------------------
 
+	/**
+	 * Writes the top row descriptors to the Excel sheet.
+	 * Creates column headers for all experiment metadata fields.
+	 * 
+	 * @param sheet The Excel sheet to write to
+	 * @return The next available row number after descriptors
+	 */
 	int writeTopRow_descriptors(SXSSFSheet sheet) {
 		Point pt = new Point(0, 0);
 		int x = 0;
@@ -64,6 +93,12 @@ public class XLSExport {
 		}
 	}
 
+	/**
+	 * Initializes an Excel workbook with default settings and styles.
+	 * Creates standard cell styles for red and blue text formatting.
+	 * 
+	 * @return A configured SXSSFWorkbook instance ready for data writing
+	 */
 	SXSSFWorkbook xlsInitWorkbook() {
 		SXSSFWorkbook workbook = new SXSSFWorkbook();
 		workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
@@ -96,6 +131,20 @@ public class XLSExport {
 		System.out.println(error);
 	}
 
+	/**
+	 * Calculates the number of output frames for an experiment.
+	 * This method handles cases where timing data might be incomplete or invalid.
+	 * 
+	 * <p>The calculation follows this logic:
+	 * <ol>
+	 * <li>Calculate based on time duration and step size</li>
+	 * <li>If result is invalid, load kymographs and recalculate</li>
+	 * <li>If still invalid, fall back to total frame count</li>
+	 * </ol>
+	 * 
+	 * @param exp The experiment to analyze
+	 * @return The number of output frames, always > 0
+	 */
 	protected int getNOutputFrames(Experiment exp) {
 		TimeManager timeManager = exp.seqCamData.getTimeManager();
 		ImageLoader imgLoader = exp.seqCamData.getImageLoader();
@@ -157,6 +206,28 @@ public class XLSExport {
 		return pt;
 	}
 
+	/**
+	 * Writes comprehensive experiment and spot information to the Excel sheet.
+	 * This method writes all metadata fields for a given experiment, cage, and spot combination.
+	 * 
+	 * <p>The information written includes:
+	 * <ul>
+	 * <li>File path and date information</li>
+	 * <li>Camera identifier extracted from filename</li>
+	 * <li>Experiment properties (box ID, experiment type, stimuli, conditions)</li>
+	 * <li>Spot properties (volume, pixels, position, stimulus, concentration)</li>
+	 * <li>Cage properties (ID, row, column, fly count, strain, sex, age, comments)</li>
+	 * </ul>
+	 * 
+	 * @param sheet The Excel sheet to write to
+	 * @param pt The starting point for writing data
+	 * @param exp The experiment containing the data
+	 * @param charSeries The series character identifier for this experiment
+	 * @param cage The cage containing the spot
+	 * @param spot The spot data to write
+	 * @param xlsExportType The type of export being performed
+	 * @return The updated point after writing all information
+	 */
 	protected Point writeExperiment_spot_infos(SXSSFSheet sheet, Point pt, Experiment exp, String charSeries, Cage cage,
 			Spot spot, EnumXLSExport xlsExportType) {
 		int x = pt.x;
