@@ -140,17 +140,17 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 					int ii = t - iiFirst;
 					for (Cage cage : exp.cagesArray.cagesList) {
-						for (Spot spot : cage.spotsArray.spotsList) {
-							if (!spot.okToAnalyze)
+						for (Spot spot : cage.spotsArray.getSpotsList()) {
+							if (!spot.isReadyForAnalysis())
 								continue;
 
-							ROI2DAlongT roiT = spot.getROIAtT(t);
+							ROI2DAlongT roiT = spot.getRoiAtTime(t);
 							ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly,
 									roiT);
-							spot.flyPresent.isPresent[ii] = results.nPoints_fly_present;
-							spot.sum_in.values[ii] = results.sumOverThreshold / results.npoints_in;
+							spot.getFlyPresenceMeasurements().setPresence(ii, results.nPoints_fly_present);
+							spot.getSumMeasurements().setValue(ii, results.sumOverThreshold / results.npoints_in);
 							if (results.nPoints_no_fly != results.npoints_in)
-								spot.sum_in.values[ii] = results.sumTot_no_fly_over_threshold / results.nPoints_no_fly;
+								spot.getSumMeasurements().setValue(ii, results.sumTot_no_fly_over_threshold / results.nPoints_no_fly);
 						}
 					}
 				}
@@ -214,13 +214,13 @@ public class BuildSpotsMeasures extends BuildSeries {
 		int spotArrayGlobalIndex = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
 			int spotPosition = 0;
-			for (Spot spot : cage.spotsArray.spotsList) {
-				spot.prop.cagePosition = spotPosition;
-				spot.sum_in.values = new double[nFrames];
-				spot.sum_clean.values = new double[nFrames];
-				spot.flyPresent.isPresent = new int[nFrames];
-				spot.prop.cageID = cage.prop.cageID;
-				spot.prop.spotArrayIndex = spotArrayGlobalIndex;
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
+				spot.getProperties().setCagePosition(spotPosition);
+				spot.getSumMeasurements().setValues(new double[nFrames]);
+				spot.getCleanMeasurements().setValues(new double[nFrames]);
+				spot.getFlyPresenceMeasurements().setIsPresent(new int[nFrames]);
+				spot.getProperties().setCageID(cage.getProperties().getCageID());
+				spot.getProperties().setSpotArrayIndex(spotArrayGlobalIndex);
 				spotArrayGlobalIndex++;
 				spotPosition++;
 			}
@@ -233,8 +233,8 @@ public class BuildSpotsMeasures extends BuildSeries {
 			seqCamData.attachSequence(
 					exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				List<ROI2DAlongT> listRoiT = spot.getROIAlongTList();
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
+				List<ROI2DAlongT> listRoiT = spot.getRoiAlongTList();
 				for (ROI2DAlongT roiT : listRoiT) {
 					if (!roiT.hasMaskData()) {
 						try {

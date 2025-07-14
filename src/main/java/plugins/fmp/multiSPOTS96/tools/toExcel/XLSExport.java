@@ -171,7 +171,7 @@ public class XLSExport {
 	XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, EnumXLSExport xlsExportType) {
 		int nOutputFrames = getNOutputFrames(exp);
 		XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
-		xlsResults.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportType,
+		xlsResults.dataValues = spot.getMeasuresForExcelPass1(xlsExportType,
 				exp.seqCamData.getTimeManager().getBinDurationMs(), options.buildExcelStepMs);
 		if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT)
 			xlsResults.relativeToMaximum(); // relativeToT0();
@@ -263,18 +263,18 @@ public class XLSExport {
 		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_COND1);
 		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_COND2);
 
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_VOLUME.getValue(), transpose, spot.prop.spotVolume);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_PIXELS.getValue(), transpose, spot.prop.spotNPixels);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_VOLUME.getValue(), transpose, spot.getProperties().getSpotVolume());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_PIXELS.getValue(), transpose, spot.getProperties().getSpotNPixels());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose,
 				spot.getCagePosition(xlsExportType));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.prop.stimulus);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.prop.concentration);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.getProperties().getStimulus());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.getProperties().getConcentration());
 
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEID.getValue(), transpose, spot.prop.cageID);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEROW.getValue(), transpose, spot.prop.cageRow);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGECOL.getValue(), transpose, spot.prop.cageColumn);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEID.getValue(), transpose, spot.getProperties().getCageID());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEROW.getValue(), transpose, spot.getProperties().getCageRow());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGECOL.getValue(), transpose, spot.getProperties().getCageColumn());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
-				charSeries + spot.prop.cageID);
+				charSeries + spot.getProperties().getCageID());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose, cage.prop.cageNFlies);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose, "");
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cage.prop.flyStrain);
@@ -282,7 +282,7 @@ public class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.prop.flyAge);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cage.prop.comment);
 //		String sheetName = sheet.getSheetName();
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, spot.prop.stimulus_i);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, spot.getProperties().getStimulusI());
 
 		pt.y = y + EnumXLSColumnHeader.DUM4.getValue() + 1;
 		return pt;

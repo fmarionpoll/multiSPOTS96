@@ -11,71 +11,70 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelResourceException;
 
 /**
- * Excel export implementation for spot measurements.
- * Uses the Template Method pattern for structured export operations.
+ * Excel export implementation for spot measurements. Uses the Template Method
+ * pattern for structured export operations.
  */
 public class XLSExportMeasuresSpot extends XLSExportBase {
-	
+
 	/**
 	 * Exports spot data for a single experiment.
 	 * 
-	 * @param exp The experiment to export
+	 * @param exp         The experiment to export
 	 * @param startColumn The starting column for export
-	 * @param charSeries The series identifier
+	 * @param charSeries  The series identifier
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
 	@Override
-	protected int exportExperimentData(Experiment exp, int startColumn, String charSeries) 
-			throws ExcelExportException {
+	protected int exportExperimentData(Experiment exp, int startColumn, String charSeries) throws ExcelExportException {
 		int column = startColumn;
-		
+
 		if (options.spotAreas) {
 			column = getSpotDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_SUM);
 			getSpotDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_FLYPRESENT);
 			getSpotDataAndExport(exp, column, charSeries, EnumXLSExport.AREA_SUMCLEAN);
 		}
-		
+
 		return column;
 	}
 
 	/**
 	 * Exports spot data for a specific export type.
 	 * 
-	 * @param exp The experiment to export
-	 * @param col0 The starting column
+	 * @param exp        The experiment to export
+	 * @param col0       The starting column
 	 * @param charSeries The series identifier
 	 * @param exportType The export type
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected int getSpotDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExport exportType) 
+	protected int getSpotDataAndExport(Experiment exp, int col0, String charSeries, EnumXLSExport exportType)
 			throws ExcelExportException {
 		try {
 			options.exportType = exportType;
 			SXSSFSheet sheet = getSheet(exportType.toString(), exportType);
 			int colmax = xlsExportExperimentSpotDataToSheet(exp, sheet, exportType, col0, charSeries);
-			
+
 			if (options.onlyalive) {
 				sheet = getSheet(exportType.toString() + ExcelExportConstants.ALIVE_SHEET_SUFFIX, exportType);
 				xlsExportExperimentSpotDataToSheet(exp, sheet, exportType, col0, charSeries);
 			}
-			
+
 			return colmax;
 		} catch (ExcelResourceException e) {
-			throw new ExcelExportException("Failed to export spot data", 
-										 "get_spot_data_and_export", exportType.toString(), e);
+			throw new ExcelExportException("Failed to export spot data", "get_spot_data_and_export",
+					exportType.toString(), e);
 		}
 	}
 
 	/**
 	 * Exports spot data to a specific sheet.
 	 * 
-	 * @param exp The experiment to export
-	 * @param sheet The sheet to write to
+	 * @param exp           The experiment to export
+	 * @param sheet         The sheet to write to
 	 * @param xlsExportType The export type
-	 * @param col0 The starting column
-	 * @param charSeries The series identifier
+	 * @param col0          The starting column
+	 * @param charSeries    The series identifier
 	 * @return The next available column
 	 */
 	protected int xlsExportExperimentSpotDataToSheet(Experiment exp, SXSSFSheet sheet, EnumXLSExport xlsExportType,
@@ -87,10 +86,10 @@ public class XLSExportMeasuresSpot extends XLSExportBase {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 			cage.updateSpotsStimulus_i();
 
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				pt.y = 0;
 				pt = writeExperimentSpotInfos(sheet, pt, exp, charSeries, cage, spot, xlsExportType);
-				XLSResults xlsResults = getSpotResults(exp, cage, spot, xlsExportType);
+				XLSResults xlsResults = getSpotResults(exp, cage, spot, options);
 				xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
 				writeXLSResult(sheet, pt, xlsResults);
 				pt.x++;

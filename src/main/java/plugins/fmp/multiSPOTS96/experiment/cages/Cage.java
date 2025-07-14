@@ -59,6 +59,13 @@ public class Cage implements Comparable<Cage> {
 	}
 
 	// ------------------------------------
+	public SpotsArray getSpotsArray() {
+		return spotsArray;
+	}
+
+	public CageProperties getProperties() {
+		return prop;
+	}
 
 	public ROI2D getRoi() {
 		return cageROI2D;
@@ -94,13 +101,13 @@ public class Cage implements Comparable<Cage> {
 		valid = false;
 		if (bMeasures)
 			flyPositions.copyXYTaSeries(cageFrom.flyPositions);
-		spotsArray.copySpotsInfos(cageFrom.spotsArray);
+		spotsArray.copySpotsInfo(cageFrom.spotsArray);
 	}
 
 	public void pasteCageInfo(Cage cageTo) {
 		prop.paste(cageTo.prop);
 		cageTo.cageROI2D = (ROI2D) cageROI2D.getCopy();
-		spotsArray.pasteSpotsInfos(cageTo.spotsArray);
+		spotsArray.pasteSpotsInfo(cageTo.spotsArray);
 	}
 
 	public void pasteCage(Cage cageTo, boolean bMeasures) {
@@ -185,7 +192,7 @@ public class Cage implements Comparable<Cage> {
 		xmlLoadCageLimits(xmlVal);
 		prop.xmlLoadCageParameters(xmlVal);
 		cageROI2D.setColor(prop.color);
-		spotsArray.xmlLoadSpotsArray(xmlVal);
+		spotsArray.loadFromXml(xmlVal);
 		return true;
 	}
 
@@ -195,7 +202,7 @@ public class Cage implements Comparable<Cage> {
 		Element xmlVal = XMLUtil.addElement(node, "Cage" + index);
 		xmlSaveCageLimits(xmlVal);
 		prop.xmlSaveCageParameters(xmlVal);
-		spotsArray.xmlSaveSpotsArray(xmlVal);
+		spotsArray.saveToXml(xmlVal);
 		return true;
 	}
 
@@ -267,13 +274,11 @@ public class Cage implements Comparable<Cage> {
 	}
 
 	public int addEllipseSpot(Point2D.Double center, int radius) {
-		if (spotsArray.spotsList == null)
-			spotsArray.spotsList = new ArrayList<Spot>(1);
-		int index = spotsArray.spotsList.size();
+		int index = spotsArray.getSpotsCount();
 		Spot spot = createEllipseSpot(index, center, radius);
-		spot.prop.cagePosition = spotsArray.spotsList.size();
-		spotsArray.spotsList.add(spot);
-		return spotsArray.spotsList.size();
+		spot.getProperties().setCagePosition(spotsArray.getSpotsCount());
+		spotsArray.addSpot(spot);
+		return spotsArray.getSpotsCount();
 	}
 
 	private Spot createEllipseSpot(int cagePosition, Point2D.Double center, int radius) {
@@ -281,13 +286,13 @@ public class Cage implements Comparable<Cage> {
 		ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
 		roiEllipse.setName(SpotString.createSpotString(prop.cageID, cagePosition));
 		Spot spot = new Spot(roiEllipse);
-		spot.prop.cageID = prop.cageID;
-		spot.prop.cagePosition = cagePosition;
-		spot.prop.spotRadius = radius;
-		spot.prop.spotXCoord = (int) center.getX();
-		spot.prop.spotYCoord = (int) center.getY();
+		spot.getProperties().setCageID(prop.cageID);
+		spot.getProperties().setCagePosition(cagePosition);
+		spot.getProperties().setSpotRadius(radius);
+		spot.getProperties().setSpotXCoord((int) center.getX());
+		spot.getProperties().setSpotYCoord((int) center.getY());
 		try {
-			spot.prop.spotNPixels = (int) roiEllipse.getNumberOfPoints();
+			spot.getProperties().setSpotNPixels((int) roiEllipse.getNumberOfPoints());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -297,8 +302,8 @@ public class Cage implements Comparable<Cage> {
 
 	public Spot getSpotFromRoiName(String name) {
 		int cagePosition = SpotString.getSpotCagePositionFromSpotName(name);
-		for (Spot spot : spotsArray.spotsList) {
-			if (spot.prop.cagePosition == cagePosition)
+		for (Spot spot : spotsArray.getSpotsList()) {
+			if (spot.getProperties().getCagePosition() == cagePosition)
 				return spot;
 		}
 		return null;
@@ -351,28 +356,28 @@ public class Cage implements Comparable<Cage> {
 		Rectangle rect = cageROI2D.getBounds();
 		int deltaX = rect.width / 8;
 		int deltaY = rect.height / 4;
-		for (Spot spot : spotsArray.spotsList) {
+		for (Spot spot : spotsArray.getSpotsList()) {
 			Rectangle rectSpot = spot.getRoi().getBounds();
-			spot.prop.cageColumn = (rectSpot.x - rect.x) / deltaX;
-			spot.prop.cageRow = (rectSpot.y - rect.y) / deltaY;
+			spot.getProperties().setCageColumn((rectSpot.x - rect.x) / deltaX);
+			spot.getProperties().setCageRow((rectSpot.y - rect.y) / deltaY);
 		}
 	}
 
 	public void cleanUpSpotNames() {
-		for (int i = 0; i < spotsArray.spotsList.size(); i++) {
-			Spot spot = spotsArray.spotsList.get(i);
+		for (int i = 0; i < spotsArray.getSpotsList().size(); i++) {
+			Spot spot = spotsArray.getSpotsList().get(i);
 			spot.setName(prop.cageID, i);
-			spot.prop.cageID = prop.cageID;
-			spot.prop.cagePosition = i;
+			spot.getProperties().setCageID(prop.cageID);
+			spot.getProperties().setCagePosition(i);
 		}
 	}
 
 	public void updateSpotsStimulus_i() {
 		ArrayList<String> stimulusArray = new ArrayList<String>(8);
-		for (Spot spot : spotsArray.spotsList) {
-			String test = spot.prop.stimulus;
+		for (Spot spot : spotsArray.getSpotsList()) {
+			String test = spot.getProperties().getStimulus();
 			stimulusArray.add(test);
-			spot.prop.stimulus_i = test + "_" + findNumberOfIdenticalItems(test, stimulusArray);
+			spot.getProperties().setStimulusI(test + "_" + findNumberOfIdenticalItems(test, stimulusArray));
 		}
 	}
 
@@ -386,13 +391,13 @@ public class Cage implements Comparable<Cage> {
 
 	public ArrayList<Spot> combineSpotsWithSameStimulusConcentration() {
 		ArrayList<Spot> spotsList = new ArrayList<Spot>(2);
-		for (Spot spotSource : spotsArray.spotsList) {
-			String test = spotSource.getCombinedSimulusConcentrationFields();
+		for (Spot spotSource : spotsArray.getSpotsList()) {
+			String test = spotSource.getCombinedStimulusConcentration();
 			boolean found = false;
 			for (Spot spot : spotsList) {
-				if (test.equals(spot.getCombinedSimulusConcentrationFields())) {
+				if (test.equals(spot.getCombinedStimulusConcentration())) {
 					found = true;
-					spot.addMeasures(spotSource);
+					spot.addMeasurements(spotSource);
 					break;
 				}
 			}
@@ -405,20 +410,16 @@ public class Cage implements Comparable<Cage> {
 
 	public Spot combineSpotsWith(String stim, String conc) {
 		Spot spotCombined = null;
-//		int nfound = 0;
-		for (Spot spotSource : spotsArray.spotsList) {
-			if (stim.equals(spotSource.prop.stimulus) && conc.equals(spotSource.prop.concentration)) {
+		for (Spot spotSource : spotsArray.getSpotsList()) {
+			if (stim.equals(spotSource.getProperties().getStimulus())
+					&& conc.equals(spotSource.getProperties().getConcentration())) {
 				if (spotCombined == null) {
 					spotCombined = new Spot(spotSource, true);
 				} else {
-					spotCombined.addMeasures(spotSource);
+					spotCombined.addMeasurements(spotSource);
 				}
-//				nfound++;
 			}
 		}
-//		System.out.println(stim + " _ " + conc + " :" + "nfound=" + nfound);
-//		if (nfound > 0)
-//			spotCombined.divideMeasures(nfound); // TODO
 		return spotCombined;
 	}
 
@@ -426,11 +427,11 @@ public class Cage implements Comparable<Cage> {
 		if (spot1 == null || spot2 == null)
 			return null;
 		Spot spotPI = new Spot();
-		spotPI.prop.cageID = spot1.prop.cageID;
-		spotPI.prop.sourceName = "PI";
-		spotPI.prop.stimulus = "PI";
-		spotPI.prop.concentration = spot1.getCombinedSimulusConcentrationFields() + " / "
-				+ spot2.getCombinedSimulusConcentrationFields();
+		spotPI.getProperties().setCageID(spot1.getProperties().getCageID());
+		spotPI.getProperties().setSourceName("PI");
+		spotPI.getProperties().setStimulus("PI");
+		spotPI.getProperties().setConcentration(
+				spot1.getCombinedStimulusConcentration() + " / " + spot2.getCombinedStimulusConcentration());
 		spotPI.computePI(spot1, spot2);
 		return spotPI;
 	}
@@ -439,11 +440,11 @@ public class Cage implements Comparable<Cage> {
 		if (spot1 == null || spot2 == null)
 			return null;
 		Spot spotSUM = new Spot();
-		spotSUM.prop.cageID = spot1.prop.cageID;
-		spotSUM.prop.sourceName = "SUM";
-		spotSUM.prop.stimulus = "SUM";
-		spotSUM.prop.concentration = spot1.getCombinedSimulusConcentrationFields() + " / "
-				+ spot2.getCombinedSimulusConcentrationFields();
+		spotSUM.getProperties().setCageID(spot1.getProperties().getCageID());
+		spotSUM.getProperties().setSourceName("SUM");
+		spotSUM.getProperties().setStimulus("SUM");
+		spotSUM.getProperties().setConcentration(
+				spot1.getCombinedStimulusConcentration() + " / " + spot2.getCombinedStimulusConcentration());
 		spotSUM.computeSUM(spot1, spot2);
 		return spotSUM;
 	}

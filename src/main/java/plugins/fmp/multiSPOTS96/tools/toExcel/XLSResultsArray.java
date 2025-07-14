@@ -54,10 +54,10 @@ public class XLSResultsArray {
 		for (Cage cage : cagesArray.cagesList) {
 			double scalingFactorToPhysicalUnits = cage.spotsArray
 					.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 
 				XLSResults results = new XLSResults(cage, spot, xlsExportOptions.exportType, nOutputFrames);
-				results.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
+				results.dataValues = spot.getMeasuresForExcelPass1(xlsExportOptions.exportType, kymoBinCol_Ms,
 						xlsExportOptions.buildExcelStepMs);
 				if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT)
 					results.relativeToMaximum(); // relativeToT0();

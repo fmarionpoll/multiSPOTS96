@@ -262,8 +262,9 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		} else {
 			removeOverlay(exp);
 			spotsOverlayCheckBox.setSelected(false);
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
-								canvas.setTransformStep1Index(0);
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
+					.getCanvas();
+			canvas.setTransformStep1Index(0);
 		}
 		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
 	}
@@ -387,7 +388,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 				if (!name.contains("spot"))
 					continue;
 				Cage cage = exp.cagesArray.getCageFromSpotName(name);
-				Iterator<Spot> iterator = cage.spotsArray.spotsList.iterator();
+				Iterator<Spot> iterator = cage.spotsArray.getSpotsList().iterator();
 				while (iterator.hasNext()) {
 					Spot spot = iterator.next();
 					if (name.equals(spot.getRoi().getName())) {
@@ -410,7 +411,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 					continue;
 				Cage cage = exp.cagesArray.getCageFromSpotName(name);
 				ArrayList<Spot> spotsToDuplicate = new ArrayList<Spot>();
-				Iterator<Spot> iterator = cage.spotsArray.spotsList.iterator();
+				Iterator<Spot> iterator = cage.spotsArray.getSpotsList().iterator();
 				while (iterator.hasNext()) {
 					Spot spot = iterator.next();
 					if (name.equals(spot.getRoi().getName())) {
@@ -425,7 +426,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 						int radius = rect.width / 2;
 						pos.setLocation(pos.getX() + 5, pos.getY() + 5);
 						cage.addEllipseSpot(pos, radius);
-						Spot newSpot = cage.spotsArray.spotsList.get(cage.spotsArray.spotsList.size() - 1);
+						Spot newSpot = cage.spotsArray.getSpotsList().get(cage.spotsArray.getSpotsList().size() - 1);
 						exp.seqCamData.getSequence().addROI(newSpot.getRoi());
 					}
 				}
@@ -440,7 +441,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		for (Cage cage : exp.cagesArray.cagesList) {
 			if (bOnlySelectedCages && !cage.getRoi().isSelected())
 				continue;
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				ROI2D roiP = spot.getRoi();
 				Point center = roiP.getPosition();
 				Rectangle rect = roiP.getBounds();
@@ -468,7 +469,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	private void cleanUpSpotNames(Experiment exp) {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			cage.mapSpotsToCageColumnRow();
-			Collections.sort(cage.spotsArray.spotsList, new Comparators.Spot_cagePosition());
+			Collections.sort(cage.spotsArray.getSpotsList(), new Comparators.Spot_cagePosition());
 			cage.cleanUpSpotNames();
 		}
 		exp.seqCamData.removeROIsContainingString("spot");

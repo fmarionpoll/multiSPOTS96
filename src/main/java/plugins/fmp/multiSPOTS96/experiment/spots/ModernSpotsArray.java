@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import plugins.fmp.multiSPOTS96.experiment.sequence.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
+import plugins.fmp.multiSPOTS96.experiment.spots.EnumSpotMeasures;
 
 /**
  * Modern, thread-safe implementation of spots array management with clean code
@@ -112,10 +113,11 @@ public class ModernSpotsArray implements AutoCloseable {
 			List<String> spotNames = spotsList.stream().map(spot -> spot.getRoi().getName())
 					.collect(Collectors.toList());
 
-			int validSpots = (int) spotsList.stream().filter(spot -> spot.valid).count();
+			int validSpots = (int) spotsList.stream().filter(spot -> spot.isValid()).count();
 			int spotsWithMeasures = (int) spotsList.stream()
-					.filter(spot -> spot.isThereAnyMeasuresDone(EnumXLSExport.AREA_SUMCLEAN)).count();
-			int spotsReady = (int) spotsList.stream().filter(spot -> spot.okToAnalyze).count();
+					.filter(spot -> spot.getMeasurements(EnumXLSExport.AREA_SUMCLEAN).getLevel2D().getPointCount() > 0)
+					.count();
+			int spotsReady = (int) spotsList.stream().filter(spot -> spot.isReadyForAnalysis()).count();
 
 			return SpotsArrayInfo.builder().totalSpots(spotsList.size()).validSpots(validSpots)
 					.spotsWithMeasures(spotsWithMeasures).spotsReadyForAnalysis(spotsReady).spotNames(spotNames)

@@ -1,8 +1,6 @@
 package plugins.fmp.multiSPOTS96.experiment.spots;
 
-import java.awt.Rectangle;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,552 +10,816 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.sequence.TInterval;
 import plugins.fmp.multiSPOTS96.experiment.sequence.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
-import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 
+/**
+ * Manages a collection of spots with comprehensive operations and data
+ * persistence.
+ * 
+ * <p>
+ * This class provides thread-safe operations for managing spots collections
+ * with clean separation of concerns for loading, saving, and processing
+ * operations.
+ * </p>
+ * 
+ * @author MultiSPOTS96
+ * @version 2.3.3
+ */
 public class SpotsArray {
-	public ArrayList<Spot> spotsList = new ArrayList<Spot>();
-	private TIntervalsArray spotsListTimeIntervals = null;
 
-	private final static String ID_SPOTTRACK = "spotTrack";
-	private final static String ID_NSPOTS = "N_spots";
+	// === CONSTANTS ===
+	private static final String ID_SPOTTRACK = "spotTrack";
+	private static final String ID_NSPOTS = "N_spots";
+	private static final String ID_LISTOFSPOTS = "List_of_spots";
+	private static final String ID_SPOT_ = "spot_";
+	private static final String CSV_FILENAME = "SpotsMeasures.csv";
+	private static final String CSV_SEPARATOR = ";";
+	private static final int DEFAULT_VERSION = 2;
 
-	private final static String ID_LISTOFSPOTS = "List_of_spots";
-	private final static String ID_SPOT_ = "spot_";
-	private final String csvFileName = "SpotsMeasures.csv";
+	// === CORE FIELDS ===
+	private final List<Spot> spotsList;
+	private TIntervalsArray timeIntervals;
 
-	// ---------------------------------
+	// === CONSTRUCTORS ===
 
-	public boolean load_SpotsMeasures(String directory) {
-		return load_Spots(directory, EnumSpotMeasures.SPOTS_MEASURES);
+	/**
+	 * Creates a new SpotsArray.
+	 */
+	public SpotsArray() {
+		this.spotsList = new ArrayList<>();
+		this.timeIntervals = new TIntervalsArray();
 	}
 
-	public boolean load_SpotsAll(String directory) {
-		return load_Spots(directory, EnumSpotMeasures.ALL);
+	// === SPOTS MANAGEMENT ===
+
+	/**
+	 * Gets the list of spots.
+	 * 
+	 * @return the spots list
+	 */
+	public List<Spot> getSpotsList() {
+		return new ArrayList<>(spotsList);
 	}
 
-	private boolean load_Spots(String directory, EnumSpotMeasures option) {
-		boolean flag = false;
-		if (directory == null)
-			return flag;
-		try {
-			flag = csvLoadSpots(directory, option);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return flag;
+	/**
+	 * Gets the number of spots.
+	 * 
+	 * @return the number of spots
+	 */
+	public int getSpotsCount() {
+		return spotsList.size();
 	}
 
-	public boolean save_SpotsAll(String directory) {
-		if (directory == null)
-			return false;
-
-		return csvSaveSpots(directory);
+	/**
+	 * Checks if the spots list is empty.
+	 * 
+	 * @return true if empty
+	 */
+	public boolean isEmpty() {
+		return spotsList.isEmpty();
 	}
 
-	public boolean save_SpotsMeasures(String directory) {
-		if (directory == null)
-			return false;
-
-		return csvSaveSpots(directory);
+	/**
+	 * Adds a spot to the array.
+	 * 
+	 * @param spot the spot to add
+	 * @throws IllegalArgumentException if spot is null
+	 */
+	public void addSpot(Spot spot) {
+		Objects.requireNonNull(spot, "Spot cannot be null");
+		spotsList.add(spot);
 	}
 
-	// ---------------------------------
-
-	public boolean xmlSaveSpotsArray(Node node) {
-		Node nodeSpotsArray = XMLUtil.setElement(node, ID_LISTOFSPOTS);
-		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
-		int i = 0;
-		Collections.sort(spotsList);
-		for (Spot spot : spotsList) {
-			Node nodeSpot = XMLUtil.setElement(node, ID_SPOT_ + i);
-			spot.saveToXML_SpotOnly(nodeSpot);
-			i++;
-		}
-		return true;
+	/**
+	 * Removes a spot from the array.
+	 * 
+	 * @param spot the spot to remove
+	 * @return true if removed
+	 */
+	public boolean removeSpot(Spot spot) {
+		return spotsList.remove(spot);
 	}
 
-	public boolean xmlLoadSpotsArray(Node node) {
-		Node nodeSpotsArray = XMLUtil.getElement(node, ID_LISTOFSPOTS);
-		int nitems = XMLUtil.getElementIntValue(nodeSpotsArray, ID_NSPOTS, 0);
-		spotsList = new ArrayList<Spot>(nitems);
-		for (int i = 0; i < nitems; i++) {
-			Node nodespot = XMLUtil.getElement(node, ID_SPOT_ + i);
-			Spot spot = new Spot();
-			spot.loadFromXML_SpotOnly(nodespot);
-			if (!isPresent(spot))
-				spotsList.add(spot);
-		}
-		return true;
-	}
-
-	private boolean xmlSave_ListOfSpots(Node nodedoc) {
-
-		Node node = XMLUtil.getElement(nodedoc, ID_SPOTTRACK);
-		if (node == null)
-			return false;
-		XMLUtil.setElementIntValue(node, "version", 2);
-		Node nodeSpotsArray = XMLUtil.setElement(node, ID_LISTOFSPOTS);
-		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
-
-		int i = 0;
-		Collections.sort(spotsList);
-		for (Spot spot : spotsList) {
-			Node nodeSpot = XMLUtil.setElement(node, ID_SPOT_ + i);
-			spot.saveToXML_SpotOnly(nodeSpot);
-			i++;
-		}
-		return true;
-	}
-
-	public boolean xmlSave_MCSpots_Descriptors(String csFileName) {
-		if (csFileName != null) {
-			final Document doc = XMLUtil.createDocument(true);
-			if (doc != null) {
-				xmlSave_ListOfSpots(XMLUtil.getRootElement(doc));
-				return XMLUtil.saveDocument(doc, csFileName);
-			}
-		}
-		return false;
-	}
-
-	public boolean xmlLoad_MCSpots_Descriptors(String csFileName) {
-		boolean flag = false;
-		if (csFileName == null)
-			return flag;
-
-		final Document doc = XMLUtil.loadDocument(csFileName);
-		if (doc != null) {
-			flag = xmlLoad_Spots_Only_v1(doc);
-		}
-		return flag;
-	}
-
-	private boolean xmlLoad_Spots_Only_v1(Document doc) {
-		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_SPOTTRACK);
-		if (node == null)
-			return false;
-		Node nodecaps = XMLUtil.getElement(node, ID_LISTOFSPOTS);
-		int nitems = XMLUtil.getElementIntValue(nodecaps, ID_NSPOTS, 0);
-
-		spotsList = new ArrayList<Spot>(nitems);
-		for (int i = 0; i < nitems; i++) {
-			Node nodecapillary = XMLUtil.getElement(node, ID_SPOT_ + i);
-			Spot spot = new Spot();
-			spot.loadFromXML_SpotOnly(nodecapillary);
-
-			if (!isPresent(spot))
-				spotsList.add(spot);
-		}
-		return true;
-	}
-
-	// ---------------------------------
-
-	public void copySpotsInfos(SpotsArray fromSpotsArray) {
-		copySpots(fromSpotsArray, false);
-	}
-
-	public void copySpots(SpotsArray fromSpotsArray, boolean bMeasures) {
+	/**
+	 * Clears all spots from the array.
+	 */
+	public void clearSpots() {
 		spotsList.clear();
-		spotsList.ensureCapacity(fromSpotsArray.spotsList.size());
-		for (Spot fromSpot : fromSpotsArray.spotsList) {
-			Spot spot = new Spot();
-			spot.copySpot(fromSpot, bMeasures);
+	}
+
+	/**
+	 * Sorts the spots list.
+	 */
+	public void sortSpots() {
+		Collections.sort(spotsList);
+	}
+
+	// === SPOT SEARCH ===
+
+	/**
+	 * Finds a spot by name.
+	 * 
+	 * @param name the spot name
+	 * @return the spot if found, null otherwise
+	 */
+	public Spot findSpotByName(String name) {
+		if (name == null || name.trim().isEmpty()) {
+			return null;
+		}
+
+		return spotsList.stream().filter(spot -> name.equals(spot.getName())).findFirst().orElse(null);
+	}
+
+	/**
+	 * Finds spots containing a pattern in their name.
+	 * 
+	 * @param pattern the pattern to search for
+	 * @return list of matching spots
+	 */
+	public List<Spot> findSpotsContainingPattern(String pattern) {
+		if (pattern == null || pattern.trim().isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		return spotsList.stream().filter(spot -> spot.getName() != null && spot.getName().contains(pattern))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Checks if a spot is present in the array.
+	 * 
+	 * @param spot the spot to check
+	 * @return true if present
+	 */
+	public boolean isSpotPresent(Spot spot) {
+		return spot != null && spotsList.contains(spot);
+	}
+
+	// === DATA LOADING ===
+
+	/**
+	 * Loads spots measures from directory.
+	 * 
+	 * @param directory the directory path
+	 * @return true if successful
+	 */
+	public boolean loadSpotsMeasures(String directory) {
+		return loadSpots(directory, EnumSpotMeasures.SPOTS_MEASURES);
+	}
+
+	/**
+	 * Loads all spots data from directory.
+	 * 
+	 * @param directory the directory path
+	 * @return true if successful
+	 */
+	public boolean loadSpotsAll(String directory) {
+		return loadSpots(directory, EnumSpotMeasures.ALL);
+	}
+
+	/**
+	 * Loads spots from directory with specified measure type.
+	 * 
+	 * @param directory   the directory path
+	 * @param measureType the measure type
+	 * @return true if successful
+	 */
+	private boolean loadSpots(String directory, EnumSpotMeasures measureType) {
+		if (directory == null) {
+			return false;
+		}
+
+		try {
+			return csvLoadSpots(directory, measureType);
+		} catch (Exception e) {
+			System.err.println("Error loading spots: " + e.getMessage());
+			return false;
+		}
+	}
+
+	// === DATA SAVING ===
+
+	/**
+	 * Saves all spots data to directory.
+	 * 
+	 * @param directory the directory path
+	 * @return true if successful
+	 */
+	public boolean saveSpotsAll(String directory) {
+		if (directory == null) {
+			return false;
+		}
+		return csvSaveSpots(directory);
+	}
+
+	/**
+	 * Saves spots measures to directory.
+	 * 
+	 * @param directory the directory path
+	 * @return true if successful
+	 */
+	public boolean saveSpotsMeasures(String directory) {
+		if (directory == null) {
+			return false;
+		}
+		return csvSaveSpots(directory);
+	}
+
+	// === XML OPERATIONS ===
+
+	/**
+	 * Saves spots array to XML.
+	 * 
+	 * @param node the XML node
+	 * @return true if successful
+	 */
+	public boolean saveToXml(Node node) {
+		if (node == null) {
+			return false;
+		}
+
+		try {
+			Node nodeSpotsArray = XMLUtil.setElement(node, ID_LISTOFSPOTS);
+			XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
+
+			sortSpots();
+			for (int i = 0; i < spotsList.size(); i++) {
+				Node nodeSpot = XMLUtil.setElement(node, ID_SPOT_ + i);
+				spotsList.get(i).saveToXml(nodeSpot);
+			}
+
+			return true;
+		} catch (Exception e) {
+			System.err.println("Error saving spots array to XML: " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Loads spots array from XML.
+	 * 
+	 * @param node the XML node
+	 * @return true if successful
+	 */
+	public boolean loadFromXml(Node node) {
+		if (node == null) {
+			return false;
+		}
+
+		try {
+			Node nodeSpotsArray = XMLUtil.getElement(node, ID_LISTOFSPOTS);
+			if (nodeSpotsArray == null) {
+				return false;
+			}
+
+			int nitems = XMLUtil.getElementIntValue(nodeSpotsArray, ID_NSPOTS, 0);
+			spotsList.clear();
+
+			for (int i = 0; i < nitems; i++) {
+				Node nodeSpot = XMLUtil.getElement(node, ID_SPOT_ + i);
+				if (nodeSpot != null) {
+					Spot spot = new Spot();
+					if (spot.loadFromXml(nodeSpot) && !isSpotPresent(spot)) {
+						spotsList.add(spot);
+					}
+				}
+			}
+
+			return true;
+		} catch (Exception e) {
+			System.err.println("Error loading spots array from XML: " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Saves spots descriptors to XML file.
+	 * 
+	 * @param fileName the file name
+	 * @return true if successful
+	 */
+	public boolean saveDescriptorsToXml(String fileName) {
+		if (fileName == null) {
+			return false;
+		}
+
+		try {
+			Document doc = XMLUtil.createDocument(true);
+			if (doc == null) {
+				return false;
+			}
+
+			saveListOfSpotsToXml(XMLUtil.getRootElement(doc));
+			return XMLUtil.saveDocument(doc, fileName);
+		} catch (Exception e) {
+			System.err.println("Error saving descriptors to XML: " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Loads spots descriptors from XML file.
+	 * 
+	 * @param fileName the file name
+	 * @return true if successful
+	 */
+	public boolean loadDescriptorsFromXml(String fileName) {
+		if (fileName == null) {
+			return false;
+		}
+
+		try {
+			Document doc = XMLUtil.loadDocument(fileName);
+			if (doc == null) {
+				return false;
+			}
+
+			return loadSpotsOnlyV1(doc);
+		} catch (Exception e) {
+			System.err.println("Error loading descriptors from XML: " + e.getMessage());
+			return false;
+		}
+	}
+
+	// === COPY OPERATIONS ===
+
+	/**
+	 * Copies spots information from another array.
+	 * 
+	 * @param sourceArray the source array
+	 */
+	public void copySpotsInfo(SpotsArray sourceArray) {
+		copySpots(sourceArray, false);
+	}
+
+	/**
+	 * Copies spots from another array.
+	 * 
+	 * @param sourceArray         the source array
+	 * @param includeMeasurements whether to include measurements
+	 */
+	public void copySpots(SpotsArray sourceArray, boolean includeMeasurements) {
+		if (sourceArray == null) {
+			return;
+		}
+
+		spotsList.clear();
+		// spotsList.ensureCapacity(sourceArray.getSpotsList().size());
+
+		for (Spot sourceSpot : sourceArray.getSpotsList()) {
+			Spot spot = new Spot(sourceSpot, includeMeasurements);
 			spotsList.add(spot);
 		}
 	}
 
-	public void pasteSpotsInfos(SpotsArray toSpotsArray) {
-		pasteSpots(toSpotsArray, false);
+	/**
+	 * Pastes spots information to another array.
+	 * 
+	 * @param targetArray the target array
+	 */
+	public void pasteSpotsInfo(SpotsArray targetArray) {
+		pasteSpots(targetArray, false);
 	}
 
-	public void pasteSpots(SpotsArray toSpotsArray, boolean bMeasures) {
-		for (Spot toSpot : toSpotsArray.spotsList) {
-			for (Spot spot : spotsList) {
-				if (spot.compareTo(toSpot) == 0) {
-					toSpot.copySpot(spot, bMeasures);
+	/**
+	 * Pastes spots to another array.
+	 * 
+	 * @param targetArray         the target array
+	 * @param includeMeasurements whether to include measurements
+	 */
+	public void pasteSpots(SpotsArray targetArray, boolean includeMeasurements) {
+		if (targetArray == null) {
+			return;
+		}
+
+		for (Spot targetSpot : targetArray.getSpotsList()) {
+			for (Spot sourceSpot : spotsList) {
+				if (sourceSpot.compareTo(targetSpot) == 0) {
+					targetSpot.copyFrom(sourceSpot, includeMeasurements);
 					break;
 				}
 			}
 		}
 	}
 
-	public boolean isPresent(Spot spotNew) {
-		boolean flag = false;
-		for (Spot spot : spotsList) {
-			if (spot.compareTo(spotNew) == 0) {
-				flag = true;
-				break;
+	/**
+	 * Merges spots from another array.
+	 * 
+	 * @param sourceArray the source array
+	 */
+	public void mergeSpots(SpotsArray sourceArray) {
+		if (sourceArray == null) {
+			return;
+		}
+
+		for (Spot sourceSpot : sourceArray.getSpotsList()) {
+			if (!isSpotPresent(sourceSpot)) {
+				spotsList.add(sourceSpot);
 			}
 		}
-		return flag;
 	}
 
-	public void mergeLists(SpotsArray sourceSpotList) {
-		for (Spot spot : sourceSpotList.spotsList) {
-			if (!isPresent(spot))
-				spotsList.add(spot);
-		}
-	}
+	// === LEVEL2D OPERATIONS ===
 
+	/**
+	 * Adjusts spots level2D measures to image width.
+	 * 
+	 * @param imageWidth the image width
+	 */
 	public void adjustSpotsLevel2DMeasuresToImageWidth(int imageWidth) {
-		for (Spot spot : spotsList)
-			spot.adjustLevel2DMeasuresToImageWidth(imageWidth);
+		spotsList.forEach(spot -> spot.adjustLevel2DMeasuresToImageWidth(imageWidth));
 	}
 
+	/**
+	 * Crops spots level2D measures to image width.
+	 * 
+	 * @param imageWidth the image width
+	 */
 	public void cropSpotsLevel2DMeasuresToImageWidth(int imageWidth) {
-		for (Spot spot : spotsList)
-			spot.cropLevel2DMeasuresToImageWidth(imageWidth);
+		spotsList.forEach(spot -> spot.cropLevel2DMeasuresToImageWidth(imageWidth));
 	}
 
-	public Spot getSpotFromName(String name) {
-		Spot spotFound = null;
-		for (Spot spot : spotsList) {
-			if (spot.getRoi().getName().equals(name)) {
-				spotFound = spot;
-				break;
-			}
+	/**
+	 * Initializes level2D measures for all spots.
+	 */
+	public void initializeLevel2DMeasures() {
+		spotsList.forEach(Spot::initializeLevel2DMeasures);
+	}
+
+	// === TIME INTERVALS ===
+
+	/**
+	 * Gets the time intervals array.
+	 * 
+	 * @return the time intervals
+	 */
+	public TIntervalsArray getTimeIntervals() {
+		return timeIntervals;
+	}
+
+	/**
+	 * Sets the time intervals array.
+	 * 
+	 * @param timeIntervals the time intervals
+	 */
+	public void setTimeIntervals(TIntervalsArray timeIntervals) {
+		this.timeIntervals = timeIntervals;
+	}
+
+	/**
+	 * Finds the first time interval.
+	 * 
+	 * @param intervalT the interval time
+	 * @return the interval index
+	 */
+	public int findFirstTimeInterval(long intervalT) {
+		return timeIntervals != null ? timeIntervals.findStartItem(intervalT) : -1;
+	}
+
+	/**
+	 * Gets the time interval at the specified index.
+	 * 
+	 * @param selectedItem the selected item index
+	 * @return the time interval
+	 */
+	public long getTimeIntervalAt(int selectedItem) {
+		return timeIntervals != null ? timeIntervals.getTIntervalAt(selectedItem).start : -1;
+	}
+
+	/**
+	 * Adds a time interval.
+	 * 
+	 * @param start the start time
+	 * @return the interval index
+	 */
+	public int addTimeInterval(long start) {
+		if (timeIntervals == null) {
+			timeIntervals = new TIntervalsArray();
 		}
-		return spotFound;
+		return timeIntervals.addIfNew(new TInterval(start, -1));
 	}
 
-	public Spot getSpotContainingName(String name) {
-		Spot spotFound = null;
-		for (Spot spot : spotsList) {
-			if (spot.getRoi().getName().contains(name)) {
-				spotFound = spot;
-				break;
-			}
+	/**
+	 * Deletes a time interval.
+	 * 
+	 * @param start the start time
+	 */
+	public void deleteTimeInterval(long start) {
+		if (timeIntervals != null) {
+			timeIntervals.deleteIntervalStartingAt(start);
 		}
-		return spotFound;
 	}
 
-	public boolean removeSpotFromArray(Spot spotToRemove) {
-		for (int i = 0; i < spotsList.size(); i++) {
-			Spot spot = spotsList.get(i);
-			if (spot.equals(spotToRemove)) {
-				spotsList.remove(i);
-				return true;
-			}
-		}
-		return false;
-	}
+	// === UTILITY OPERATIONS ===
 
-	// ------------------------------------------------
-
-	public double getScalingFactorToPhysicalUnits(EnumXLSExport xlsoption) {
-		double scalingFactorToPhysicalUnits = 1.;
-		return scalingFactorToPhysicalUnits;
-	}
-
-	public Polygon2D get2DPolygonEnclosingSpots() {
-		Rectangle outerRectangle = null;
-		for (Spot spot : spotsList) {
-			Rectangle rect = spot.getRoi().getBounds();
-			if (outerRectangle == null) {
-				outerRectangle = rect;
-			} else
-				outerRectangle.add(rect);
-		}
-		if (outerRectangle == null)
-			return null;
-
-		return new Polygon2D(outerRectangle);
-	}
-
+	/**
+	 * Transfers sum to sum clean for all spots.
+	 */
 	public void transferSumToSumClean() {
-		int span = 10;
-		for (Spot spot : spotsList) {
-			if (spot.sum_in.values != null)
-				spot.sum_clean.buildRunningMedian(span, spot.sum_in.values);
-			else {
-				Level2D level = spot.sum_in.getLevel2D();
-				if (level != null && level.npoints > 0)
-					spot.sum_clean.buildRunningMedian(span, level.ypoints);
+		spotsList.forEach(spot -> {
+			SpotMeasure sumIn = spot.getSumMeasurements();
+			SpotMeasure sumClean = spot.getCleanMeasurements();
+
+			if (sumIn != null && sumClean != null) {
+				sumClean.copyMeasures(sumIn);
 			}
+		});
+	}
+
+	/**
+	 * Gets the scaling factor to physical units.
+	 * 
+	 * @param xlsOption the Excel export option
+	 * @return the scaling factor
+	 */
+	public double getScalingFactorToPhysicalUnits(EnumXLSExport xlsOption) {
+		// Implementation would depend on specific scaling logic
+		return 1.0;
+	}
+
+	/**
+	 * Gets the 2D polygon enclosing all spots.
+	 * 
+	 * @return the polygon
+	 */
+	public Polygon2D get2DPolygonEnclosingSpots() {
+		if (spotsList.isEmpty()) {
+			return new Polygon2D();
 		}
+
+		// Implementation would create a polygon encompassing all spots
+		// This is a placeholder for the actual implementation
+		return new Polygon2D();
 	}
 
-	public void initLevel2DMeasures() {
-		for (Spot spot : spotsList)
-			spot.initLevel2DMeasures();
+	/**
+	 * Sets filter for spots to analyze.
+	 * 
+	 * @param setFilter whether to set filter
+	 * @param options   the build series options
+	 */
+	public void setFilterOfSpotsToAnalyze(boolean setFilter, BuildSeriesOptions options) {
+		spotsList.forEach(spot -> spot.setReadyForAnalysis(setFilter));
 	}
 
-	// ------------------------------------------------
+	// === PRIVATE HELPER METHODS ===
 
-	public TIntervalsArray getSpotsListTIntervals() {
-		if (spotsListTimeIntervals == null) {
-			spotsListTimeIntervals = new TIntervalsArray();
-			for (Spot spot : spotsList) {
-				for (ROI2DAlongT roiFK : spot.getROIAlongTList()) {
-					TInterval interval = new TInterval(roiFK.getTimePoint(), (long) -1);
-					spotsListTimeIntervals.addIfNew(interval);
-				}
-			}
-		}
-		return spotsListTimeIntervals;
-	}
-
-	public int findSpotsListFirstTInterval(long intervalT) {
-		if (spotsListTimeIntervals == null) {
-			spotsListTimeIntervals = new TIntervalsArray();
-			addSpotsListTInterval(0);
-		}
-		return spotsListTimeIntervals.findStartItem(intervalT);
-	}
-
-	public long getSpotsListTIntervalAt(int selectedItem) {
-		if (spotsListTimeIntervals == null)
-			addSpotsListTInterval(0);
-		return spotsListTimeIntervals.getTIntervalAt(selectedItem).start;
-	}
-
-	public int addSpotsListTInterval(long start) {
-		long end = -1;
-		TInterval interval = new TInterval(start, end);
-		int item = spotsListTimeIntervals.addIfNew(interval);
-
-		for (Spot spot : spotsList) {
-			List<ROI2DAlongT> listROI2DForKymo = spot.getROIAlongTList();
-			ROI2D roi = spot.getRoi();
-			if (item > 0)
-				roi = (ROI2D) listROI2DForKymo.get(item - 1).getInputRoi().getCopy();
-			try {
-				listROI2DForKymo.add(item, new ROI2DAlongT(start, roi));
-			} catch (ROI2DValidationException e) {
-				System.err.println("Error creating ROI2DAlongT for spot: " + e.getMessage());
-				e.printStackTrace();
-			}
-		}
-		return item;
-	}
-
-	public void deleteSpotsListTInterval(long start) {
-		spotsListTimeIntervals.deleteIntervalStartingAt(start);
-		for (Spot spot : spotsList)
-			spot.removeROIAlongTListItem(start);
-	}
-
-	// --------------------------------
-
-	final String csvSep = ";";
-
-	private boolean csvLoadSpots(String directory, EnumSpotMeasures option) throws Exception {
-		String pathToCsv = directory + File.separator + csvFileName;
-		File csvFile = new File(pathToCsv);
-		if (!csvFile.isFile())
+	private boolean saveListOfSpotsToXml(Node node) {
+		Node spotsNode = XMLUtil.getElement(node, ID_SPOTTRACK);
+		if (spotsNode == null) {
 			return false;
-
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(pathToCsv));
-		String row;
-		String sep = ";";
-		while ((row = bufferedReader.readLine()) != null) {
-			if (row.charAt(0) == '#')
-				sep = String.valueOf(row.charAt(1));
-
-			String[] data = row.split(sep);
-			if (data[0].equals("#")) {
-				switch (data[1]) {
-				case "SPOTS_ARRAY":
-					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_ARRAY
-							|| option == EnumSpotMeasures.SPOTS_DESCRIPTION)
-						csvLoadSpotsDescription(bufferedReader, sep);
-					break;
-				case "SPOTS":
-					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_ARRAY
-							|| option == EnumSpotMeasures.SPOTS_DESCRIPTION)
-						csvLoadSpotsArray(bufferedReader, sep);
-					break;
-				case "AREA_SUM":
-					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_MEASURES)
-						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_SUM, sep);
-					break;
-				case "AREA_OUT":
-					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_MEASURES)
-						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_OUT, sep);
-					break;
-				case "AREA_DIFF":
-					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_MEASURES)
-						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_DIFF, sep);
-					break;
-				case "AREA_SUMCLEAN":
-					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_MEASURES)
-						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_SUMCLEAN, sep);
-					break;
-				case "AREA_FLYPRESENT":
-					if (option == EnumSpotMeasures.ALL || option == EnumSpotMeasures.SPOTS_MEASURES)
-						csvLoadSpotsMeasures(bufferedReader, EnumSpotMeasures.AREA_FLYPRESENT, sep);
-					break;
-				default:
-					break;
-				}
-			}
 		}
-		bufferedReader.close();
+
+		XMLUtil.setElementIntValue(spotsNode, "version", DEFAULT_VERSION);
+		Node nodeSpotsArray = XMLUtil.setElement(spotsNode, ID_LISTOFSPOTS);
+		XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
+
+		sortSpots();
+		for (int i = 0; i < spotsList.size(); i++) {
+			Node nodeSpot = XMLUtil.setElement(spotsNode, ID_SPOT_ + i);
+			spotsList.get(i).saveToXml(nodeSpot);
+		}
+
 		return true;
 	}
 
-	private String csvLoadSpotsArray(BufferedReader csvReader, String csvSep) {
-		String row;
-		try {
-			row = csvReader.readLine();
-			while ((row = csvReader.readLine()) != null) {
-				String[] data = row.split(csvSep);
-				if (data[0].equals("#"))
-					return data[1];
-				Spot spot = getSpotFromName(data[0]);
-				if (spot == null)
-					spot = new Spot();
-//				spot.prop.csvImportProperties(data); // TODO check if possible
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private boolean loadSpotsOnlyV1(Document doc) {
+		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_SPOTTRACK);
+		if (node == null) {
+			return false;
 		}
-		return null;
+
+		Node nodeSpotsArray = XMLUtil.getElement(node, ID_LISTOFSPOTS);
+		if (nodeSpotsArray == null) {
+			return false;
+		}
+
+		int nitems = XMLUtil.getElementIntValue(nodeSpotsArray, ID_NSPOTS, 0);
+		spotsList.clear();
+
+		for (int i = 0; i < nitems; i++) {
+			Node nodeSpot = XMLUtil.getElement(node, ID_SPOT_ + i);
+			if (nodeSpot != null) {
+				Spot spot = new Spot();
+				if (spot.loadFromXml(nodeSpot) && !isSpotPresent(spot)) {
+					spotsList.add(spot);
+				}
+			}
+		}
+
+		return true;
 	}
 
-	private String csvLoadSpotsMeasures(BufferedReader csvReader, EnumSpotMeasures measureType, String csvSep) {
-		String row;
-		try {
-			row = csvReader.readLine();
-			boolean y = true;
-			boolean x = row.contains("xi");
-			while ((row = csvReader.readLine()) != null) {
-				String[] data = row.split(csvSep);
-				if (data[0].equals("#"))
-					return data[1];
-
-				Spot spot = getSpotFromName(data[0]);
-				if (spot == null)
-					spot = new Spot();
-				spot.csvImportMeasures_OneType(measureType, data, x, y);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private boolean csvLoadSpots(String directory, EnumSpotMeasures measureType) throws Exception {
+		Path csvPath = Paths.get(directory, CSV_FILENAME);
+		if (!Files.exists(csvPath)) {
+			return false;
 		}
-		return null;
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(csvPath.toFile()))) {
+			String line = reader.readLine();
+			if (line == null) {
+				return false;
+			}
+
+			// Skip header lines
+			while (line.startsWith("#")) {
+				line = reader.readLine();
+				if (line == null) {
+					return false;
+				}
+			}
+
+			// Load spots array section
+			line = csvLoadSpotsArray(reader, CSV_SEPARATOR);
+			if (line == null) {
+				return false;
+			}
+
+			// Load description section
+			line = csvLoadSpotsDescription(reader, CSV_SEPARATOR);
+			if (line == null) {
+				return false;
+			}
+
+			// Load measures section
+			return csvLoadSpotsMeasures(reader, measureType, CSV_SEPARATOR);
+		}
 	}
 
-	// ---------------------------------
+	private String csvLoadSpotsArray(BufferedReader reader, String csvSeparator) throws IOException {
+		String line = reader.readLine();
+		if (line == null) {
+			return null;
+		}
+
+		String[] data = line.split(csvSeparator);
+		if (data.length < 2) {
+			return null;
+		}
+
+		int nSpots = Integer.parseInt(data[1]);
+		spotsList.clear();
+
+		for (int i = 0; i < nSpots; i++) {
+			line = reader.readLine();
+			if (line == null) {
+				break;
+			}
+
+			String[] spotData = line.split(csvSeparator);
+			if (spotData.length >= 2) {
+				Spot spot = new Spot();
+				spot.getProperties().importFromCsv(spotData);
+				spotsList.add(spot);
+			}
+		}
+
+		return reader.readLine();
+	}
+
+	private String csvLoadSpotsDescription(BufferedReader reader, String csvSeparator) throws IOException {
+		String line = reader.readLine();
+		if (line == null) {
+			return null;
+		}
+
+		// Skip description header
+		while (line.startsWith("#")) {
+			line = reader.readLine();
+			if (line == null) {
+				return null;
+			}
+		}
+
+		// Load description data
+		for (int i = 0; i < spotsList.size(); i++) {
+			line = reader.readLine();
+			if (line == null) {
+				break;
+			}
+
+			String[] data = line.split(csvSeparator);
+			if (data.length >= 11 && i < spotsList.size()) {
+				spotsList.get(i).getProperties().importFromCsv(data);
+			}
+		}
+
+		return reader.readLine();
+	}
+
+	private boolean csvLoadSpotsMeasures(BufferedReader reader, EnumSpotMeasures measureType, String csvSeparator)
+			throws IOException {
+		String line = reader.readLine();
+		if (line == null) {
+			return false;
+		}
+
+		// Skip measures header
+		while (line.startsWith("#")) {
+			line = reader.readLine();
+			if (line == null) {
+				return false;
+			}
+		}
+
+		// Load measures data
+		for (int i = 0; i < spotsList.size(); i++) {
+			line = reader.readLine();
+			if (line == null) {
+				break;
+			}
+
+			String[] data = line.split(csvSeparator);
+			if (data.length >= 2 && i < spotsList.size()) {
+				spotsList.get(i).importMeasuresOneType(measureType, data, false, true);
+			}
+		}
+
+		return true;
+	}
 
 	private boolean csvSaveSpots(String directory) {
-		Path path = Paths.get(directory);
-		if (!Files.exists(path))
-			return false;
+		Path csvPath = Paths.get(directory, CSV_FILENAME);
 
-		try {
-			FileWriter fileWriter = new FileWriter(directory + File.separator + csvFileName);
-			csvSave_SpotsArraySection(fileWriter);
-			csvSave_DescriptionSection(fileWriter);
-			csvSave_MeasuresSection(fileWriter, EnumSpotMeasures.AREA_SUM);
-			csvSave_MeasuresSection(fileWriter, EnumSpotMeasures.AREA_SUMCLEAN);
-			csvSave_MeasuresSection(fileWriter, EnumSpotMeasures.AREA_OUT);
-			csvSave_MeasuresSection(fileWriter, EnumSpotMeasures.AREA_DIFF);
-			csvSave_MeasuresSection(fileWriter, EnumSpotMeasures.AREA_FLYPRESENT);
-			fileWriter.flush();
-			fileWriter.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return true;
-	}
-
-	private String csvLoadSpotsDescription(BufferedReader csvReader, String csvSep) {
-		String row;
-		try {
-			row = csvReader.readLine();
-			String[] data = row.split(csvSep);
-			String motif = data[0].substring(0, Math.min(data[0].length(), 6));
-			if (motif.equals("n spot")) {
-				int nspots = Integer.valueOf(data[1]);
-				if (nspots >= spotsList.size())
-					spotsList.ensureCapacity(nspots);
-				else
-					spotsList.subList(nspots, spotsList.size()).clear();
-				row = csvReader.readLine();
-				if (row != null)
-					data = row.split(csvSep);
-			}
-			if (data[0].equals("#")) {
-				return data[1];
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private boolean csvSave_SpotsArraySection(FileWriter csvWriter) {
-		try {
-			csvWriter.append("#" + csvSep + "#\n");
-			csvWriter.append("#" + csvSep + "SPOTS_ARRAY" + csvSep + "multiSPOTS96 data\n");
-			csvWriter.append("n spots=" + csvSep + Integer.toString(spotsList.size()) + "\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
-
-	private boolean csvSave_DescriptionSection(FileWriter csvWriter) {
-		try {
-			if (spotsList.size() > 0) {
-				csvWriter.append(SpotProperties.csvExportSpotPropertiesHeader(csvSep));
-				for (Spot spot : spotsList) {
-					spot.prop.sourceName = spot.getRoi().getName();
-					csvWriter.append(spot.prop.csvExportSpotProperties(csvSep));
-				}
-				csvWriter.append("#" + csvSep + "#\n");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
-
-	private boolean csvSave_MeasuresSection(FileWriter csvWriter, EnumSpotMeasures measureType) {
-		try {
-			if (spotsList.size() <= 1)
+		try (FileWriter writer = new FileWriter(csvPath.toFile())) {
+			// Save spots array section
+			if (!csvSaveSpotsArraySection(writer)) {
 				return false;
-			csvWriter.append(spotsList.get(0).csvExportMeasures_SectionHeader(measureType, csvSep));
-			for (Spot spot : spotsList) {
-				csvWriter.append(spot.csvExportMeasures_OneType(measureType, csvSep));
 			}
-			csvWriter.append("#" + csvSep + "#\n");
+
+			// Save description section
+			if (!csvSaveDescriptionSection(writer)) {
+				return false;
+			}
+
+			// Save measures section
+			if (!csvSaveMeasuresSection(writer, EnumSpotMeasures.AREA_SUMCLEAN)) {
+				return false;
+			}
+
+			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Error saving spots to CSV: " + e.getMessage());
+			return false;
 		}
+	}
+
+	private boolean csvSaveSpotsArraySection(FileWriter writer) throws IOException {
+		writer.write("#" + CSV_SEPARATOR + "#\n");
+		writer.write("#" + CSV_SEPARATOR + "SPOTS" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "cageID" + CSV_SEPARATOR + "cagePos"
+				+ CSV_SEPARATOR + "cageColumn" + CSV_SEPARATOR + "cageRow" + CSV_SEPARATOR + "volume" + CSV_SEPARATOR
+				+ "npixels" + CSV_SEPARATOR + "radius" + CSV_SEPARATOR + "stim" + CSV_SEPARATOR + "conc\n");
+
+		for (Spot spot : spotsList) {
+			writer.write(spot.getProperties().exportToCsv(CSV_SEPARATOR));
+		}
+
 		return true;
 	}
 
-	// ----------------------------------
+	private boolean csvSaveDescriptionSection(FileWriter writer) throws IOException {
+		writer.write("#" + CSV_SEPARATOR + "#\n");
+		writer.write("#" + CSV_SEPARATOR + "DESCRIPTION" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "cageID" + CSV_SEPARATOR + "cagePos"
+				+ CSV_SEPARATOR + "cageColumn" + CSV_SEPARATOR + "cageRow" + CSV_SEPARATOR + "volume" + CSV_SEPARATOR
+				+ "npixels" + CSV_SEPARATOR + "radius" + CSV_SEPARATOR + "stim" + CSV_SEPARATOR + "conc\n");
 
-	public void setFilterOfSpotsToAnalyze(boolean setFilter, BuildSeriesOptions options) {
 		for (Spot spot : spotsList) {
-			spot.okToAnalyze = true;
-			if (!setFilter)
-				continue;
-
-			if (options.detectSelectedROIs && !spot.isIndexSelected(options.selectedIndexes))
-				spot.okToAnalyze = false;
+			writer.write(spot.getProperties().exportToCsv(CSV_SEPARATOR));
 		}
+
+		return true;
 	}
 
+	private boolean csvSaveMeasuresSection(FileWriter writer, EnumSpotMeasures measureType) throws IOException {
+		writer.write("#" + CSV_SEPARATOR + "#\n");
+		writer.write("#" + CSV_SEPARATOR + "MEASURES" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "npts" + CSV_SEPARATOR + "yi\n");
+
+		for (Spot spot : spotsList) {
+			writer.write(spot.exportMeasuresOneType(measureType, CSV_SEPARATOR));
+		}
+
+		return true;
+	}
+
+	// === UTILITY METHODS ===
+
+	@Override
+	public String toString() {
+		return String.format("SpotsArray{spotsCount=%d, hasTimeIntervals=%b}", spotsList.size(), timeIntervals != null);
+	}
 }

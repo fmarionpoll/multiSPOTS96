@@ -255,7 +255,8 @@ public class ShapeSpots extends JPanel {
 		} else {
 			removeOverlay(exp);
 			spotsOverlayCheckBox.setSelected(false);
-			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
+			Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
+					.getCanvas();
 			canvas.setTransformStep1Index(0);
 		}
 		spotsOverlayCheckBox.setEnabled(displayCheckOverlay);
@@ -284,14 +285,14 @@ public class ShapeSpots extends JPanel {
 		IcyBufferedImage workImage = transformFunction.getTransformedImage(sourceImage, transformOptions);
 		boolean detectSelectedROIs = selectedSpotCheckBox.isSelected();
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				ROI2D roi_in = spot.getRoi();
 				if (detectSelectedROIs && !roi_in.isSelected())
 					continue;
 
 				exp.seqCamData.getSequence().removeROI(roi_in);
 				try {
-					spot.mask2DSpot = spot.getRoi().getBooleanMask2D(0, 0, 1, true);
+					spot.setMask2DSpot(spot.getRoi().getBooleanMask2D(0, 0, 1, true));
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -313,17 +314,19 @@ public class ShapeSpots extends JPanel {
 	private void restoreContours(Experiment exp) {
 		boolean detectSelectedROIs = selectedSpotCheckBox.isSelected();
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				ROI2D roi_in = spot.getRoi();
 				if (detectSelectedROIs && !roi_in.isSelected())
 					continue;
 
 				String roiName = roi_in.getName();
 				exp.seqCamData.getSequence().removeROI(roi_in);
-				Point2D point = new Point2D.Double(spot.prop.spotXCoord, spot.prop.spotYCoord);
-				double x = point.getX() - spot.prop.spotRadius;
-				double y = point.getY() - spot.prop.spotRadius;
-				Ellipse2D ellipse = new Ellipse2D.Double(x, y, 2 * spot.prop.spotRadius, 2 * spot.prop.spotRadius);
+				Point2D point = new Point2D.Double(spot.getProperties().getSpotXCoord(),
+						spot.getProperties().getSpotYCoord());
+				double x = point.getX() - spot.getProperties().getSpotRadius();
+				double y = point.getY() - spot.getProperties().getSpotRadius();
+				Ellipse2D ellipse = new Ellipse2D.Double(x, y, 2 * spot.getProperties().getSpotRadius(),
+						2 * spot.getProperties().getSpotRadius());
 				ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
 				roiEllipse.setName(roiName);
 				spot.setRoi(roiEllipse);
@@ -339,7 +342,7 @@ public class ShapeSpots extends JPanel {
 		roi_new.setColor(roi_old.getColor());
 		spot.setRoi((ROI2DShape) roi_new);
 		try {
-			spot.prop.spotNPixels = (int) roi_new.getNumberOfPoints();
+			spot.getProperties().setSpotNPixels((int) roi_new.getNumberOfPoints());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -352,7 +355,7 @@ public class ShapeSpots extends JPanel {
 			return;
 
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				ROI2D spotRoi = spot.getRoi();
 				try {
 					if (!spotRoi.intersects(roi))

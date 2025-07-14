@@ -3,7 +3,6 @@ package plugins.fmp.multiSPOTS96.tools.chart;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.jfree.chart.ChartColor;
@@ -17,9 +16,9 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresSpot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResults;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResultsArray;
 
 /**
  * Utility class for creating and managing cage charts. This class provides
@@ -198,27 +197,6 @@ public class ChartCage {
 		subplot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
 	}
 
-	XLSResultsArray getXLSResultsFromCage(Experiment exp, Cage cage, XLSExportOptions xlsExportOptions) {
-		XLSResultsArray xlsResultsArray = new XLSResultsArray();
-		
-		
-		ArrayList<Spot> spotsList = cage.combineSpotsWithSameStimulusConcentration();
-		EnumXLSExport xlsExportType = xlsExportOptions.exportType;
-		double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
-
-		for (Spot spot : spotsList) {
-			XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
-			xlsResults.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportType,
-					exp.seqCamData.getTimeManager().getBinDurationMs(), options.buildExcelStepMs);
-			if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT)
-				xlsResults.relativeToMaximum(); // relativeToT0();
-			
-			xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportType);
-		}
-		
-		return xlsResultsArray;
-	}
-
 	/**
 	 * Extracts spot data from one cage in the results array.
 	 * 
@@ -227,31 +205,23 @@ public class ChartCage {
 	 * @param token           token to append to series names
 	 * @return XYSeriesCollection containing the cage's data
 	 */
-	XYSeriesCollection getSpotDataFromOneCage(XLSResultsArray xlsResultsArray, Cage cage, String token) {
-		if (xlsResultsArray == null || cage == null) {
-			LOGGER.warning("Cannot get spot data: results array or cage is null");
+	XYSeriesCollection getSpotDataFromOneCage(Experiment exp, Cage cage, XLSExportOptions xlsExportOptions) {
+		if (cage == null || cage.spotsArray == null || cage.spotsArray.getSpotsCount() < 1) {
+			LOGGER.warning("Cannot get spot data: spot array is empty or cage is null");
 			return new XYSeriesCollection();
 		}
 
+		EnumXLSExport xlsExportType = xlsExportOptions.exportType;
 		XYSeriesCollection xySeriesCollection = null;
 		int seriesCount = 0;
+		XLSExportMeasuresSpot xlsExportMeasuresSpot = new XLSExportMeasuresSpot();
 
-		for (int i = 0; i < xlsResultsArray.size(); i++) {
-			XLSResults xlsResults = xlsResultsArray.getRow(i);
-			if (xlsResults == null) {
-				LOGGER.warning("Null result at index " + i + ", skipping");
-				continue;
-			}
-
-			if (cage.prop.cageID != xlsResults.cageID) {
-				continue;
-			}
-
+		for (Spot spot : cage.spotsArray.getSpotsList()) {
 			if (xySeriesCollection == null) {
 				xySeriesCollection = new XYSeriesCollection();
 			}
-
-			XYSeries seriesXY = getXYSeries(xlsResults, xlsResults.name + token);
+			XLSResults xlsResults = xlsExportMeasuresSpot.getSpotResults(exp, cage, spot, xlsExportOptions);
+			XYSeries seriesXY = createXYSeriesFromXLSResults(xlsResults, spot.getName());
 			if (seriesXY != null) {
 				seriesXY.setDescription(buildSeriesDescription(xlsResults, cage));
 				xySeriesCollection.addSeries(seriesXY);
@@ -277,37 +247,13 @@ public class ChartCage {
 	}
 
 	/**
-	 * Adds all series from source collection to destination collection.
-	 * 
-	 * @param destination the collection to add series to
-	 * @param source      the collection to copy series from
-	 */
-	private void addXYSeriesCollection(XYSeriesCollection destination, XYSeriesCollection source) {
-		if (source == null) {
-			LOGGER.fine("Source collection is null, nothing to add");
-			return;
-		}
-
-		int addedCount = 0;
-		for (int j = 0; j < source.getSeriesCount(); j++) {
-			XYSeries xySeries = source.getSeries(j);
-			if (xySeries != null) {
-				destination.addSeries(xySeries);
-				addedCount++;
-			}
-		}
-
-		LOGGER.fine("Added " + addedCount + " series from secondary collection");
-	}
-
-	/**
 	 * Creates an XY series from results data.
 	 * 
 	 * @param xlsResults the results data
 	 * @param name       the series name
 	 * @return XYSeries containing the data points
 	 */
-	private XYSeries getXYSeries(XLSResults xlsResults, String name) {
+	private XYSeries createXYSeriesFromXLSResults(XLSResults xlsResults, String name) {
 		if (xlsResults == null) {
 			LOGGER.warning("Cannot create XY series: results is null");
 			return null;

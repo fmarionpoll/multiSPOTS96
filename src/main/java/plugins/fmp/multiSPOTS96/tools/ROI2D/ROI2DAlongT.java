@@ -52,14 +52,25 @@ public class ROI2DAlongT implements XMLPersistent {
         // Default constructor
     }
 
-    /**
-     * Gets the time point.
-     * 
-     * @return The time point
-     */
-    public long getTimePoint() {
-        return timePoint;
-    }
+    	/**
+	 * Gets the time point.
+	 * 
+	 * @return The time point
+	 */
+	public long getTimePoint() {
+		return timePoint;
+	}
+
+	/**
+	 * Gets the time point (compatibility method).
+	 * 
+	 * @return The time point
+	 * @deprecated Use getTimePoint() instead
+	 */
+	@Deprecated
+	public long getT() {
+		return timePoint;
+	}
 
     /**
      * Sets the time point.

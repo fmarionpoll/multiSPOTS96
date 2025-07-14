@@ -306,13 +306,13 @@ public class SequenceKymos extends SequenceCamData {
 			}
 
 			Cage firstCage = cagesArray.cagesList.get(0);
-			if (firstCage.spotsArray == null || firstCage.spotsArray.spotsList.isEmpty()) {
+			if (firstCage.spotsArray == null || firstCage.spotsArray.getSpotsList().isEmpty()) {
 				LOGGER.warning("No spots found in first cage");
 				return new ArrayList<>();
 			}
 
 			// Calculate total expected files
-			int totalExpectedFiles = cagesArray.cagesList.size() * firstCage.spotsArray.spotsList.size();
+			int totalExpectedFiles = cagesArray.cagesList.size() * firstCage.spotsArray.getSpotsList().size();
 			List<ImageFileDescriptor> fileList = new ArrayList<>(totalExpectedFiles);
 
 			// Generate file descriptors for each spot in each cage
@@ -320,7 +320,7 @@ public class SequenceKymos extends SequenceCamData {
 				if (cage.spotsArray == null)
 					continue;
 
-				for (Spot spot : cage.spotsArray.spotsList) {
+				for (Spot spot : cage.spotsArray.getSpotsList()) {
 					ImageFileDescriptor descriptor = new ImageFileDescriptor();
 					descriptor.fileName = fullDirectory + spot.getRoi().getName() + ".tiff";
 					descriptor.exists = new File(descriptor.fileName).exists();

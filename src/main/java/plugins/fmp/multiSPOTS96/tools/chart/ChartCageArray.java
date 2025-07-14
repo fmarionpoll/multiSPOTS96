@@ -265,7 +265,7 @@ public class ChartCageArray extends IcyFrame {
 					continue;
 				}
 
-				if (cage.spotsArray.spotsList.size() < 1) {
+				if (cage.spotsArray.getSpotsCount() < 1) {
 					LOGGER.fine("Skipping cage " + cage.prop.cageID + " - no spots");
 					continue;
 				}
@@ -296,8 +296,7 @@ public class ChartCageArray extends IcyFrame {
 	private ChartPanel createChartPanelForCage(ChartCage chartCage, Cage cage, int row, int col,
 			XLSExportOptions xlsExportOptions) {
 
-		XLSResultsArray xlsResultsArray = chartCage.getXLSResultsFromCage(experiment, cage, xlsExportOptions);
-		XYSeriesCollection xyDataSetList = chartCage.getSpotDataFromOneCage(xlsResultsArray, cage, "");
+		XYSeriesCollection xyDataSetList = chartCage.getSpotDataFromOneCage(experiment, cage, xlsExportOptions);
 
 		NumberAxis xAxis = setXaxis("", xlsExportOptions);
 		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
@@ -461,8 +460,8 @@ public class ChartCageArray extends IcyFrame {
 					spotFound = experiment.cagesArray.getSpotFromROIName(description);
 				}
 			} else {
-				if (cage.spotsArray.spotsList.size() > 0) {
-					spotFound = cage.spotsArray.spotsList.get(0);
+						if (cage.spotsArray.getSpotsCount() > 0) {
+			spotFound = cage.spotsArray.getSpotsList().get(0);
 				}
 			}
 

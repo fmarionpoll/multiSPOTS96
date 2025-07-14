@@ -32,11 +32,11 @@ public class XLSExportForChart extends XLSExport {
 		int nspots = expAll.cagesArray.getTotalNumberOfSpots();
 		XLSResultsArray rowListForOneExp = new XLSResultsArray(nspots);
 		for (Cage cage : expAll.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				XLSResults rowResults = new XLSResults(cage, spot, xlsOption, nFrames);
-				rowResults.stimulus = spot.prop.stimulus;
-				rowResults.concentration = spot.prop.concentration;
-				rowResults.cageID = spot.prop.cageID;
+				rowResults.stimulus = spot.getProperties().getStimulus();
+				rowResults.concentration = spot.getProperties().getConcentration();
+				rowResults.cageID = spot.getProperties().getCageID();
 				rowResults.name = spot.getName();
 				rowListForOneExp.resultsList.add(rowResults);
 			}

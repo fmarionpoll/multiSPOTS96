@@ -23,7 +23,6 @@ import plugins.fmp.multiSPOTS96.experiment.sequence.ROIOperation;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.sequence.TInterval;
 import plugins.fmp.multiSPOTS96.experiment.sequence.TIntervalsArray;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
@@ -33,6 +32,7 @@ import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
 import plugins.fmp.multiSPOTS96.tools.JComponents.exceptions.FileDialogException;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
@@ -393,7 +393,7 @@ public class CagesArray {
 	public Cage findFirstCageWithSelectedSpot() {
 		Cage cageFound = null;
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				ROI2D roi = spot.getRoi();
 				if (roi.isSelected()) {
 					return cage;
@@ -437,7 +437,7 @@ public class CagesArray {
 
 	public Cage getCageFromSpotROIName(String name) {
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				if (spot.getRoi().getName().contains(name))
 					return cage;
 			}
@@ -616,9 +616,9 @@ public class CagesArray {
 	public void transferCageSpotsToSequenceAsROIs(SequenceCamData seqCamData) {
 		if (cagesList.size() > 0) {
 			List<ROI2D> spotROIList = new ArrayList<ROI2D>(
-					cagesList.get(0).spotsArray.spotsList.size() * cagesList.size());
+					cagesList.get(0).spotsArray.getSpotsList().size() * cagesList.size());
 			for (Cage cage : cagesList) {
-				for (Spot spot : cage.spotsArray.spotsList)
+				for (Spot spot : cage.spotsArray.getSpotsList())
 					spotROIList.add(spot.getRoi());
 			}
 			Collections.sort(spotROIList, new Comparators.ROI2D_Name());
@@ -635,7 +635,7 @@ public class CagesArray {
 //			T = v.getPositionT();
 		Collections.sort(listSeqRois, new Comparators.ROI_Name());
 		for (Cage cage : cagesList) {
-			Iterator<Spot> iteratorSpots = cage.spotsArray.spotsList.iterator();
+			Iterator<Spot> iteratorSpots = cage.spotsArray.getSpotsList().iterator();
 			while (iteratorSpots.hasNext()) {
 				Spot spot = iteratorSpots.next();
 				String spotRoiName = spot.getRoi().getName();
@@ -660,7 +660,7 @@ public class CagesArray {
 
 	public Spot getSpotFromROIName(String name) {
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				if (spot.getRoi().getName().contains(name))
 					return spot;
 			}
@@ -681,7 +681,7 @@ public class CagesArray {
 
 		ArrayList<Spot> enclosedSpots = new ArrayList<Spot>();
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				try {
 					if (envelopeRoi.contains(spot.getRoi())) {
 						spot.getRoi().setSelected(true);
@@ -699,7 +699,7 @@ public class CagesArray {
 	public ArrayList<Spot> getSpotsSelected() {
 		ArrayList<Spot> enclosedSpots = new ArrayList<Spot>();
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				if (spot.getRoi().isSelected())
 					enclosedSpots.add(spot);
 			}
@@ -709,10 +709,9 @@ public class CagesArray {
 
 	public SpotsArray getAllSpotsArray() {
 		SpotsArray spotsArray = new SpotsArray();
-		spotsArray.spotsList = new ArrayList<Spot>();
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				spotsArray.spotsList.add(spot);
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
+				spotsArray.getSpotsList().add(spot);
 			}
 		}
 		return spotsArray;
@@ -721,12 +720,12 @@ public class CagesArray {
 	public Spot getSpotAtGlobalIndex(int indexT) {
 		int i = 0;
 		for (Cage cage : cagesList) {
-			int count = cage.spotsArray.spotsList.size();
+			int count = cage.spotsArray.getSpotsList().size();
 			if (i + count - 1 < indexT) {
 				i += count;
 				continue;
 			}
-			Spot spot = cage.spotsArray.spotsList.get(indexT - i);
+			Spot spot = cage.getSpotsArray().getSpotsList().get(indexT - i);
 			return spot;
 		}
 		return null;
@@ -734,16 +733,16 @@ public class CagesArray {
 
 	public int getSpotGlobalPosition(Spot spot) {
 		int i = 0;
-		int cageID = spot.prop.cageID;
+		int cageID = spot.getProperties().getCageID();
 		for (Cage cage : cagesList) {
-			int count = cage.spotsArray.spotsList.size();
-			if (cageID != cage.prop.cageID) {
+			int count = cage.getSpotsArray().getSpotsList().size();
+			if (cageID != cage.getProperties().getCageID()) {
 				i += count;
 				continue;
 			}
 			String name = spot.getRoi().getName();
-			for (int j = 0; j < cage.spotsArray.spotsList.size(); j++) {
-				if (name.equals(cage.spotsArray.spotsList.get(j).getRoi().getName())) {
+			for (int j = 0; j < cage.getSpotsArray().getSpotsList().size(); j++) {
+				if (name.equals(cage.getSpotsArray().getSpotsList().get(j).getRoi().getName())) {
 					return i + j;
 				}
 			}
@@ -754,7 +753,7 @@ public class CagesArray {
 	public int getTotalNumberOfSpots() {
 		int nspots = 0;
 		for (Cage cage : cagesList) {
-			nspots += cage.spotsArray.spotsList.size();
+			nspots += cage.getSpotsArray().getSpotsList().size();
 		}
 		return nspots;
 	}
@@ -766,28 +765,28 @@ public class CagesArray {
 	public void mergeSpotsLists(CagesArray arrayToMerge) {
 		for (Cage cage : cagesList) {
 			for (Cage cageToMerge : arrayToMerge.cagesList) {
-				if (cage.prop.cagePosition != cageToMerge.prop.cagePosition)
+				if (cage.getProperties().getCagePosition() != cageToMerge.getProperties().getCagePosition())
 					continue;
-				cage.spotsArray.mergeLists(cageToMerge.spotsArray);
+				cage.getSpotsArray().mergeSpots(cageToMerge.getSpotsArray());
 			}
 		}
 	}
 
 	public void setFilterOfSpotsToAnalyze(boolean setFilter, BuildSeriesOptions options) {
 		for (Cage cage : cagesList) {
-			cage.spotsArray.setFilterOfSpotsToAnalyze(setFilter, options);
+			cage.getSpotsArray().setFilterOfSpotsToAnalyze(setFilter, options);
 		}
 	}
 
 	public void transferSumToSumClean() {
 		for (Cage cage : cagesList) {
-			cage.spotsArray.transferSumToSumClean();
+			cage.getSpotsArray().transferSumToSumClean();
 		}
 	}
 
 	public void initLevel2DMeasures() {
 		for (Cage cage : cagesList) {
-			cage.spotsArray.initLevel2DMeasures();
+			cage.getSpotsArray().initializeLevel2DMeasures();
 		}
 	}
 
@@ -797,8 +796,8 @@ public class CagesArray {
 
 	public void transferROIsMeasuresFromSequenceToSpots() {
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				spot.transferROIsMeasuresToLevel2D();
+			for (Spot spot : cage.getSpotsArray().getSpotsList()) {
+				spot.transferRoiMeasuresToLevel2D();
 			}
 		}
 	}
@@ -810,8 +809,8 @@ public class CagesArray {
 		int height = seq.getHeight();
 		int i = 0;
 		for (Cage cage : cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				List<ROI2D> listOfRois = spot.transferSpotMeasuresToROIs(height);
+			for (Spot spot : cage.getSpotsArray().getSpotsList()) {
+				List<ROI2D> listOfRois = spot.transferSpotMeasuresToRois(height);
 				for (ROI2D roi : listOfRois) {
 					if (roi != null)
 						roi.setT(i);
@@ -858,8 +857,8 @@ public class CagesArray {
 				e.printStackTrace();
 			}
 
-			if (cage.spotsArray.findSpotsListFirstTInterval(start) < 0) {
-				cage.spotsArray.addSpotsListTInterval(start);
+			if (cage.getSpotsArray().findFirstTimeInterval(start) < 0) {
+				cage.getSpotsArray().addTimeInterval(start);
 			}
 
 		}
@@ -870,24 +869,24 @@ public class CagesArray {
 		cagesListTimeIntervals.deleteIntervalStartingAt(start);
 		for (Cage cage : cagesList) {
 			cage.removeROIAlongTListItem(start);
-			cage.spotsArray.deleteSpotsListTInterval(start);
+			cage.getSpotsArray().deleteTimeInterval(start);
 		}
 	}
 
 	// --------------------------------------------------
 
 	public boolean load_SpotsMeasures(String directory) {
-		boolean flag = getSpotsArrayFromAllCages().load_SpotsMeasures(directory);
+		boolean flag = getSpotsArrayFromAllCages().loadSpotsMeasures(directory);
 		return flag;
 	}
 
 	public boolean load_SpotsAll(String directory) {
-		boolean flag = getSpotsArrayFromAllCages().load_SpotsAll(directory);
+		boolean flag = getSpotsArrayFromAllCages().loadSpotsAll(directory);
 		return flag;
 	}
 
 	public boolean save_SpotsAll(String directory) {
-		boolean flag = getSpotsArrayFromAllCages().save_SpotsAll(directory);
+		boolean flag = getSpotsArrayFromAllCages().saveSpotsAll(directory);
 		return flag;
 	}
 
@@ -895,17 +894,16 @@ public class CagesArray {
 		if (directory == null)
 			return false;
 		SpotsArray localSpotsArray = getSpotsArrayFromAllCages();
-		localSpotsArray.save_SpotsMeasures(directory);
+		localSpotsArray.saveSpotsMeasures(directory);
 		return true;
 	}
 
 	public SpotsArray getSpotsArrayFromAllCages() {
 		SpotsArray spotsArray = new SpotsArray();
 		if (cagesList.size() > 0) {
-			int nspots = cagesList.size() * cagesList.get(0).spotsArray.spotsList.size();
-			spotsArray.spotsList.ensureCapacity(nspots);
+			int nspots = cagesList.size() * cagesList.get(0).getSpotsArray().getSpotsList().size();
 			for (Cage cage : cagesList) {
-				spotsArray.spotsList.addAll(cage.spotsArray.spotsList);
+				spotsArray.getSpotsList().addAll(cage.getSpotsArray().getSpotsList());
 			}
 		}
 		return spotsArray;

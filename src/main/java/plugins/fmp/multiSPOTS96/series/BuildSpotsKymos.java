@@ -80,7 +80,7 @@ public class BuildSpotsKymos extends BuildSeries {
 			futuresArray.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					Spot spot = spotsArray.spotsList.get(t_index);
+					Spot spot = spotsArray.getSpotsList().get(t_index);
 					String filename = directory + File.separator + spot.getRoi().getName() + ".tiff";
 
 					File file = new File(filename);
@@ -121,7 +121,7 @@ public class BuildSpotsKymos extends BuildSeries {
 		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
 		processor.setThreadName("buildKymograph");
 		processor.setPriority(Processor.NORM_PRIORITY);
-		int ntasks = iiLast - iiFirst; // exp.spotsArray.spotsList.size(); //
+		int ntasks = iiLast - iiFirst; // exp.spotsArray.getSpotsList().size(); //
 		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(ntasks);
 		tasks.clear();
 
@@ -144,7 +144,7 @@ public class BuildSpotsKymos extends BuildSeries {
 					int sizeC = sourceImage.getSizeC();
 					IcyBufferedImageCursor cursorSource = new IcyBufferedImageCursor(sourceImage);
 					for (Cage cage : exp.cagesArray.cagesList) {
-						for (Spot spot : cage.spotsArray.spotsList) {
+						for (Spot spot : cage.spotsArray.getSpotsList()) {
 							analyzeImageWithSpot2(cursorSource, spot, t - iiFirst, sizeC);
 						}
 					}
@@ -169,7 +169,7 @@ public class BuildSpotsKymos extends BuildSeries {
 		if (maskPoints == null) {
 			return; // No mask points available
 		}
-		
+
 		for (int chan = 0; chan < sizeC; chan++) {
 			IcyBufferedImageCursor cursor = new IcyBufferedImageCursor(spot.spotImage);
 			try {
@@ -218,15 +218,15 @@ public class BuildSpotsKymos extends BuildSeries {
 
 		int indexSpot = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				final int indexSpotKymo = indexSpot;
 				tasks.add(processor.submit(new Runnable() {
 					@Override
 					public void run() {
-						IcyBufferedImage kymoImage = IcyBufferedImageUtil.scale(spot.spotImage,
-								spot.spotImage.getWidth(), vertical_resolution);
+						IcyBufferedImage kymoImage = IcyBufferedImageUtil.scale(spot.getSpotImage(),
+								spot.getSpotImage().getWidth(), vertical_resolution);
 						seqKymo.setImage(indexSpotKymo, 0, kymoImage);
-						spot.spotImage = null;
+						spot.setSpotImage(null);
 					}
 				}));
 				indexSpot++;
@@ -239,8 +239,8 @@ public class BuildSpotsKymos extends BuildSeries {
 	private int getMaxImageHeight(Experiment exp) {
 		int maxImageHeight = 0;
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				int height = spot.spotImage.getHeight();
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
+				int height = spot.getSpotImage().getHeight();
 				if (height > maxImageHeight)
 					maxImageHeight = height;
 			}
@@ -273,13 +273,14 @@ public class BuildSpotsKymos extends BuildSeries {
 			dataType = DataType.UBYTE;
 
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				int imageHeight = 0;
-				for (ROI2DAlongT roiT : spot.getROIAlongTList()) {
+				for (ROI2DAlongT roiT : spot.getRoiAlongTList()) {
 					try {
 						roiT.buildMask2DFromInputRoi();
 					} catch (ROI2DProcessingException e) {
-						System.err.println("Error building mask for ROI at time " + roiT.getTimePoint() + ": " + e.getMessage());
+						System.err.println(
+								"Error building mask for ROI at time " + roiT.getTimePoint() + ": " + e.getMessage());
 						e.printStackTrace();
 						continue;
 					}
@@ -292,7 +293,8 @@ public class BuildSpotsKymos extends BuildSeries {
 						if (imageHeight_i > imageHeight)
 							imageHeight = imageHeight_i;
 					} catch (ROI2DProcessingException e) {
-						System.err.println("Error getting mask height for ROI at time " + roiT.getTimePoint() + ": " + e.getMessage());
+						System.err.println("Error getting mask height for ROI at time " + roiT.getTimePoint() + ": "
+								+ e.getMessage());
 						e.printStackTrace();
 					}
 				}

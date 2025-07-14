@@ -196,8 +196,8 @@ public class Charts extends JPanel implements SequenceListener {
 	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExport option) {
 		boolean flag = false;
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				flag = spot.isThereAnyMeasuresDone(option);
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
+				flag = spot.hasMeasurements(option);
 				if (flag)
 					break;
 			}

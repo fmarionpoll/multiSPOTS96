@@ -24,10 +24,12 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotProperties;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotTable;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 
-public class InfosSpotTable extends JPanel implements ListSelectionListener { // implements GlobalSequenceListener, ROIListener {
+public class InfosSpotTable extends JPanel implements ListSelectionListener { // implements GlobalSequenceListener,
+																				// ROIListener {
 //, 
 //SequenceListener {
 	/**
@@ -108,7 +110,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					SpotsArray spotsArray = exp.cagesArray.getAllSpotsArray();
-					allSpotsCopy.pasteSpotsInfos(spotsArray);
+					allSpotsCopy.pasteSpotsInfo(spotsArray);
 				}
 			}
 		});
@@ -172,7 +174,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp != null) 
+				if (exp != null)
 					locateSelectedROI(exp);
 			}
 		});
@@ -183,7 +185,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 	void close() {
 		dialogFrame.close();
 	}
-	
+
 	private void locateSelectedROI(Experiment exp) {
 		ArrayList<ROI> roiList = exp.seqCamData.getSequence().getSelectedROIs();
 		if (roiList.size() > 0) {
@@ -196,7 +198,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 				}
 				if (name.contains("cage")) {
 					Cage cage = exp.cagesArray.getCageFromName(name);
-					spot = cage.spotsArray.spotsList.get(0);
+					spot = cage.spotsArray.getSpotsList().get(0);
 					break;
 				}
 			}
@@ -208,7 +210,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 	private void measureNPixelsForAllSpots(Experiment exp) {
 		int columnIndex = 1;
 		for (Cage cage : exp.cagesArray.cagesList)
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				try {
 					int value = (int) spot.getRoi().getNumberOfPoints();
 					int iID = exp.cagesArray.getSpotGlobalPosition(spot);
@@ -223,15 +225,16 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 	private void transferFromSpot(Experiment exp, Spot spotTo, Spot spotFrom) {
 		int iID = exp.cagesArray.getSpotGlobalPosition(spotTo);
 		int columnIndex = 2;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.spotVolume, iID, columnIndex);
+		SpotProperties prop = spotFrom.getProperties();
+		spotTable.spotTableModel.setValueAt(prop.getSpotVolume(), iID, columnIndex);
 		columnIndex = 5;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.cageRow, iID, columnIndex);
+		spotTable.spotTableModel.setValueAt(prop.getCageRow(), iID, columnIndex);
 		columnIndex = 7;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.stimulus, iID, columnIndex);
+		spotTable.spotTableModel.setValueAt(prop.getStimulusI(), iID, columnIndex);
 		columnIndex = 8;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.concentration, iID, columnIndex);
+		spotTable.spotTableModel.setValueAt(prop.getConcentration(), iID, columnIndex);
 		columnIndex = 9;
-		spotTable.spotTableModel.setValueAt(spotFrom.prop.color, iID, columnIndex);
+		spotTable.spotTableModel.setValueAt(prop.getColor(), iID, columnIndex);
 	}
 
 	private void duplicatePos(Experiment exp) {
@@ -245,14 +248,17 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 			System.out.println("spot not found: " + spotName);
 			return;
 		}
-		int cagePosition = spotFrom.prop.cagePosition;
-		int cageID = spotFrom.prop.cageID;
+
+		SpotProperties prop = spotFrom.getProperties();
+
+		int cagePosition = prop.getCagePosition();
+		int cageID = prop.getCageID();
 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			if (cage.prop.cageID == cageID)
 				continue;
-			for (Spot spot : cage.spotsArray.spotsList) {
-				if (spot.prop.cagePosition != cagePosition)
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
+				if (spot.getProperties().getCagePosition() != cagePosition)
 					continue;
 				transferFromSpot(exp, spot, spotFrom);
 			}
@@ -292,7 +298,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 
 		Object value = spotTable.spotTableModel.getValueAt(rowIndex, columnIndex);
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				int iID = exp.cagesArray.getSpotGlobalPosition(spot);
 				spotTable.spotTableModel.setValueAt(value, iID, columnIndex);
 			}
@@ -305,18 +311,18 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 			return;
 
 		Spot spotFromSelectedRow = exp.cagesArray.getSpotAtGlobalIndex(rowIndex);
-		int cageIDFrom = spotFromSelectedRow.prop.cageID;
+		int cageIDFrom = spotFromSelectedRow.getProperties().getCageID();
 		Cage cageFrom = exp.cagesArray.getCageFromSpotName(spotFromSelectedRow.getRoi().getName());
 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			if (cage.prop.cageID == cageIDFrom)
 				continue;
 
-			for (int i = 0; i < cage.spotsArray.spotsList.size(); i++) {
-				Spot spot = cage.spotsArray.spotsList.get(i);
-				if (i >= cageFrom.spotsArray.spotsList.size())
+			for (int i = 0; i < cage.spotsArray.getSpotsList().size(); i++) {
+				Spot spot = cage.spotsArray.getSpotsList().get(i);
+				if (i >= cageFrom.spotsArray.getSpotsList().size())
 					continue;
-				Spot spotFrom = cageFrom.spotsArray.spotsList.get(i);
+				Spot spotFrom = cageFrom.spotsArray.getSpotsList().get(i);
 				transferFromSpot(exp, spot, spotFrom);
 			}
 		}
@@ -340,7 +346,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 			spotTable.scrollRectToVisible(rect);
 		}
 	}
-	
+
 	void selectSpot(Spot spot) {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
@@ -357,9 +363,9 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 					System.out.println("cage roi not found");
 			} else
 				System.out.println("cage is null");
-			
+
 			exp.seqCamData.getSequence().setFocusedROI(roiSpot);
-			//exp.seqCamData.centerOnRoi(roi);
+			// exp.seqCamData.centerOnRoi(roi);
 			roiSpot.setSelected(true);
 		}
 	}
@@ -371,7 +377,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 
 		ListSelectionModel lsm = (ListSelectionModel) e.getSource();
 		int minIndex = lsm.getMinSelectionIndex();
-		selectSpot( spotTable.spotTableModel.getSpotAt(minIndex));
+		selectSpot(spotTable.spotTableModel.getSpotAt(minIndex));
 	}
 
 }

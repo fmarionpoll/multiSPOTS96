@@ -174,10 +174,10 @@ public class Display extends JPanel implements ViewerListener {
 			public void run() {
 				kymographsCombo.removeAllItems();
 				for (Cage cage : exp.cagesArray.cagesList) {
-					Collections.sort(cage.spotsArray.spotsList);
-					int nspotsArray = cage.spotsArray.spotsList.size();
+					Collections.sort(cage.spotsArray.getSpotsList());
+					int nspotsArray = cage.spotsArray.getSpotsList().size();
 					for (int i = 0; i < nspotsArray; i++) {
-						Spot spot = cage.spotsArray.spotsList.get(i);
+						Spot spot = cage.spotsArray.getSpotsList().get(i);
 						String name = spot.getRoi().getName();
 						kymographsCombo.addItem(name);
 					}
@@ -369,7 +369,7 @@ public class Display extends JPanel implements ViewerListener {
 //		int i = 0;
 //		for (Cage cage : exp.cagesArray.cagesList) {
 //			SpotsArray spotsArray = cage.spotsArray;
-//			for (Spot spot : spotsArray.spotsList) {
+//			for (Spot spot : spotsArray.getSpotsList()) {
 //				spot.getRoi().setSelected(isel == i);
 //				spot.getRoi().setFocused(isel == i);
 //				i++;

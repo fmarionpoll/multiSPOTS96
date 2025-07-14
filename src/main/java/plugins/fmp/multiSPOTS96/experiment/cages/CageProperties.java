@@ -117,4 +117,12 @@ public class CageProperties {
 		return true;
 	}
 
+	public int getCagePosition() {
+		return cagePosition;
+	}
+
+	public int getCageID() {
+		return cageID;
+	}
+
 }

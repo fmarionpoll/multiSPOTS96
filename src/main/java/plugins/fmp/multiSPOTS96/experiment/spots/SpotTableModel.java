@@ -69,23 +69,23 @@ public class SpotTableModel extends AbstractTableModel {
 			case 0:
 				return spot.getRoi().getName(); // string
 			case 1:
-				return spot.prop.spotNPixels;
+				return spot.getProperties().getSpotNPixels();
 			case 2:
-				return spot.prop.spotVolume;
+				return spot.getProperties().getSpotVolume();
 			case 3:
-				return spot.prop.cageID;
+				return spot.getProperties().getCageID();
 			case 4:
-				return spot.prop.cagePosition;
+				return spot.getProperties().getCagePosition();
 			case 5:
-				return spot.prop.cageRow;
+				return spot.getProperties().getCageRow();
 			case 6:
-				return spot.prop.cageColumn;
+				return spot.getProperties().getCageColumn();
 			case 7:
-				return spot.prop.stimulus; // string
+				return spot.getProperties().getStimulus(); // string
 			case 8:
-				return spot.prop.concentration; // string
+				return spot.getProperties().getConcentration(); // string
 			case 9:
-				return spot.prop.color;
+				return spot.getProperties().getColor();
 			}
 		}
 		return null;
@@ -94,39 +94,39 @@ public class SpotTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		Spot spot = getSpotAt(rowIndex);
-		if (spot != null && spot.prop != null) {
+		if (spot != null && spot.getProperties() != null) {
 			switch (columnIndex) {
 
 			case 0:
 				spot.getRoi().setName(aValue.toString());
 				break;
 			case 1:
-				spot.prop.spotNPixels = (int) aValue;
+				spot.getProperties().setSpotNPixels((int) aValue);
 				break;
 			case 2:
-				spot.prop.spotVolume = (double) aValue;
+				spot.getProperties().setSpotVolume((double) aValue);
 				break;
 			case 3:
-				spot.prop.cageID = (int) aValue;
+				spot.getProperties().setCageID((int) aValue);
 				break;
 			case 4:
-				spot.prop.cagePosition = (int) aValue;
+				spot.getProperties().setCagePosition((int) aValue);
 				break;
 			case 5:
-				spot.prop.cageRow = (int) aValue;
+				spot.getProperties().setCageRow((int) aValue);
 				break;
 			case 6:
-				spot.prop.cageColumn = (int) aValue;
+				spot.getProperties().setCageColumn((int) aValue);
 				break;
 			case 7:
-				spot.prop.stimulus = aValue.toString();
+				spot.getProperties().setStimulus(aValue.toString());
 				break;
 			case 8:
-				spot.prop.concentration = aValue.toString();
+				spot.getProperties().setConcentration(aValue.toString());
 				break;
 			case 9:
-				spot.prop.color = (Color) aValue;
-				spot.getRoi().setColor(spot.prop.color);
+				spot.getProperties().setColor((Color) aValue);
+				spot.getRoi().setColor(spot.getProperties().getColor());
 				break;
 			}
 		}

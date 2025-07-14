@@ -22,6 +22,7 @@ import icy.type.geom.Polyline2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotProperties;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -197,8 +198,9 @@ public class EditSpots extends JPanel {
 			if (enclosedSpots.size() > 0) {
 				ArrayList<Point2D> listPoint = new ArrayList<Point2D>();
 				for (Spot spot : enclosedSpots) {
-					Point2D.Double point = new Point2D.Double(spot.prop.spotXCoord + spot.prop.spotRadius,
-							spot.prop.spotYCoord + spot.prop.spotRadius);
+					SpotProperties prop = spot.getProperties();
+					Point2D.Double point = new Point2D.Double(prop.getSpotXCoord() + prop.getSpotRadius(),
+							prop.getSpotYCoord() + prop.getSpotRadius());
 					listPoint.add(point);
 				}
 				roiSnake = new ROI2DPolyLine(listPoint);
@@ -238,12 +240,13 @@ public class EditSpots extends JPanel {
 		Polyline2D snake = roiSnake.getPolyline2D();
 		int i = 0;
 		for (Spot spot : enclosedSpots) {
-			spot.prop.spotXCoord = (int) snake.xpoints[i];
-			spot.prop.spotYCoord = (int) snake.ypoints[i];
+			SpotProperties prop = spot.getProperties();
+			prop.setSpotXCoord((int) snake.xpoints[i]);
+			prop.setSpotYCoord((int) snake.ypoints[i]);
 			ROI2D roi = spot.getRoi();
 
-			Point2D.Double point = new Point2D.Double(snake.xpoints[i] - spot.prop.spotRadius,
-					snake.ypoints[i] - spot.prop.spotRadius);
+			Point2D.Double point = new Point2D.Double(snake.xpoints[i] - prop.getSpotRadius(),
+					snake.ypoints[i] - prop.getSpotRadius());
 			roi.setPosition2D(point);
 
 			String name = roi.getName();

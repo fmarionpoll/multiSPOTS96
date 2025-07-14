@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.CellReference;
@@ -125,7 +126,7 @@ public abstract class XLSExportBase {
 		}
 	}
 
-		/**
+	/**
 	 * Executes the export process with progress tracking.
 	 * 
 	 * @throws ExcelExportException If export execution fails
@@ -133,39 +134,39 @@ public abstract class XLSExportBase {
 	protected void executeExport() throws ExcelExportException {
 		int nbexpts = expList.getItemCount();
 		ProgressFrame progress = new ProgressFrame(ExcelExportConstants.DEFAULT_PROGRESS_TITLE);
-		
+
 		try {
 			progress.setLength(nbexpts);
-			
+
 			int column = 1;
 			int iSeries = 0;
-			
+
 			for (int index = options.experimentIndexFirst; index <= options.experimentIndexLast; index++) {
 				Experiment exp = expList.getItemAt(index);
-				
+
 				// Load experiment data
 				exp.load_MS96_spotsMeasures();
-				
+
 				// Skip chained experiments if needed
 				if (shouldSkipExperiment(exp)) {
 					continue;
 				}
-				
+
 				// Update progress
 				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
-				
+
 				// Get series identifier
 				String charSeries = CellReference.convertNumToColString(iSeries);
-				
+
 				// Export experiment data (subclass-specific)
 				column = exportExperimentData(exp, column, charSeries);
-				
+
 				iSeries++;
 				progress.incPosition();
 			}
-			
+
 			progress.setMessage(ExcelExportConstants.SAVE_PROGRESS_MESSAGE);
-			
+
 		} catch (Exception e) {
 			throw new ExcelExportException("Export execution failed", "execute_export", "export_loop", e);
 		} finally {
@@ -390,26 +391,29 @@ public abstract class XLSExportBase {
 	private void writeSpotProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Spot spot, Cage cage,
 			String charSeries, EnumXLSExport xlsExportType) {
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_VOLUME, transpose,
-				spot.prop.spotVolume);
+				spot.getProperties().getSpotVolume());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_PIXELS, transpose,
-				spot.prop.spotNPixels);
+				spot.getProperties().getSpotNPixels());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGEPOS, transpose,
 				spot.getCagePosition(xlsExportType));
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_STIM, transpose, spot.prop.stimulus);
+		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_STIM, transpose,
+				spot.getProperties().getStimulus());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_CONC, transpose,
-				spot.prop.concentration);
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_CAGEID, transpose, spot.prop.cageID);
+				spot.getProperties().getConcentration());
+		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_CAGEID, transpose,
+				spot.getProperties().getCageID());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_CAGEROW, transpose,
-				spot.prop.cageRow);
+				spot.getProperties().getCageRow());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_CAGECOL, transpose,
-				spot.prop.cageColumn);
+				spot.getProperties().getCageColumn());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGEID, transpose,
-				charSeries + spot.prop.cageID);
+				charSeries + spot.getProperties().getCageID());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_NFLIES, transpose,
 				cage.prop.cageNFlies);
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CHOICE_NOCHOICE, transpose,
 				ExcelExportConstants.CHOICE_NOCHOICE_DEFAULT);
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.DUM4, transpose, spot.prop.stimulus_i);
+		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.DUM4, transpose,
+				spot.getProperties().getStimulusI());
 	}
 
 	/**
@@ -433,13 +437,14 @@ public abstract class XLSExportBase {
 	 * @param xlsExportType The export type
 	 * @return The XLS results
 	 */
-	protected XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, EnumXLSExport xlsExportType) {
-		int nOutputFrames = getNOutputFrames(exp);
+	public XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, XLSExportOptions xlsExportOptions) {
+		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
+		EnumXLSExport xlsExportType = xlsExportOptions.exportType;
 		XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
-		xlsResults.dataValues = spot.getSpotMeasuresForXLSPass1(xlsExportType,
-				exp.seqCamData.getTimeManager().getBinDurationMs(), options.buildExcelStepMs);
+		xlsResults.dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportType,
+				exp.seqCamData.getTimeManager().getBinDurationMs(), xlsExportOptions.buildExcelStepMs);
 
-		if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT) {
+		if (xlsExportOptions.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT) {
 			xlsResults.relativeToMaximum();
 		}
 
@@ -452,7 +457,7 @@ public abstract class XLSExportBase {
 	 * @param exp The experiment
 	 * @return The number of output frames
 	 */
-	protected int getNOutputFrames(Experiment exp) {
+	protected int getNOutputFrames(Experiment exp, XLSExportOptions options) {
 		TimeManager timeManager = exp.seqCamData.getTimeManager();
 		ImageLoader imgLoader = exp.seqCamData.getImageLoader();
 		long durationMs = timeManager.getBinLast_ms() - timeManager.getBinFirst_ms();

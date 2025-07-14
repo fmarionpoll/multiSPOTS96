@@ -755,7 +755,7 @@ public class Experiment {
 			load_MS96_cages();
 		boolean flag = false;
 		for (Cage cage : cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				if (spot.getField(fieldEnumCode).equals(oldValue)) {
 					spot.setField(fieldEnumCode, newValue);
 					flag = true;
@@ -791,7 +791,7 @@ public class Experiment {
 		if (cagesArray.cagesList.size() == 0)
 			load_MS96_cages();
 		for (Cage cage : cagesArray.cagesList)
-			for (Spot spot : cage.spotsArray.spotsList)
+			for (Spot spot : cage.spotsArray.getSpotsList())
 				addValue(spot.getField(fieldEnumCode), textList);
 	}
 

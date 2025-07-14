@@ -148,19 +148,20 @@ public class CreateSpots extends JPanel {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			ROI2D cageRoi = cage.getRoi();
 			ROI2DGrid cageGrid = createGrid(cageRoi);
-			cage.spotsArray.spotsList.clear();
-					for (ROI2DPolygonPlus roi : listSelectedAreas) {
-			try {
-				ROI2DPolygonPlus roiP = cageGrid.getAreaAt(roi.getCagePosition());
-				Rectangle2D rect = roiP.getBounds2D();
-				Point2D.Double center = (Double) roiP.getPosition2D();
-				int radius = (int) (rect.getHeight() / 2);
-				cage.addEllipseSpot(center, radius);
-			} catch (ROI2DValidationException e) {
-				System.err.println("Error getting area at position " + roi.getCagePosition() + ": " + e.getMessage());
-				e.printStackTrace();
+			cage.spotsArray.getSpotsList().clear();
+			for (ROI2DPolygonPlus roi : listSelectedAreas) {
+				try {
+					ROI2DPolygonPlus roiP = cageGrid.getAreaAt(roi.getCagePosition());
+					Rectangle2D rect = roiP.getBounds2D();
+					Point2D.Double center = (Double) roiP.getPosition2D();
+					int radius = (int) (rect.getHeight() / 2);
+					cage.addEllipseSpot(center, radius);
+				} catch (ROI2DValidationException e) {
+					System.err
+							.println("Error getting area at position " + roi.getCagePosition() + ": " + e.getMessage());
+					e.printStackTrace();
+				}
 			}
-		}
 			cage.getRoi().setSelected(false);
 		}
 	}

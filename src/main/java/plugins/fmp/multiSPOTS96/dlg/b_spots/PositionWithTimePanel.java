@@ -241,8 +241,8 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 	private void addFrameAroundSpots(int t, Experiment exp) {
 		ArrayList<ROI2D> listRoisAtT = new ArrayList<ROI2D>();
 		for (Cage cage : exp.cagesArray.cagesList) {
-			for (Spot spot : cage.spotsArray.spotsList) {
-				ROI2DAlongT kymoROI2D = spot.getROIAtT(t);
+			for (Spot spot : cage.spotsArray.getSpotsList()) {
+				ROI2DAlongT kymoROI2D = spot.getRoiAtTime(t);
 				listRoisAtT.add(kymoROI2D.getInputRoi());
 			}
 		}
@@ -298,8 +298,8 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 		seq.removeAllROI();
 		List<ROI2D> listRois = new ArrayList<ROI2D>();
 		for (Cage cage : exp.cagesArray.cagesList)
-			for (Spot spot : cage.spotsArray.spotsList)
-				listRois.add(spot.getROIAtT((int) intervalT).getInputRoi());
+			for (Spot spot : cage.spotsArray.getSpotsList())
+				listRois.add(spot.getRoiAtTime((int) intervalT).getInputRoi());
 		seq.addROIs(listRois, false);
 
 		Viewer v = seq.getFirstViewer();
@@ -323,7 +323,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 				if (spot != null) {
 					ROI2D roilocal = (ROI2D) roi.getCopy();
 					try {
-						spot.getROIAtT(intervalT).setInputRoi(roilocal);
+						spot.getRoiAtTime(intervalT).setInputRoi(roilocal);
 					} catch (ROI2DValidationException e) {
 						System.err.println("Error setting ROI for spot: " + e.getMessage());
 						e.printStackTrace();
