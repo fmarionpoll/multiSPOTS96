@@ -12,12 +12,12 @@ import icy.plugin.PluginLauncher;
 import icy.plugin.PluginLoader;
 import icy.plugin.abstract_.PluginActionable;
 import icy.preferences.GeneralPreferences;
-import plugins.fmp.multiSPOTS96.dlg.browse._DlgBrowse_;
-import plugins.fmp.multiSPOTS96.dlg.excel._DlgExcel_;
-import plugins.fmp.multiSPOTS96.dlg.experiment._DlgExperiment_;
-import plugins.fmp.multiSPOTS96.dlg.kymos._DlgKymos_;
-import plugins.fmp.multiSPOTS96.dlg.spots._DlgSpots_;
-import plugins.fmp.multiSPOTS96.dlg.spotsMeasures._DlgSpotMeasure_;
+import plugins.fmp.multiSPOTS96.dlg.a_browse._DlgBrowse_;
+import plugins.fmp.multiSPOTS96.dlg.a_experiment._DlgExperiment_;
+import plugins.fmp.multiSPOTS96.dlg.b_spots._DlgSpots_;
+import plugins.fmp.multiSPOTS96.dlg.c_kymos._DlgKymos_;
+import plugins.fmp.multiSPOTS96.dlg.d_spotsMeasures._DlgSpotMeasure_;
+import plugins.fmp.multiSPOTS96.dlg.f_excel._DlgExcel_;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
 public class MultiSPOTS96 extends PluginActionable {
