@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.experiment;
+package plugins.fmp.multiSPOTS96.experiment.sequence;
 
 /**
  * Enum representing different sources for obtaining file time information.

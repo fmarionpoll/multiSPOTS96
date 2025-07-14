@@ -1,4 +1,6 @@
-package plugins.fmp.multiSPOTS96.experiment;
+package plugins.fmp.multiSPOTS96.experiment.sequence;
+
+import plugins.fmp.multiSPOTS96.experiment.EnumStatus;
 
 /**
  * Immutable data class containing sequence information.

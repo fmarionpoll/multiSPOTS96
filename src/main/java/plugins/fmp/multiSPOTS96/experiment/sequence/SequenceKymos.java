@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.experiment;
+package plugins.fmp.multiSPOTS96.experiment.sequence;
 
 import java.awt.Rectangle;
 import java.io.File;
@@ -23,6 +23,8 @@ import icy.type.DataType;
 import icy.type.collection.array.Array1DUtil;
 import loci.formats.FormatException;
 import ome.xml.meta.OMEXMLMetadata;
+import plugins.fmp.multiSPOTS96.experiment.EnumStatus;
+import plugins.fmp.multiSPOTS96.experiment.ExperimentDirectories;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
@@ -430,7 +432,7 @@ public class SequenceKymos extends SequenceCamData {
 	 * @param imageDescriptors the image descriptors
 	 * @return rectangle representing maximum dimensions
 	 */
-	Rectangle calculateMaxDimensions(List<ImageFileDescriptor> imageDescriptors) {
+	public Rectangle calculateMaxDimensions(List<ImageFileDescriptor> imageDescriptors) {
 		int maxWidth = 0;
 		int maxHeight = 0;
 

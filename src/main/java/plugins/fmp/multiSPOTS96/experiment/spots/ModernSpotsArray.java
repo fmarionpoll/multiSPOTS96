@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
+import plugins.fmp.multiSPOTS96.experiment.sequence.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 
 /**

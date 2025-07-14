@@ -21,7 +21,7 @@ import icy.roi.ROI2D;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
+import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
 import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 

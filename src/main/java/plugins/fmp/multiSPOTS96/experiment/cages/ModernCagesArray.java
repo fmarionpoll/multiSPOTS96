@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import icy.roi.ROI2D;
-import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
+import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
 /**

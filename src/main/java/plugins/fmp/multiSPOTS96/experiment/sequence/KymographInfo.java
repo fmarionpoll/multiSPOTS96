@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.experiment;
+package plugins.fmp.multiSPOTS96.experiment.sequence;
 
 import java.awt.Rectangle;
 import java.util.List;

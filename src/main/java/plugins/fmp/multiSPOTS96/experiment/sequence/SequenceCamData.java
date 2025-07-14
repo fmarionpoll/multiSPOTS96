@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.experiment;
+package plugins.fmp.multiSPOTS96.experiment.sequence;
 
 import java.awt.Rectangle;
 import java.nio.file.attribute.FileTime;
@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import icy.image.IcyBufferedImage;
 import icy.roi.ROI2D;
 import icy.sequence.Sequence;
+import plugins.fmp.multiSPOTS96.experiment.EnumStatus;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 
 /**

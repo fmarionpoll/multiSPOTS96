@@ -13,9 +13,9 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.ImageLoader;
-import plugins.fmp.multiSPOTS96.experiment.TimeManager;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.sequence.ImageLoader;
+import plugins.fmp.multiSPOTS96.experiment.sequence.TimeManager;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 

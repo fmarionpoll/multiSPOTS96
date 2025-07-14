@@ -25,9 +25,9 @@ import icy.system.thread.ThreadUtil;
 import loci.formats.FormatException;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.ImageFileDescriptor;
-import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.sequence.ImageFileDescriptor;
+import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceKymos;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 
 public class LoadSave extends JPanel {

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.TInterval;
-import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
+import plugins.fmp.multiSPOTS96.experiment.sequence.TInterval;
+import plugins.fmp.multiSPOTS96.experiment.sequence.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
 public class TableModelTIntervals extends AbstractTableModel {

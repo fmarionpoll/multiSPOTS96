@@ -27,7 +27,7 @@ import icy.type.DataType;
 import icy.type.geom.Polygon2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
+import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.overlay.OverlayThreshold;
 import plugins.fmp.multiSPOTS96.tools.polyline.Blobs;

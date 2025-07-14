@@ -18,7 +18,7 @@ import icy.roi.ROI2D;
 import icy.util.StringUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.SequenceKymos;
+import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceKymos;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotMeasure;
 import plugins.fmp.multiSPOTS96.series.BuildMedianFromSpotMeasure;
