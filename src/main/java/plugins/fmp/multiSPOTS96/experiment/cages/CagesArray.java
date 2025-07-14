@@ -29,6 +29,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
+import plugins.fmp.multiSPOTS96.tools.JComponents.exceptions.FileDialogException;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DArea;
@@ -203,7 +204,12 @@ public class CagesArray {
 		String filename = exp.getResultsDirectory();
 		File file = new File(filename);
 		String directory = file.getParentFile().getAbsolutePath();
-		filedummy = Dialog.selectFiles(directory, "xml");
+		try {
+			filedummy = Dialog.selectFiles(directory, "xml");
+		} catch (FileDialogException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		boolean wasOk = false;
 		if (filedummy != null) {
 			for (int i = 0; i < filedummy.length; i++) {

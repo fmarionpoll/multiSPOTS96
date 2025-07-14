@@ -38,18 +38,31 @@ public class TableCellColorRenderer extends JLabel implements TableCellRenderer 
 		if (isBordered) {
 			if (isSelected) {
 				if (selectedBorder == null) {
-					selectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5, table.getSelectionBackground());
+					selectedBorder = BorderFactory.createMatteBorder(
+						JComponentConstants.TableCell.BORDER_THICKNESS, 
+						JComponentConstants.TableCell.BORDER_MARGIN, 
+						JComponentConstants.TableCell.BORDER_THICKNESS, 
+						JComponentConstants.TableCell.BORDER_MARGIN, 
+						table.getSelectionBackground()
+					);
 				}
 				setBorder(selectedBorder);
 			} else {
 				if (unselectedBorder == null) {
-					unselectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5, table.getBackground());
+					unselectedBorder = BorderFactory.createMatteBorder(
+						JComponentConstants.TableCell.BORDER_THICKNESS, 
+						JComponentConstants.TableCell.BORDER_MARGIN, 
+						JComponentConstants.TableCell.BORDER_THICKNESS, 
+						JComponentConstants.TableCell.BORDER_MARGIN, 
+						table.getBackground()
+					);
 				}
 				setBorder(unselectedBorder);
 			}
 		}
 
-		setToolTipText("RGB value: " + newColor.getRed() + ", " + newColor.getGreen() + ", " + newColor.getBlue());
+		setToolTipText(String.format(JComponentConstants.ColorRendering.RGB_TOOLTIP_FORMAT,
+			newColor.getRed(), newColor.getGreen(), newColor.getBlue()));
 		return this;
 	}
 }

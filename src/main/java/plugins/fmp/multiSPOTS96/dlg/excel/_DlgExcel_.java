@@ -17,6 +17,7 @@ import icy.system.thread.ThreadUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
+import plugins.fmp.multiSPOTS96.tools.JComponents.exceptions.FileDialogException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresCagesAsQuery;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresSpot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
@@ -130,7 +131,13 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 		Path directory = Paths.get(filename0).getParent();
 		Path subpath = directory.getName(directory.getNameCount() - 1);
 		String tentativeName = subpath.toString() + pattern;
-		return Dialog.saveFileAs(tentativeName, directory.getParent().toString(), "xlsx");
+		try {
+			return Dialog.saveFileAs(tentativeName, directory.getParent().toString(), "xlsx");
+		} catch (FileDialogException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	private void updateExperrimentsParameters(Experiment exp) {

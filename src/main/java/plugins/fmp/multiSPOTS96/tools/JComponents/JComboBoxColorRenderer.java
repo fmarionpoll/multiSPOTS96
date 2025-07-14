@@ -45,28 +45,45 @@ public class JComboBoxColorRenderer extends JPanel implements ListCellRenderer<O
 		return text;
 	}
 
-	private Color getInvertedColor(Color argb) {
+	/**
+	 * Calculates the appropriate font color based on background luminance.
+	 * Uses ITU-R BT.709 coefficients for luminance calculation.
+	 * 
+	 * @param backgroundColor The background color
+	 * @return Black color for bright backgrounds, white for dark backgrounds
+	 */
+	private Color getInvertedColor(Color backgroundColor) {
+		int r = backgroundColor.getRed();
+		int g = backgroundColor.getGreen();
+		int b = backgroundColor.getBlue();
 
-		int r = argb.getRed();
-		int g = argb.getGreen();
-		int b = argb.getBlue();
-		int d = 0;
-
-		// adapt color of text according to background
-		// https://stackoverflow.com/questions/1855884/determine-font-color-based-on-background-color/34883645
-		double luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-		if (luminance > 0.5)
-			d = 0; // bright colors - black font
-		else
-			d = 255; // dark colors - white font
-		Color color = new Color(d, d, d);
-		return color;
+		// Calculate luminance using ITU-R BT.709 coefficients
+		double luminance = (JComponentConstants.ColorRendering.LUMINANCE_RED_COEFFICIENT * r + 
+		                   JComponentConstants.ColorRendering.LUMINANCE_GREEN_COEFFICIENT * g + 
+		                   JComponentConstants.ColorRendering.LUMINANCE_BLUE_COEFFICIENT * b) / 255.0;
+		
+		int fontColorValue;
+		if (luminance > JComponentConstants.ColorRendering.LUMINANCE_THRESHOLD) {
+			fontColorValue = JComponentConstants.ColorRendering.BRIGHT_BACKGROUND_FONT_COLOR; // Black for bright backgrounds
+		} else {
+			fontColorValue = JComponentConstants.ColorRendering.DARK_BACKGROUND_FONT_COLOR; // White for dark backgrounds
+		}
+		
+		return new Color(fontColorValue, fontColorValue, fontColorValue);
 	}
 
-	private String getColorAsText(Color argb) {
-		int r = argb.getRed();
-		int g = argb.getGreen();
-		int b = argb.getBlue();
-		return Integer.toString(r) + ":" + Integer.toString(g) + ":" + Integer.toString(b);
+	/**
+	 * Converts a color to its string representation in R:G:B format.
+	 * 
+	 * @param color The color to convert
+	 * @return String representation in format "R:G:B"
+	 */
+	private String getColorAsText(Color color) {
+		int r = color.getRed();
+		int g = color.getGreen();
+		int b = color.getBlue();
+		return r + JComponentConstants.ColorRendering.COLOR_FORMAT_SEPARATOR + 
+		       g + JComponentConstants.ColorRendering.COLOR_FORMAT_SEPARATOR + 
+		       b;
 	}
 }
