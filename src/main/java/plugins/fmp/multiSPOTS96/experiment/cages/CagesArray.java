@@ -19,8 +19,8 @@ import icy.sequence.Sequence;
 import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.ROIOperation;
+import plugins.fmp.multiSPOTS96.experiment.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.TInterval;
 import plugins.fmp.multiSPOTS96.experiment.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
@@ -443,11 +443,13 @@ public class CagesArray {
 	public void transferCagesToSequenceAsROIs(SequenceCamData seqCamData) {
 		// Use modern ROI operation for removing existing cage ROIs
 		seqCamData.processROIs(ROIOperation.removeROIs("cage"));
-		
+
 		List<ROI2D> cageROIList = new ArrayList<ROI2D>(cagesList.size());
 		for (Cage cage : cagesList)
 			cageROIList.add(cage.getRoi());
-		seqCamData.getSequence().addROIs(cageROIList, true);
+		Sequence sequence = seqCamData.getSequence();
+		if (sequence != null)
+			sequence.addROIs(cageROIList, true);
 	}
 
 	public void transferROIsFromSequenceToCages(SequenceCamData seqCamData) {

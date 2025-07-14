@@ -19,6 +19,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import icy.gui.viewer.Viewer;
+import icy.sequence.Sequence;
 import icy.util.StringUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
@@ -325,7 +326,10 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	}
 
 	private void updateCanvasFunction(SequenceCamData seqCamData, int index) {
-		Viewer v = seqCamData.getSequence().getFirstViewer();
+		Sequence sequence = seqCamData.getSequence();
+		if (sequence == null)
+			return;
+		Viewer v = sequence.getFirstViewer();
 		if (v == null)
 			return;
 		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) v.getCanvas();

@@ -832,7 +832,6 @@ public class Experiment {
 	}
 
 	public boolean saveSpotsArray_file() {
-		;
 		cagesArray.transferROIsFromSequenceToCageSpots(seqCamData);
 		boolean flag = save_MS96_cages();
 		flag &= save_MS96_spotsMeasures();

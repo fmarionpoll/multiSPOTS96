@@ -4,9 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
-import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
-import icy.image.IcyBufferedImageCursor;
 import icy.image.IcyBufferedImageUtil;
 import icy.sequence.Sequence;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
@@ -14,157 +12,374 @@ import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 
+/**
+ * Refactored BuildBackground class with improved architecture.
+ * Demonstrates proper dependency injection, error handling, and method decomposition.
+ */
 public class BuildBackground extends BuildSeries {
-	public Sequence seqData = new Sequence();
-	public Sequence seqReference = null;
-
-	private ViewerFMP vData = null;
-	private ViewerFMP vReference = null;
-
-	private DetectFlyTools flyDetectTools = new DetectFlyTools();
-
-	// -----------------------------------------
-
-	void analyzeExperiment(Experiment exp) {
-		if (!zloadDrosoTrack(exp))
-			return;
-		if (!checkBoundsForCages(exp))
-			return;
-
-		runBuildBackground(exp);
-
-	}
-
-	private void closeSequences() {
-		closeSequence(seqReference);
-		closeSequence(seqData);
-	}
-
-	private void closeViewers() {
-		closeViewer(vData);
-		closeViewer(vReference);
-		closeSequences();
-	}
-
-	private void openBackgroundViewers(Experiment exp) {
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {
-					seqData = newSequence("data recorded", exp.seqCamData.getSeqImage(0, 0));
-					vData = new ViewerFMP(seqData, true, true);
-
-					seqReference = newSequence("referenceImage", exp.seqCamData.getReferenceImage());
-					exp.seqReference = seqReference;
-					vReference = new ViewerFMP(seqReference, true, true);
-				}
-			});
-		} catch (InvocationTargetException | InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void runBuildBackground(Experiment exp) {
-		exp.cleanPreviousDetectedFliesROIs();
-		flyDetectTools.initParametersForDetection(exp, options);
-		exp.cagesArray.initFlyPositions(options.detectCage);
-		options.threshold = options.thresholdDiff;
-
-		openBackgroundViewers(exp);
-		try {
-			ImageTransformOptions transformOptions = new ImageTransformOptions();
-			transformOptions.transformOption = ImageTransformEnums.SUBTRACT;
-			transformOptions.setSingleThreshold(options.backgroundThreshold, stopFlag);
-			transformOptions.background_delta = options.background_delta;
-			transformOptions.background_jitter = options.background_jitter;
-			buildBackgroundImage(exp, transformOptions);
-			exp.saveReferenceImage(seqReference.getFirstImage());
-
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		closeViewers();
-	}
-
-	private void buildBackgroundImage(Experiment exp, ImageTransformOptions transformOptions)
-			throws InterruptedException {
-		ProgressFrame progress = new ProgressFrame("Build background image...");
-		flyDetectTools.initParametersForDetection(exp, options);
-
-		transformOptions.backgroundImage = imageIORead(
-				exp.seqCamData.getFileNameFromImageList(options.backgroundFirst));
-
-		long first_ms = exp.cagesArray.detectFirst_Ms
-				+ (options.backgroundFirst * exp.seqCamData.getTimeManager().getBinImage_ms());
-		final int t_first = (int) ((first_ms - exp.cagesArray.detectFirst_Ms)
-				/ exp.seqCamData.getTimeManager().getBinImage_ms());
-
-		int t_last = options.backgroundFirst + options.backgroundNFrames;
-		if (t_last > exp.seqCamData.getImageLoader().getNTotalFrames())
-			t_last = exp.seqCamData.getImageLoader().getNTotalFrames();
-
-		for (int t = t_first + 1; t <= t_last && !stopFlag; t++) {
-			IcyBufferedImage currentImage = imageIORead(exp.seqCamData.getFileNameFromImageList(t));
-			seqData.setImage(0, 0, currentImage);
-			progress.setMessage("Frame #" + t + "/" + t_last);
-
-			transformBackground(currentImage, transformOptions);
-			seqReference.setImage(0, 0, transformOptions.backgroundImage);
-
-			if (transformOptions.npixels_changed < 10)
-				break;
-		}
-		exp.seqCamData.setReferenceImage(IcyBufferedImageUtil.getCopy(seqReference.getFirstImage()));
-		progress.close();
-	}
-
-	void transformBackground(IcyBufferedImage sourceImage, ImageTransformOptions transformOptions) {
-		if (transformOptions.backgroundImage == null)
-			return;
-
-		int width = sourceImage.getSizeX();
-		int height = sourceImage.getSizeY();
-		int planes = sourceImage.getSizeC();
-		transformOptions.npixels_changed = 0;
-		int changed = 0;
-
-		IcyBufferedImageCursor sourceCursor = new IcyBufferedImageCursor(sourceImage);
-		IcyBufferedImageCursor backgroundCursor = new IcyBufferedImageCursor(transformOptions.backgroundImage);
-
-		double smallThreshold = transformOptions.background_delta;
-		;
-		try {
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
-					for (int c = 0; c < planes; c++) {
-						double backgroundValue = backgroundCursor.get(x, y, c);
-						double sourceValue = sourceCursor.get(x, y, c);
-						if (sourceValue < transformOptions.simplethreshold)
-							continue;
-
-						double differenceValue = sourceValue - backgroundValue;
-						if (backgroundValue < transformOptions.simplethreshold && differenceValue > smallThreshold) {
-							changed++;
-							for (int yy = y - transformOptions.background_jitter; yy < y
-									+ transformOptions.background_jitter; yy++) {
-								if (yy < 0 || yy >= height)
-									continue;
-								for (int xx = x - transformOptions.background_jitter; xx < x
-										+ transformOptions.background_jitter; xx++) {
-									if (xx < 0 || xx >= width)
-										continue;
-									for (int cc = 0; cc < planes; cc++) {
-										backgroundCursor.set(xx, yy, cc, sourceCursor.get(xx, yy, cc));
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		} finally {
-			backgroundCursor.commitChanges();
-			transformOptions.npixels_changed = changed;
-		}
-	}
-
+    
+    // Dependencies - injected for better testability
+    private final ImageProcessor imageProcessor;
+    private final ProgressReporter progressReporter;
+    
+    // State
+    private Sequence dataSequence = new Sequence();
+    private Sequence referenceSequence = null;
+    private ViewerFMP dataViewer = null;
+    private ViewerFMP referenceViewer = null;
+    private DetectFlyTools flyDetectionTools = new DetectFlyTools();
+    
+    // Constants
+    private static final int MINIMUM_PIXELS_CHANGED_THRESHOLD = 10;
+    
+    // Constructor with dependency injection
+    public BuildBackground() {
+        this(new SafeImageProcessor(), ProgressReporter.NO_OP);
+    }
+    
+    public BuildBackground(ImageProcessor imageProcessor, ProgressReporter progressReporter) {
+        this.imageProcessor = imageProcessor;
+        this.progressReporter = progressReporter;
+    }
+    
+    @Override
+    void analyzeExperiment(Experiment experiment) {
+        ProcessingResult<Void> result = analyzeExperimentSafely(experiment);
+        
+        if (result.isFailure()) {
+            System.err.println("Background analysis failed: " + result.getErrorMessage());
+            progressReporter.failed(result.getErrorMessage());
+        } else {
+            progressReporter.completed();
+        }
+    }
+    
+    /**
+     * Safely analyzes an experiment with proper error handling.
+     * Replaces the original analyzeExperiment method with better error handling.
+     */
+    private ProcessingResult<Void> analyzeExperimentSafely(Experiment experiment) {
+        try {
+            // Validate inputs
+            ProcessingResult<Void> validationResult = validateExperiment(experiment);
+            if (validationResult.isFailure()) {
+                return validationResult;
+            }
+            
+            // Load experiment data
+            ProcessingResult<Void> loadResult = loadExperimentData(experiment);
+            if (loadResult.isFailure()) {
+                return loadResult;
+            }
+            
+            // Validate bounds
+            ProcessingResult<Void> boundsResult = validateBoundsForCages(experiment);
+            if (boundsResult.isFailure()) {
+                return boundsResult;
+            }
+            
+            // Execute background building
+            ProcessingResult<Void> buildResult = buildBackgroundSafely(experiment);
+            if (buildResult.isFailure()) {
+                return buildResult;
+            }
+            
+            return ProcessingResult.success();
+            
+        } finally {
+            cleanupResources();
+        }
+    }
+    
+    /**
+     * Validates the experiment for required data.
+     */
+    private ProcessingResult<Void> validateExperiment(Experiment experiment) {
+        if (experiment == null) {
+            return ProcessingResult.failure("Experiment cannot be null");
+        }
+        
+        if (experiment.seqCamData == null) {
+            return ProcessingResult.failure("Experiment must have camera data");
+        }
+        
+        return ProcessingResult.success();
+    }
+    
+    /**
+     * Loads experiment data with proper error handling.
+     */
+    private ProcessingResult<Void> loadExperimentData(Experiment experiment) {
+        try {
+            boolean loadSuccess = zloadDrosoTrack(experiment);
+            if (!loadSuccess) {
+                return ProcessingResult.failure("Failed to load DrosoTrack data");
+            }
+            return ProcessingResult.success();
+        } catch (Exception e) {
+            return ProcessingResult.failure("Error loading experiment data", e);
+        }
+    }
+    
+    /**
+     * Validates bounds for cages with proper error handling.
+     */
+    private ProcessingResult<Void> validateBoundsForCages(Experiment experiment) {
+        try {
+            boolean boundsValid = checkBoundsForCages(experiment);
+            if (!boundsValid) {
+                return ProcessingResult.failure("Invalid bounds for cages");
+            }
+            return ProcessingResult.success();
+        } catch (Exception e) {
+            return ProcessingResult.failure("Error validating cage bounds", e);
+        }
+    }
+    
+    /**
+     * Safely builds the background with proper error handling.
+     */
+    private ProcessingResult<Void> buildBackgroundSafely(Experiment experiment) {
+        try {
+            // Initialize detection parameters
+            initializeDetectionParameters(experiment);
+            
+            // Open viewers
+            ProcessingResult<Void> viewerResult = openBackgroundViewers(experiment);
+            if (viewerResult.isFailure()) {
+                return viewerResult;
+            }
+            
+            // Build background
+            ProcessingResult<Void> backgroundResult = executeBackgroundBuilding(experiment);
+            if (backgroundResult.isFailure()) {
+                return backgroundResult;
+            }
+            
+            // Save results
+            ProcessingResult<Void> saveResult = saveBackgroundResults(experiment);
+            if (saveResult.isFailure()) {
+                return saveResult;
+            }
+            
+            return ProcessingResult.success();
+            
+        } catch (Exception e) {
+            return ProcessingResult.failure("Unexpected error during background building", e);
+        }
+    }
+    
+    /**
+     * Initializes detection parameters in a focused method.
+     */
+    private void initializeDetectionParameters(Experiment experiment) {
+        experiment.cleanPreviousDetectedFliesROIs();
+        flyDetectionTools.initParametersForDetection(experiment, options);
+        experiment.cagesArray.initFlyPositions(options.detectCage);
+        options.threshold = options.thresholdDiff;
+    }
+    
+    /**
+     * Opens background viewers with proper error handling.
+     */
+    private ProcessingResult<Void> openBackgroundViewers(Experiment experiment) {
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                createDataSequence(experiment);
+                createReferenceSequence(experiment);
+            });
+            return ProcessingResult.success();
+        } catch (InvocationTargetException | InterruptedException e) {
+            return ProcessingResult.failure("Failed to open background viewers", e);
+        }
+    }
+    
+    /**
+     * Creates the data sequence viewer.
+     */
+    private void createDataSequence(Experiment experiment) {
+        dataSequence = newSequence("data recorded", experiment.seqCamData.getSeqImage(0, 0));
+        dataViewer = new ViewerFMP(dataSequence, true, true);
+    }
+    
+    /**
+     * Creates the reference sequence viewer.
+     */
+    private void createReferenceSequence(Experiment experiment) {
+        referenceSequence = newSequence("referenceImage", experiment.seqCamData.getReferenceImage());
+        experiment.seqReference = referenceSequence;
+        referenceViewer = new ViewerFMP(referenceSequence, true, true);
+    }
+    
+    /**
+     * Executes the background building process.
+     */
+    private ProcessingResult<Void> executeBackgroundBuilding(Experiment experiment) {
+        try {
+            ImageTransformOptions transformOptions = createTransformOptions();
+            ProcessingResult<Void> buildResult = buildBackgroundImages(experiment, transformOptions);
+            return buildResult;
+        } catch (Exception e) {
+            return ProcessingResult.failure("Error during background building execution", e);
+        }
+    }
+    
+    /**
+     * Creates transformation options for background building.
+     */
+    private ImageTransformOptions createTransformOptions() {
+        ImageTransformOptions transformOptions = new ImageTransformOptions();
+        transformOptions.transformOption = ImageTransformEnums.SUBTRACT;
+        transformOptions.setSingleThreshold(options.backgroundThreshold, stopFlag);
+        transformOptions.background_delta = options.background_delta;
+        transformOptions.background_jitter = options.background_jitter;
+        return transformOptions;
+    }
+    
+    /**
+     * Builds background images with proper progress reporting.
+     */
+    private ProcessingResult<Void> buildBackgroundImages(Experiment experiment, ImageTransformOptions transformOptions) {
+        progressReporter.updateMessage("Building background image...");
+        
+        try {
+            // Load initial background image
+            ProcessingResult<IcyBufferedImage> initialBackgroundResult = loadInitialBackgroundImage(experiment);
+            if (initialBackgroundResult.isFailure()) {
+                return ProcessingResult.failure("Failed to load initial background: " + initialBackgroundResult.getErrorMessage());
+            }
+            
+            transformOptions.backgroundImage = initialBackgroundResult.getData().orElse(null);
+            
+            // Calculate frame range
+            FrameRange frameRange = calculateFrameRange(experiment);
+            
+            // Process frames
+            ProcessingResult<Void> processResult = processFramesForBackground(experiment, transformOptions, frameRange);
+            if (processResult.isFailure()) {
+                return processResult;
+            }
+            
+            return ProcessingResult.success();
+            
+        } catch (Exception e) {
+            return ProcessingResult.failure("Error building background images", e);
+        }
+    }
+    
+    /**
+     * Loads the initial background image.
+     */
+    private ProcessingResult<IcyBufferedImage> loadInitialBackgroundImage(Experiment experiment) {
+        String filename = experiment.seqCamData.getFileNameFromImageList(options.backgroundFirst);
+        return imageProcessor.loadImage(filename);
+    }
+    
+    /**
+     * Calculates the frame range for background processing.
+     */
+    private FrameRange calculateFrameRange(Experiment experiment) {
+        long firstMs = experiment.cagesArray.detectFirst_Ms + 
+                      (options.backgroundFirst * experiment.seqCamData.getTimeManager().getBinImage_ms());
+        int firstFrame = (int) ((firstMs - experiment.cagesArray.detectFirst_Ms) / 
+                               experiment.seqCamData.getTimeManager().getBinImage_ms());
+        
+        int lastFrame = options.backgroundFirst + options.backgroundNFrames;
+        int totalFrames = experiment.seqCamData.getImageLoader().getNTotalFrames();
+        
+        if (lastFrame > totalFrames) {
+            lastFrame = totalFrames;
+        }
+        
+        return new FrameRange(firstFrame, lastFrame);
+    }
+    
+    /**
+     * Processes frames for background building with proper error handling.
+     */
+    private ProcessingResult<Void> processFramesForBackground(Experiment experiment, ImageTransformOptions transformOptions, FrameRange frameRange) {
+        for (int frame = frameRange.getFirst() + 1; frame <= frameRange.getLast() && !stopFlag; frame++) {
+            // Update progress
+            progressReporter.updateProgress("Processing frame", frame, frameRange.getLast());
+            
+            // Load current frame
+            ProcessingResult<IcyBufferedImage> imageResult = loadFrame(experiment, frame);
+            if (imageResult.isFailure()) {
+                return ProcessingResult.failure("Failed to load frame %d: %s", frame, imageResult.getErrorMessage());
+            }
+            
+            IcyBufferedImage currentImage = imageResult.getData().orElse(null);
+            
+            // Update data sequence
+            dataSequence.setImage(0, 0, currentImage);
+            
+            // Transform background
+            ProcessingResult<ImageProcessor.BackgroundTransformResult> transformResult = 
+                imageProcessor.transformBackground(currentImage, transformOptions.backgroundImage, transformOptions);
+            
+            if (transformResult.isFailure()) {
+                return ProcessingResult.failure("Background transformation failed at frame %d: %s", 
+                                               frame, transformResult.getErrorMessage());
+            }
+            
+            // Update reference sequence
+            referenceSequence.setImage(0, 0, transformOptions.backgroundImage);
+            
+            // Check convergence
+            ImageProcessor.BackgroundTransformResult result = transformResult.getData().orElse(null);
+            if (result != null && result.getPixelsChanged() < MINIMUM_PIXELS_CHANGED_THRESHOLD) {
+                progressReporter.updateMessage("Background converged at frame %d", frame);
+                break;
+            }
+        }
+        
+        return ProcessingResult.success();
+    }
+    
+    /**
+     * Loads a frame with proper error handling.
+     */
+    private ProcessingResult<IcyBufferedImage> loadFrame(Experiment experiment, int frameIndex) {
+        String filename = experiment.seqCamData.getFileNameFromImageList(frameIndex);
+        return imageProcessor.loadImage(filename);
+    }
+    
+    /**
+     * Saves background results with proper error handling.
+     */
+    private ProcessingResult<Void> saveBackgroundResults(Experiment experiment) {
+        try {
+            experiment.seqCamData.setReferenceImage(IcyBufferedImageUtil.getCopy(referenceSequence.getFirstImage()));
+            experiment.saveReferenceImage(referenceSequence.getFirstImage());
+            return ProcessingResult.success();
+        } catch (Exception e) {
+            return ProcessingResult.failure("Failed to save background results", e);
+        }
+    }
+    
+    /**
+     * Cleans up resources properly.
+     */
+    private void cleanupResources() {
+        closeViewer(referenceViewer);
+        closeViewer(dataViewer);
+        closeSequence(referenceSequence);
+        closeSequence(dataSequence);
+    }
+    
+    /**
+     * Helper class to represent frame range.
+     */
+    private static class FrameRange {
+        private final int first;
+        private final int last;
+        
+        public FrameRange(int first, int last) {
+            this.first = first;
+            this.last = last;
+        }
+        
+        public int getFirst() { return first; }
+        public int getLast() { return last; }
+    }
 }
