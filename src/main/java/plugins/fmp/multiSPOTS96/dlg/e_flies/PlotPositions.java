@@ -121,7 +121,7 @@ public class PlotPositions extends JPanel implements SequenceListener {
 
 	private void displayYPos(String title, ChartPositions iChart, Rectangle rectv, Point ptRelative, Experiment exp,
 			EnumXLSExport option) {
-		if (iChart == null || !iChart.mainChartPanel.isValid()) {
+		if (iChart == null || !iChart.getMainChartPanel().isValid()) {
 			iChart = new ChartPositions();
 			iChart.createPanel(title);
 			iChart.setLocationRelativeToRectangle(rectv, ptRelative);

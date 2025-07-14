@@ -111,7 +111,7 @@ public class Line2DPlus extends Line2D.Double {
      * @throws IllegalArgumentException if y is NaN or infinite
      */
     public double getXfromY(double y) {
-        if (Double.isNaN(y) || Double.isInfinite(y)) {
+        if (java.lang.Double.isNaN(y) || java.lang.Double.isInfinite(y)) {
             throw new IllegalArgumentException("Y-coordinate must be a finite number: " + y);
         }
         
