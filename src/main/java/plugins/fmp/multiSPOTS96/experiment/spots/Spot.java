@@ -14,6 +14,7 @@ import icy.roi.BooleanMask2D;
 import icy.roi.ROI2D;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
@@ -733,6 +734,15 @@ public class Spot implements Comparable<Spot> {
 				return false;
 			}
 
+			final Node nodeMeta = XMLUtil.getElement(node, ID_META);
+			if (nodeMeta != null) {
+				spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
+				if (spotROI2D != null) {
+					spotROI2D.setColor(getProperties().getColor());
+					getProperties().setSourceName(spotROI2D.getName());
+				}
+			}
+
 			// Load measurements
 			if (!measurements.loadFromXml(node)) {
 				return false;
@@ -767,6 +777,10 @@ public class Spot implements Comparable<Spot> {
 			if (!measurements.saveToXml(node)) {
 				return false;
 			}
+
+			final Node nodeMeta = XMLUtil.setElement(node, ID_META);
+			if (nodeMeta != null)
+				ROI2DUtilities.saveToXML_ROI(nodeMeta, spotROI2D);
 
 			// Save ROI along time
 			return saveRoiAlongTToXml(node);

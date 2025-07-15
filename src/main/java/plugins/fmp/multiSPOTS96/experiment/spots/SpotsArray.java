@@ -162,8 +162,15 @@ public class SpotsArray {
 	 * @param spot the spot to check
 	 * @return true if present
 	 */
-	public boolean isSpotPresent(Spot spot) {
-		return spot != null && spotsList.contains(spot);
+	public boolean isSpotPresent(Spot newSpot) {
+		if (newSpot == null)
+			return false;
+		String newSpotName = newSpot.getName();
+		for (Spot spot : spotsList) {
+			if (spot.getName().equals(newSpotName))
+				return true;
+		}
+		return false;
 	}
 
 	// === DATA LOADING ===
