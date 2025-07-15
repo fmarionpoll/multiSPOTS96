@@ -642,27 +642,27 @@ public class SpotsArray {
 			}
 
 			// Load spots array section
-			line = csvLoadSpotsArray(reader, CSV_SEPARATOR);
+			line = csvLoadSpotsArray(reader, line, CSV_SEPARATOR);
 			if (line == null) {
 				return false;
 			}
 
 			// Load description section
-			line = csvLoadSpotsDescription(reader, CSV_SEPARATOR);
+			line = csvLoadSpotsDescription(reader, line, CSV_SEPARATOR);
 			if (line == null) {
 				return false;
 			}
 
 			// Load measures section
-			return csvLoadSpotsMeasures(reader, measureType, CSV_SEPARATOR);
+			return csvLoadSpotsMeasures(reader, measureType, line, CSV_SEPARATOR);
 		}
 	}
 
-	private String csvLoadSpotsArray(BufferedReader reader, String csvSeparator) throws IOException {
-		String line = reader.readLine();
-		if (line == null) {
-			return null;
-		}
+	private String csvLoadSpotsArray(BufferedReader reader, String line, String csvSeparator) throws IOException {
+//		String line = reader.readLine();
+//		if (line == null) {
+//			return null;
+//		}
 
 		String[] data = line.split(csvSeparator);
 		if (data.length < 2) {
@@ -689,11 +689,11 @@ public class SpotsArray {
 		return reader.readLine();
 	}
 
-	private String csvLoadSpotsDescription(BufferedReader reader, String csvSeparator) throws IOException {
-		String line = reader.readLine();
-		if (line == null) {
-			return null;
-		}
+	private String csvLoadSpotsDescription(BufferedReader reader, String line, String csvSeparator) throws IOException {
+//		String line = reader.readLine();
+//		if (line == null) {
+//			return null;
+//		}
 
 		// Skip description header
 		while (line.startsWith("#")) {
@@ -719,12 +719,12 @@ public class SpotsArray {
 		return reader.readLine();
 	}
 
-	private boolean csvLoadSpotsMeasures(BufferedReader reader, EnumSpotMeasures measureType, String csvSeparator)
+	private boolean csvLoadSpotsMeasures(BufferedReader reader, EnumSpotMeasures measureType, String line, String csvSeparator)
 			throws IOException {
-		String line = reader.readLine();
-		if (line == null) {
-			return false;
-		}
+//		String line = reader.readLine();
+//		if (line == null) {
+//			return false;
+//		}
 
 		// Skip measures header
 		while (line.startsWith("#")) {
