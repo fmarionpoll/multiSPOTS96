@@ -902,9 +902,9 @@ public class CagesArray {
 	public SpotsArray getSpotsArrayFromAllCages() {
 		SpotsArray spotsArray = new SpotsArray();
 		if (cagesList.size() > 0) {
-			int nspots = cagesList.size() * cagesList.get(0).getSpotsArray().getSpotsList().size();
 			for (Cage cage : cagesList) {
-				spotsArray.getSpotsList().addAll(cage.getSpotsArray().getSpotsList());
+				List<Spot> spotsList = cage.getSpotsArray().getSpotsList();
+				spotsArray.getSpotsList().addAll(spotsList);
 			}
 		}
 		return spotsArray;

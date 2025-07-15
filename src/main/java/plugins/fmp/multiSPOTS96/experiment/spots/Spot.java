@@ -1006,6 +1006,7 @@ public class Spot implements Comparable<Spot> {
 
 		void importOneType(EnumSpotMeasures measureType, String[] data, boolean includeX, boolean includeY) {
 			// Implementation for CSV import
+			xx missing code! xxxxx
 		}
 	}
 

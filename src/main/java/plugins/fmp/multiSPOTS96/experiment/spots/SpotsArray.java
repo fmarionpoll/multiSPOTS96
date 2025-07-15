@@ -69,7 +69,7 @@ public class SpotsArray {
 	 * @return the spots list
 	 */
 	public List<Spot> getSpotsList() {
-		return new ArrayList<>(spotsList);
+		return spotsList;
 	}
 
 	/**
