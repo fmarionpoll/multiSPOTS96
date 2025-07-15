@@ -628,126 +628,91 @@ public class SpotsArray {
 		}
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(csvPath.toFile()))) {
-			String line = reader.readLine();
-			if (line == null) {
-				return false;
-			}
+			String line;
+			String sep = CSV_SEPARATOR;
+			while ((line = reader.readLine()) != null) {
+				if (line.charAt(0) == '#')
+					sep = String.valueOf(line.charAt(1));
+				String[] data = line.split(sep);
+				if (data[0].equals("#")) {
+					switch (data[1]) {
+					case "SPOTS_ARRAY":
+						csvLoadSpotsDescription(reader, sep);
+						break;
 
-			// Skip header lines
-			while (line.startsWith("#")) {
-				line = reader.readLine();
-				if (line == null) {
-					return false;
+					case "SPOTS":
+						csvLoadSpotsArray(reader, sep);
+						break;
+
+					case "AREA_SUM":
+					case "AREA_SUMCLEAN":
+					case "AREA_FLYPRESENT":
+					default:
+						EnumSpotMeasures measure = EnumSpotMeasures.findByText(data[1]);
+						if (measure != null)
+							csvLoadSpotsMeasures(reader, measure, sep);
+						break;
+					}
 				}
 			}
-
-			// Load spots array section
-			line = csvLoadSpotsArray(reader, line, CSV_SEPARATOR);
-			if (line == null) {
-				return false;
-			}
-
-			// Load description section
-			line = csvLoadSpotsDescription(reader, line, CSV_SEPARATOR);
-			if (line == null) {
-				return false;
-			}
-
-			// Load measures section
-			return csvLoadSpotsMeasures(reader, measureType, line, CSV_SEPARATOR);
+			reader.close();
+			return true;
 		}
 	}
 
-	private String csvLoadSpotsArray(BufferedReader reader, String line, String csvSeparator) throws IOException {
-//		String line = reader.readLine();
-//		if (line == null) {
-//			return null;
-//		}
-
-		String[] data = line.split(csvSeparator);
-		if (data.length < 2) {
-			return null;
-		}
-
-		int nSpots = Integer.parseInt(data[1]);
-		spotsList.clear();
-
-		for (int i = 0; i < nSpots; i++) {
-			line = reader.readLine();
-			if (line == null) {
-				break;
-			}
-
+	private String csvLoadSpotsArray(BufferedReader reader, String csvSeparator) throws IOException {
+		String line = reader.readLine();
+		while ((line = reader.readLine()) != null) {
 			String[] spotData = line.split(csvSeparator);
-			if (spotData.length >= 2) {
-				Spot spot = new Spot();
-				spot.getProperties().importFromCsv(spotData);
+			if (spotData[0].equals("#"))
+				return spotData[1];
+
+			Spot spot = findSpotByName(spotData[0]);
+			if (spot == null) {
+				spot = new Spot();
 				spotsList.add(spot);
 			}
+			spot.getProperties().importFromCsv(spotData);
 		}
-
-		return reader.readLine();
+		return null;
 	}
 
-	private String csvLoadSpotsDescription(BufferedReader reader, String line, String csvSeparator) throws IOException {
-//		String line = reader.readLine();
-//		if (line == null) {
-//			return null;
-//		}
-
-		// Skip description header
-		while (line.startsWith("#")) {
+	private String csvLoadSpotsDescription(BufferedReader reader, String csvSeparator) throws IOException {
+		String line = reader.readLine();
+		String[] data = line.split(csvSeparator);
+		String motif = data[0].substring(0, Math.min(data[0].length(), 6));
+		if (motif.equals("n spot")) {
+			int nspots = Integer.valueOf(data[1]);
+			if (nspots < spotsList.size())
+				spotsList.subList(nspots, spotsList.size()).clear();
 			line = reader.readLine();
-			if (line == null) {
-				return null;
-			}
+			if (line != null)
+				data = line.split(csvSeparator);
 		}
-
-		// Load description data
-		for (int i = 0; i < spotsList.size(); i++) {
-			line = reader.readLine();
-			if (line == null) {
-				break;
-			}
-
-			String[] data = line.split(csvSeparator);
-			if (data.length >= 11 && i < spotsList.size()) {
-				spotsList.get(i).getProperties().importFromCsv(data);
-			}
+		if (data[0].equals("#")) {
+			return data[1];
 		}
-
-		return reader.readLine();
+		return null;
 	}
 
-	private boolean csvLoadSpotsMeasures(BufferedReader reader, EnumSpotMeasures measureType, String line, String csvSeparator)
+	private String csvLoadSpotsMeasures(BufferedReader reader, EnumSpotMeasures measureType, String csvSeparator)
 			throws IOException {
-//		String line = reader.readLine();
-//		if (line == null) {
-//			return false;
-//		}
-
-		// Skip measures header
-		while (line.startsWith("#")) {
-			line = reader.readLine();
-			if (line == null) {
-				return false;
-			}
-		}
-
-		// Load measures data
-		for (int i = 0; i < spotsList.size(); i++) {
-			line = reader.readLine();
-			if (line == null) {
-				break;
-			}
-
+		String line = reader.readLine();
+		boolean y = true;
+		boolean x = line.contains("xi");
+		while ((line = reader.readLine()) != null) {
 			String[] data = line.split(csvSeparator);
-			if (data.length >= 2 && i < spotsList.size()) {
-				spotsList.get(i).importMeasuresOneType(measureType, data, false, true);
-			}
-		}
+			if (data[0].equals("#"))
+				return data[1];
 
-		return true;
+			Spot spot = findSpotByName(data[0]);
+			if (spot == null) {
+				spot = new Spot();
+				spotsList.add(spot);
+			}
+			spot.importMeasuresOneType(measureType, data, x, y);
+		}
+		return null;
 	}
 
 	private boolean csvSaveSpots(String directory) {

@@ -876,7 +876,8 @@ public class CagesArray {
 	// --------------------------------------------------
 
 	public boolean load_SpotsMeasures(String directory) {
-		boolean flag = getSpotsArrayFromAllCages().loadSpotsMeasures(directory);
+		SpotsArray spotsArray = getSpotsArrayFromAllCages();
+		boolean flag = spotsArray.loadSpotsMeasures(directory);
 		return flag;
 	}
 
