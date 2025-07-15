@@ -230,7 +230,7 @@ public class ChartCage {
 			}
 		}
 
-		LOGGER.fine("Extracted " + seriesCount + " series for cage ID: " + cage.prop.cageID);
+		LOGGER.fine("Extracted " + seriesCount + " series for cage ID: " + cage.getProperties().getCageID());
 		return xySeriesCollection;
 	}
 
@@ -242,7 +242,7 @@ public class ChartCage {
 	 * @return formatted description string
 	 */
 	private String buildSeriesDescription(XLSResults xlsResults, Cage cage) {
-		return "ID:" + xlsResults.cageID + ":Pos:" + xlsResults.cagePosition + ":nflies:" + cage.prop.cageNFlies + ":R:"
+		return "ID:" + xlsResults.cageID + ":Pos:" + xlsResults.cagePosition + ":nflies:" + cage.getProperties().getCageNFlies() + ":R:"
 				+ xlsResults.color.getRed() + ":G:" + xlsResults.color.getGreen() + ":B:" + xlsResults.color.getBlue();
 	}
 

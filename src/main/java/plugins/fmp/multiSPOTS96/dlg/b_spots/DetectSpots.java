@@ -328,7 +328,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			if (iSelectedOption == 0)
 				bselected = cage.getRoi().isSelected();
 			if (bselected)
-				indexes.add(cage.prop.cageID);
+				indexes.add(cage.getProperties().getCageID());
 		}
 		return indexes;
 	}
@@ -369,7 +369,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		if (exp == null)
 			return;
 		for (Cage cage : exp.cagesArray.cagesList) {
-			if (!selectedCagesList.contains(cage.prop.cageID))
+			if (!selectedCagesList.contains(cage.getProperties().getCageID()))
 				continue;
 			cage.getRoi().setSelected(true);
 		}

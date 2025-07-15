@@ -126,8 +126,8 @@ public class Comparators {
                 return -1;
             }
 
-            int y1 = spot1.prop.cageRow * CAGE_GRID_WIDTH + spot1.prop.cageColumn;
-            int y2 = spot2.prop.cageRow * CAGE_GRID_WIDTH + spot2.prop.cageColumn;
+            int y1 = spot1.getProperties().getCageRow() * CAGE_GRID_WIDTH + spot1.getProperties().getCageColumn();
+            int y2 = spot2.getProperties().getCageRow() * CAGE_GRID_WIDTH + spot2.getProperties().getCageColumn();
             return Integer.compare(y1, y2);
         }
     }

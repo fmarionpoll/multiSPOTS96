@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -21,9 +22,11 @@ import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
 /**
  * Legacy Excel export class providing core functionality for Excel data export.
- * This class is being refactored to use the new XLSExportBase template method pattern.
+ * This class is being refactored to use the new XLSExportBase template method
+ * pattern.
  * 
- * <p>Provides functionality for:
+ * <p>
+ * Provides functionality for:
  * <ul>
  * <li>Workbook initialization and styling</li>
  * <li>Sheet creation and management</li>
@@ -32,13 +35,15 @@ import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
  * <li>Experiment data processing</li>
  * </ul>
  * 
- * <p>This class uses Apache POI for Excel file generation and supports both
+ * <p>
+ * This class uses Apache POI for Excel file generation and supports both
  * standard and streaming workbook formats for large datasets.
  * 
  * @author MultiSPOTS96 Team
  * @version 2.0
  * @since 1.0
- * @deprecated Use {@link XLSExportBase} and its subclasses for new implementations
+ * @deprecated Use {@link XLSExportBase} and its subclasses for new
+ *             implementations
  */
 @Deprecated
 public class XLSExport {
@@ -56,8 +61,8 @@ public class XLSExport {
 	// ------------------------------------------------
 
 	/**
-	 * Writes the top row descriptors to the Excel sheet.
-	 * Creates column headers for all experiment metadata fields.
+	 * Writes the top row descriptors to the Excel sheet. Creates column headers for
+	 * all experiment metadata fields.
 	 * 
 	 * @param sheet The Excel sheet to write to
 	 * @return The next available row number after descriptors
@@ -94,8 +99,8 @@ public class XLSExport {
 	}
 
 	/**
-	 * Initializes an Excel workbook with default settings and styles.
-	 * Creates standard cell styles for red and blue text formatting.
+	 * Initializes an Excel workbook with default settings and styles. Creates
+	 * standard cell styles for red and blue text formatting.
 	 * 
 	 * @return A configured SXSSFWorkbook instance ready for data writing
 	 */
@@ -132,10 +137,11 @@ public class XLSExport {
 	}
 
 	/**
-	 * Calculates the number of output frames for an experiment.
-	 * This method handles cases where timing data might be incomplete or invalid.
+	 * Calculates the number of output frames for an experiment. This method handles
+	 * cases where timing data might be incomplete or invalid.
 	 * 
-	 * <p>The calculation follows this logic:
+	 * <p>
+	 * The calculation follows this logic:
 	 * <ol>
 	 * <li>Calculate based on time duration and step size</li>
 	 * <li>If result is invalid, load kymographs and recalculate</li>
@@ -171,7 +177,7 @@ public class XLSExport {
 	XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, EnumXLSExport xlsExportType) {
 		int nOutputFrames = getNOutputFrames(exp);
 		XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
-		xlsResults.dataValues = spot.getMeasuresForExcelPass1(xlsExportType,
+		xlsResults.dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportType,
 				exp.seqCamData.getTimeManager().getBinDurationMs(), options.buildExcelStepMs);
 		if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT)
 			xlsResults.relativeToMaximum(); // relativeToT0();
@@ -207,24 +213,27 @@ public class XLSExport {
 	}
 
 	/**
-	 * Writes comprehensive experiment and spot information to the Excel sheet.
-	 * This method writes all metadata fields for a given experiment, cage, and spot combination.
+	 * Writes comprehensive experiment and spot information to the Excel sheet. This
+	 * method writes all metadata fields for a given experiment, cage, and spot
+	 * combination.
 	 * 
-	 * <p>The information written includes:
+	 * <p>
+	 * The information written includes:
 	 * <ul>
 	 * <li>File path and date information</li>
 	 * <li>Camera identifier extracted from filename</li>
 	 * <li>Experiment properties (box ID, experiment type, stimuli, conditions)</li>
 	 * <li>Spot properties (volume, pixels, position, stimulus, concentration)</li>
-	 * <li>Cage properties (ID, row, column, fly count, strain, sex, age, comments)</li>
+	 * <li>Cage properties (ID, row, column, fly count, strain, sex, age,
+	 * comments)</li>
 	 * </ul>
 	 * 
-	 * @param sheet The Excel sheet to write to
-	 * @param pt The starting point for writing data
-	 * @param exp The experiment containing the data
-	 * @param charSeries The series character identifier for this experiment
-	 * @param cage The cage containing the spot
-	 * @param spot The spot data to write
+	 * @param sheet         The Excel sheet to write to
+	 * @param pt            The starting point for writing data
+	 * @param exp           The experiment containing the data
+	 * @param charSeries    The series character identifier for this experiment
+	 * @param cage          The cage containing the spot
+	 * @param spot          The spot data to write
 	 * @param xlsExportType The type of export being performed
 	 * @return The updated point after writing all information
 	 */
@@ -254,35 +263,48 @@ public class XLSExport {
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DATE.getValue(), transpose, date);
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAM.getValue(), transpose, cam);
 
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_BOXID);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_EXPT);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_STIM);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_CONC);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_STRAIN);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_SEX);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_COND1);
-		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.prop, EnumXLSColumnHeader.EXP_COND2);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.getProperties(), EnumXLSColumnHeader.EXP_BOXID);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.getProperties(), EnumXLSColumnHeader.EXP_EXPT);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.getProperties(), EnumXLSColumnHeader.EXP_STIM);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.getProperties(), EnumXLSColumnHeader.EXP_CONC);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.getProperties(), EnumXLSColumnHeader.EXP_STRAIN);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.getProperties(), EnumXLSColumnHeader.EXP_SEX);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.getProperties(), EnumXLSColumnHeader.EXP_COND1);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, exp.getProperties(), EnumXLSColumnHeader.EXP_COND2);
 
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_VOLUME.getValue(), transpose, spot.getProperties().getSpotVolume());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_PIXELS.getValue(), transpose, spot.getProperties().getSpotNPixels());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_VOLUME.getValue(), transpose,
+				spot.getProperties().getSpotVolume());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_PIXELS.getValue(), transpose,
+				spot.getProperties().getSpotNPixels());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEPOS.getValue(), transpose,
 				spot.getCagePosition(xlsExportType));
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose, spot.getProperties().getStimulus());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose, spot.getProperties().getConcentration());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_STIM.getValue(), transpose,
+				spot.getProperties().getStimulus());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CONC.getValue(), transpose,
+				spot.getProperties().getConcentration());
 
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEID.getValue(), transpose, spot.getProperties().getCageID());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEROW.getValue(), transpose, spot.getProperties().getCageRow());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGECOL.getValue(), transpose, spot.getProperties().getCageColumn());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEID.getValue(), transpose,
+				spot.getProperties().getCageID());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGEROW.getValue(), transpose,
+				spot.getProperties().getCageRow());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_CAGECOL.getValue(), transpose,
+				spot.getProperties().getCageColumn());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGEID.getValue(), transpose,
 				charSeries + spot.getProperties().getCageID());
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose, cage.prop.cageNFlies);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.SPOT_NFLIES.getValue(), transpose,
+				cage.getProperties().getCageNFlies());
 		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CHOICE_NOCHOICE.getValue(), transpose, "");
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose, cage.prop.flyStrain);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose, cage.prop.flySex);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose, cage.prop.flyAge);
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose, cage.prop.comment);
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_STRAIN.getValue(), transpose,
+				cage.getProperties().getFlyStrain());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_SEX.getValue(), transpose,
+				cage.getProperties().getFlySex());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_AGE.getValue(), transpose,
+				cage.getProperties().getFlyAge());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.CAGE_COMMENT.getValue(), transpose,
+				cage.getProperties().getComment());
 //		String sheetName = sheet.getSheetName();
-		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose, spot.getProperties().getStimulusI());
+		XLSUtils.setValue(sheet, x, y + EnumXLSColumnHeader.DUM4.getValue(), transpose,
+				spot.getProperties().getStimulusI());
 
 		pt.y = y + EnumXLSColumnHeader.DUM4.getValue() + 1;
 		return pt;

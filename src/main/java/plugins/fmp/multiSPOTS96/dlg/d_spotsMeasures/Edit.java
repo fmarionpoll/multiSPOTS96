@@ -172,7 +172,7 @@ public class Edit extends JPanel implements PropertyChangeListener {
 
 	private void compensateAndUpdate(SequenceKymos seqKymos, Spot spot, SpotMeasure spotMeasure, ROI2D roi) {
 		boolean bAdd = (directionCombo.getSelectedIndex() == 0);
-		spotMeasure.compensateOffetUsingSelectedRoi(roi, bAdd);
+		spotMeasure.compensateOffsetUsingSelectedRoi(roi, bAdd);
 		spotMeasure.transferROItoLevel2D();
 	}
 

@@ -62,7 +62,7 @@ public class DetectSpotsTools {
 		final ROI2DArea binarizedImageRoi = binarizeImage(workimage, options);
 
 		for (Cage cage : exp.cagesArray.cagesList) {
-			if (!options.selectedIndexes.contains(cage.prop.cageID))
+			if (!options.selectedIndexes.contains(cage.getProperties().getCageID()))
 				continue;
 
 			cage.spotsArray = new SpotsArray();
@@ -91,8 +91,8 @@ public class DetectSpotsTools {
 									.collect(Collectors.toList());
 							ROI2DPolygon roi = new ROI2DPolygon(points2s);
 							Spot spot = new Spot(roi);
-							spot.setName(cage.prop.cageID, spotID);
-							spot.getProperties().getCageID() = cage.prop.cageID;
+							spot.setName(cage.getProperties().getCageID(), spotID);
+							spot.getProperties().setCageID(cage.getProperties().getCageID());
 							cage.spotsArray.addSpot(spot);
 							spotID++;
 						}

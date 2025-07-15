@@ -310,7 +310,7 @@ public class ROI2DMeasures {
 					.collect(Collectors.toList());
 			ROI2DPolygon roi = new ROI2DPolygon(points2s);
 			return roi;
-		} 
+		}
 		return null;
 	}
 
@@ -318,9 +318,9 @@ public class ROI2DMeasures {
 			BuildSeriesOptions options) {
 		boolean spotThresholdUp = options.spotThresholdUp;
 		int spotThreshold = options.spotThreshold;
-		Rectangle rectSpot = spot.mask2DSpot.bounds;
+		Rectangle rectSpot = spot.getMask2DSpot().bounds;
 		IcyBufferedImage subWorkImage = IcyBufferedImageUtil.getSubImage(workImage, rectSpot);
-		boolean[] mask = spot.mask2DSpot.mask;
+		boolean[] mask = spot.getMask2DSpot().mask;
 		int[] workData = (int[]) ArrayUtil.arrayToIntArray(subWorkImage.getDataXY(0), workImage.isSignedDataType());
 
 		if (spotThresholdUp) {
@@ -342,7 +342,7 @@ public class ROI2DMeasures {
 		List<Point> points = null;
 		BooleanMask2D[] components = null;
 		int maxPoints = 0;
-		
+
 		try {
 			components = mask2d.getComponents();
 			int itemMax = 0;

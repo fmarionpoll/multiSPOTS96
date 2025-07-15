@@ -50,7 +50,7 @@ public class Experiment {
 	public FileTime firstImage_FileTime;
 	public FileTime lastImage_FileTime;
 
-	public ExperimentProperties prop = new ExperimentProperties();
+	private ExperimentProperties prop = new ExperimentProperties();
 	public int col = -1;
 	public Experiment chainToPreviousExperiment = null;
 	public Experiment chainToNextExperiment = null;
@@ -844,6 +844,11 @@ public class Experiment {
 		boolean flag = save_MS96_cages();
 		flag &= save_MS96_spotsMeasures();
 		return flag;
+	}
+
+	// ============== get/set =============
+	public ExperimentProperties getProperties() {
+		return prop;
 	}
 
 }

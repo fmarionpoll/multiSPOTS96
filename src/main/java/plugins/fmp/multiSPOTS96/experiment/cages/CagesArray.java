@@ -83,7 +83,7 @@ public class CagesArray {
 
 	public void clearAllMeasures(int option_detectCage) {
 		for (Cage cage : cagesList) {
-			if (option_detectCage < 0 || option_detectCage == cage.prop.cageID)
+			if (option_detectCage < 0 || option_detectCage == cage.getProperties().getCageID())
 				cage.clearMeasures();
 		}
 	}
@@ -111,10 +111,10 @@ public class CagesArray {
 			Cage cage = new Cage();
 			cage.copyCage(cageFrom, bMeasures);
 			cagesList.add(cage);
-			if (nCagesAlongX < cageFrom.prop.arrayColumn)
-				nCagesAlongX = cageFrom.prop.arrayColumn;
-			if (nCagesAlongY < cageFrom.prop.arrayRow)
-				nCagesAlongY = cageFrom.prop.arrayRow;
+			if (nCagesAlongX < cageFrom.getProperties().getArrayColumn())
+				nCagesAlongX = cageFrom.getProperties().getArrayColumn();
+			if (nCagesAlongY < cageFrom.getProperties().getArrayRow())
+				nCagesAlongY = cageFrom.getProperties().getArrayRow();
 		}
 	}
 
@@ -124,9 +124,9 @@ public class CagesArray {
 
 	public void pasteCages(ArrayList<Cage> cagesListTo, boolean bMeasures) {
 		for (Cage cageTo : cagesListTo) {
-			int fromID = cageTo.prop.cageID;
+			int fromID = cageTo.getProperties().getCageID();
 			for (Cage cage : cagesList) {
-				if (cage.prop.cageID == fromID) {
+				if (cage.getProperties().getCageID() == fromID) {
 					cage.pasteCage(cageTo, bMeasures);
 					break;
 				}
@@ -370,7 +370,7 @@ public class CagesArray {
 	public Cage getCageFromRowColCoordinates(int row, int column) {
 		Cage cage_found = null;
 		for (Cage cage : cagesList) {
-			if (cage.prop.arrayColumn == column && cage.prop.arrayRow == row) {
+			if (cage.getProperties().getArrayColumn() == column && cage.getProperties().getArrayRow() == row) {
 				cage_found = cage;
 				break;
 			}
@@ -406,7 +406,7 @@ public class CagesArray {
 	public Cage getCageFromNumber(int number) {
 		Cage cageFound = null;
 		for (Cage cage : cagesList) {
-			if (number == cage.prop.cageID) {
+			if (number == cage.getProperties().getCageID()) {
 				cageFound = cage;
 				break;
 			}
@@ -416,7 +416,7 @@ public class CagesArray {
 
 	public Cage getCageFromID(int cageID) {
 		for (Cage cage : cagesList) {
-			if (cage.prop.cageID == cageID)
+			if (cage.getProperties().getCageID() == cageID)
 				return cage;
 		}
 		return null;
@@ -498,9 +498,9 @@ public class CagesArray {
 		int nbcages = cagesList.size();
 		for (int i = 0; i < nbcages; i++) {
 			Cage cage = cagesList.get(i);
-			if (option_cagenumber != -1 && cage.prop.cageID != option_cagenumber)
+			if (option_cagenumber != -1 && cage.getProperties().getCageID() != option_cagenumber)
 				continue;
-			if (cage.prop.cageNFlies > 0) {
+			if (cage.getProperties().getCageNFlies() > 0) {
 				cage.flyPositions = new FlyPositions();
 				cage.flyPositions.ensureCapacity(detect_nframes);
 			}
@@ -579,8 +579,8 @@ public class CagesArray {
 			return null;
 		Polygon2D polygon = getROIPolygon2D(cagesList.get(0).getRoi());
 		for (Cage cage : cagesList) {
-			int col = cage.prop.arrayColumn;
-			int row = cage.prop.arrayRow;
+			int col = cage.getProperties().getArrayColumn();
+			int row = cage.getProperties().getArrayRow();
 			Polygon2D n = getROIPolygon2D(cage.getRoi());
 			if (col == 0 && row == 0) {
 				transferPointToPolygon(0, polygon, n);
@@ -670,7 +670,7 @@ public class CagesArray {
 
 	public void initCagesAndSpotsWithNFlies(int nflies) {
 		for (Cage cage : cagesList) {
-			cage.prop.cageNFlies = nflies;
+			cage.getProperties().setCageNFlies(nflies);
 			cage.setNFlies(nflies);
 		}
 	}

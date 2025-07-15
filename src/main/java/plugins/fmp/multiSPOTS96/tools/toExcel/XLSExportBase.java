@@ -373,7 +373,7 @@ public abstract class XLSExportBase {
 	 * Writes experiment properties to the sheet.
 	 */
 	private void writeExperimentProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp) {
-		ExperimentProperties props = exp.prop;
+		ExperimentProperties props = exp.getProperties();
 
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_BOXID);
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_EXPT);
@@ -409,7 +409,7 @@ public abstract class XLSExportBase {
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGEID, transpose,
 				charSeries + spot.getProperties().getCageID());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.SPOT_NFLIES, transpose,
-				cage.prop.cageNFlies);
+				cage.getProperties().getCageNFlies());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CHOICE_NOCHOICE, transpose,
 				ExcelExportConstants.CHOICE_NOCHOICE_DEFAULT);
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.DUM4, transpose,
@@ -421,11 +421,13 @@ public abstract class XLSExportBase {
 	 */
 	private void writeCageProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Cage cage) {
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_STRAIN, transpose,
-				cage.prop.flyStrain);
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_SEX, transpose, cage.prop.flySex);
-		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_AGE, transpose, cage.prop.flyAge);
+				cage.getProperties().getFlyStrain());
+		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_SEX, transpose,
+				cage.getProperties().getFlySex());
+		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_AGE, transpose,
+				cage.getProperties().getFlyAge());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_COMMENT, transpose,
-				cage.prop.comment);
+				cage.getProperties().getComment());
 	}
 
 	/**

@@ -164,14 +164,14 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private void analyzeImageWithSpot2(IcyBufferedImageCursor cursorSource, Spot spot, int t, int sizeC) {
-		ROI2DAlongT roiT = spot.getROIAtT(t);
+		ROI2DAlongT roiT = spot.getRoiAtTime(t);
 		Point[] maskPoints = roiT.getMaskPoints();
 		if (maskPoints == null) {
 			return; // No mask points available
 		}
 
 		for (int chan = 0; chan < sizeC; chan++) {
-			IcyBufferedImageCursor cursor = new IcyBufferedImageCursor(spot.spotImage);
+			IcyBufferedImageCursor cursor = new IcyBufferedImageCursor(spot.getSpotImage());
 			try {
 				int i = 0;
 				for (int j = roiT.getYMin(); j < roiT.getYMax(); j++) {
@@ -298,7 +298,7 @@ public class BuildSpotsKymos extends BuildSeries {
 						e.printStackTrace();
 					}
 				}
-				spot.spotImage = new IcyBufferedImage(kymoImageWidth, imageHeight, numC, dataType);
+				spot.setSpotImage(new IcyBufferedImage(kymoImageWidth, imageHeight, numC, dataType));
 			}
 		}
 	}

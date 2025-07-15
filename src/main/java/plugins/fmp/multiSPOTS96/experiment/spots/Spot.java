@@ -464,6 +464,58 @@ public class Spot implements Comparable<Spot> {
 		metadata.setMask2DSpot(mask2DSpot);
 	}
 
+	/**
+	 * Gets spotImage.
+	 * 
+	 * @return spotImage
+	 */
+	public IcyBufferedImage getSpotImage() {
+		return metadata.getSpotImage();
+	}
+
+	/**
+	 * Sets spotImage.
+	 * 
+	 * @param IcyBufferedImage to set
+	 */
+	public void setSpotImage(IcyBufferedImage image) {
+		metadata.setSpotImage(image);
+	}
+
+	/**
+	 * Gets spotImage FileName.
+	 * 
+	 * @return spotImage
+	 */
+	public String getSpotFilenameTiff() {
+		return metadata.getSpotFilenameTiff();
+	}
+
+	/**
+	 * Sets spotImage.
+	 * 
+	 * @param IcyBufferedImage to set
+	 */
+	public void setSpotFilenameTiff(String name) {
+		metadata.setSpotFilenameTiff(name);
+	}
+
+	public int getSpotKymographT() {
+		return metadata.getSpotKymographT();
+	}
+
+	public void setSpotKymographT(int spotKymographT) {
+		this.metadata.setSpotKymographT(spotKymographT);
+	}
+
+	public int getSpotCamDataT() {
+		return metadata.getSpotCamDataT();
+	}
+
+	public void setSpotCamDataT(int spotCamDataT) {
+		this.metadata.setSpotCamDataT(spotCamDataT);
+	}
+
 	// === SELECTION ===
 
 	/**

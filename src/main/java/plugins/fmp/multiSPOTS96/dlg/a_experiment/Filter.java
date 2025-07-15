@@ -78,7 +78,6 @@ public class Filter extends JPanel {
 		c.gridx += delta2;
 		add(applyButton, c);
 
-
 		// line 2
 		c.gridy = 1;
 		c.gridx = 0;
@@ -91,7 +90,7 @@ public class Filter extends JPanel {
 		add(sexCombo, c);
 		c.gridx += delta2;
 		add(clearButton, c);
-		
+
 		// line 1
 		c.gridy = 2;
 		c.gridx = 0;
@@ -103,7 +102,6 @@ public class Filter extends JPanel {
 		c.gridx += delta1;
 		add(comt2Combo, c);
 
-				
 		// line 3
 		c.gridy = 3;
 		c.gridx = 0;
@@ -197,7 +195,7 @@ public class Filter extends JPanel {
 		Iterator<Experiment> iterator = filteredList.iterator();
 		while (iterator.hasNext()) {
 			Experiment exp = iterator.next();
-			int compare = exp.prop.getExperimentField(header).compareTo(filter);
+			int compare = exp.getProperties().getExperimentField(header).compareTo(filter);
 			if (compare != 0)
 				iterator.remove();
 		}

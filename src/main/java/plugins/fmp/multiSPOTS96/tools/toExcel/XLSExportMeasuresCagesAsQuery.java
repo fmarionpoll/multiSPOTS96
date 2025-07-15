@@ -123,10 +123,10 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExport {
 	int xlsExportExperimentCageDataToSheet(SXSSFSheet sheet, Experiment exp, EnumXLSExport xlsExportType, int col0,
 			String charSeries) {
 		Point pt = new Point(col0, 0);
-		String stim1 = exp.prop.field_stim1;
-		String conc1 = exp.prop.field_conc1;
-		String stim2 = exp.prop.field_stim2;
-		String conc2 = exp.prop.field_conc2;
+		String stim1 = exp.getProperties().getField_stim1();
+		String conc1 = exp.getProperties().getField_conc1();
+		String stim2 = exp.getProperties().getField_stim2();
+		String conc2 = exp.getProperties().getField_conc2();
 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
@@ -211,36 +211,36 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExport {
 			return df.format(exp.chainImageFirst_ms);
 
 		case EXP_BOXID:
-			return exp.prop.ffield_boxID;
+			return exp.getProperties().getFfield_boxID();
 		case CAGEID:
-			return Integer.toString(cage.prop.cageID);
+			return Integer.toString(cage.getProperties().getCageID());
 		case EXP_EXPT:
-			return exp.prop.ffield_experiment;
+			return exp.getProperties().getFfield_experiment();
 		case EXP_STRAIN:
-			return exp.prop.field_strain;
+			return exp.getProperties().getField_strain();
 		case EXP_SEX:
-			return exp.prop.field_sex;
+			return exp.getProperties().getField_sex();
 		case EXP_STIM1:
-			return exp.prop.field_stim1;
+			return exp.getProperties().getField_stim1();
 		case EXP_CONC1:
-			return exp.prop.field_conc1;
+			return exp.getProperties().getField_conc1();
 		case EXP_STIM2:
-			return exp.prop.field_stim2;
+			return exp.getProperties().getField_stim2();
 		case EXP_CONC2:
-			return exp.prop.field_conc2;
+			return exp.getProperties().getField_conc2();
 
 		case CAGE_POS:
-			return Integer.toString(cage.prop.arrayIndex);
+			return Integer.toString(cage.getProperties().getArrayIndex());
 		case CAGE_NFLIES:
-			return Integer.toString(cage.prop.cageNFlies);
+			return Integer.toString(cage.getProperties().getCageNFlies());
 		case CAGE_STRAIN:
-			return cage.prop.flyStrain;
+			return cage.getProperties().getFlyStrain();
 		case CAGE_SEX:
-			return cage.prop.flySex;
+			return cage.getProperties().getFlySex();
 		case CAGE_AGE:
-			return Integer.toString(cage.prop.flyAge);
+			return Integer.toString(cage.getProperties().getFlyAge());
 		case CAGE_COMMENT:
-			return cage.prop.comment;
+			return cage.getProperties().getComment();
 //		case DUM4:
 //			break;
 //		case VAL_TIME:

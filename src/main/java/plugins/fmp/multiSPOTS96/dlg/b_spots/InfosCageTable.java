@@ -112,7 +112,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 							if (!cageFrom.getRoi().getName().equals(cageTo.getRoi().getName()))
 								continue;
 							cageFrom.valid = true;
-							cageTo.prop.copy(cageFrom.prop);
+							cageTo.getProperties().copy(cageFrom.prop);
 						}
 					}
 					cageTable.cageTableModel.fireTableDataChanged();
@@ -130,7 +130,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 					if (rowIndex >= 0) {
 						Object value = cageTable.cageTableModel.getValueAt(rowIndex, columnIndex);
 						for (Cage cage : exp.cagesArray.cagesList) {
-							int iID = cage.prop.cageID;
+							int iID = cage.getProperties().getCageID();
 							cageTable.cageTableModel.setValueAt(value, iID, columnIndex);
 						}
 					}

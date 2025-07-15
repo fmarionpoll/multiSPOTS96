@@ -117,8 +117,8 @@ public class LoadSave extends JPanel {
 							} catch (FormatException | IOException e) {
 								e.printStackTrace();
 							}
-							System.out.println(
-									"LoadSaveKymos:saveKymographFiles() File " + spot.getSpotFilenameTiff() + " saved ");
+							System.out.println("LoadSaveKymos:saveKymographFiles() File " + spot.getSpotFilenameTiff()
+									+ " saved ");
 						}
 					});
 				}

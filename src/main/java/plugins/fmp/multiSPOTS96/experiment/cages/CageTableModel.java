@@ -52,19 +52,19 @@ public class CageTableModel extends AbstractTableModel {
 			case 0:
 				return cage.getRoi().getName();
 			case 1:
-				return cage.prop.cageNFlies;
+				return cage.getProperties().getCageNFlies();
 			case 2:
-				return cage.prop.flyStrain;
+				return cage.getProperties().getFlyStrain();
 			case 3:
-				return cage.prop.flySex;
+				return cage.getProperties().getFlySex();
 			case 4:
-				return cage.prop.flyAge;
+				return cage.getProperties().getFlyAge();
 			case 5:
-				return cage.prop.comment;
+				return cage.getProperties().getComment();
 			case 6:
-				return cage.prop.color;
+				return cage.getProperties().getColor();
 			case 7:
-				return cage.prop.isSelected();
+				return cage.getProperties().isSelected();
 			}
 		}
 		return null;
@@ -111,33 +111,33 @@ public class CageTableModel extends AbstractTableModel {
 				cage.getRoi().setName(aValue.toString());
 				break;
 			case 1: {
-				cage.prop.cageNFlies = (int) aValue;
+				cage.getProperties().setCageNFlies((int) aValue);
 				int ivalue = (int) aValue;
 				Color color = ivalue >= 0 ? colorTable[((int) aValue) % 2] : Color.yellow;
-				cage.prop.color = color;
+				cage.getProperties().setColor(color);
 				cage.getRoi().setColor(color);
 			}
 				break;
 			case 2:
-				cage.prop.flyStrain = aValue.toString();
+				cage.getProperties().setFlyStrain(aValue.toString());
 				break;
 			case 3:
-				cage.prop.flySex = aValue.toString();
+				cage.getProperties().setFlySex(aValue.toString());
 				break;
 			case 4:
-				cage.prop.flyAge = (int) aValue;
+				cage.getProperties().setFlyAge((int) aValue);
 				break;
 			case 5:
-				cage.prop.comment = aValue.toString();
+				cage.getProperties().setComment(aValue.toString());
 				break;
 			case 6:
-				cage.prop.color = (Color) aValue;
+				cage.getProperties().setColor((Color) aValue);
 				break;
 			case 7:
-				cage.prop.setSelected(Boolean.valueOf(aValue.toString()));
-				int ivalue = cage.prop.isSelected() ? 1 : 0;
+				cage.getProperties().setSelected(Boolean.valueOf(aValue.toString()));
+				int ivalue = cage.getProperties().isSelected() ? 1 : 0;
 				Color color = ivalue >= 0 ? colorTable[ivalue % 2] : Color.yellow;
-				cage.prop.color = color;
+				cage.getProperties().setColor(color);
 				cage.getRoi().setColor(color);
 				break;
 			}

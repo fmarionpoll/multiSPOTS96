@@ -18,7 +18,7 @@ public class XLSExportForChart extends XLSExport {
 		// loop to get all spots into expAll and init rows for this experiment
 		expAll.cagesArray.copyCages(exp.cagesArray.cagesList, true);
 		expAll.chainImageFirst_ms = exp.chainImageFirst_ms;
-		expAll.prop.copyExperimentFieldsFrom(exp.prop);
+		expAll.getProperties().copyExperimentFieldsFrom(exp.getProperties());
 		expAll.setResultsDirectory(exp.getResultsDirectory());
 
 		Experiment expi = exp.chainToNextExperiment;

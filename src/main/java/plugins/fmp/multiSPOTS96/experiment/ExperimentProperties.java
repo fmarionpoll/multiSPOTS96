@@ -199,4 +199,46 @@ public class ExperimentProperties {
 		i++;
 		field_conc2 = data[i];
 	}
+
+	// ================ getters / setters
+
+	public String getFfield_boxID() {
+		return ffield_boxID;
+	}
+
+	public String getFfield_experiment() {
+		return ffield_experiment;
+	}
+
+	public String getField_stim1() {
+		return field_stim1;
+	}
+
+	public String getField_conc1() {
+		return field_conc1;
+	}
+
+	public String getField_comment1() {
+		return field_comment1;
+	}
+
+	public String getField_comment2() {
+		return field_comment2;
+	}
+
+	public String getField_strain() {
+		return field_strain;
+	}
+
+	public String getField_sex() {
+		return field_sex;
+	}
+
+	public String getField_stim2() {
+		return field_stim2;
+	}
+
+	public String getField_conc2() {
+		return field_conc2;
+	}
 }

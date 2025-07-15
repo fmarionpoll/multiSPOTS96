@@ -255,7 +255,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 		int cageID = prop.getCageID();
 
 		for (Cage cage : exp.cagesArray.cagesList) {
-			if (cage.prop.cageID == cageID)
+			if (cage.getProperties().getCageID() == cageID)
 				continue;
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				if (spot.getProperties().getCagePosition() != cagePosition)
@@ -315,7 +315,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 		Cage cageFrom = exp.cagesArray.getCageFromSpotName(spotFromSelectedRow.getRoi().getName());
 
 		for (Cage cage : exp.cagesArray.cagesList) {
-			if (cage.prop.cageID == cageIDFrom)
+			if (cage.getProperties().getCageID() == cageIDFrom)
 				continue;
 
 			for (int i = 0; i < cage.spotsArray.getSpotsList().size(); i++) {

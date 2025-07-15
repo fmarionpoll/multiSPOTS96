@@ -239,10 +239,10 @@ public class CreateCages extends JPanel {
 				roiP.setColor(Color.magenta);
 
 				Cage cage = new Cage(roiP);
-				cage.prop.cageID = index;
-				cage.prop.arrayIndex = index;
-				cage.prop.arrayColumn = column;
-				cage.prop.arrayRow = row;
+				cage.getProperties().setCageID(index);
+				cage.getProperties().setArrayIndex(index);
+				cage.getProperties().setArrayColumn(column);
+				cage.getProperties().setArrayRow(row);
 
 				index++;
 				exp.seqCamData.getSequence().addROI(roiP);

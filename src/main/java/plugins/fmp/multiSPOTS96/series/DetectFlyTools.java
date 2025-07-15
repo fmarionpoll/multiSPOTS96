@@ -95,9 +95,9 @@ public class DetectFlyTools {
 		List<Rectangle2D> listRectangles = new ArrayList<Rectangle2D>(cages.cagesList.size());
 
 		for (Cage cage : cages.cagesList) {
-			if (options.detectCage != -1 && cage.prop.cageID != options.detectCage)
+			if (options.detectCage != -1 && cage.getProperties().getCageID() != options.detectCage)
 				continue;
-			if (cage.prop.cageNFlies < 1)
+			if (cage.getProperties().getCageNFlies() < 1)
 				continue;
 
 			futures.add(processor.submit(new Runnable() {
@@ -167,7 +167,7 @@ public class DetectFlyTools {
 		cages.computeBooleanMasksForCages();
 		rectangleAllCages = null;
 		for (Cage cage : cages.cagesList) {
-			if (cage.prop.cageNFlies < 1)
+			if (cage.getProperties().getCageNFlies() < 1)
 				continue;
 			Rectangle rect = cage.getRoi().getBounds();
 			if (rectangleAllCages == null)

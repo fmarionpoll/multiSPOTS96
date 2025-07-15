@@ -206,9 +206,9 @@ public class ChartFliesPositions extends IcyFrame {
 
 				xyDataSetList.add(xyDataset);
 				count++;
-				LOGGER.fine("Added data for cage ID: " + cage.prop.cageID);
+				LOGGER.fine("Added data for cage ID: " + cage.getProperties().getCageID());
 			} else {
-				LOGGER.fine("Skipping cage ID " + cage.prop.cageID + " - no position data");
+				LOGGER.fine("Skipping cage ID " + cage.getProperties().getCageID() + " - no position data");
 			}
 		}
 
@@ -267,7 +267,7 @@ public class ChartFliesPositions extends IcyFrame {
 
 		FlyPositions results = cage.flyPositions;
 		if (results == null || results.flyPositionList == null) {
-			LOGGER.warning("No fly positions data for cage ID: " + cage.prop.cageID);
+			LOGGER.warning("No fly positions data for cage ID: " + cage.getProperties().getCageID());
 			return new MaxMinDouble(0.0, 1.0);
 		}
 
@@ -293,7 +293,7 @@ public class ChartFliesPositions extends IcyFrame {
 				break;
 			}
 		} else {
-			LOGGER.warning("No data points for cage ID: " + cage.prop.cageID);
+			LOGGER.warning("No data points for cage ID: " + cage.getProperties().getCageID());
 			yMaxMin = new MaxMinDouble(0.0, 1.0);
 		}
 

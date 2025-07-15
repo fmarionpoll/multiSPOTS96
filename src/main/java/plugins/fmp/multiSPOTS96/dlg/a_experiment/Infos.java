@@ -145,7 +145,7 @@ public class Infos extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					ExperimentProperties expDesc = exp.prop;
+					ExperimentProperties expDesc = exp.getProperties();
 					getExperimentInfosFromDialog(expDesc);
 					exp.save_MS96_experiment();
 				}
@@ -182,11 +182,11 @@ public class Infos extends JPanel {
 
 	private void setInfoCombo(Experiment exp_dest, Experiment exp_source, JComboBox<String> combo,
 			EnumXLSColumnHeader field) {
-		String altText = exp_source.prop.getExperimentField(field);
-		String text = exp_dest.prop.getExperimentField(field);
+		String altText = exp_source.getProperties().getExperimentField(field);
+		String text = exp_dest.getProperties().getExperimentField(field);
 		if (text.equals(".."))
-			exp_dest.prop.setExperimentFieldNoTest(field, altText);
-		text = exp_dest.prop.getExperimentField(field);
+			exp_dest.getProperties().setExperimentFieldNoTest(field, altText);
+		text = exp_dest.getProperties().getExperimentField(field);
 		addItemToComboIfNew(text, combo);
 		combo.setSelectedItem(text);
 	}

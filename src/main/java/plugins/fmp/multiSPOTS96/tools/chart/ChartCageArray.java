@@ -32,9 +32,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportForChart;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResultsArray;
 
 /**
  * Chart display class for spot data visualization. This class creates and
@@ -266,7 +264,7 @@ public class ChartCageArray extends IcyFrame {
 				}
 
 				if (cage.spotsArray.getSpotsCount() < 1) {
-					LOGGER.fine("Skipping cage " + cage.prop.cageID + " - no spots");
+					LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
 					continue;
 				}
 
@@ -303,7 +301,7 @@ public class ChartCageArray extends IcyFrame {
 		XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList, xAxis, yAxis);
 
 		JFreeChart chart = new JFreeChart(null, null, cageXYPlot, false);
-		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.prop.cagePosition);
+		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 
 		ChartPanel chartPanel = new ChartPanel(chart, DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, MIN_CHART_WIDTH,
 				MIN_CHART_HEIGHT, MAX_CHART_WIDTH, MAX_CHART_HEIGHT, true, true, true, true, false, true);
@@ -377,17 +375,17 @@ public class ChartCageArray extends IcyFrame {
 		LOGGER.fine("Set chart location to: " + graphLocation);
 	}
 
-	/**
-	 * Gets data as results array from the experiment.
-	 * 
-	 * @param exp              the experiment
-	 * @param xlsExportOptions the export options
-	 * @return XLSResultsArray containing the data
-	 */
-	private XLSResultsArray getDataAsResultsArray(Experiment exp, XLSExportOptions xlsExportOptions) {
-		XLSExportForChart xlsExport = new XLSExportForChart();
-		return xlsExport.getSpotsDataFromOneExperiment_v2parms(exp, xlsExportOptions);
-	}
+//	/**
+//	 * Gets data as results array from the experiment.
+//	 * 
+//	 * @param exp              the experiment
+//	 * @param xlsExportOptions the export options
+//	 * @return XLSResultsArray containing the data
+//	 */
+//	private XLSResultsArray getDataAsResultsArray(Experiment exp, XLSExportOptions xlsExportOptions) {
+//		XLSExportForChart xlsExport = new XLSExportForChart();
+//		return xlsExport.getSpotsDataFromOneExperiment_v2parms(exp, xlsExportOptions);
+//	}
 
 	/**
 	 * Gets the spot from a clicked chart.
@@ -460,8 +458,8 @@ public class ChartCageArray extends IcyFrame {
 					spotFound = experiment.cagesArray.getSpotFromROIName(description);
 				}
 			} else {
-						if (cage.spotsArray.getSpotsCount() > 0) {
-			spotFound = cage.spotsArray.getSpotsList().get(0);
+				if (cage.spotsArray.getSpotsCount() > 0) {
+					spotFound = cage.spotsArray.getSpotsList().get(0);
 				}
 			}
 
@@ -471,7 +469,7 @@ public class ChartCageArray extends IcyFrame {
 			}
 
 			int index = experiment.cagesArray.getSpotGlobalPosition(spotFound);
-			spotFound.spotKymograph_T = index;
+			spotFound.setSpotKymographT(index);
 			return spotFound;
 
 		} catch (NumberFormatException ex) {
@@ -514,7 +512,7 @@ public class ChartCageArray extends IcyFrame {
 			return null;
 		}
 
-		spotFound.spotCamData_T = xyItemEntity.getItem();
+		spotFound.setSpotCamDataT(xyItemEntity.getItem());
 		return spotFound;
 	}
 
@@ -551,8 +549,8 @@ public class ChartCageArray extends IcyFrame {
 		}
 
 		Viewer v = exp.seqCamData.getSequence().getFirstViewer();
-		if (v != null && spot.spotCamData_T > 0) {
-			int frameIndex = (int) (spot.spotCamData_T * xlsExportOptions.buildExcelStepMs
+		if (v != null && spot.getSpotCamDataT() > 0) {
+			int frameIndex = (int) (spot.getSpotCamDataT() * xlsExportOptions.buildExcelStepMs
 					/ exp.seqCamData.getTimeManager().getBinDurationMs());
 			v.setPositionT(frameIndex);
 		}
@@ -573,7 +571,7 @@ public class ChartCageArray extends IcyFrame {
 		if (exp.seqKymos != null) {
 			Viewer v = exp.seqKymos.getSequence().getFirstViewer();
 			if (v != null) {
-				v.setPositionT(spot.spotKymograph_T);
+				v.setPositionT(spot.getSpotKymographT());
 			}
 		}
 	}
@@ -680,7 +678,7 @@ public class ChartCageArray extends IcyFrame {
 			Spot clickedSpot = getSpotFromClickedChart(e);
 			if (clickedSpot != null) {
 				chartSelectClickedSpot(experiment, xlsOptions, clickedSpot);
-				Cage cage = experiment.cagesArray.getCageFromID(clickedSpot.prop.cageID);
+				Cage cage = experiment.cagesArray.getCageFromID(clickedSpot.getProperties().getCageID());
 				if (cage != null && parent != null && parent.dlgSpots != null) {
 					parent.dlgSpots.tabInfos.selectCage(cage);
 					parent.dlgSpots.tabInfos.selectSpot(clickedSpot);

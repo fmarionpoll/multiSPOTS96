@@ -34,10 +34,10 @@ public class XLSResults {
 
 	public XLSResults(Cage cage, Spot spot, EnumXLSExport exportType, int nFrames) {
 		this.name = spot.getName();
-		this.color = spot.getProperties()..color;
-		this.nflies = cage.prop.cageNFlies;
-		this.cageID = cage.prop.cageID;
-		this.cagePosition = spot.getProperties()..cagePosition;
+		this.color = spot.getProperties().getColor();
+		this.nflies = cage.getProperties().getCageNFlies();
+		this.cageID = cage.getProperties().getCageID();
+		this.cagePosition = spot.getProperties().getCagePosition();
 		this.exportType = exportType;
 		initValuesArray(nFrames);
 	}

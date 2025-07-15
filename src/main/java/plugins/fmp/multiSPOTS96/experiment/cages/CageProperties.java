@@ -121,8 +121,112 @@ public class CageProperties {
 		return cagePosition;
 	}
 
+	public void setCagePosition(int pos) {
+		this.cagePosition = pos;
+	}
+
 	public int getCageID() {
 		return cageID;
+	}
+
+	public void setCageID(int cageID) {
+		this.cageID = cageID;
+	}
+
+	public int getCageNFlies() {
+		return cageNFlies;
+	}
+
+	public void setCageNFlies(int nFlies) {
+		this.cageNFlies = nFlies;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public int getArrayIndex() {
+		return arrayIndex;
+	}
+
+	public void setArrayIndex(int arrayIndex) {
+		this.arrayIndex = arrayIndex;
+	}
+
+	public int getArrayColumn() {
+		return arrayColumn;
+	}
+
+	public void setArrayColumn(int arrayColumn) {
+		this.arrayColumn = arrayColumn;
+	}
+
+	public int getArrayRow() {
+		return arrayRow;
+	}
+
+	public void setArrayRow(int arrayRow) {
+		this.arrayRow = arrayRow;
+	}
+
+	public int getFlyAge() {
+		return flyAge;
+	}
+
+	public void setFlyAge(int flyAge) {
+		this.flyAge = flyAge;
+	}
+
+	public boolean getChecked() {
+		return checked;
+	}
+
+	public void setChecked(boolean checked) {
+		this.checked = checked;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public String getFlySex() {
+		return flySex;
+	}
+
+	public void setFlySex(String flySex) {
+		this.flySex = flySex;
+	}
+
+	public String getFlyStrain() {
+		return flyStrain;
+	}
+
+	public void setFlyStrain(String flyStrain) {
+		this.flyStrain = flyStrain;
+	}
+
+	public String getStrCageNumber() {
+		return strCageNumber;
+	}
+
+	public void setStrCageNumber(String strCageNumber) {
+		this.strCageNumber = strCageNumber;
 	}
 
 }

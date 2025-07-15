@@ -149,7 +149,7 @@ public class Edit extends JPanel {
 				Rectangle2D rect = cage.flyPositions.flyPositionList.get(frame).rectPosition;
 				if (rect.getX() == -1 && rect.getY() == -1) {
 					foundT = cage.flyPositions.flyPositionList.get(frame).flyIndexT;
-					foundCage = cage.prop.cageID;
+					foundCage = cage.getProperties().getCageID();
 					return true;
 				}
 			}
