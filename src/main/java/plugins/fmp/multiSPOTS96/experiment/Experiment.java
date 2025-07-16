@@ -488,21 +488,21 @@ public class Experiment {
 		return cagesArray.save_SpotsMeasures(getResultsDirectory());
 	}
 
-	public boolean load_MS96_fliesPositions() {
-		return false;
-	}
-
-	public boolean save_MS96_fliesPositions() {
-		return false;
-	}
-
-	public boolean load_MS96_kymographs() {
-		return false;
-	}
-
-	public boolean save_MS96_kymographs() {
-		return false;
-	}
+//	public boolean load_MS96_fliesPositions() {
+//		return false;
+//	}
+//
+//	public boolean save_MS96_fliesPositions() {
+//		return false;
+//	}
+//
+//	public boolean load_MS96_kymographs() {
+//		return false;
+//	}
+//
+//	public boolean save_MS96_kymographs() {
+//		return false;
+//	}
 
 	// -------------------------------
 

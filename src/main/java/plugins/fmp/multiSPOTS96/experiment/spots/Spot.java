@@ -700,7 +700,9 @@ public class Spot implements Comparable<Spot> {
 	 * @return the CSV data string
 	 */
 	public String exportMeasuresOneType(EnumSpotMeasures measureType, String csvSeparator) {
-		return measurements.exportOneType(measureType, csvSeparator);
+
+		return measurements.exportOneType(properties.getSourceName(), properties.getSpotArrayIndex(), measureType,
+				csvSeparator);
 	}
 
 	/**
@@ -999,15 +1001,58 @@ public class Spot implements Comparable<Spot> {
 			return "#" + csvSeparator + measureType.toString() + "\n";
 		}
 
-		String exportOneType(EnumSpotMeasures measureType, String csvSeparator) {
-			// Implementation for CSV export
-			return "";
+		String exportOneType(String sourceName, int spotArrayIndex, EnumSpotMeasures measureType, String csvSeparator) {
+			StringBuilder sbf = new StringBuilder();
+			sbf.append(sourceName + csvSeparator + spotArrayIndex + csvSeparator);
+			switch (measureType) {
+			case AREA_SUM:
+				sumIn.exportYDataToCsv(sbf, csvSeparator);
+				break;
+			case AREA_SUMCLEAN:
+				sumClean.exportYDataToCsv(sbf, csvSeparator);
+				break;
+			case AREA_FLYPRESENT:
+				flyPresent.exportYDataToCsv(sbf, csvSeparator);
+				break;
+			default:
+				break;
+			}
+			sbf.append("\n");
+			return sbf.toString();
 		}
 
 		void importOneType(EnumSpotMeasures measureType, String[] data, boolean includeX, boolean includeY) {
-			// Implementation for CSV import
-			xx missing code! xxxxx
+			if (includeX && includeY) {
+				switch (measureType) {
+				case AREA_SUM:
+					sumIn.importXYDataFromCsv(data, 2);
+					break;
+				case AREA_SUMCLEAN:
+					sumClean.importXYDataFromCsv(data, 2);
+					break;
+				case AREA_FLYPRESENT:
+					flyPresent.importXYDataFromCsv(data, 2);
+					break;
+				default:
+					break;
+				}
+			} else if (!includeX && includeY) {
+				switch (measureType) {
+				case AREA_SUM:
+					sumIn.importYDataFromCsv(data, 2);
+					break;
+				case AREA_SUMCLEAN:
+					sumClean.importYDataFromCsv(data, 2);
+					break;
+				case AREA_FLYPRESENT:
+					flyPresent.importYDataFromCsv(data, 2);
+					break;
+				default:
+					break;
+				}
+			}
 		}
+
 	}
 
 	/**
