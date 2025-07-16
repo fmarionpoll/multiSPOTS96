@@ -731,11 +731,6 @@ public class SpotsArray {
 				return false;
 			}
 
-			// Save description section
-			if (!csvSaveDescriptionSection(writer)) {
-				return false;
-			}
-
 			// Save measures section
 			if (!csvSaveMeasuresSection(writer, EnumSpotMeasures.AREA_SUMCLEAN)) {
 				return false;
@@ -754,21 +749,10 @@ public class SpotsArray {
 
 	private boolean csvSaveSpotsArraySection(FileWriter writer) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
-		writer.write("#" + CSV_SEPARATOR + "SPOTS" + CSV_SEPARATOR + "multiSPOTS96 data\n");
-		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "cageID" + CSV_SEPARATOR + "cagePos"
-				+ CSV_SEPARATOR + "cageColumn" + CSV_SEPARATOR + "cageRow" + CSV_SEPARATOR + "volume" + CSV_SEPARATOR
-				+ "npixels" + CSV_SEPARATOR + "radius" + CSV_SEPARATOR + "stim" + CSV_SEPARATOR + "conc\n");
-
-		for (Spot spot : spotsList) {
-			writer.write(spot.getProperties().exportToCsv(CSV_SEPARATOR));
-		}
-
-		return true;
-	}
-
-	private boolean csvSaveDescriptionSection(FileWriter writer) throws IOException {
+		writer.write("#" + CSV_SEPARATOR + "SPOTS_ARRAY" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("n spots=" + CSV_SEPARATOR + spotsList.size() + "\n");
 		writer.write("#" + CSV_SEPARATOR + "#\n");
-		writer.write("#" + CSV_SEPARATOR + "DESCRIPTION" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("#" + CSV_SEPARATOR + "SPOTS" + CSV_SEPARATOR + "multiSPOTS96 data\n");
 		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "cageID" + CSV_SEPARATOR + "cagePos"
 				+ CSV_SEPARATOR + "cageColumn" + CSV_SEPARATOR + "cageRow" + CSV_SEPARATOR + "volume" + CSV_SEPARATOR
 				+ "npixels" + CSV_SEPARATOR + "radius" + CSV_SEPARATOR + "stim" + CSV_SEPARATOR + "conc\n");
@@ -782,7 +766,7 @@ public class SpotsArray {
 
 	private boolean csvSaveMeasuresSection(FileWriter writer, EnumSpotMeasures measureType) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
-		writer.write("#" + CSV_SEPARATOR + "MEASURES" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("#" + CSV_SEPARATOR + measureType.toString() + CSV_SEPARATOR + "multiSPOTS96 data\n");
 		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "npts" + CSV_SEPARATOR + "yi\n");
 
 		for (Spot spot : spotsList) {
