@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.cages.CageProperties;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotProperties;
 
 public class XLSResults {
 	public String name = null;
@@ -20,7 +21,6 @@ public class XLSResults {
 	public int cageID = 0;
 	public int cagePosition = 0;
 	public Color color;
-	public EnumXLSExport exportType = null;
 	public ArrayList<Double> dataValues = null;
 	public double[] valuesOut = null;
 
@@ -29,16 +29,16 @@ public class XLSResults {
 		this.nflies = nflies;
 		this.cageID = cageID;
 		this.cagePosition = cagePos;
-		this.exportType = exportType;
 	}
 
-	public XLSResults(Cage cage, Spot spot, EnumXLSExport exportType, int nFrames) {
-		this.name = spot.getName();
-		this.color = spot.getProperties().getColor();
-		this.nflies = cage.getProperties().getCageNFlies();
-		this.cageID = cage.getProperties().getCageID();
-		this.cagePosition = spot.getProperties().getCagePosition();
-		this.exportType = exportType;
+	public XLSResults(CageProperties cageProperties, SpotProperties spotProperties, int nFrames) {
+		this.name = spotProperties.getSourceName();
+		this.color = spotProperties.getColor();
+		this.nflies = cageProperties.getCageNFlies();
+		this.cageID = cageProperties.getCageID();
+		this.cagePosition = spotProperties.getCagePosition();
+		this.stimulus = spotProperties.getStimulus();
+		this.concentration = spotProperties.getConcentration();
 		initValuesArray(nFrames);
 	}
 
@@ -68,6 +68,13 @@ public class XLSResults {
 		dataValues = null;
 		valuesOut = null;
 		nflies = 0;
+	}
+
+	public void getDataFromSpot(Spot spot, long binData, long binExcel, XLSExportOptions xlsExportOptions) {
+		dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportOptions.exportType, binData, binExcel);
+		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT) {
+			relativeToMaximum();
+		}
 	}
 
 	public void transferMeasuresToValuesOut(double scalingFactorToPhysicalUnits, EnumXLSExport xlsExport) {
@@ -111,7 +118,6 @@ public class XLSResults {
 			return maximum;
 
 		maximum = dataValues.get(0);
-		;
 		for (int index = 0; index < dataValues.size(); index++) {
 			double value = dataValues.get(index);
 			maximum = Math.max(maximum, value);

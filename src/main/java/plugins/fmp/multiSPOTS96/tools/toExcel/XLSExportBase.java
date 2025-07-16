@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.CellReference;
@@ -441,15 +440,11 @@ public abstract class XLSExportBase {
 	 */
 	public XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, XLSExportOptions xlsExportOptions) {
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
-		EnumXLSExport xlsExportType = xlsExportOptions.exportType;
-		XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
-		xlsResults.dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportType,
-				exp.seqCamData.getTimeManager().getBinDurationMs(), xlsExportOptions.buildExcelStepMs);
+		XLSResults xlsResults = new XLSResults(cage.getProperties(), spot.getProperties(), nOutputFrames);
 
-		if (xlsExportOptions.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT) {
-			xlsResults.relativeToMaximum();
-		}
-
+		long binData = exp.seqCamData.getTimeManager().getBinDurationMs();
+		long binExcel = xlsExportOptions.buildExcelStepMs;
+		xlsResults.getDataFromSpot(spot, binData, binExcel, xlsExportOptions);
 		return xlsResults;
 	}
 

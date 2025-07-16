@@ -250,7 +250,6 @@ public class ChartCageArrayFrame extends IcyFrame {
 	private void createChartPanelArray(XLSExportOptions xlsExportOptions) {
 		int indexCage = 0;
 		int createdCharts = 0;
-
 		for (int row = 0; row < experiment.cagesArray.nCagesAlongY; row++) {
 			for (int col = 0; col < experiment.cagesArray.nCagesAlongX; col++, indexCage++) {
 				if (indexCage < xlsExportOptions.cageIndexFirst || indexCage > xlsExportOptions.cageIndexLast)
@@ -262,20 +261,13 @@ public class ChartCageArrayFrame extends IcyFrame {
 					continue;
 				}
 
-				if (cage.spotsArray.getSpotsCount() < 1) {
-					LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
-					continue;
-				}
-
-				ChartCage chartCage = new ChartCage();
-				chartCage.initMaxMin();
-				ChartPanel chartPanel = createChartPanelForCage(chartCage, cage, row, col, xlsExportOptions);
+				ChartPanel chartPanel = createChartPanelForCage(cage, row, col, xlsExportOptions);
 				chartPanelArray[row][col] = new ChartCagePair(chartPanel, cage);
 				createdCharts++;
 			}
 		}
 
-		LOGGER.info("Created " + createdCharts + " chart panels");
+		LOGGER.info("Created " + createdCharts + " in " + indexCage + " chart panels");
 	}
 
 	/**
@@ -290,12 +282,19 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param xlsExportOptions the export options
 	 * @return configured ChartPanel
 	 */
-	private ChartPanel createChartPanelForCage(ChartCage chartCage, Cage cage, int row, int col,
-			XLSExportOptions xlsExportOptions) {
-		XYSeriesCollection xyDataSetList = chartCage.getSpotDataFromOneCage(experiment, cage, xlsExportOptions);
+	private ChartPanel createChartPanelForCage(Cage cage, int row, int col, XLSExportOptions xlsExportOptions) {
+
+		if (cage.spotsArray.getSpotsCount() < 1) {
+			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
+			return null;
+		}
+
+		ChartCage chartCage = new ChartCage();
+		chartCage.initMaxMin();
 
 		NumberAxis xAxis = setXaxis("", xlsExportOptions);
 		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
+		XYSeriesCollection xyDataSetList = chartCage.getSpotDataFromOneCage(experiment, cage, xlsExportOptions);
 		XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList, xAxis, yAxis);
 
 		JFreeChart chart = new JFreeChart(null, // title - the chart title (null permitted).

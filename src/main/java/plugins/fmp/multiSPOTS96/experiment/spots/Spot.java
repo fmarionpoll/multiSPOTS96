@@ -555,8 +555,8 @@ public class Spot implements Comparable<Spot> {
 	 * @param outputBinMs the output bin in milliseconds
 	 * @return the measures list
 	 */
-	public List<Double> getMeasuresForExcelPass1(EnumXLSExport option, long seriesBinMs, long outputBinMs) {
-		SpotMeasure measure = getMeasurements(option);
+	public List<Double> getMeasuresForExcelPass1(EnumXLSExport exportType, long seriesBinMs, long outputBinMs) {
+		SpotMeasure measure = getMeasurements(exportType);
 		if (measure == null) {
 			return new ArrayList<>();
 		}

@@ -15,7 +15,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresSpot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResults;
@@ -141,10 +140,10 @@ public class ChartCage {
 		LOGGER.fine("Building XY plot with " + xySeriesCollection.getSeriesCount() + " series");
 
 		XYLineAndShapeRenderer subPlotRenderer = getSubPlotRenderer(xySeriesCollection);
-		XYPlot subplot = new XYPlot(xySeriesCollection, xAxis, yAxis, subPlotRenderer);
-		updatePlotBackgroundAccordingToNFlies(xySeriesCollection, subplot);
+		XYPlot xyPlot = new XYPlot(xySeriesCollection, xAxis, yAxis, subPlotRenderer);
+		updatePlotBackgroundAccordingToNFlies(xySeriesCollection, xyPlot);
 
-		return subplot;
+		return xyPlot;
 	}
 
 	/**
@@ -152,9 +151,9 @@ public class ChartCage {
 	 * the data.
 	 * 
 	 * @param xySeriesCollection the dataset to analyze
-	 * @param subplot            the plot to update
+	 * @param xyPlot             the plot to update
 	 */
-	private void updatePlotBackgroundAccordingToNFlies(XYSeriesCollection xySeriesCollection, XYPlot subplot) {
+	private void updatePlotBackgroundAccordingToNFlies(XYSeriesCollection xySeriesCollection, XYPlot xyPlot) {
 		if (xySeriesCollection == null || xySeriesCollection.getSeriesCount() == 0) {
 			LOGGER.warning("Cannot update plot background: dataset is null or empty");
 			return;
@@ -164,25 +163,25 @@ public class ChartCage {
 			String[] description = xySeriesCollection.getSeries(0).getDescription().split(DESCRIPTION_DELIMITER);
 			if (description.length < 6) {
 				LOGGER.warning("Invalid series description format, using default background");
-				setDefaultBackground(subplot);
+				setDefaultBackground(xyPlot);
 				return;
 			}
 
 			int nflies = Integer.parseInt(description[5]);
 			if (nflies > 0) {
-				subplot.setBackgroundPaint(BACKGROUND_WITH_DATA);
-				subplot.setDomainGridlinePaint(GRID_WITH_DATA);
-				subplot.setRangeGridlinePaint(GRID_WITH_DATA);
+				xyPlot.setBackgroundPaint(BACKGROUND_WITH_DATA);
+				xyPlot.setDomainGridlinePaint(GRID_WITH_DATA);
+				xyPlot.setRangeGridlinePaint(GRID_WITH_DATA);
 				LOGGER.fine("Set background for chart with " + nflies + " flies");
 			} else {
-				subplot.setBackgroundPaint(BACKGROUND_WITHOUT_DATA);
-				subplot.setDomainGridlinePaint(GRID_WITHOUT_DATA);
-				subplot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
+				xyPlot.setBackgroundPaint(BACKGROUND_WITHOUT_DATA);
+				xyPlot.setDomainGridlinePaint(GRID_WITHOUT_DATA);
+				xyPlot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
 				LOGGER.fine("Set background for chart with no flies");
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.warning("Could not parse number of flies from description: " + e.getMessage());
-			setDefaultBackground(subplot);
+			setDefaultBackground(xyPlot);
 		}
 	}
 
@@ -211,7 +210,6 @@ public class ChartCage {
 			return new XYSeriesCollection();
 		}
 
-		EnumXLSExport xlsExportType = xlsExportOptions.exportType;
 		XYSeriesCollection xySeriesCollection = null;
 		int seriesCount = 0;
 		XLSExportMeasuresSpot xlsExportMeasuresSpot = new XLSExportMeasuresSpot();
@@ -221,6 +219,9 @@ public class ChartCage {
 				xySeriesCollection = new XYSeriesCollection();
 			}
 			XLSResults xlsResults = xlsExportMeasuresSpot.getSpotResults(exp, cage, spot, xlsExportOptions);
+			double scalingFactorToPhysicalUnits = 1.;
+			xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
+
 			XYSeries seriesXY = createXYSeriesFromXLSResults(xlsResults, spot.getName());
 			if (seriesXY != null) {
 				seriesXY.setDescription(buildSeriesDescription(xlsResults, cage));
@@ -242,8 +243,9 @@ public class ChartCage {
 	 * @return formatted description string
 	 */
 	private String buildSeriesDescription(XLSResults xlsResults, Cage cage) {
-		return "ID:" + xlsResults.cageID + ":Pos:" + xlsResults.cagePosition + ":nflies:" + cage.getProperties().getCageNFlies() + ":R:"
-				+ xlsResults.color.getRed() + ":G:" + xlsResults.color.getGreen() + ":B:" + xlsResults.color.getBlue();
+		return "ID:" + xlsResults.cageID + ":Pos:" + xlsResults.cagePosition + ":nflies:"
+				+ cage.getProperties().getCageNFlies() + ":R:" + xlsResults.color.getRed() + ":G:"
+				+ xlsResults.color.getGreen() + ":B:" + xlsResults.color.getBlue();
 	}
 
 	/**

@@ -176,7 +176,7 @@ public class XLSExport {
 
 	XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, EnumXLSExport xlsExportType) {
 		int nOutputFrames = getNOutputFrames(exp);
-		XLSResults xlsResults = new XLSResults(cage, spot, xlsExportType, nOutputFrames);
+		XLSResults xlsResults = new XLSResults(cage.getProperties(), spot.getProperties(), nOutputFrames);
 		xlsResults.dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportType,
 				exp.seqCamData.getTimeManager().getBinDurationMs(), options.buildExcelStepMs);
 		if (options.relativeToT0 && xlsExportType != EnumXLSExport.AREA_FLYPRESENT)

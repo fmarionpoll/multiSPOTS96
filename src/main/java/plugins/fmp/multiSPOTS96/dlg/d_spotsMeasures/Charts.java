@@ -37,13 +37,13 @@ public class Charts extends JPanel implements SequenceListener {
 	private JButton displayResultsButton = new JButton("Display results");
 	private JButton axisOptionsButton = new JButton("Axis options");
 	private ChartOptions graphOptions = null;
-
-	private EnumXLSExport[] measures = new EnumXLSExport[] { EnumXLSExport.AREA_SUM, EnumXLSExport.AREA_SUMCLEAN // ,
-																													// EnumXLSExportType.AREA_DIFF
+	private EnumXLSExport[] measures = new EnumXLSExport[] { //
+			EnumXLSExport.AREA_SUM, //
+			EnumXLSExport.AREA_SUMCLEAN // ,
+			// EnumXLSExportType.AREA_DIFF
 	};
 	private JComboBox<EnumXLSExport> exportTypeComboBox = new JComboBox<EnumXLSExport>(measures);
 	private JCheckBox relativeToCheckbox = new JCheckBox("relative to max", false);
-
 	private JRadioButton displayAllButton = new JRadioButton("all cages");
 	private JRadioButton displaySelectedButton = new JRadioButton("cage selected");
 
@@ -153,7 +153,8 @@ public class Charts extends JPanel implements SequenceListener {
 		exp.seqCamData.getSequence().addListener(this);
 	}
 
-	private ChartCageArrayFrame plotSpotMeasuresToChart(Experiment exp, EnumXLSExport exportType, ChartCageArrayFrame iChart) {
+	private ChartCageArrayFrame plotSpotMeasuresToChart(Experiment exp, EnumXLSExport exportType,
+			ChartCageArrayFrame iChart) {
 		if (iChart != null)
 			iChart.getMainChartFrame().dispose();
 

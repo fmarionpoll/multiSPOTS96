@@ -55,8 +55,7 @@ public class XLSResultsArray {
 			double scalingFactorToPhysicalUnits = cage.spotsArray
 					.getScalingFactorToPhysicalUnits(xlsExportOptions.exportType);
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
-
-				XLSResults results = new XLSResults(cage, spot, xlsExportOptions.exportType, nOutputFrames);
+				XLSResults results = new XLSResults(cage.getProperties(), spot.getProperties(), nOutputFrames);
 				results.dataValues = (ArrayList<Double>) spot.getMeasuresForExcelPass1(xlsExportOptions.exportType,
 						kymoBinCol_Ms, xlsExportOptions.buildExcelStepMs);
 				if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT)
