@@ -222,8 +222,14 @@ public class ChartFliesPositions extends IcyFrame {
 				continue;
 			}
 
-			JFreeChart xyChart = ChartFactory.createXYLineChart(null, null, null, xyDataset, PlotOrientation.VERTICAL,
-					true, true, true);
+			JFreeChart xyChart = ChartFactory.createXYLineChart(null, // title - the chart title (null permitted).
+					null, // title - the chart title (null permitted).
+					null, // yAxisLabel - a label for the Y-axis (null permitted)
+					xyDataset, // dataset - the dataset for the chart (null permitted)
+					PlotOrientation.VERTICAL, // orientation - the plot orientation (horizontal or vertical) (null NOT permitted)
+					true, // legend - a flag specifying whether or not a legend is required
+					true, // tooltips - configure chart to generate tool tips?
+					true); // urls - configure chart to generate URLs?
 			xyChart.setAntiAlias(true);
 			xyChart.setTextAntiAlias(true);
 

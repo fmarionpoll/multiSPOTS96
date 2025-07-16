@@ -183,11 +183,11 @@ public class ChartCageArray extends IcyFrame {
 	 * @param xlsExportOptions the export options
 	 * @return configured NumberAxis
 	 */
-	private NumberAxis setYaxis(String title, int row, int col, XLSExportOptions xlsExportOptions) {
+	private NumberAxis setYaxis(String label, int row, int col, XLSExportOptions xlsExportOptions) {
 		NumberAxis yAxis = new NumberAxis();
 		row = row * experiment.cagesArray.nRowsPerCage;
 		col = col * experiment.cagesArray.nColumnsPerCage;
-		String yLegend = title + " " + String.valueOf((char) (row + 'A')) + Integer.toString(col);
+		String yLegend = label + " " + String.valueOf((char) (row + 'A')) + Integer.toString(col);
 		yAxis.setLabel(yLegend);
 
 		if (xlsExportOptions.relativeToT0 || xlsExportOptions.relativeToMedianT0) {
@@ -208,10 +208,9 @@ public class ChartCageArray extends IcyFrame {
 	 * @param xlsExportOptions the export options
 	 * @return configured NumberAxis
 	 */
-	private NumberAxis setXaxis(String title, XLSExportOptions xlsExportOptions) {
+	private NumberAxis setXaxis(String label, XLSExportOptions xlsExportOptions) {
 		NumberAxis xAxis = new NumberAxis();
-		String yLegend = title;
-		xAxis.setLabel(yLegend);
+		xAxis.setLabel(label);
 		xAxis.setAutoRange(true);
 		xAxis.setAutoRangeIncludesZero(false);
 		return xAxis;
@@ -293,18 +292,33 @@ public class ChartCageArray extends IcyFrame {
 	 */
 	private ChartPanel createChartPanelForCage(ChartCage chartCage, Cage cage, int row, int col,
 			XLSExportOptions xlsExportOptions) {
-
 		XYSeriesCollection xyDataSetList = chartCage.getSpotDataFromOneCage(experiment, cage, xlsExportOptions);
 
 		NumberAxis xAxis = setXaxis("", xlsExportOptions);
 		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
 		XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList, xAxis, yAxis);
 
-		JFreeChart chart = new JFreeChart(null, null, cageXYPlot, false);
+		JFreeChart chart = new JFreeChart(null,  // title - the chart title (null permitted).
+				null, // titleFont - the font for displaying the chart title (null permitted)
+				cageXYPlot, // plot - controller of the visual representation of the data (null not permitted)
+				false); // createLegend - a flag indicating whether or not a legend should be created for the chart
+		
 		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 
-		ChartPanel chartPanel = new ChartPanel(chart, DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, MIN_CHART_WIDTH,
-				MIN_CHART_HEIGHT, MAX_CHART_WIDTH, MAX_CHART_HEIGHT, true, true, true, true, false, true);
+		ChartPanel chartPanel = new ChartPanel(chart, 
+				DEFAULT_CHART_WIDTH, // preferred width of the panel
+				DEFAULT_CHART_HEIGHT, // preferred height of the panel
+				MIN_CHART_WIDTH, // minimal drawing width
+				MIN_CHART_HEIGHT, // minimal drawing height
+				MAX_CHART_WIDTH,  // maximumDrawWidth
+				MAX_CHART_HEIGHT, // maximumDrawHeight
+				true, //useBuffer - a flag that indicates whether to use the off-screen buffer to improve performance (at the expense of memory).
+				true, //properties - a flag indicating whether or not the chart property editor should be available via the popup menu
+				true, // save - a flag indicating whether or not save options should be available via the popup menu
+				true, // print - a flag indicating whether or not the print option should be available via the popup menu
+				false, // zoom - a flag indicating whether or not zoom options should be added to the popup menu
+				true); //tooltips - a flag indicating whether or not tooltips should be enabled for the chart
+		
 		chartPanel.addChartMouseListener(new SpotChartMouseListener(experiment, xlsExportOptions));
 		return chartPanel;
 	}
