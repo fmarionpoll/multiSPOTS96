@@ -23,7 +23,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CageString;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.tools.chart.ChartCageArray;
+import plugins.fmp.multiSPOTS96.tools.chart.ChartCageArrayFrame;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 
@@ -32,7 +32,7 @@ public class Charts extends JPanel implements SequenceListener {
 	 * 
 	 */
 	private static final long serialVersionUID = -7079184380174992501L;
-	private ChartCageArray chartCageArray = null;
+	private ChartCageArrayFrame chartCageArray = null;
 	private MultiSPOTS96 parent0 = null;
 	private JButton displayResultsButton = new JButton("Display results");
 	private JButton axisOptionsButton = new JButton("Axis options");
@@ -153,13 +153,12 @@ public class Charts extends JPanel implements SequenceListener {
 		exp.seqCamData.getSequence().addListener(this);
 	}
 
-	private ChartCageArray plotSpotMeasuresToChart(Experiment exp, EnumXLSExport exportType, ChartCageArray iChart) {
+	private ChartCageArrayFrame plotSpotMeasuresToChart(Experiment exp, EnumXLSExport exportType, ChartCageArrayFrame iChart) {
 		if (iChart != null)
-			iChart.mainChartFrame.dispose();
+			iChart.getMainChartFrame().dispose();
 
 		XLSExportOptions xlsExportOptions = new XLSExportOptions();
 		xlsExportOptions.buildExcelStepMs = 60000;
-
 		xlsExportOptions.relativeToT0 = relativeToCheckbox.isSelected();
 		xlsExportOptions.exportType = exportType;
 
@@ -178,18 +177,18 @@ public class Charts extends JPanel implements SequenceListener {
 			xlsExportOptions.cageIndexLast = xlsExportOptions.cageIndexFirst;
 		}
 
-		iChart = new ChartCageArray();
+		iChart = new ChartCageArrayFrame();
 		iChart.createPanel("Spots measures", exp, xlsExportOptions, parent0);
 		iChart.setChartSpotUpperLeftLocation(getInitialUpperLeftPosition(exp));
 		iChart.displayData(exp, xlsExportOptions);
-		iChart.mainChartFrame.toFront();
-		iChart.mainChartFrame.requestFocus();
+		iChart.getMainChartFrame().toFront();
+		iChart.getMainChartFrame().requestFocus();
 		return iChart;
 	}
 
 	public void closeAllCharts() {
 		if (chartCageArray != null)
-			chartCageArray.mainChartFrame.dispose();
+			chartCageArray.getMainChartFrame().dispose();
 		chartCageArray = null;
 	}
 

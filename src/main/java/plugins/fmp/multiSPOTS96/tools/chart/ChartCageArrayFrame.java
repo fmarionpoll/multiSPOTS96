@@ -62,10 +62,10 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
  * @see plugins.fmp.multiSPOTS96.experiment.cages.Cage
  * @see plugins.fmp.multiSPOTS96.experiment.spots.Spot
  */
-public class ChartCageArray extends IcyFrame {
+public class ChartCageArrayFrame extends IcyFrame {
 
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ChartCageArray.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ChartCageArrayFrame.class.getName());
 
 	/** Default chart width in pixels */
 	private static final int DEFAULT_CHART_WIDTH = 200;
@@ -110,13 +110,13 @@ public class ChartCageArray extends IcyFrame {
 	private JPanel mainChartPanel = null;
 
 	/** Main chart frame */
-	public IcyFrame mainChartFrame = null;
+	private IcyFrame mainChartFrame = null;
 
 	/** Y-axis range for charts */
-	public Range yRange = null;
+	private Range yRange = null;
 
 	/** X-axis range for charts */
-	public Range xRange = null;
+	private Range xRange = null;
 
 	/** Chart location */
 	private Point graphLocation = new Point(0, 0);
@@ -298,27 +298,34 @@ public class ChartCageArray extends IcyFrame {
 		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
 		XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList, xAxis, yAxis);
 
-		JFreeChart chart = new JFreeChart(null,  // title - the chart title (null permitted).
+		JFreeChart chart = new JFreeChart(null, // title - the chart title (null permitted).
 				null, // titleFont - the font for displaying the chart title (null permitted)
-				cageXYPlot, // plot - controller of the visual representation of the data (null not permitted)
-				false); // createLegend - a flag indicating whether or not a legend should be created for the chart
-		
+				cageXYPlot, // plot - controller of the visual representation of the data (null not
+							// permitted)
+				false); // createLegend - a flag indicating whether or not a legend should be created
+						// for the chart
+
 		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 
-		ChartPanel chartPanel = new ChartPanel(chart, 
-				DEFAULT_CHART_WIDTH, // preferred width of the panel
+		ChartPanel chartPanel = new ChartPanel(chart, DEFAULT_CHART_WIDTH, // preferred width of the panel
 				DEFAULT_CHART_HEIGHT, // preferred height of the panel
 				MIN_CHART_WIDTH, // minimal drawing width
 				MIN_CHART_HEIGHT, // minimal drawing height
-				MAX_CHART_WIDTH,  // maximumDrawWidth
+				MAX_CHART_WIDTH, // maximumDrawWidth
 				MAX_CHART_HEIGHT, // maximumDrawHeight
-				true, //useBuffer - a flag that indicates whether to use the off-screen buffer to improve performance (at the expense of memory).
-				true, //properties - a flag indicating whether or not the chart property editor should be available via the popup menu
-				true, // save - a flag indicating whether or not save options should be available via the popup menu
-				true, // print - a flag indicating whether or not the print option should be available via the popup menu
-				false, // zoom - a flag indicating whether or not zoom options should be added to the popup menu
-				true); //tooltips - a flag indicating whether or not tooltips should be enabled for the chart
-		
+				true, // useBuffer - a flag that indicates whether to use the off-screen buffer to
+						// improve performance (at the expense of memory).
+				true, // properties - a flag indicating whether or not the chart property editor
+						// should be available via the popup menu
+				true, // save - a flag indicating whether or not save options should be available via
+						// the popup menu
+				true, // print - a flag indicating whether or not the print option should be available
+						// via the popup menu
+				false, // zoom - a flag indicating whether or not zoom options should be added to the
+						// popup menu
+				true); // tooltips - a flag indicating whether or not tooltips should be enabled for
+						// the chart
+
 		chartPanel.addChartMouseListener(new SpotChartMouseListener(experiment, xlsExportOptions));
 		return chartPanel;
 	}
@@ -388,18 +395,6 @@ public class ChartCageArray extends IcyFrame {
 		graphLocation = new Point(rectv.x, rectv.y);
 		LOGGER.fine("Set chart location to: " + graphLocation);
 	}
-
-//	/**
-//	 * Gets data as results array from the experiment.
-//	 * 
-//	 * @param exp              the experiment
-//	 * @param xlsExportOptions the export options
-//	 * @return XLSResultsArray containing the data
-//	 */
-//	private XLSResultsArray getDataAsResultsArray(Experiment exp, XLSExportOptions xlsExportOptions) {
-//		XLSExportForChart xlsExport = new XLSExportForChart();
-//		return xlsExport.getSpotsDataFromOneExperiment_v2parms(exp, xlsExportOptions);
-//	}
 
 	/**
 	 * Gets the spot from a clicked chart.
@@ -667,6 +662,22 @@ public class ChartCageArray extends IcyFrame {
 	 */
 	public int getPanelsAlongY() {
 		return nPanelsAlongY;
+	}
+
+	public Range getXRange() {
+		return xRange;
+	}
+
+	public void setXRange(Range range) {
+		xRange = range;
+	}
+
+	public Range getYRange() {
+		return yRange;
+	}
+
+	public void setYRange(Range range) {
+		yRange = range;
 	}
 
 	/**
