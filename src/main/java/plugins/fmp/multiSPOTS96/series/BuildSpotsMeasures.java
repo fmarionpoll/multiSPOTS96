@@ -48,12 +48,14 @@ public class BuildSpotsMeasures extends BuildSeries {
 	}
 
 	private boolean loadExperimentDataToMeasureSpots(Experiment exp) {
+		exp.load_MS96_experiment();
+		exp.seqCamData.attachSequence(
+				exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
+
 		boolean flag = exp.load_MS96_cages();
 		if (exp.seqCamData.getTimeManager().getBinDurationMs() == 0)
 			exp.loadFileIntervalsFromSeqCamData();
 
-		exp.seqCamData.attachSequence(
-				exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
 		return flag;
 	}
 
@@ -150,7 +152,8 @@ public class BuildSpotsMeasures extends BuildSeries {
 							spot.getFlyPresenceMeasurements().setPresence(ii, results.nPoints_fly_present);
 							spot.getSumMeasurements().setValue(ii, results.sumOverThreshold / results.npoints_in);
 							if (results.nPoints_no_fly != results.npoints_in)
-								spot.getSumMeasurements().setValue(ii, results.sumTot_no_fly_over_threshold / results.nPoints_no_fly);
+								spot.getSumMeasurements().setValue(ii,
+										results.sumTot_no_fly_over_threshold / results.nPoints_no_fly);
 						}
 					}
 				}
@@ -240,7 +243,8 @@ public class BuildSpotsMeasures extends BuildSeries {
 						try {
 							roiT.buildMask2DFromInputRoi();
 						} catch (ROI2DProcessingException e) {
-							System.err.println("Error building mask for ROI at time " + roiT.getTimePoint() + ": " + e.getMessage());
+							System.err.println("Error building mask for ROI at time " + roiT.getTimePoint() + ": "
+									+ e.getMessage());
 							e.printStackTrace();
 						}
 					}

@@ -62,6 +62,7 @@ public class Spot implements Comparable<Spot> {
 	 */
 	public Spot(ROI2DShape roi) {
 		this.spotROI2D = Objects.requireNonNull(roi, "ROI cannot be null");
+		initRoiTList(roi);
 		this.properties = new SpotProperties();
 		this.measurements = new SpotMeasurements();
 		this.metadata = new SpotMetadata();
@@ -200,7 +201,20 @@ public class Spot implements Comparable<Spot> {
 	 */
 	public void setRoi(ROI2DShape roi) {
 		this.spotROI2D = roi;
+		initRoiTList(roi);
+	}
+
+	private void initRoiTList(ROI2D roi) {
 		this.roiAlongTList.clear();
+		roiAlongTList.clear();
+		ROI2DAlongT roiT = new ROI2DAlongT();
+		try {
+			roiT.setInputRoi(roi);
+		} catch (ROI2DValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		roiAlongTList.add(roiT);
 	}
 
 	/**
@@ -595,7 +609,25 @@ public class Spot implements Comparable<Spot> {
 	 * @return the ROI at that time, or null if not found
 	 */
 	public ROI2DAlongT getRoiAtTime(long time) {
-		return roiAlongTList.stream().filter(roi -> roi.getTimePoint() == time).findFirst().orElse(null);
+		if (roiAlongTList.size() < 1) {
+			ROI2DAlongT roiT0 = null;
+			try {
+				roiT0 = new ROI2DAlongT(0, spotROI2D);
+			} catch (ROI2DValidationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return roiT0;
+		}
+
+		int index = 0;
+		for (ROI2DAlongT roiT : roiAlongTList) {
+			if (roiT.getTimePoint() < time)
+				index++;
+			else
+				break;
+		}
+		return roiAlongTList.get(index);
 	}
 
 	/**

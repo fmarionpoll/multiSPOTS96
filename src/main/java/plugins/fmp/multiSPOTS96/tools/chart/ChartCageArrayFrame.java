@@ -77,10 +77,10 @@ public class ChartCageArrayFrame extends IcyFrame {
 	private static final int MIN_CHART_WIDTH = 50;
 
 	/** Default maximum chart width in pixels */
-	private static final int MAX_CHART_WIDTH = 25;
+	private static final int MAX_CHART_WIDTH = 1200;
 
 	/** Default minimum chart height in pixels */
-	private static final int MIN_CHART_HEIGHT = 1200;
+	private static final int MIN_CHART_HEIGHT = 25;
 
 	/** Default maximum chart height in pixels */
 	private static final int MAX_CHART_HEIGHT = 600;
@@ -299,31 +299,22 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		JFreeChart chart = new JFreeChart(null, // title - the chart title (null permitted).
 				null, // titleFont - the font for displaying the chart title (null permitted)
-				cageXYPlot, // plot - controller of the visual representation of the data (null not
-							// permitted)
-				false); // createLegend - a flag indicating whether or not a legend should be created
+				cageXYPlot, // plot - controller of the visual representation of the data
+				false); // createLegend - legend not created
 						// for the chart
 
 		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 
-		ChartPanel chartPanel = new ChartPanel(chart, DEFAULT_CHART_WIDTH, // preferred width of the panel
-				DEFAULT_CHART_HEIGHT, // preferred height of the panel
-				MIN_CHART_WIDTH, // minimal drawing width
-				MIN_CHART_HEIGHT, // minimal drawing height
-				MAX_CHART_WIDTH, // maximumDrawWidth
-				MAX_CHART_HEIGHT, // maximumDrawHeight
-				true, // useBuffer - a flag that indicates whether to use the off-screen buffer to
-						// improve performance (at the expense of memory).
-				true, // properties - a flag indicating whether or not the chart property editor
-						// should be available via the popup menu
-				true, // save - a flag indicating whether or not save options should be available via
-						// the popup menu
-				true, // print - a flag indicating whether or not the print option should be available
-						// via the popup menu
-				false, // zoom - a flag indicating whether or not zoom options should be added to the
-						// popup menu
-				true); // tooltips - a flag indicating whether or not tooltips should be enabled for
-						// the chart
+		ChartPanel chartPanel = new ChartPanel(chart, // jfreechart
+				DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, // preferred width, height of the panel
+				MIN_CHART_WIDTH, MIN_CHART_HEIGHT, // minimal drawing width, drawing height
+				MAX_CHART_WIDTH, MAX_CHART_HEIGHT, // maximumDrawWidth, maximumDrawHeight
+				true, // use memory buffer to improve performance.
+				true, // chart property editor available via popup menu
+				true, // copy option available via popup menu
+				true, // print option available via popup menu
+				false, // zoom options not added to the popup menu
+				true); // tooltips enabled for the chart
 
 		chartPanel.addChartMouseListener(new SpotChartMouseListener(experiment, xlsExportOptions));
 		return chartPanel;

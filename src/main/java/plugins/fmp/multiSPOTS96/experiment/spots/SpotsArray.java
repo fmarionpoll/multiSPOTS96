@@ -741,6 +741,10 @@ public class SpotsArray {
 				return false;
 			}
 
+			if (!csvSaveMeasuresSection(writer, EnumSpotMeasures.AREA_SUM)) {
+				return false;
+			}
+
 			return true;
 		} catch (IOException e) {
 			System.err.println("Error saving spots to CSV: " + e.getMessage());
