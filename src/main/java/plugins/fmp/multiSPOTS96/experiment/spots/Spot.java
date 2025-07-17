@@ -44,6 +44,7 @@ public class Spot implements Comparable<Spot> {
 	private static final String DEFAULT_STIMULUS = "..";
 	private static final String DEFAULT_CONCENTRATION = "..";
 	private static final double DEFAULT_SPOT_VOLUME = 0.5;
+	private static final int DATA_OFFSET = 3;
 
 	// === CORE FIELDS ===
 	private ROI2DShape spotROI2D;
@@ -1057,13 +1058,13 @@ public class Spot implements Comparable<Spot> {
 			if (includeX && includeY) {
 				switch (measureType) {
 				case AREA_SUM:
-					sumIn.importXYDataFromCsv(data, 2);
+					sumIn.importXYDataFromCsv(data, DATA_OFFSET);
 					break;
 				case AREA_SUMCLEAN:
-					sumClean.importXYDataFromCsv(data, 2);
+					sumClean.importXYDataFromCsv(data, DATA_OFFSET);
 					break;
 				case AREA_FLYPRESENT:
-					flyPresent.importXYDataFromCsv(data, 2);
+					flyPresent.importXYDataFromCsv(data, DATA_OFFSET);
 					break;
 				default:
 					break;
@@ -1071,13 +1072,13 @@ public class Spot implements Comparable<Spot> {
 			} else if (!includeX && includeY) {
 				switch (measureType) {
 				case AREA_SUM:
-					sumIn.importYDataFromCsv(data, 2);
+					sumIn.importYDataFromCsv(data, DATA_OFFSET);
 					break;
 				case AREA_SUMCLEAN:
-					sumClean.importYDataFromCsv(data, 2);
+					sumClean.importYDataFromCsv(data, DATA_OFFSET);
 					break;
 				case AREA_FLYPRESENT:
-					flyPresent.importYDataFromCsv(data, 2);
+					flyPresent.importYDataFromCsv(data, DATA_OFFSET);
 					break;
 				default:
 					break;
