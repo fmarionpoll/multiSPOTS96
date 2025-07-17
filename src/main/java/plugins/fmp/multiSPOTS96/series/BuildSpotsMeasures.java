@@ -56,6 +56,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 		if (exp.seqCamData.getTimeManager().getBinDurationMs() == 0)
 			exp.loadFileIntervalsFromSeqCamData();
 
+		exp.cagesArray.initLevel2DMeasures();
 		return flag;
 	}
 
@@ -67,7 +68,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 			return;
 
 		exp.cagesArray.transferSumToSumClean();
-		exp.cagesArray.initLevel2DMeasures();
+//		exp.cagesArray.initLevel2DMeasures();
 
 		exp.save_MS96_experiment();
 		exp.save_MS96_spotsMeasures();
@@ -142,8 +143,9 @@ public class BuildSpotsMeasures extends BuildSeries {
 					int ii_local = t - iiFirst;
 					for (Cage cage : exp.cagesArray.cagesList) {
 						for (Spot spot : cage.spotsArray.getSpotsList()) {
-							if (!spot.isReadyForAnalysis())
+							if (!spot.isReadyForAnalysis()) {
 								continue;
+							}
 		
 							ROI2DAlongT roiT = spot.getRoiAtTime(t);
 							ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly, roiT);
