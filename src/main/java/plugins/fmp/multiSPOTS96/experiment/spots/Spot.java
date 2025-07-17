@@ -987,12 +987,6 @@ public class Spot implements Comparable<Spot> {
 				flyPresent.clearLevel2D();
 		}
 
-		void buildRunningMedianFromSumLevel2D(int imageHeight) {
-			if (sumIn != null && sumIn.getLevel2D() != null) {
-				sumIn.buildRunningMedianFromValuesArray(5, sumIn.getLevel2D().ypoints);
-			}
-		}
-
 		List<ROI2D> transferLevel2DToRois(int imageHeight) {
 			List<ROI2D> rois = new ArrayList<>();
 			if (sumIn != null) {
@@ -1021,6 +1015,12 @@ public class Spot implements Comparable<Spot> {
 		private void transferRoiToMeasureBoolean(ROI2D roi, SpotMeasure measure) {
 			if (roi != null && measure != null) {
 				measure.transferROItoLevel2D();
+			}
+		}
+
+		void buildRunningMedianFromSumLevel2D(int imageHeight) {
+			if (sumIn != null && sumIn.getLevel2D() != null) {
+				sumIn.buildRunningMedianFromValuesArray(5, sumIn.getLevel2D().ypoints);
 			}
 		}
 

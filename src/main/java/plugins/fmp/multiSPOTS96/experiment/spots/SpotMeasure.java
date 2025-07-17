@@ -607,7 +607,6 @@ public class SpotMeasure {
 		}
 
 		int npoints = yvalues.length;
-//		double[] medianValues = new double[npoints];
 
 		for (int i = 0; i < npoints; i++) {
 			int start = Math.max(0, i - span / 2);
@@ -620,13 +619,9 @@ public class SpotMeasure {
 			}
 
 			Arrays.sort(window);
-			values[i] = window[count / 2];
+			level2D.ypoints[i] = window[count / 2];
 		}
 
-//		// Update level2D with median values
-//		if (level2D != null) {
-//			level2D.ypoints = medianValues;
-//		}
 	}
 
 	// === OFFSET COMPENSATION ===

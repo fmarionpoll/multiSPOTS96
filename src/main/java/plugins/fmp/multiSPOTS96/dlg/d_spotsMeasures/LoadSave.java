@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import icy.gui.util.FontUtil;
+import icy.sequence.Sequence;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 
@@ -73,7 +74,11 @@ public class LoadSave extends JPanel {
 			exp.load_MS96_spotsMeasures();
 			exp.seqCamData.removeROIsContainingString("spot");
 			exp.cagesArray.transferCageSpotsToSequenceAsROIs(exp.seqCamData);
-			exp.cagesArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqKymos.getSequence());
+			if (exp.seqKymos != null) {
+				Sequence seq = exp.seqKymos.getSequence();
+				if (seq != null && seq.getName() != null)
+					exp.cagesArray.transferSpotsMeasuresToSequenceAsROIs(exp.seqKymos.getSequence());
+			}
 		}
 		return flag;
 	}
