@@ -733,7 +733,6 @@ public class Spot implements Comparable<Spot> {
 	 * @return the CSV data string
 	 */
 	public String exportMeasuresOneType(EnumSpotMeasures measureType, String csvSeparator) {
-
 		return measurements.exportOneType(properties.getSourceName(), properties.getSpotArrayIndex(), measureType,
 				csvSeparator);
 	}
@@ -1036,7 +1035,8 @@ public class Spot implements Comparable<Spot> {
 
 		String exportOneType(String sourceName, int spotArrayIndex, EnumSpotMeasures measureType, String csvSeparator) {
 			StringBuilder sbf = new StringBuilder();
-			sbf.append(sourceName + csvSeparator + spotArrayIndex + csvSeparator);
+			String head = sourceName + csvSeparator + spotArrayIndex + csvSeparator;
+			sbf.append(head);
 			switch (measureType) {
 			case AREA_SUM:
 				sumIn.exportYDataToCsv(sbf, csvSeparator);

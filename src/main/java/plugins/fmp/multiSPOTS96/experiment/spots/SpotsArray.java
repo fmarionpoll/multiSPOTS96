@@ -732,11 +732,11 @@ public class SpotsArray {
 			}
 
 			// Save measures section
-			if (!csvSaveMeasuresSection(writer, EnumSpotMeasures.AREA_SUMCLEAN)) {
+			if (!csvSaveMeasuresSection(writer, EnumSpotMeasures.AREA_SUM)) {
 				return false;
 			}
 
-			if (!csvSaveMeasuresSection(writer, EnumSpotMeasures.AREA_SUM)) {
+			if (!csvSaveMeasuresSection(writer, EnumSpotMeasures.AREA_SUMCLEAN)) {
 				return false;
 			}
 

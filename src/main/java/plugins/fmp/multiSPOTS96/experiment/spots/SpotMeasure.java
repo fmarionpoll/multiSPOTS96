@@ -667,7 +667,8 @@ public class SpotMeasure {
 		if (level2D == null || level2D.npoints == 0) {
 			return false;
 		}
-
+		sbf.append(level2D.ypoints.length);
+		sbf.append(separator);
 		for (int i = 0; i < level2D.npoints; i++) {
 			if (i > 0) {
 				sbf.append(separator);
@@ -689,7 +690,8 @@ public class SpotMeasure {
 		if (level2D == null || level2D.ypoints == null) {
 			return false;
 		}
-
+		sbf.append(level2D.ypoints.length);
+		sbf.append(separator);
 		for (int i = 0; i < level2D.ypoints.length; i++) {
 			if (i > 0) {
 				sbf.append(separator);
