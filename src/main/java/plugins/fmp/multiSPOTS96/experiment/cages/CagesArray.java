@@ -784,6 +784,12 @@ public class CagesArray {
 		}
 	}
 
+	public void transferMeasuresToLevel2D() {
+		for (Cage cage : cagesList) {
+			cage.getSpotsArray().transferMeasuresToLevel2D();
+		}
+	}
+
 	public void initLevel2DMeasures() {
 		for (Cage cage : cagesList) {
 			cage.getSpotsArray().initializeLevel2DMeasures();
@@ -810,7 +816,7 @@ public class CagesArray {
 		int i = 0;
 		for (Cage cage : cagesList) {
 			for (Spot spot : cage.getSpotsArray().getSpotsList()) {
-				List<ROI2D> listOfRois = spot.transferSpotMeasuresToRois(height);
+				List<ROI2D> listOfRois = spot.transferMeasuresToRois(height);
 				for (ROI2D roi : listOfRois) {
 					if (roi != null)
 						roi.setT(i);

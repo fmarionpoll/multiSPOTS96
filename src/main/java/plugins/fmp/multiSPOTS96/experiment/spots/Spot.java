@@ -381,7 +381,7 @@ public class Spot implements Comparable<Spot> {
 	 * 
 	 * @return the sum measurements
 	 */
-	public SpotMeasure getSumMeasurements() {
+	public SpotMeasure getSum() {
 		return measurements.getSumIn();
 	}
 
@@ -390,7 +390,7 @@ public class Spot implements Comparable<Spot> {
 	 * 
 	 * @return the clean measurements
 	 */
-	public SpotMeasure getCleanMeasurements() {
+	public SpotMeasure getSumClean() {
 		return measurements.getSumClean();
 	}
 
@@ -399,7 +399,7 @@ public class Spot implements Comparable<Spot> {
 	 * 
 	 * @return the fly presence measurements
 	 */
-	public SpotMeasure getFlyPresenceMeasurements() {
+	public SpotMeasure getFlyPresent() {
 		return measurements.getFlyPresent();
 	}
 
@@ -575,7 +575,7 @@ public class Spot implements Comparable<Spot> {
 		if (measure == null) {
 			return new ArrayList<>();
 		}
-		return measure.getLevel2D_Y_subsampled(seriesBinMs, outputBinMs);
+		return measure.getLevel2DYAsSubsampledList(seriesBinMs, outputBinMs);
 	}
 
 	/**
@@ -612,9 +612,9 @@ public class Spot implements Comparable<Spot> {
 	public ROI2DAlongT getRoiAtTime(long time) {
 		int index = 0;
 		for (ROI2DAlongT roiT : roiAlongTList) {
-			if (roiT.getTimePoint() >= time) 
+			if (roiT.getTimePoint() >= time)
 				break;
-			if (index >= (roiAlongTList.size()-1))
+			if (index >= (roiAlongTList.size() - 1))
 				break;
 			index++;
 		}
@@ -674,6 +674,13 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	/**
+	 * Transfer measures to Level2D.
+	 */
+	public void transferMeasuresToLevel2D() {
+		measurements.transferMeasuresToLevel2D();
+	}
+
+	/**
 	 * Builds running median from sum Level2D.
 	 * 
 	 * @param imageHeight the image height
@@ -688,8 +695,8 @@ public class Spot implements Comparable<Spot> {
 	 * @param imageHeight the image height
 	 * @return the list of ROIs
 	 */
-	public List<ROI2D> transferSpotMeasuresToRois(int imageHeight) {
-		return measurements.transferSpotMeasuresToRois(imageHeight);
+	public List<ROI2D> transferMeasuresToRois(int imageHeight) {
+		return measurements.transferLevel2DToRois(imageHeight);
 	}
 
 	/**
@@ -935,6 +942,15 @@ public class Spot implements Comparable<Spot> {
 			}
 		}
 
+		public void transferMeasuresToLevel2D() {
+			if (sumIn != null)
+				sumIn.transferValuesToLevel2D();
+			if (sumClean != null)
+				sumClean.transferValuesToLevel2D();
+			if (flyPresent != null)
+				flyPresent.transferIsPresentToLevel2D();
+		}
+
 		void transferRoiMeasuresToLevel2D() {
 			if (sumIn != null)
 				sumIn.transferROItoLevel2D();
@@ -977,7 +993,7 @@ public class Spot implements Comparable<Spot> {
 			}
 		}
 
-		List<ROI2D> transferSpotMeasuresToRois(int imageHeight) {
+		List<ROI2D> transferLevel2DToRois(int imageHeight) {
 			List<ROI2D> rois = new ArrayList<>();
 			if (sumIn != null) {
 				ROI2DPolyLine roi = sumIn.getROIForImage("sum", 0, imageHeight);

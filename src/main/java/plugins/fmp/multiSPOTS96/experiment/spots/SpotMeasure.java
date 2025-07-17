@@ -27,10 +27,10 @@ import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 public class SpotMeasure {
 
 	// === CONSTANTS ===
-	private static final String DEFAULT_NAME = "no_name";
+//	private static final String DEFAULT_NAME = "no_name";
 	private static final double DEFAULT_FACTOR = 1.0;
-	private static final int DEFAULT_SPAN = 5;
-	private static final double DEFAULT_THRESHOLD = 1.0;
+//	private static final int DEFAULT_SPAN = 5;
+//	private static final double DEFAULT_THRESHOLD = 1.0;
 
 	// === CORE FIELDS ===
 	private Level2D level2D;
@@ -215,9 +215,7 @@ public class SpotMeasure {
 	 * 
 	 * @param name the name for the level2D
 	 */
-	public void initLevel2DFromMeasureValues(String name) {
-		setName(name);
-
+	public void transferValuesToLevel2D() {
 		if (values == null || values.length == 0) {
 			return;
 		}
@@ -239,9 +237,7 @@ public class SpotMeasure {
 	 * 
 	 * @param name the name for the level2D
 	 */
-	public void initLevel2DFromBooleans(String name) {
-		setName(name);
-
+	public void transferIsPresentToLevel2D() {
 		if (isPresent == null || isPresent.length == 0) {
 			return;
 		}
@@ -343,35 +339,8 @@ public class SpotMeasure {
 	 * 
 	 * @return the values array
 	 */
-	public double[] getValues() {
+	public double[] getValuesArray() {
 		return values;
-	}
-
-	/**
-	 * Sets the values array.
-	 * 
-	 * @param values the values array
-	 */
-	public void setValues(double[] values) {
-		this.values = values;
-	}
-
-	/**
-	 * Gets the presence array.
-	 * 
-	 * @return the presence array
-	 */
-	public int[] getIsPresent() {
-		return isPresent;
-	}
-
-	/**
-	 * Sets the presence array.
-	 * 
-	 * @param isPresent the presence array
-	 */
-	public void setIsPresent(int[] isPresent) {
-		this.isPresent = isPresent;
 	}
 
 	/**
@@ -380,10 +349,47 @@ public class SpotMeasure {
 	 * @param index the index to set
 	 * @param value the value to set
 	 */
-	public void setValue(int index, double value) {
+	public void setValueAt(int index, double value) {
 		if (values != null && index >= 0 && index < values.length) {
 			values[index] = value;
 		}
+	}
+
+	/**
+	 * Sets a single value in the values array.
+	 * 
+	 * @param index the index to set
+	 * @param value the value to set
+	 */
+	public double getValueAt(int index) {
+		return values[index];
+	}
+
+	/**
+	 * Sets the values array.
+	 * 
+	 * @param values the values array
+	 */
+	public void setValuesArray(double[] values) {
+		this.values = values;
+	}
+
+	/**
+	 * Gets the presence array.
+	 * 
+	 * @return the presence array
+	 */
+	public int[] getIsPresentArray() {
+		return isPresent;
+	}
+
+	/**
+	 * Sets the presence array.
+	 * 
+	 * @param isPresent the presence array
+	 */
+	public void setIsPresentArray(int[] isPresent) {
+		this.isPresent = isPresent;
 	}
 
 	/**
@@ -392,7 +398,7 @@ public class SpotMeasure {
 	 * @param index the index to set
 	 * @param value the value to set
 	 */
-	public void setPresence(int index, int value) {
+	public void setIsPresent(int index, int value) {
 		if (isPresent != null && index >= 0 && index < isPresent.length) {
 			isPresent[index] = value;
 		}
@@ -425,7 +431,7 @@ public class SpotMeasure {
 	 * @param outputBinMs the output bin in milliseconds
 	 * @return the subsampled data
 	 */
-	public List<Double> getLevel2D_Y_subsampled(long seriesBinMs, long outputBinMs) {
+	public List<Double> getLevel2DYAsSubsampledList(long seriesBinMs, long outputBinMs) {
 		if (level2D == null || level2D.npoints == 0) {
 			return new ArrayList<>();
 		}
@@ -453,7 +459,7 @@ public class SpotMeasure {
 	 * 
 	 * @return the Y data
 	 */
-	public List<Double> getLevel2D_Y() {
+	public List<Double> getLevel2DYAsList() {
 		if (level2D == null || level2D.ypoints == null) {
 			return new ArrayList<>();
 		}

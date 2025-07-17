@@ -46,16 +46,13 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		JComboBoxExperiment expList = options.expList;
 		ProgressFrame progress = new ProgressFrame("Analyze series");
 		selectedExperimentIndex = expList.getSelectedIndex();
-
 		selectList(expList, -1);
 
 		for (int index = expList.index0; index <= expList.index1; index++, nbiterations++) {
 			if (stopFlag)
 				break;
 			long startTimeInNs = System.nanoTime();
-
 			Experiment exp = expList.getItemAt(index);
-
 			progress.setMessage("Processing file: " + (index + 1) + "//" + (expList.index1 + 1));
 			System.out.println("BuildSeries:doInBackground " + (index + 1) + ": " + exp.getResultsDirectory());
 			exp.setBinSubDirectory(options.binSubDirectory);

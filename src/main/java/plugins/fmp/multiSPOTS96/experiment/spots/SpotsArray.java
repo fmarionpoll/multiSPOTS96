@@ -464,6 +464,10 @@ public class SpotsArray {
 		spotsList.forEach(Spot::initializeLevel2DMeasures);
 	}
 
+	public void transferMeasuresToLevel2D() {
+		spotsList.forEach(Spot::transferMeasuresToLevel2D);
+	}
+
 	// === TIME INTERVALS ===
 
 	/**
@@ -535,8 +539,8 @@ public class SpotsArray {
 	 */
 	public void transferSumToSumClean() {
 		spotsList.forEach(spot -> {
-			SpotMeasure sumIn = spot.getSumMeasurements();
-			SpotMeasure sumClean = spot.getCleanMeasurements();
+			SpotMeasure sumIn = spot.getSum();
+			SpotMeasure sumClean = spot.getSumClean();
 
 			if (sumIn != null && sumClean != null) {
 				sumClean.copyMeasures(sumIn);
