@@ -766,7 +766,7 @@ public class SpotsArray {
 
 	private boolean csvSaveMeasuresSection(FileWriter writer, EnumSpotMeasures measureType) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
-		writer.write("#" + CSV_SEPARATOR + measureType.toString() + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("#" + CSV_SEPARATOR + measureType.toString() + CSV_SEPARATOR + "v0\n");
 		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "npts" + CSV_SEPARATOR + "yi\n");
 
 		for (Spot spot : spotsList) {

@@ -205,7 +205,7 @@ public class Spot implements Comparable<Spot> {
 		initRoiTList(roi);
 	}
 
-	private void initRoiTList(ROI2D roi) {
+	public void initRoiTList(ROI2D roi) {
 		this.roiAlongTList.clear();
 		roiAlongTList.clear();
 		ROI2DAlongT roiT = new ROI2DAlongT();
@@ -610,23 +610,11 @@ public class Spot implements Comparable<Spot> {
 	 * @return the ROI at that time, or null if not found
 	 */
 	public ROI2DAlongT getRoiAtTime(long time) {
-		if (roiAlongTList.size() < 1) {
-			ROI2DAlongT roiT0 = null;
-			try {
-				roiT0 = new ROI2DAlongT(0, spotROI2D);
-			} catch (ROI2DValidationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return roiT0;
-		}
-
 		int index = 0;
 		for (ROI2DAlongT roiT : roiAlongTList) {
-			if (roiT.getTimePoint() < time)
-				index++;
-			else
+			if (roiT.getTimePoint() >= time) xxxx not working
 				break;
+			index++;
 		}
 		return roiAlongTList.get(index);
 	}
@@ -1035,8 +1023,7 @@ public class Spot implements Comparable<Spot> {
 
 		String exportOneType(String sourceName, int spotArrayIndex, EnumSpotMeasures measureType, String csvSeparator) {
 			StringBuilder sbf = new StringBuilder();
-			String head = sourceName + csvSeparator + spotArrayIndex + csvSeparator;
-			sbf.append(head);
+			sbf.append(sourceName + csvSeparator + spotArrayIndex + csvSeparator);
 			switch (measureType) {
 			case AREA_SUM:
 				sumIn.exportYDataToCsv(sbf, csvSeparator);
