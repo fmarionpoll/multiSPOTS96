@@ -989,7 +989,7 @@ public class Spot implements Comparable<Spot> {
 
 		void buildRunningMedianFromSumLevel2D(int imageHeight) {
 			if (sumIn != null && sumIn.getLevel2D() != null) {
-				sumIn.buildRunningMedian(5, sumIn.getLevel2D().ypoints);
+				sumIn.buildRunningMedianFromValuesArray(5, sumIn.getLevel2D().ypoints);
 			}
 		}
 

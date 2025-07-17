@@ -47,7 +47,7 @@ public class Level2D extends Polyline2D {
 	private static final Logger LOGGER = Logger.getLogger(Level2D.class.getName());
 
 	/** Default initial capacity for arrays */
-	private static final int DEFAULT_CAPACITY = 10;
+//	private static final int DEFAULT_CAPACITY = 10;
 
 	/** Growth factor for array expansion */
 	private static final int GROWTH_FACTOR = 2;

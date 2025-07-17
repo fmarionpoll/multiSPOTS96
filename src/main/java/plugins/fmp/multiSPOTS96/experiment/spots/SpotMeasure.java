@@ -601,13 +601,13 @@ public class SpotMeasure {
 	 * @param span    the span
 	 * @param yvalues the Y values
 	 */
-	public void buildRunningMedian(int span, double[] yvalues) {
+	public void buildRunningMedianFromValuesArray(int span, double[] yvalues) {
 		if (yvalues == null || yvalues.length == 0) {
 			return;
 		}
 
 		int npoints = yvalues.length;
-		double[] medianValues = new double[npoints];
+//		double[] medianValues = new double[npoints];
 
 		for (int i = 0; i < npoints; i++) {
 			int start = Math.max(0, i - span / 2);
@@ -620,13 +620,13 @@ public class SpotMeasure {
 			}
 
 			Arrays.sort(window);
-			medianValues[i] = window[count / 2];
+			values[i] = window[count / 2];
 		}
 
-		// Update level2D with median values
-		if (level2D != null) {
-			level2D.ypoints = medianValues;
-		}
+//		// Update level2D with median values
+//		if (level2D != null) {
+//			level2D.ypoints = medianValues;
+//		}
 	}
 
 	// === OFFSET COMPENSATION ===

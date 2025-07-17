@@ -537,13 +537,13 @@ public class SpotsArray {
 	/**
 	 * Transfers sum to sum clean for all spots.
 	 */
-	public void transferSumToSumClean() {
+	public void medianFilterFromSumToSumClean() {
+		int span = 10;
 		spotsList.forEach(spot -> {
 			SpotMeasure sumIn = spot.getSum();
 			SpotMeasure sumClean = spot.getSumClean();
-
 			if (sumIn != null && sumClean != null) {
-				sumClean.copyMeasures(sumIn);
+				sumClean.buildRunningMedianFromValuesArray(span, sumIn.getValuesArray());
 			}
 		});
 	}

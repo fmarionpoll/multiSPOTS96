@@ -778,9 +778,9 @@ public class CagesArray {
 		}
 	}
 
-	public void transferSumToSumClean() {
+	public void medianFilterFromSumToSumClean() {
 		for (Cage cage : cagesList) {
-			cage.getSpotsArray().transferSumToSumClean();
+			cage.getSpotsArray().medianFilterFromSumToSumClean();
 		}
 	}
 
