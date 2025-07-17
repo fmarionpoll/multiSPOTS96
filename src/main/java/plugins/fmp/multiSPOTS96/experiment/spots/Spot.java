@@ -612,7 +612,9 @@ public class Spot implements Comparable<Spot> {
 	public ROI2DAlongT getRoiAtTime(long time) {
 		int index = 0;
 		for (ROI2DAlongT roiT : roiAlongTList) {
-			if (roiT.getTimePoint() >= time) xxxx not working
+			if (roiT.getTimePoint() >= time) 
+				break;
+			if (index >= (roiAlongTList.size()-1))
 				break;
 			index++;
 		}
