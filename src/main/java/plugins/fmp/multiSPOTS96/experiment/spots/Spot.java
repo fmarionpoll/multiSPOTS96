@@ -41,9 +41,9 @@ public class Spot implements Comparable<Spot> {
 	private static final String ID_INTERVALS = "INTERVALS";
 	private static final String ID_NINTERVALS = "nintervals";
 	private static final String ID_INTERVAL = "interval_";
-	private static final String DEFAULT_STIMULUS = "..";
-	private static final String DEFAULT_CONCENTRATION = "..";
-	private static final double DEFAULT_SPOT_VOLUME = 0.5;
+//	private static final String DEFAULT_STIMULUS = "..";
+//	private static final String DEFAULT_CONCENTRATION = "..";
+//	private static final double DEFAULT_SPOT_VOLUME = 0.5;
 	private static final int DATA_OFFSET = 3;
 
 	// === CORE FIELDS ===
@@ -1120,13 +1120,13 @@ public class Spot implements Comparable<Spot> {
 			this.okToAnalyze = okToAnalyze;
 		}
 
-		int getKymographIndex() {
-			return kymographIndex;
-		}
-
-		void setKymographIndex(int kymographIndex) {
-			this.kymographIndex = kymographIndex;
-		}
+//		int getKymographIndex() {
+//			return kymographIndex;
+//		}
+//
+//		void setKymographIndex(int kymographIndex) {
+//			this.kymographIndex = kymographIndex;
+//		}
 
 		int getSpotCamDataT() {
 			return spotCamDataT;
