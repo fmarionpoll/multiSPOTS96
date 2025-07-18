@@ -66,6 +66,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 				System.out.println("BuildSeries:doInBackground process aborted - subdirectory not created: "
 						+ exp.getKymosBinFullDirectory());
 			}
+			System.gc();
 		}
 		progress.close();
 		threadRunning = false;
