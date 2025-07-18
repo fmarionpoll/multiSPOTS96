@@ -2,7 +2,9 @@ package plugins.fmp.multiSPOTS96.series;
 
 import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.swing.SwingUtilities;
 
@@ -10,6 +12,8 @@ import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageCursor;
 import icy.sequence.Sequence;
+import icy.system.SystemUtil;
+import icy.system.thread.Processor;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
@@ -101,12 +105,12 @@ public class BuildSpotsMeasures extends BuildSeries {
 		vData.setTitle(exp.seqCamData.getCSCamFileName() + ": " + iiFirst + "-" + iiLast);
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack");
 
-//		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
-//		processor.setThreadName("measureSpots");
-//		processor.setPriority(Processor.NORM_PRIORITY);
-//		int ntasks = iiLast - iiFirst;
-//		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(ntasks);
-//		tasks.clear();
+		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
+		processor.setThreadName("measureSpots");
+		processor.setPriority(Processor.NORM_PRIORITY);
+		int ntasks = iiLast - iiFirst;
+		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(ntasks);
+		tasks.clear();
 
 		initMeasureSpots(exp);
 
@@ -118,16 +122,13 @@ public class BuildSpotsMeasures extends BuildSeries {
 			}
 
 			final int t = ii;
+			progressBar1.setMessage("Analyze frame: " + t + "//" + iiLast);
 			String fileName = exp.seqCamData.getFileNameFromImageList(t);
 			if (fileName == null) {
 				System.out.println("filename null at t=" + t);
 				continue;
 			}
 			final IcyBufferedImage sourceImage = imageIORead(fileName);
-//			tasks.add(processor.submit(new Runnable() {
-//				@Override
-//				public void run() {
-			progressBar1.setMessage("Analyze frame: " + t + "//" + iiLast);
 			final IcyBufferedImage transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage,
 					transformOptions01);
 			final IcyBufferedImage transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage,
@@ -135,27 +136,32 @@ public class BuildSpotsMeasures extends BuildSeries {
 			final IcyBufferedImageCursor cursorToDetectFly = new IcyBufferedImageCursor(transformToDetectFly);
 			final IcyBufferedImageCursor cursorToMeasureArea = new IcyBufferedImageCursor(transformToMeasureArea);
 
-			int ii_local = t - iiFirst;
-			for (Cage cage : exp.cagesArray.cagesList) {
-				for (Spot spot : cage.spotsArray.getSpotsList()) {
-					if (!spot.isReadyForAnalysis()) {
-						continue;
-					}
+			tasks.add(processor.submit(new Runnable() {
+				@Override
+				public void run() {
 
-					ROI2DAlongT roiT = spot.getRoiAtTime(t);
-					ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly, roiT);
-					spot.getFlyPresent().setIsPresent(ii_local, results.nPoints_fly_present);
-					spot.getSum().setValueAt(ii_local, results.sumOverThreshold / results.npoints_in);
-					if (results.nPoints_no_fly != results.npoints_in)
-						spot.getSum().setValueAt(ii_local,
-								results.sumTot_no_fly_over_threshold / results.nPoints_no_fly);
+					int ii_local = t - iiFirst;
+					for (Cage cage : exp.cagesArray.cagesList) {
+						for (Spot spot : cage.spotsArray.getSpotsList()) {
+							if (!spot.isReadyForAnalysis()) {
+								continue;
+							}
+
+							ROI2DAlongT roiT = spot.getRoiAtTime(t);
+							ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly,
+									roiT);
+							spot.getFlyPresent().setIsPresent(ii_local, results.nPoints_fly_present);
+							spot.getSum().setValueAt(ii_local, results.sumOverThreshold / results.npoints_in);
+							if (results.nPoints_no_fly != results.npoints_in)
+								spot.getSum().setValueAt(ii_local,
+										results.sumTot_no_fly_over_threshold / results.nPoints_no_fly);
+						}
+					}
 				}
-			}
-//				}
-//			}));
+			}));
 		}
 
-//		waitFuturesCompletion(processor, tasks, null);
+		waitFuturesCompletion(processor, tasks, null);
 		progressBar1.close();
 		return true;
 	}
@@ -230,22 +236,23 @@ public class BuildSpotsMeasures extends BuildSeries {
 		if (seqCamData.getSequence() == null)
 			seqCamData.attachSequence(
 					exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
+
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				List<ROI2DAlongT> listRoiT = spot.getRoiAlongTList();
 				if (listRoiT.size() < 1)
 					spot.initRoiTList(spot.getRoi());
 				for (ROI2DAlongT roiT : listRoiT) {
-					if (!roiT.hasMaskData()) {
-						try {
-							roiT.buildMask2DFromInputRoi();
-						} catch (ROI2DProcessingException e) {
-							System.err.println("Error building mask for ROI at time " + roiT.getTimePoint() + ": "
-									+ e.getMessage());
-							e.printStackTrace();
-						}
+//					if (!roiT.hasMaskData()) {
+					try {
+						roiT.buildMask2DFromInputRoi();
+					} catch (ROI2DProcessingException e) {
+						System.err.println(
+								"Error building mask for ROI at time " + roiT.getTimePoint() + ": " + e.getMessage());
+						e.printStackTrace();
 					}
 				}
+//				}
 			}
 		}
 	}
