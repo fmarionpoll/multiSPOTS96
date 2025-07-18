@@ -3,7 +3,6 @@ package plugins.fmp.multiSPOTS96.series;
 import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Future;
 
 import javax.swing.SwingUtilities;
@@ -128,6 +127,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 				System.out.println("filename null at t=" + t);
 				continue;
 			}
+
 			final IcyBufferedImage sourceImage = imageIORead(fileName);
 			final IcyBufferedImage transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage,
 					transformOptions01);
@@ -136,32 +136,31 @@ public class BuildSpotsMeasures extends BuildSeries {
 			final IcyBufferedImageCursor cursorToDetectFly = new IcyBufferedImageCursor(transformToDetectFly);
 			final IcyBufferedImageCursor cursorToMeasureArea = new IcyBufferedImageCursor(transformToMeasureArea);
 
-			tasks.add(processor.submit(new Runnable() {
-				@Override
-				public void run() {
+//			tasks.add(processor.submit(new Runnable() {
+//				@Override
+//				public void run() {
 
-					int ii_local = t - iiFirst;
-					for (Cage cage : exp.cagesArray.cagesList) {
-						for (Spot spot : cage.spotsArray.getSpotsList()) {
-							if (!spot.isReadyForAnalysis()) {
-								continue;
-							}
-
-							ROI2DAlongT roiT = spot.getRoiAtTime(t);
-							ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly,
-									roiT);
-							spot.getFlyPresent().setIsPresent(ii_local, results.nPoints_fly_present);
-							spot.getSum().setValueAt(ii_local, results.sumOverThreshold / results.npoints_in);
-							if (results.nPoints_no_fly != results.npoints_in)
-								spot.getSum().setValueAt(ii_local,
-										results.sumTot_no_fly_over_threshold / results.nPoints_no_fly);
-						}
+			int ii_local = t - iiFirst;
+			for (Cage cage : exp.cagesArray.cagesList) {
+				for (Spot spot : cage.spotsArray.getSpotsList()) {
+					if (!spot.isReadyForAnalysis()) {
+						continue;
 					}
-				}
-			}));
-		}
 
-		waitFuturesCompletion(processor, tasks, null);
+					ROI2DAlongT roiT = spot.getRoiAtTime(t);
+					ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly, roiT);
+					spot.getFlyPresent().setIsPresent(ii_local, results.nPoints_fly_present);
+					spot.getSum().setValueAt(ii_local, results.sumOverThreshold / results.npoints_in);
+					if (results.nPoints_no_fly != results.npoints_in)
+						spot.getSum().setValueAt(ii_local,
+								results.sumTot_no_fly_over_threshold / results.nPoints_no_fly);
+				}
+			}
+		}
+//			}));
+//		}
+
+//		waitFuturesCompletion(processor, tasks, null);
 		progressBar1.close();
 		return true;
 	}
@@ -239,11 +238,10 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
-				List<ROI2DAlongT> listRoiT = spot.getRoiAlongTList();
-				if (listRoiT.size() < 1)
+				if (spot.getRoiAlongTList().size() < 1)
 					spot.initRoiTList(spot.getRoi());
-				for (ROI2DAlongT roiT : listRoiT) {
-//					if (!roiT.hasMaskData()) {
+
+				for (ROI2DAlongT roiT : spot.getRoiAlongTList()) {
 					try {
 						roiT.buildMask2DFromInputRoi();
 					} catch (ROI2DProcessingException e) {
@@ -252,7 +250,6 @@ public class BuildSpotsMeasures extends BuildSeries {
 						e.printStackTrace();
 					}
 				}
-//				}
 			}
 		}
 	}

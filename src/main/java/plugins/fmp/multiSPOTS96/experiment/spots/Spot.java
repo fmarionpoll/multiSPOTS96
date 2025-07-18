@@ -207,15 +207,14 @@ public class Spot implements Comparable<Spot> {
 
 	public void initRoiTList(ROI2D roi) {
 		this.roiAlongTList.clear();
-		roiAlongTList.clear();
-		ROI2DAlongT roiT = new ROI2DAlongT();
+		ROI2DAlongT roiT = null;
 		try {
-			roiT.setInputRoi(roi);
+			roiT = new ROI2DAlongT(0, roi);
 		} catch (ROI2DValidationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		roiAlongTList.add(roiT);
+		this.roiAlongTList.add(roiT);
 	}
 
 	/**
