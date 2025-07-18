@@ -28,10 +28,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.SpotProperties;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotTable;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 
-public class InfosSpotTable extends JPanel implements ListSelectionListener { // implements GlobalSequenceListener,
-																				// ROIListener {
-//, 
-//SequenceListener {
+public class InfosSpotTable extends JPanel implements ListSelectionListener {
 	/**
 	 * 
 	 */
@@ -230,7 +227,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener { //
 		columnIndex = 5;
 		spotTable.spotTableModel.setValueAt(prop.getCageRow(), iID, columnIndex);
 		columnIndex = 7;
-		spotTable.spotTableModel.setValueAt(prop.getStimulusI(), iID, columnIndex);
+		spotTable.spotTableModel.setValueAt(prop.getStimulus(), iID, columnIndex);
 		columnIndex = 8;
 		spotTable.spotTableModel.setValueAt(prop.getConcentration(), iID, columnIndex);
 		columnIndex = 9;

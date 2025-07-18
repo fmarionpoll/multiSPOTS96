@@ -40,7 +40,6 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 	private JButton selectedCageButton = new JButton("Locate selected cage");
 
 	private JButton duplicateAllButton = new JButton("Cage to all");
-//	private JButton colorizeCagesRoiButton = new JButton("Set cell color according to nflies");
 	private MultiSPOTS96 parent0 = null;
 	private CagesArray cagesArrayCopy = null;
 
@@ -69,7 +68,6 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 		JPanel panel2 = new JPanel(flowLayout);
 		panel2.add(new JLabel("Duplicate:"));
 		panel2.add(duplicateAllButton);
-//		panel2.add(colorizeCagesRoiButton);
 		topPanel.add(panel2);
 
 		JPanel tablePanel = new JPanel();

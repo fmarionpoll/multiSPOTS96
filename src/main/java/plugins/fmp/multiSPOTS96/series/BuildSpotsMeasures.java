@@ -2,8 +2,6 @@ package plugins.fmp.multiSPOTS96.series;
 
 import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.concurrent.Future;
 
 import javax.swing.SwingUtilities;
 
@@ -11,8 +9,6 @@ import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageCursor;
 import icy.sequence.Sequence;
-import icy.system.SystemUtil;
-import icy.system.thread.Processor;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
@@ -104,12 +100,12 @@ public class BuildSpotsMeasures extends BuildSeries {
 		vData.setTitle(exp.seqCamData.getCSCamFileName() + ": " + iiFirst + "-" + iiLast);
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack");
 
-		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
-		processor.setThreadName("measureSpots");
-		processor.setPriority(Processor.NORM_PRIORITY);
-		int ntasks = iiLast - iiFirst;
-		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(ntasks);
-		tasks.clear();
+//		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
+//		processor.setThreadName("measureSpots");
+//		processor.setPriority(Processor.NORM_PRIORITY);
+//		int ntasks = iiLast - iiFirst;
+//		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(ntasks);
+//		tasks.clear();
 
 		initMeasureSpots(exp);
 
