@@ -138,44 +138,52 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 	}
 
 	private XLSExportOptions getSpotsOptions() {
+		int first = 0;
+		int last = parent0.expListCombo.getItemCount() - 1;
+		if (!tabCommonOptions.exportAllFilesCheckBox.isSelected()) {
+			first = parent0.expListCombo.getSelectedIndex();
+			last = parent0.expListCombo.getSelectedIndex();
+		}
+		boolean fixedIntervals = tabCommonOptions.isFixedFrameButton.isSelected();
+
+//		XLSExportOptions options = XLSExportOptionsBuilder
+//		.forSpotAreas()
+//		.build();
+//		
+//		options.withSum(spotsAreas.sumCheckBox.isSelected());
+//		options.withRelativeToT0(spotsAreas.t0CheckBox.isSelected());
+//		options.withTranspose(tabCommonOptions.transposeCheckBox.isSelected());
+//		options.withBuildExcelStepMs(tabCommonOptions.getExcelBuildStep());
+//
+//		.withBuildExcelUnitMs(tabCommonOptions.binUnit.getMsUnitValue())
+//		.withNPixels(spotsAreas.nPixelsCheckBox.isSelected())
+//		.withFixedIntervals(fixedIntervals)
+//		.withTimeRange(tabCommonOptions.getStartAllMs(), tabCommonOptions.getEndAllMs())
+//		.withExportAllFiles(tabCommonOptions.exportAllFilesCheckBox.isSelected())
+//		.withExperimentList(parent0.expListCombo)
+//		.withExperimentRange(first, last);
+
 		XLSExportOptions options = new XLSExportOptions();
 		options.spotAreas = true;
 		options.sum = spotsAreas.sumCheckBox.isSelected();
 		options.nPixels = spotsAreas.nPixelsCheckBox.isSelected();
 		options.relativeToT0 = spotsAreas.t0CheckBox.isSelected();
-		getCommonOptions(options);
-		return options;
-	}
 
-//	private XLSExportOptions getCagesOptions() {
-//		XLSExportOptions options = new XLSExportOptions();
-//		options.spotAreas = true;
-//		options.sum = cagesAreas.sumCheckBox.isSelected();
-//		options.nPixels = cagesAreas.nPixelsCheckBox.isSelected();
-//		getCommonOptions(options);
-//		return options;
-//	}
-
-	private void getCommonOptions(XLSExportOptions options) {
 		options.transpose = tabCommonOptions.transposeCheckBox.isSelected();
 		options.buildExcelStepMs = tabCommonOptions.getExcelBuildStep();
 		options.buildExcelUnitMs = tabCommonOptions.binUnit.getMsUnitValue();
-		options.fixedIntervals = tabCommonOptions.isFixedFrameButton.isSelected();
+		options.fixedIntervals = fixedIntervals;
 		options.startAll_Ms = tabCommonOptions.getStartAllMs();
 		options.endAll_Ms = tabCommonOptions.getEndAllMs();
-		options.collateSeries = false; // tabCommonOptions.collateSeriesCheckBox.isSelected();
-		options.padIntervals = false; // tabCommonOptions.padIntervalsCheckBox.isSelected();
-		options.absoluteTime = false; // tabCommonOptions.absoluteTimeCheckBox.isSelected();
-		options.onlyalive = false; // tabCommonOptions.onlyAliveCheckBox.isSelected();
+		options.collateSeries = false;
+		options.padIntervals = false;
+		options.absoluteTime = false;
+		options.onlyalive = false;
 		options.exportAllFiles = tabCommonOptions.exportAllFilesCheckBox.isSelected();
-
 		options.expList = parent0.expListCombo;
-		if (tabCommonOptions.exportAllFilesCheckBox.isSelected()) {
-			options.experimentIndexFirst = 0;
-			options.experimentIndexLast = options.expList.getItemCount() - 1;
-		} else {
-			options.experimentIndexFirst = parent0.expListCombo.getSelectedIndex();
-			options.experimentIndexLast = parent0.expListCombo.getSelectedIndex();
-		}
+		options.experimentIndexFirst = first;
+		options.experimentIndexLast = last;
+
+		return options;
 	}
 }

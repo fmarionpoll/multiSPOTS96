@@ -26,6 +26,7 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.chart.ChartCageArrayFrame;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptionsBuilder;
 
 public class Charts extends JPanel implements SequenceListener {
 	/**
@@ -158,15 +159,10 @@ public class Charts extends JPanel implements SequenceListener {
 		if (iChart != null)
 			iChart.getMainChartFrame().dispose();
 
-		XLSExportOptions xlsExportOptions = new XLSExportOptions();
-		xlsExportOptions.buildExcelStepMs = 60000;
-		xlsExportOptions.relativeToT0 = relativeToCheckbox.isSelected();
-		xlsExportOptions.exportType = exportType;
+		int first = 0;
+		int last = exp.cagesArray.cagesList.size() - 1;
 
-		if (displayAllButton.isSelected()) {
-			xlsExportOptions.cageIndexFirst = 0;
-			xlsExportOptions.cageIndexLast = exp.cagesArray.cagesList.size() - 1;
-		} else {
+		if (!displayAllButton.isSelected()) {
 			Cage cageFound = exp.cagesArray.findFirstCageWithSelectedSpot();
 			if (cageFound == null)
 				cageFound = exp.cagesArray.findFirstSelectedCage();
@@ -174,14 +170,18 @@ public class Charts extends JPanel implements SequenceListener {
 				return null;
 			exp.seqCamData.centerOnRoi(cageFound.getRoi());
 			String cageNumber = CageString.getCageNumberFromCageRoiName(cageFound.getRoi().getName());
-			xlsExportOptions.cageIndexFirst = Integer.parseInt(cageNumber);
-			xlsExportOptions.cageIndexLast = xlsExportOptions.cageIndexFirst;
+			first = Integer.parseInt(cageNumber);
+			last = first;
 		}
 
+		XLSExportOptions options = XLSExportOptionsBuilder.forChart().withBuildExcelStepMs(60000)
+				.withRelativeToT0(relativeToCheckbox.isSelected()).withExportType(exportType).withCageRange(first, last)
+				.build();
+
 		iChart = new ChartCageArrayFrame();
-		iChart.createPanel("Spots measures", exp, xlsExportOptions, parent0);
+		iChart.createPanel("Spots measures", exp, options, parent0);
 		iChart.setChartSpotUpperLeftLocation(getInitialUpperLeftPosition(exp));
-		iChart.displayData(exp, xlsExportOptions);
+		iChart.displayData(exp, options);
 		iChart.getMainChartFrame().toFront();
 		iChart.getMainChartFrame().requestFocus();
 		return iChart;
