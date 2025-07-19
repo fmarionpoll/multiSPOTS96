@@ -217,9 +217,9 @@ public class SequenceKymos extends SequenceCamData {
 			throw new IllegalArgumentException("Adjustment options cannot be null");
 		}
 
-		if (getSequence() == null) {
-			throw new IllegalStateException("Sequence is not initialized");
-		}
+//		if (getSequence() == null) {
+//			throw new IllegalStateException("Sequence is not initialized");
+//		}
 		processingLock.lock();
 		try {
 			isLoadingImages = true;

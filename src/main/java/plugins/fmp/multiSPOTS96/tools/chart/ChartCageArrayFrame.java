@@ -567,7 +567,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 			return;
 		}
 
-		if (exp.seqKymos != null) {
+		if (exp.seqKymos != null && exp.seqKymos.getSequence() != null) {
 			Viewer v = exp.seqKymos.getSequence().getFirstViewer();
 			if (v != null) {
 				v.setPositionT(spot.getSpotKymographT());

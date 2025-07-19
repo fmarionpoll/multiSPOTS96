@@ -308,12 +308,15 @@ public class Experiment {
 		}
 	}
 
-	public long[] build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList() {
+	public boolean build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList() {
 		int nFrames = seqCamData.getImageLoader().getImagesCount();
 		if (nFrames != seqCamData.getImageLoader().getNTotalFrames())
 			System.out.println("error: nFrames (seqCamData.camImagesList.size()):" + nFrames
 					+ " is different from seqCamData.getImageLoader().getNTotalFrames():"
 					+ seqCamData.getImageLoader().getNTotalFrames());
+		if (nFrames < 1)
+			return false;
+
 		seqCamData.getTimeManager().setCamImagesArrayMs(new long[seqCamData.getImageLoader().getNTotalFrames()]);
 
 		FileTime firstImage_FileTime = seqCamData.getFileTimeFromStructuredName(0);
@@ -323,7 +326,7 @@ public class Experiment {
 			long image_ms = image_FileTime.toMillis() - firstImage_ms;
 			seqCamData.getTimeManager().getCamImagesArrayMs()[i] = image_ms;
 		}
-		return seqCamData.getTimeManager().getCamImagesArrayMs();
+		return true;
 	}
 
 	public int findNearestIntervalWithBinarySearch(long value, int low, int high) {

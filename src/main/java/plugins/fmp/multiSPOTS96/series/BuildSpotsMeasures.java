@@ -94,7 +94,9 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 		threadRunning = true;
 		stopFlag = false;
-		exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList();
+		if (!exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList())
+			return false;
+
 		int iiFirst = 0;
 		int iiLast = exp.seqCamData.getImageLoader().getNTotalFrames();
 		vData.setTitle(exp.seqCamData.getCSCamFileName() + ": " + iiFirst + "-" + iiLast);
