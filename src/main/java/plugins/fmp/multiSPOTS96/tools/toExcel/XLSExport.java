@@ -30,7 +30,7 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelResourceException;
  * This class defines the overall algorithm for Excel export while allowing
  * subclasses to customize specific steps through protected methods.
  */
-public abstract class XLSExportBase {
+public abstract class XLSExport {
 
 	protected XLSExportOptions options = null;
 	protected Experiment expAll = null;

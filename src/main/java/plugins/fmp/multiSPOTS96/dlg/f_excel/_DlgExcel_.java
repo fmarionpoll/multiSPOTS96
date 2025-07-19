@@ -18,8 +18,8 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
 import plugins.fmp.multiSPOTS96.tools.JComponents.exceptions.FileDialogException;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportBaseMeasuresCagesAsQuery;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportBaseMeasuresSpot;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresCagesAsQuery;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresSpot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelExportException;
 
@@ -89,7 +89,7 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 			ThreadUtil.bgRun(new Runnable() {
 				@Override
 				public void run() {
-					XLSExportBaseMeasuresSpot xlsExport = new XLSExportBaseMeasuresSpot();
+					XLSExportMeasuresSpot xlsExport = new XLSExportMeasuresSpot();
 					try {
 						xlsExport.exportToFile(file, getSpotsOptions());
 					} catch (ExcelExportException e) {
@@ -107,7 +107,7 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 			ThreadUtil.bgRun(new Runnable() {
 				@Override
 				public void run() {
-					XLSExportBaseMeasuresCagesAsQuery xlsExport = new XLSExportBaseMeasuresCagesAsQuery();
+					XLSExportMeasuresCagesAsQuery xlsExport = new XLSExportMeasuresCagesAsQuery();
 					try {
 						xlsExport.exportQToFile(file, getSpotsOptions());
 					} catch (ExcelExportException e) {

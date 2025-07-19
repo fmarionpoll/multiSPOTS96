@@ -16,7 +16,7 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelDataException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelResourceException;
 
-public class XLSExportBaseMeasuresCagesAsQuery extends XLSExportBase {
+public class XLSExportMeasuresCagesAsQuery extends XLSExport {
 	ArrayList<EnumXLS_QColumnHeader> headers = new ArrayList<EnumXLS_QColumnHeader>();
 
 	public void exportQToFile(String filename, XLSExportOptions options) throws ExcelExportException {
