@@ -14,7 +14,7 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelResourceException;
  * Excel export implementation for spot measurements. Uses the Template Method
  * pattern for structured export operations.
  */
-public class XLSExportMeasuresSpot extends XLSExportBase {
+public class XLSExportBaseMeasuresSpot extends XLSExportBase {
 
 	/**
 	 * Exports spot data for a single experiment.
@@ -24,9 +24,10 @@ public class XLSExportMeasuresSpot extends XLSExportBase {
 	 * @param charSeries  The series identifier
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
-	 */
+	 **/
 	@Override
-	protected int exportExperimentData(Experiment exp, int startColumn, String charSeries) throws ExcelExportException {
+	protected int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+			String charSeries) throws ExcelExportException {
 		int column = startColumn;
 
 		if (options.spotAreas) {

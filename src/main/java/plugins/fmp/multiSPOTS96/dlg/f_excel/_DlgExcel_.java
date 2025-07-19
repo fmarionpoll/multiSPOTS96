@@ -18,8 +18,8 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
 import plugins.fmp.multiSPOTS96.tools.JComponents.exceptions.FileDialogException;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresCagesAsQuery;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresSpot;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportBaseMeasuresCagesAsQuery;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportBaseMeasuresSpot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelExportException;
 
@@ -89,7 +89,7 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 			ThreadUtil.bgRun(new Runnable() {
 				@Override
 				public void run() {
-					XLSExportMeasuresSpot xlsExport = new XLSExportMeasuresSpot();
+					XLSExportBaseMeasuresSpot xlsExport = new XLSExportBaseMeasuresSpot();
 					try {
 						xlsExport.exportToFile(file, getSpotsOptions());
 					} catch (ExcelExportException e) {
@@ -99,18 +99,6 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 				}
 			});
 
-//		} else if (evt.getPropertyName().equals("EXPORT_CAGESMEASURES")) {
-//			String file = defineXlsFileName(exp, "_cagesareas.xlsx");
-//			if (file == null)
-//				return;
-//			updateExperrimentsParameters(exp);
-//			ThreadUtil.bgRun(new Runnable() {
-//				@Override
-//				public void run() {
-//					XLSExportMeasuresCage xlsExport = new XLSExportMeasuresCage();
-//					xlsExport.exportToFile(file, getCagesOptions());
-//				}
-//			});
 		} else if (evt.getPropertyName().equals("EXPORT_SPOTSMEASURES_AS_Q")) {
 			String file = defineXlsFileName(exp, "_asQ.xlsx");
 			if (file == null)
@@ -119,8 +107,13 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 			ThreadUtil.bgRun(new Runnable() {
 				@Override
 				public void run() {
-					XLSExportMeasuresCagesAsQuery xlsExport = new XLSExportMeasuresCagesAsQuery();
-					xlsExport.exportToFile(file, getSpotsOptions());
+					XLSExportBaseMeasuresCagesAsQuery xlsExport = new XLSExportBaseMeasuresCagesAsQuery();
+					try {
+						xlsExport.exportQToFile(file, getSpotsOptions());
+					} catch (ExcelExportException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			});
 		}

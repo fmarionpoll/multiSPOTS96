@@ -52,19 +52,17 @@ public abstract class XLSExportBase {
 	 * @throws ExcelExportException If export fails
 	 */
 	public final void exportToFile(String filename, XLSExportOptions options) throws ExcelExportException {
-		System.out.println("XLSExport:exportToFile() - " + ExcelExportConstants.EXPORT_START_MESSAGE);
+		System.out.println("XLSExportBase:exportToFile() - " + ExcelExportConstants.EXPORT_START_MESSAGE);
 
 		this.options = options;
 		this.expList = options.expList;
 
 		try (ExcelResourceManager resourceManager = new ExcelResourceManager(filename)) {
 			this.resourceManager = resourceManager;
-
-			// Initialize styles
 			this.redCellStyle = resourceManager.getRedCellStyle();
 			this.blueCellStyle = resourceManager.getBlueCellStyle();
 
-			// Execute template method steps
+			// Execute method steps
 			prepareExperiments();
 			validateExportParameters();
 			executeExport();
@@ -136,29 +134,19 @@ public abstract class XLSExportBase {
 
 		try {
 			progress.setLength(nbexpts);
-
 			int column = 1;
 			int iSeries = 0;
 
 			for (int index = options.experimentIndexFirst; index <= options.experimentIndexLast; index++) {
 				Experiment exp = expList.getItemAt(index);
-
-				// Load experiment data
 				exp.load_MS96_spotsMeasures();
-
-				// Skip chained experiments if needed
 				if (shouldSkipExperiment(exp)) {
 					continue;
 				}
-
-				// Update progress
 				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
 
-				// Get series identifier
-				String charSeries = CellReference.convertNumToColString(iSeries);
-
-				// Export experiment data (subclass-specific)
-				column = exportExperimentData(exp, column, charSeries);
+				String seriesIdentifier = CellReference.convertNumToColString(iSeries);
+				column = exportExperimentData(exp, options, column, seriesIdentifier);
 
 				iSeries++;
 				progress.incPosition();
@@ -197,8 +185,8 @@ public abstract class XLSExportBase {
 	 * @return The next available column
 	 * @throws ExcelExportException If export fails
 	 */
-	protected abstract int exportExperimentData(Experiment exp, int startColumn, String charSeries)
-			throws ExcelExportException;
+	protected abstract int exportExperimentData(Experiment exp, XLSExportOptions xlsExportOptions, int startColumn,
+			String charSeries) throws ExcelExportException;
 
 	/**
 	 * Cleanup method called after export completion. Subclasses can override to add
@@ -461,9 +449,9 @@ public abstract class XLSExportBase {
 		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
 
 		if (nOutputFrames <= 1) {
-			if (exp.seqKymos != null && exp.seqKymos.getKymographInfo().getMaxWidth() == 0) {
-				exp.zloadKymographs();
-			}
+//			if (exp.seqKymos != null && exp.seqKymos.getKymographInfo().getMaxWidth() == 0) {
+//				exp.zloadKymographs();
+//			}
 
 			long binLastMs = timeManager.getBinFirst_ms()
 					+ imgLoader.getNTotalFrames() * timeManager.getBinDurationMs();
