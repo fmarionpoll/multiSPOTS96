@@ -329,24 +329,6 @@ public class Experiment {
 		return true;
 	}
 
-	public int findNearestIntervalWithBinarySearch(long value, int low, int high) {
-		int result = -1;
-		if (high - low > 1) {
-			int mid = (low + high) / 2;
-
-			if (seqCamData.getTimeManager().getCamImagesArrayMs()[mid] > value)
-				result = findNearestIntervalWithBinarySearch(value, low, mid);
-			else if (seqCamData.getTimeManager().getCamImagesArrayMs()[mid] < value)
-				result = findNearestIntervalWithBinarySearch(value, mid, high);
-			else
-				result = mid;
-		} else
-			result = Math.abs(value - seqCamData.getTimeManager().getCamImagesArrayMs()[low]) < Math
-					.abs(value - seqCamData.getTimeManager().getCamImagesArrayMs()[high]) ? low : high;
-
-		return result;
-	}
-
 	public String getBinNameFromKymoFrameStep() {
 		return BIN + seqCamData.getTimeManager().getBinDurationMs() / 1000;
 	}

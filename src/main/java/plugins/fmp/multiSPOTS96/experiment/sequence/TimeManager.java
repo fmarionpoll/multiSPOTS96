@@ -109,6 +109,24 @@ public class TimeManager {
 		return filetime;
 	}
 
+	public int findNearestIntervalWithBinarySearch(long value, int low, int high) {
+		int result = -1;
+		if (high - low > 1) {
+			int mid = (low + high) / 2;
+
+			if (camImages_array_ms[mid] > value)
+				result = findNearestIntervalWithBinarySearch(value, low, mid);
+			else if (camImages_array_ms[mid] < value)
+				result = findNearestIntervalWithBinarySearch(value, mid, high);
+			else
+				result = mid;
+		} else
+			result = Math.abs(value - camImages_array_ms[low]) < Math
+					.abs(value - camImages_array_ms[high]) ? low : high;
+
+		return result;
+	}
+	
 	private int findProperFilterIfAny(String fileName) {
 		for (int i = 1; i < timePatternArray.length; i++) {
 			if (timePatternArray[i].findMatch(fileName))
