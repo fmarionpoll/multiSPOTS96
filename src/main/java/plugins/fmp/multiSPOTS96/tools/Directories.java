@@ -106,8 +106,8 @@ public class Directories {
 						.filter(p -> p.getFileName().toString().toLowerCase().endsWith(filter.toLowerCase()))
 						.forEach(p -> hSet.add(p.toFile().getParent().toString()));
 
-				LOGGER.fine("Found " + hSet.size() + " directories with files matching '" + filter + "' in "
-						+ rootDirectory);
+//				LOGGER.fine("Found " + hSet.size() + " directories with files matching '" + filter + "' in "
+//						+ rootDirectory);
 			} else {
 				LOGGER.warning("Root directory does not exist: " + rootDirectory);
 			}
@@ -142,7 +142,7 @@ public class Directories {
 		List<String> dirList = getPathsContainingString(subfolders, filter);
 		if (dirList != null) {
 			Collections.sort(dirList, CASE_INSENSITIVE_COMPARATOR);
-			LOGGER.fine("Found " + dirList.size() + " subdirectories matching '" + filter + "' in " + directory);
+//			LOGGER.fine("Found " + dirList.size() + " subdirectories matching '" + filter + "' in " + directory);
 		}
 		return dirList;
 	}
@@ -176,7 +176,7 @@ public class Directories {
 		}
 
 		List<String> result = new ArrayList<String>(dirList);
-		LOGGER.fine("Found " + result.size() + " paths containing '" + filter + "'");
+//		LOGGER.fine("Found " + result.size() + " paths containing '" + filter + "'");
 		return result;
 	}
 
@@ -235,7 +235,7 @@ public class Directories {
 		String strDirectory = filepath.isDirectory() ? filepath.getAbsolutePath()
 				: filepath.getParentFile().getAbsolutePath();
 
-		LOGGER.fine("Extracted directory from '" + fileName + "': " + strDirectory);
+//		LOGGER.fine("Extracted directory from '" + fileName + "': " + strDirectory);
 		return strDirectory;
 	}
 
@@ -294,7 +294,7 @@ public class Directories {
 			}
 		});
 
-		LOGGER.fine("Found " + list.size() + " TIFF directories in " + parentDirectory);
+//		LOGGER.fine("Found " + list.size() + " TIFF directories in " + parentDirectory);
 		return list;
 	}
 
@@ -362,7 +362,7 @@ public class Directories {
 				if (name.toLowerCase().endsWith(filter.toLowerCase())) {
 					if (file.delete()) {
 						deletedCount++;
-						LOGGER.fine("Deleted file: " + file.getAbsolutePath());
+//						LOGGER.fine("Deleted file: " + file.getAbsolutePath());
 					} else {
 						LOGGER.warning("Failed to delete file: " + file.getAbsolutePath());
 					}

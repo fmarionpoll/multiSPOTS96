@@ -64,7 +64,7 @@ public class ChartCagePair {
 		this.chartPanel = chartPanel;
 		this.cage = cage;
 
-		LOGGER.fine("Created CageChartPair for cage ID: " + cage.getProperties().getCageID());
+//		LOGGER.fine("Created CageChartPair for cage ID: " + cage.getProperties().getCageID());
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class ChartCagePair {
 		}
 
 		this.chartPanel = chartPanel;
-		LOGGER.fine("Updated chart panel for cage ID: " + cage.getProperties().getCageID());
+//		LOGGER.fine("Updated chart panel for cage ID: " + cage.getProperties().getCageID());
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class ChartCagePair {
 		}
 
 		this.cage = cage;
-		LOGGER.fine("Updated cage for chart panel, new cage ID: " + cage.getProperties().getCageID());
+//		LOGGER.fine("Updated cage for chart panel, new cage ID: " + cage.getProperties().getCageID());
 	}
 
 	/**

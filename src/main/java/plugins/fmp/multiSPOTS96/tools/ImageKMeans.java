@@ -208,18 +208,18 @@ public class ImageKMeans {
 			throw new IllegalArgumentException("Algorithm cannot be null");
 		}
 
-		LOGGER.fine("Creating segmentation algorithm");
+//		LOGGER.fine("Creating segmentation algorithm");
 		DefaultSegmentationAlgorithm<SegmentableIcyBufferedImage> segAlgo = new DefaultSegmentationAlgorithm<SegmentableIcyBufferedImage>(
 				descriptor, algo);
 		segAlgo.setLogEnabled(false);
 
-		LOGGER.fine("Performing segmentation");
+//		LOGGER.fine("Performing segmentation");
 		Segmentation seg = segAlgo.segment(img, regions);
 
-		if (seg != null) {
-			LOGGER.fine("Segmentation completed successfully");
-		} else {
+		if (seg == null) {
 			LOGGER.warning("Segmentation returned null result");
+//		} else {
+//			LOGGER.fine("Segmentation completed successfully");
 		}
 
 		return seg;

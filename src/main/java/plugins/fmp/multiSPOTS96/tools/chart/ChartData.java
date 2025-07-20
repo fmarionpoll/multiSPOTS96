@@ -72,7 +72,7 @@ public class ChartData {
 		this.yMaxMin = yMaxMin;
 		this.xyDataset = xyDataset;
 
-		LOGGER.fine("Created ChartData with " + (xyDataset != null ? xyDataset.getSeriesCount() : 0) + " series");
+//		LOGGER.fine("Created ChartData with " + (xyDataset != null ? xyDataset.getSeriesCount() : 0) + " series");
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class ChartData {
 	 */
 	public void setYMaxMin(MaxMinDouble yMaxMin) {
 		this.yMaxMin = yMaxMin;
-		LOGGER.fine("Updated Y-axis range: " + yMaxMin);
+//		LOGGER.fine("Updated Y-axis range: " + yMaxMin);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class ChartData {
 	 */
 	public void setXMaxMin(MaxMinDouble xMaxMin) {
 		this.xMaxMin = xMaxMin;
-		LOGGER.fine("Updated X-axis range: " + xMaxMin);
+//		LOGGER.fine("Updated X-axis range: " + xMaxMin);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class ChartData {
 	 */
 	public void setXYDataset(XYSeriesCollection xyDataset) {
 		this.xyDataset = xyDataset;
-		LOGGER.fine("Updated XY dataset with " + (xyDataset != null ? xyDataset.getSeriesCount() : 0) + " series");
+//		LOGGER.fine("Updated XY dataset with " + (xyDataset != null ? xyDataset.getSeriesCount() : 0) + " series");
 	}
 
 	/**
@@ -219,6 +219,6 @@ public class ChartData {
 		this.xMaxMin = null;
 		this.yMaxMin = null;
 		this.xyDataset = null;
-		LOGGER.fine("Cleared ChartData");
+//		LOGGER.fine("Cleared ChartData");
 	}
 }

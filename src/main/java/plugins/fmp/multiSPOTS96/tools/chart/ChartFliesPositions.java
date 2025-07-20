@@ -165,7 +165,7 @@ public class ChartFliesPositions extends IcyFrame {
 		}
 
 		pt = new Point(originPoint.x + deltapt.x, originPoint.y + deltapt.y);
-		LOGGER.fine("Set chart location to: " + pt);
+//		LOGGER.fine("Set chart location to: " + pt);
 	}
 
 	/**
@@ -206,9 +206,9 @@ public class ChartFliesPositions extends IcyFrame {
 
 				xyDataSetList.add(xyDataset);
 				count++;
-				LOGGER.fine("Added data for cage ID: " + cage.getProperties().getCageID());
-			} else {
-				LOGGER.fine("Skipping cage ID " + cage.getProperties().getCageID() + " - no position data");
+//				LOGGER.fine("Added data for cage ID: " + cage.getProperties().getCageID());
+//			} else {
+//				LOGGER.fine("Skipping cage ID " + cage.getProperties().getCageID() + " - no position data");
 			}
 		}
 
@@ -448,7 +448,7 @@ public class ChartFliesPositions extends IcyFrame {
 	private void cleanChartsPanel(ArrayList<ChartPanel> chartsPanel) {
 		if (chartsPanel != null && chartsPanel.size() > 0) {
 			chartsPanel.clear();
-			LOGGER.fine("Cleaned up " + chartsPanel.size() + " chart panels");
+//			LOGGER.fine("Cleaned up " + chartsPanel.size() + " chart panels");
 		}
 	}
 

@@ -285,7 +285,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 	private ChartPanel createChartPanelForCage(Cage cage, int row, int col, XLSExportOptions xlsExportOptions) {
 
 		if (cage.spotsArray.getSpotsCount() < 1) {
-			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
+//			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
 			return null;
 		}
 
@@ -368,7 +368,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		mainChartFrame.setLocation(graphLocation);
 		mainChartFrame.addToDesktopPane();
 		mainChartFrame.setVisible(true);
-		LOGGER.fine("Displayed chart frame at location: " + graphLocation);
+//		LOGGER.fine("Displayed chart frame at location: " + graphLocation);
 	}
 
 	/**
@@ -383,7 +383,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		}
 
 		graphLocation = new Point(rectv.x, rectv.y);
-		LOGGER.fine("Set chart location to: " + graphLocation);
+//		LOGGER.fine("Set chart location to: " + graphLocation);
 	}
 
 	/**

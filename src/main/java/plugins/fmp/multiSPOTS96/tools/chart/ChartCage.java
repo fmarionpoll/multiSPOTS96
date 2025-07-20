@@ -114,7 +114,7 @@ public class ChartCage {
 		globalYMin = 0;
 		globalXMax = 0;
 
-		LOGGER.fine("Initialized max/min tracking variables");
+		// LOGGER.fine("Initialized max/min tracking variables");
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class ChartCage {
 			throw new IllegalArgumentException("Y-axis cannot be null");
 		}
 
-		LOGGER.fine("Building XY plot with " + xySeriesCollection.getSeriesCount() + " series");
+//		//LOGGER.fine("Building XY plot with " + xySeriesCollection.getSeriesCount() + " series");
 
 		XYLineAndShapeRenderer subPlotRenderer = getSubPlotRenderer(xySeriesCollection);
 		XYPlot xyPlot = new XYPlot(xySeriesCollection, xAxis, yAxis, subPlotRenderer);
@@ -172,12 +172,12 @@ public class ChartCage {
 				xyPlot.setBackgroundPaint(BACKGROUND_WITH_DATA);
 				xyPlot.setDomainGridlinePaint(GRID_WITH_DATA);
 				xyPlot.setRangeGridlinePaint(GRID_WITH_DATA);
-				LOGGER.fine("Set background for chart with " + nflies + " flies");
+				// LOGGER.fine("Set background for chart with " + nflies + " flies");
 			} else {
 				xyPlot.setBackgroundPaint(BACKGROUND_WITHOUT_DATA);
 				xyPlot.setDomainGridlinePaint(GRID_WITHOUT_DATA);
 				xyPlot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
-				LOGGER.fine("Set background for chart with no flies");
+				// LOGGER.fine("Set background for chart with no flies");
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.warning("Could not parse number of flies from description: " + e.getMessage());
@@ -211,7 +211,7 @@ public class ChartCage {
 		}
 
 		XYSeriesCollection xySeriesCollection = null;
-		int seriesCount = 0;
+//		int seriesCount = 0;
 		XLSExportMeasuresSpot xlsExportMeasuresSpot = new XLSExportMeasuresSpot();
 
 		for (Spot spot : cage.spotsArray.getSpotsList()) {
@@ -226,12 +226,13 @@ public class ChartCage {
 			if (seriesXY != null) {
 				seriesXY.setDescription(buildSeriesDescription(xlsResults, cage));
 				xySeriesCollection.addSeries(seriesXY);
-				seriesCount++;
+//				seriesCount++;
 				updateGlobalMaxMin();
 			}
 		}
 
-		LOGGER.fine("Extracted " + seriesCount + " series for cage ID: " + cage.getProperties().getCageID());
+		// LOGGER.fine("Extracted " + seriesCount + " series for cage ID: " +
+		// cage.getProperties().getCageID());
 		return xySeriesCollection;
 	}
 
@@ -268,7 +269,8 @@ public class ChartCage {
 			ymax = xlsResults.valuesOut[0];
 			ymin = ymax;
 			addPointsAndUpdateExtrema(seriesXY, xlsResults, 0);
-			LOGGER.fine("Created series '" + name + "' with " + xlsResults.valuesOut.length + " points");
+			// LOGGER.fine("Created series '" + name + "' with " +
+			// xlsResults.valuesOut.length + " points");
 		} else {
 			LOGGER.warning("No data points in results for series '" + name + "'");
 		}
@@ -285,27 +287,27 @@ public class ChartCage {
 			globalYMin = ymin;
 			globalXMax = xmax;
 			flagMaxMinSet = true;
-			LOGGER.fine(
-					"Set initial global extrema: Y[" + globalYMin + ", " + globalYMax + "], X[0, " + globalXMax + "]");
+			// LOGGER.fine(
+//					"Set initial global extrema: Y[" + globalYMin + ", " + globalYMax + "], X[0, " + globalXMax + "]");
 		} else {
-			boolean updated = false;
+//			boolean updated = false;
 			if (globalYMax < ymax) {
 				globalYMax = ymax;
-				updated = true;
+//				updated = true;
 			}
 			if (globalYMin > ymin) {
 				globalYMin = ymin;
-				updated = true;
+//				updated = true;
 			}
 			if (globalXMax < xmax) {
 				globalXMax = xmax;
-				updated = true;
+//				updated = true;
 			}
 
-			if (updated) {
-				LOGGER.fine(
-						"Updated global extrema: Y[" + globalYMin + ", " + globalYMax + "], X[0, " + globalXMax + "]");
-			}
+//			if (updated) {
+//				LOGGER.fine(
+//						"Updated global extrema: Y[" + globalYMin + ", " + globalYMax + "], X[0, " + globalXMax + "]");
+//			}
 		}
 	}
 
@@ -338,7 +340,8 @@ public class ChartCage {
 			x++;
 		}
 
-		LOGGER.fine("Added " + npoints + " points to series, local extrema: Y[" + ymin + ", " + ymax + "]");
+		// LOGGER.fine("Added " + npoints + " points to series, local extrema: Y[" +
+		// ymin + ", " + ymax + "]");
 	}
 
 	/**
@@ -380,7 +383,8 @@ public class ChartCage {
 			}
 		}
 
-		LOGGER.fine("Created renderer for " + xySeriesCollection.getSeriesCount() + " series");
+		// LOGGER.fine("Created renderer for " + xySeriesCollection.getSeriesCount() + "
+		// series");
 		return subPlotRenderer;
 	}
 
