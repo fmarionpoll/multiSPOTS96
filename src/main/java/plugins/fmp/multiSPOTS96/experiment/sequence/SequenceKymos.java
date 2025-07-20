@@ -328,8 +328,8 @@ public class SequenceKymos extends SequenceCamData {
 				}
 			}
 
-			LOGGER.info(String.format("Created %d kymograph file descriptors from %d cages", fileList.size(),
-					cagesArray.cagesList.size()));
+//			LOGGER.info(String.format("Created %d kymograph file descriptors from %d cages", fileList.size(),
+//					cagesArray.cagesList.size()));
 
 			return fileList;
 

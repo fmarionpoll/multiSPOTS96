@@ -146,7 +146,7 @@ public class ChartFliesPositions extends IcyFrame {
 		mainChartPanel.setLayout(new BoxLayout(mainChartPanel, BoxLayout.LINE_AXIS));
 		mainChartFrame.add(mainChartPanel);
 
-		LOGGER.info("Created chart panel with title: " + title);
+//		LOGGER.info("Created chart panel with title: " + title);
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class ChartFliesPositions extends IcyFrame {
 			throw new IllegalArgumentException("Export option cannot be null");
 		}
 
-		LOGGER.info("Displaying " + option + " data for " + cageList.size() + " cages");
+//		LOGGER.info("Displaying " + option + " data for " + cageList.size() + " cages");
 
 		List<XYSeriesCollection> xyDataSetList = new ArrayList<XYSeriesCollection>();
 		MaxMinDouble yMaxMin = new MaxMinDouble();
@@ -226,7 +226,8 @@ public class ChartFliesPositions extends IcyFrame {
 					null, // title - the chart title (null permitted).
 					null, // yAxisLabel - a label for the Y-axis (null permitted)
 					xyDataset, // dataset - the dataset for the chart (null permitted)
-					PlotOrientation.VERTICAL, // orientation - the plot orientation (horizontal or vertical) (null NOT permitted)
+					PlotOrientation.VERTICAL, // orientation - the plot orientation (horizontal or vertical) (null NOT
+												// permitted)
 					true, // legend - a flag specifying whether or not a legend is required
 					true, // tooltips - configure chart to generate tool tips?
 					true); // urls - configure chart to generate URLs?
@@ -254,7 +255,7 @@ public class ChartFliesPositions extends IcyFrame {
 		mainChartFrame.addToDesktopPane();
 		mainChartFrame.setVisible(true);
 
-		LOGGER.info("Displayed " + xyDataSetList.size() + " charts");
+//		LOGGER.info("Displayed " + xyDataSetList.size() + " charts");
 	}
 
 	/**

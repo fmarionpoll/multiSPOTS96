@@ -145,9 +145,9 @@ public class ImageLoader {
 				return null;
 			}
 
-			if (sequenceList.size() > 1) {
-				LOGGER.info("Multiple sequences loaded, using first one. Count: " + sequenceList.size());
-			}
+//			if (sequenceList.size() > 1) {
+//				LOGGER.info("Multiple sequences loaded, using first one. Count: " + sequenceList.size());
+//			}
 
 			return sequenceList.get(0);
 		} catch (Exception e) {

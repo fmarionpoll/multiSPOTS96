@@ -171,7 +171,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		mainChartFrame.add(scrollPane);
 		chartPanelArray = new ChartCagePair[nPanelsAlongY][nPanelsAlongX];
 
-		LOGGER.info("Created chart panel with " + nPanelsAlongY + "x" + nPanelsAlongX + " grid");
+//		LOGGER.info("Created chart panel with " + nPanelsAlongY + "x" + nPanelsAlongX + " grid");
 	}
 
 	/**
@@ -236,7 +236,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		arrangePanelsInDisplay(xlsExportOptions);
 		displayChartFrame();
 
-		LOGGER.info("Displayed spot charts for experiment");
+//		LOGGER.info("Displayed spot charts for experiment");
 	}
 
 	/**
@@ -267,7 +267,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 			}
 		}
 
-		LOGGER.info("Created " + createdCharts + " in " + indexCage + " chart panels");
+//		LOGGER.info("Created " + createdCharts + " in " + indexCage + " chart panels");
 	}
 
 	/**

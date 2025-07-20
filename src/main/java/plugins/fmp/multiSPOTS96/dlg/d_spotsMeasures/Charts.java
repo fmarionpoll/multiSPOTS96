@@ -161,7 +161,6 @@ public class Charts extends JPanel implements SequenceListener {
 
 		int first = 0;
 		int last = exp.cagesArray.cagesList.size() - 1;
-
 		if (!displayAllButton.isSelected()) {
 			Cage cageFound = exp.cagesArray.findFirstCageWithSelectedSpot();
 			if (cageFound == null)
