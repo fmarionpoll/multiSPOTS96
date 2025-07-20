@@ -14,8 +14,6 @@ import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
-import plugins.fmp.multiSPOTS96.experiment.sequence.ImageLoader;
-import plugins.fmp.multiSPOTS96.experiment.sequence.TimeManager;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelDataException;
@@ -415,61 +413,6 @@ public abstract class XLSExport {
 				cage.getProperties().getFlyAge());
 		XLSUtils.setValue(sheet, x, y + ExcelExportConstants.ColumnPositions.CAGE_COMMENT, transpose,
 				cage.getProperties().getComment());
-	}
-
-	/**
-	 * Gets the results for a spot.
-	 * 
-	 * @param exp           The experiment
-	 * @param cage          The cage
-	 * @param spot          The spot
-	 * @param xlsExportType The export type
-	 * @return The XLS results
-	 */
-	public XLSResults getSpotResults(Experiment exp, Cage cage, Spot spot, XLSExportOptions xlsExportOptions) {
-		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
-		XLSResults xlsResults = new XLSResults(cage.getProperties(), spot.getProperties(), nOutputFrames);
-
-		long binData = exp.seqCamData.getTimeManager().getBinDurationMs();
-		long binExcel = xlsExportOptions.buildExcelStepMs;
-		xlsResults.getDataFromSpot(spot, binData, binExcel, xlsExportOptions);
-		return xlsResults;
-	}
-
-	/**
-	 * Gets the number of output frames for the experiment.
-	 * 
-	 * @param exp The experiment
-	 * @return The number of output frames
-	 */
-	protected int getNOutputFrames(Experiment exp, XLSExportOptions options) {
-		TimeManager timeManager = exp.seqCamData.getTimeManager();
-		ImageLoader imgLoader = exp.seqCamData.getImageLoader();
-		long durationMs = timeManager.getBinLast_ms() - timeManager.getBinFirst_ms();
-		int nOutputFrames = (int) (durationMs / options.buildExcelStepMs + 1);
-
-		if (nOutputFrames <= 1) {
-//			if (exp.seqKymos != null && exp.seqKymos.getKymographInfo().getMaxWidth() == 0) {
-//				exp.zloadKymographs();
-//			}
-
-			long binLastMs = timeManager.getBinFirst_ms()
-					+ imgLoader.getNTotalFrames() * timeManager.getBinDurationMs();
-			timeManager.setBinLast_ms(binLastMs);
-
-			if (binLastMs <= 0) {
-				handleExportError(exp, -1);
-			}
-
-			nOutputFrames = (int) ((binLastMs - timeManager.getBinFirst_ms()) / options.buildExcelStepMs + 1);
-
-			if (nOutputFrames <= 1) {
-				nOutputFrames = imgLoader.getNTotalFrames();
-				handleExportError(exp, nOutputFrames);
-			}
-		}
-
-		return nOutputFrames;
 	}
 
 	/**

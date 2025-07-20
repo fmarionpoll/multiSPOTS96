@@ -355,13 +355,13 @@ public class Directories {
 			return;
 		}
 
-		int deletedCount = 0;
+//		int deletedCount = 0;
 		for (File file : files) {
 			if (file != null && file.isFile()) {
 				String name = file.getName();
 				if (name.toLowerCase().endsWith(filter.toLowerCase())) {
 					if (file.delete()) {
-						deletedCount++;
+//						deletedCount++;
 //						LOGGER.fine("Deleted file: " + file.getAbsolutePath());
 					} else {
 						LOGGER.warning("Failed to delete file: " + file.getAbsolutePath());
