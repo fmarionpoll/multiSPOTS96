@@ -117,7 +117,7 @@ public class XLSExportMeasuresSpot extends XLSExport {
 		 * calculate n output bins
 		 */
 		int nOutputFrames = getNOutputFrames(exp, xlsExportOptions);
-		nOutputFrames = spot.getMeasurements(EnumXLSExport.AREA_SUMCLEAN).getLevel2DNPoints();
+
 		XLSResults xlsResults = new XLSResults(cage.getProperties(), spot.getProperties(), nOutputFrames);
 
 		long binData = exp.seqCamData.getTimeManager().getBinDurationMs();
