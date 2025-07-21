@@ -113,7 +113,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresSpot {
 		headers.add(EnumXLS_QColumnHeader.EXP_CONC1);
 		headers.add(EnumXLS_QColumnHeader.EXP_STIM2);
 		headers.add(EnumXLS_QColumnHeader.EXP_CONC2);
-		headers.add(EnumXLS_QColumnHeader.CAGE_STRAIN);
+		headers.add(EnumXLS_QColumnHeader.EXP_STRAIN);
 		headers.add(EnumXLS_QColumnHeader.CAGE_NFLIES);
 		headers.add(EnumXLS_QColumnHeader.CAGE_POS);
 		headers.add(EnumXLS_QColumnHeader.VAL_TIME);
