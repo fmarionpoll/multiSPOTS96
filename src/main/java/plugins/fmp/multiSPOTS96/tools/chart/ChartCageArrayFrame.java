@@ -262,6 +262,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 				}
 
 				ChartPanel chartPanel = createChartPanelForCage(cage, row, col, xlsExportOptions);
+				if (chartPanel == null)
+					chartPanel = (ChartPanel) new JPanel();
 				chartPanelArray[row][col] = new ChartCagePair(chartPanel, cage);
 //				createdCharts++;
 			}
