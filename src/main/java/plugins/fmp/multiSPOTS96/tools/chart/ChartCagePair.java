@@ -54,12 +54,12 @@ public class ChartCagePair {
 	 * @throws IllegalArgumentException if either parameter is null
 	 */
 	public ChartCagePair(ChartPanel chartPanel, Cage cage) {
-		if (chartPanel == null) {
-			throw new IllegalArgumentException("Chart panel cannot be null");
-		}
-		if (cage == null) {
-			throw new IllegalArgumentException("Cage cannot be null");
-		}
+//		if (chartPanel == null) {
+//			throw new IllegalArgumentException("Chart panel cannot be null");
+//		}
+//		if (cage == null) {
+//			throw new IllegalArgumentException("Cage cannot be null");
+//		}
 
 		this.chartPanel = chartPanel;
 		this.cage = cage;

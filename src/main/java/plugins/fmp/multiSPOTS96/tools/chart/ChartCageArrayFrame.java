@@ -262,8 +262,6 @@ public class ChartCageArrayFrame extends IcyFrame {
 				}
 
 				ChartPanel chartPanel = createChartPanelForCage(cage, row, col, xlsExportOptions);
-				if (chartPanel == null)
-					chartPanel = (ChartPanel) new JPanel();
 				chartPanelArray[row][col] = new ChartCagePair(chartPanel, cage);
 //				createdCharts++;
 			}
@@ -288,7 +286,18 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		if (cage.spotsArray.getSpotsCount() < 1) {
 //			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
-			return null;
+			ChartPanel chartPanel = new ChartPanel(null, // jfreechart
+					DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, // preferred width, height of the panel
+					MIN_CHART_WIDTH, MIN_CHART_HEIGHT, // minimal drawing width, drawing height
+					MAX_CHART_WIDTH, MAX_CHART_HEIGHT, // maximumDrawWidth, maximumDrawHeight
+					true, // use memory buffer to improve performance.
+					true, // chart property editor available via popup menu
+					true, // copy option available via popup menu
+					true, // print option available via popup menu
+					false, // zoom options not added to the popup menu
+					true); // tooltips enabled for the chart;
+
+			return chartPanel;
 		}
 
 		ChartCage chartCage = new ChartCage();
