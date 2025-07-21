@@ -351,7 +351,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 			ROI2D roiSpot = spot.getRoi();
 			if (name == null)
 				name = roiSpot.getName();
-			Cage cage = exp.cagesArray.getCageFromName(name);
+			Cage cage = exp.cagesArray.getCageFromSpotROIName(name);
 			if (cage != null) {
 				ROI2D cageRoi = cage.getRoi();
 				if (cageRoi != null)

@@ -149,8 +149,10 @@ public class SpotMeasure {
 				&& measure2.values.length > 0) {
 			this.values = new double[measure1.values.length];
 			for (int i = 0; i < measure1.values.length; i++) {
-				double sum = measure1.values[i] + measure2.values[i];
-				this.values[i] = sum > 0 ? (measure1.values[i] - measure2.values[i]) / sum : 0;
+				double value1 = measure1.values[i];
+				double value2 = measure2.values[i];
+				double sum = value1 + value2;
+				this.values[i] = sum > 0 ? (value1 - value2) / sum : 0;
 			}
 		}
 	}
