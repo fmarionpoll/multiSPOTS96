@@ -13,12 +13,12 @@ public class XLSExportOptions {
 	public boolean sleep = true;
 	public int sleepThreshold = 5;
 
-	public boolean topLevel = true;
-	public boolean topLevelDelta = false;
-	public boolean bottomLevel = false;
-	public boolean derivative = false;
-	public boolean lrPI = true;
-	public double lrPIThreshold = 0.;
+//	public boolean topLevel = true;
+//	public boolean topLevelDelta = false;
+//	public boolean bottomLevel = false;
+//	public boolean derivative = false;
+//	public boolean lrPI = true;
+//	public double lrPIThreshold = 0.;
 
 	public boolean spotAreas = true;
 	public boolean sum = true;
@@ -73,12 +73,12 @@ public class XLSExportOptions {
 		this.sleep = xlsExportOptions.sleep;
 		this.sleepThreshold = xlsExportOptions.sleepThreshold;
 
-		this.topLevel = xlsExportOptions.topLevel;
-		this.topLevelDelta = xlsExportOptions.topLevelDelta;
-		this.bottomLevel = xlsExportOptions.bottomLevel;
-		this.derivative = xlsExportOptions.derivative;
-		this.lrPI = xlsExportOptions.lrPI;
-		this.lrPIThreshold = xlsExportOptions.lrPIThreshold;
+//		this.topLevel = xlsExportOptions.topLevel;
+//		this.topLevelDelta = xlsExportOptions.topLevelDelta;
+//		this.bottomLevel = xlsExportOptions.bottomLevel;
+//		this.derivative = xlsExportOptions.derivative;
+//		this.lrPI = xlsExportOptions.lrPI;
+//		this.lrPIThreshold = xlsExportOptions.lrPIThreshold;
 
 		this.spotAreas = xlsExportOptions.spotAreas;
 		this.sum = xlsExportOptions.sum;

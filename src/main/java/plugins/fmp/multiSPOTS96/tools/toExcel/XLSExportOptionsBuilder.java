@@ -22,12 +22,12 @@ public class XLSExportOptionsBuilder {
 	private int sleepThreshold = ExcelExportConstants.DEFAULT_SLEEP_THRESHOLD;
 
 	// Level analysis options
-	private boolean topLevel = DefaultOptions.TOP_LEVEL;
-	private boolean topLevelDelta = DefaultOptions.TOP_LEVEL_DELTA;
-	private boolean bottomLevel = DefaultOptions.BOTTOM_LEVEL;
-	private boolean derivative = DefaultOptions.DERIVATIVE;
-	private boolean lrPI = DefaultOptions.LR_PI;
-	private double lrPIThreshold = DefaultOptions.LR_PI_THRESHOLD;
+//	private boolean topLevel = DefaultOptions.TOP_LEVEL;
+//	private boolean topLevelDelta = DefaultOptions.TOP_LEVEL_DELTA;
+//	private boolean bottomLevel = DefaultOptions.BOTTOM_LEVEL;
+//	private boolean derivative = DefaultOptions.DERIVATIVE;
+//	private boolean lrPI = DefaultOptions.LR_PI;
+//	private double lrPIThreshold = DefaultOptions.LR_PI_THRESHOLD;
 
 	// Spot area options
 	private boolean spotAreas = DefaultOptions.SPOT_AREAS;
@@ -101,12 +101,12 @@ public class XLSExportOptionsBuilder {
 		this.sleep = existing.sleep;
 		this.sleepThreshold = existing.sleepThreshold;
 
-		this.topLevel = existing.topLevel;
-		this.topLevelDelta = existing.topLevelDelta;
-		this.bottomLevel = existing.bottomLevel;
-		this.derivative = existing.derivative;
-		this.lrPI = existing.lrPI;
-		this.lrPIThreshold = existing.lrPIThreshold;
+//		this.topLevel = existing.topLevel;
+//		this.topLevelDelta = existing.topLevelDelta;
+//		this.bottomLevel = existing.bottomLevel;
+//		this.derivative = existing.derivative;
+//		this.lrPI = existing.lrPI;
+//		this.lrPIThreshold = existing.lrPIThreshold;
 
 		this.spotAreas = existing.spotAreas;
 		this.sum = existing.sum;
@@ -192,10 +192,10 @@ public class XLSExportOptionsBuilder {
 		return this;
 	}
 
-	public XLSExportOptionsBuilder withTopLevel(boolean topLevel) {
-		this.topLevel = topLevel;
-		return this;
-	}
+//	public XLSExportOptionsBuilder withTopLevel(boolean topLevel) {
+//		this.topLevel = topLevel;
+//		return this;
+//	}
 
 	public XLSExportOptionsBuilder withSpotAreas(boolean spotAreas) {
 		this.spotAreas = spotAreas;
@@ -310,12 +310,12 @@ public class XLSExportOptionsBuilder {
 		options.sleep = this.sleep;
 		options.sleepThreshold = this.sleepThreshold;
 
-		options.topLevel = this.topLevel;
-		options.topLevelDelta = this.topLevelDelta;
-		options.bottomLevel = this.bottomLevel;
-		options.derivative = this.derivative;
-		options.lrPI = this.lrPI;
-		options.lrPIThreshold = this.lrPIThreshold;
+//		options.topLevel = this.topLevel;
+//		options.topLevelDelta = this.topLevelDelta;
+//		options.bottomLevel = this.bottomLevel;
+//		options.derivative = this.derivative;
+//		options.lrPI = this.lrPI;
+//		options.lrPIThreshold = this.lrPIThreshold;
 
 		options.spotAreas = this.spotAreas;
 		options.sum = this.sum;

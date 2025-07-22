@@ -10,19 +10,16 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotProperties;
 
 public class XLSResults {
-	public String name = null;
-	String stimulus = null;
-	String concentration = null;
-	int nadded = 1;
-	boolean[] padded_out = null;
-
-	public int dimension = 0;
-	public int nflies = 1;
-	public int cageID = 0;
-	public int cagePosition = 0;
-	public Color color;
-	public ArrayList<Double> dataValues = null;
-	public double[] valuesOut = null;
+	private String name = null;
+	private String stimulus = null;
+	private String concentration = null;
+	private int nflies = 1;
+	private int cageID = 0;
+	private int cagePosition = 0;
+	private Color color;
+	private ArrayList<Double> dataValues = null;
+	private int valuesOutLength = 0;
+	private double[] valuesOut = null;
 
 	public XLSResults(String name, int nflies, int cageID, int cagePos, EnumXLSExport exportType) {
 		this.name = name;
@@ -42,25 +39,101 @@ public class XLSResults {
 		initValuesArray(nFrames);
 	}
 
+	// ---------------------------
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getStimulus() {
+		return this.stimulus;
+	}
+
+	public void setStimulus(String stimulus) {
+		this.stimulus = stimulus;
+	}
+
+	public String getConcentration() {
+		return this.concentration;
+	}
+
+	public void setConcentration(String concentration) {
+		this.concentration = concentration;
+	}
+
+	public int getNflies() {
+		return this.nflies;
+	}
+
+	public void setNflies(int nFlies) {
+		this.nflies = nFlies;
+	}
+
+	public int getCageID() {
+		return this.cageID;
+	}
+
+	public void setCageID(int cageID) {
+		this.cageID = cageID;
+	}
+
+	public int getCagePosition() {
+		return this.cagePosition;
+	}
+
+	public void getCagePosition(int cagePosition) {
+		this.cagePosition = cagePosition;
+	}
+
+	public Color getColor() {
+		return this.color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public ArrayList<Double> getDataValues() {
+		return this.dataValues;
+	}
+
+	public void setDataValues(ArrayList<Double> dataValues) {
+		this.dataValues = dataValues;
+	}
+
+	public int getValuesOutLength() {
+		return this.valuesOutLength;
+	}
+
+	public double[] getValuesOut() {
+		return valuesOut;
+	}
+
+	public void setValuesOut(double[] valuesOut) {
+		this.valuesOut = valuesOut;
+	}
+
+	// ---------------------------
+
 	void initValuesOutArray(int dimension, Double val) {
-		this.dimension = dimension;
+		this.valuesOutLength = dimension;
 		valuesOut = new double[dimension];
 		Arrays.fill(valuesOut, val);
 	}
 
 	private void initValuesArray(int dimension) {
-		this.dimension = dimension;
+		this.valuesOutLength = dimension;
 		valuesOut = new double[dimension];
 		Arrays.fill(valuesOut, Double.NaN);
-		padded_out = new boolean[dimension];
-		Arrays.fill(padded_out, false);
 	}
 
 	void clearValues(int fromindex) {
 		int toindex = valuesOut.length;
 		if (fromindex > 0 && fromindex < toindex) {
 			Arrays.fill(valuesOut, fromindex, toindex, Double.NaN);
-			Arrays.fill(padded_out, fromindex, toindex, false);
 		}
 	}
 
@@ -78,11 +151,11 @@ public class XLSResults {
 	}
 
 	public void transferMeasuresToValuesOut(double scalingFactorToPhysicalUnits, EnumXLSExport xlsExport) {
-		if (dimension == 0 || dataValues == null || dataValues.size() < 1)
+		if (valuesOutLength == 0 || dataValues == null || dataValues.size() < 1)
 			return;
 
 		boolean removeZeros = false;
-		int len = Math.min(dimension, dataValues.size());
+		int len = Math.min(valuesOutLength, dataValues.size());
 		if (removeZeros) {
 			for (int i = 0; i < len; i++) {
 				double ivalue = dataValues.get(i);
@@ -96,10 +169,10 @@ public class XLSResults {
 
 	public void copyValuesOut(XLSResults sourceRow) {
 		if (sourceRow.valuesOut.length != valuesOut.length) {
-			this.dimension = sourceRow.dimension;
-			valuesOut = new double[dimension];
+			this.valuesOutLength = sourceRow.valuesOutLength;
+			valuesOut = new double[valuesOutLength];
 		}
-		for (int i = 0; i < dimension; i++)
+		for (int i = 0; i < valuesOutLength; i++)
 			valuesOut[i] = sourceRow.valuesOut[i];
 	}
 

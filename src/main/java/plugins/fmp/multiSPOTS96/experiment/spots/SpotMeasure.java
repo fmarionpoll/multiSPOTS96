@@ -39,6 +39,7 @@ public class SpotMeasure {
 	private int[] isPresent;
 	private ROI2DPolyLine roi;
 	private double factor;
+	private int measuredFromNSpots = 1;
 	private String name;
 
 	// === CONSTRUCTORS ===
@@ -125,6 +126,8 @@ public class SpotMeasure {
 		if (source.isPresent != null && source.isPresent.length > 0) {
 			addPresence(source.isPresent);
 		}
+
+		measuredFromNSpots++;
 	}
 
 	/**
@@ -422,6 +425,14 @@ public class SpotMeasure {
 	 */
 	public void setFactor(double factor) {
 		this.factor = factor;
+	}
+
+	public int getMeasuredFromNSpots() {
+		return measuredFromNSpots;
+	}
+
+	public void setMeasuredFromNSpots(int n) {
+		this.measuredFromNSpots = n;
 	}
 
 	// === LEVEL2D DATA PROCESSING ===

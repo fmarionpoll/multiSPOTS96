@@ -244,9 +244,9 @@ public class ChartCage {
 	 * @return formatted description string
 	 */
 	private String buildSeriesDescription(XLSResults xlsResults, Cage cage) {
-		return "ID:" + xlsResults.cageID + ":Pos:" + xlsResults.cagePosition + ":nflies:"
-				+ cage.getProperties().getCageNFlies() + ":R:" + xlsResults.color.getRed() + ":G:"
-				+ xlsResults.color.getGreen() + ":B:" + xlsResults.color.getBlue();
+		return "ID:" + xlsResults.getCageID() + ":Pos:" + xlsResults.getCagePosition() + ":nflies:"
+				+ cage.getProperties().getCageNFlies() + ":R:" + xlsResults.getColor().getRed() + ":G:"
+				+ xlsResults.getColor().getGreen() + ":B:" + xlsResults.getColor().getBlue();
 	}
 
 	/**
@@ -264,9 +264,9 @@ public class ChartCage {
 
 		XYSeries seriesXY = new XYSeries(name, false);
 
-		if (xlsResults.valuesOut != null && xlsResults.valuesOut.length > 0) {
-			xmax = xlsResults.valuesOut.length;
-			ymax = xlsResults.valuesOut[0];
+		if (xlsResults.getValuesOutLength() > 0) {
+			xmax = xlsResults.getValuesOutLength();
+			ymax = xlsResults.getValuesOut()[0];
 			ymin = ymax;
 			addPointsAndUpdateExtrema(seriesXY, xlsResults, 0);
 			// LOGGER.fine("Created series '" + name + "' with " +
@@ -319,16 +319,16 @@ public class ChartCage {
 	 * @param startFrame the starting frame number
 	 */
 	private void addPointsAndUpdateExtrema(XYSeries seriesXY, XLSResults xlsResults, int startFrame) {
-		if (seriesXY == null || xlsResults == null || xlsResults.valuesOut == null) {
+		if (seriesXY == null || xlsResults == null || xlsResults.getValuesOutLength() > 0) {
 			LOGGER.warning("Cannot add points: series, results, or values are null");
 			return;
 		}
 
 		int x = 0;
-		int npoints = xlsResults.valuesOut.length;
+		int npoints = xlsResults.getValuesOutLength();
 
 		for (int j = 0; j < npoints; j++) {
-			double y = xlsResults.valuesOut[j];
+			double y = xlsResults.getValuesOut()[j];
 			seriesXY.add(x + startFrame, y);
 
 			if (ymax < y) {

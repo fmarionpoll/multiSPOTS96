@@ -438,7 +438,7 @@ public abstract class XLSExport {
 	protected void writeXLSResult(SXSSFSheet sheet, Point pt, XLSResults xlsResult) {
 		boolean transpose = options.transpose;
 
-		if (xlsResult.valuesOut == null) {
+		if (xlsResult.getValuesOutLength() < 1) {
 			return;
 		}
 
@@ -447,18 +447,18 @@ public abstract class XLSExport {
 
 			int i_from = (int) ((coltime - expAll.seqCamData.getFirstImageMs()) / options.buildExcelStepMs);
 
-			if (i_from >= xlsResult.valuesOut.length) {
+			if (i_from >= xlsResult.getValuesOutLength()) {
 				break;
 			}
 
-			double value = xlsResult.valuesOut[i_from];
+			double value = xlsResult.getValuesOut()[i_from];
 
 			if (!Double.isNaN(value)) {
 				XLSUtils.setValue(sheet, pt, transpose, value);
 
-				if (i_from < xlsResult.padded_out.length && xlsResult.padded_out[i_from]) {
-					XLSUtils.getCell(sheet, pt, transpose).setCellStyle(redCellStyle);
-				}
+//				if (i_from < xlsResult.padded_out.length && xlsResult.padded_out[i_from]) {
+//					XLSUtils.getCell(sheet, pt, transpose).setCellStyle(redCellStyle);
+//				}
 			}
 		}
 	}

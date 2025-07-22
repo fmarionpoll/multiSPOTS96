@@ -389,24 +389,24 @@ public class Cage implements Comparable<Cage> {
 		return items;
 	}
 
-	public ArrayList<Spot> combineSpotsWithSameStimulusConcentration() {
-		ArrayList<Spot> spotsList = new ArrayList<Spot>(2);
-		for (Spot spotSource : spotsArray.getSpotsList()) {
-			String test = spotSource.getCombinedStimulusConcentration();
-			boolean found = false;
-			for (Spot spot : spotsList) {
-				if (test.equals(spot.getCombinedStimulusConcentration())) {
-					found = true;
-					spot.addMeasurements(spotSource);
-					break;
-				}
-			}
-			if (!found) {
-				spotsList.add(new Spot(spotSource, true));
-			}
-		}
-		return spotsList;
-	}
+//	public ArrayList<Spot> combineSpotsWithSameStimulusConcentration() {
+//		ArrayList<Spot> spotsList = new ArrayList<Spot>(2);
+//		for (Spot spotSource : spotsArray.getSpotsList()) {
+//			String test = spotSource.getCombinedStimulusConcentration();
+//			boolean found = false;
+//			for (Spot spot : spotsList) {
+//				if (test.equals(spot.getCombinedStimulusConcentration())) {
+//					found = true;
+//					spot.addMeasurements(spotSource);
+//					break;
+//				}
+//			}
+//			if (!found) {
+//				spotsList.add(new Spot(spotSource, true));
+//			}
+//		}
+//		return spotsList;
+//	}
 
 	public Spot combineSpotsWith(String stim, String conc) {
 		Spot spotCombined = null;

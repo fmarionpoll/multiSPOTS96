@@ -118,7 +118,9 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresSpot {
 		headers.add(EnumXLS_QColumnHeader.CAGE_POS);
 		headers.add(EnumXLS_QColumnHeader.VAL_TIME);
 		headers.add(EnumXLS_QColumnHeader.VAL_STIM1);
+		headers.add(EnumXLS_QColumnHeader.N_STIM1);
 		headers.add(EnumXLS_QColumnHeader.VAL_STIM2);
+		headers.add(EnumXLS_QColumnHeader.N_STIM2);
 		headers.add(EnumXLS_QColumnHeader.VAL_SUM);
 		headers.add(EnumXLS_QColumnHeader.VAL_PI);
 		for (int i = 0; i < headers.size(); i++)
@@ -197,9 +199,9 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresSpot {
 
 			int duration = 0;
 			if (xlsStim1 != null)
-				duration = xlsStim1.dimension;
+				duration = xlsStim1.getValuesOutLength();
 			else if (xlsStim2 != null)
-				duration = xlsStim2.dimension;
+				duration = xlsStim2.getValuesOutLength();
 
 			for (int t = 0; t < duration; t++) {
 				pt.y = 0;
@@ -252,7 +254,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresSpot {
 	void writeDataToXLS(SXSSFSheet sheet, Point pt, int t, XLSResults xlsResult) {
 		if (xlsResult == null)
 			return;
-		double value = xlsResult.valuesOut[t];
+		double value = xlsResult.getValuesOut()[t];
 		boolean transpose = options.transpose;
 		if (!Double.isNaN(value)) {
 			XLSUtils.setValue(sheet, pt, transpose, value);
