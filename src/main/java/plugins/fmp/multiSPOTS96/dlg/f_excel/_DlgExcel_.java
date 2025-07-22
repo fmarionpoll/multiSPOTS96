@@ -19,7 +19,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
 import plugins.fmp.multiSPOTS96.tools.JComponents.exceptions.FileDialogException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresCagesAsQuery;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresSpot;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresFromSpot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelExportException;
 
@@ -89,7 +89,7 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 			ThreadUtil.bgRun(new Runnable() {
 				@Override
 				public void run() {
-					XLSExportMeasuresSpot xlsExport = new XLSExportMeasuresSpot();
+					XLSExportMeasuresFromSpot xlsExport = new XLSExportMeasuresFromSpot();
 					try {
 						xlsExport.exportToFile(file, getSpotsOptions());
 					} catch (ExcelExportException e) {

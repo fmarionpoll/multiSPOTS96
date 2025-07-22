@@ -15,7 +15,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresSpot;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresFromSpot;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResults;
 
@@ -212,7 +212,7 @@ public class ChartCage {
 
 		XYSeriesCollection xySeriesCollection = null;
 //		int seriesCount = 0;
-		XLSExportMeasuresSpot xlsExportMeasuresSpot = new XLSExportMeasuresSpot();
+		XLSExportMeasuresFromSpot xlsExportMeasuresSpot = new XLSExportMeasuresFromSpot();
 
 		for (Spot spot : cage.spotsArray.getSpotsList()) {
 			if (xySeriesCollection == null) {

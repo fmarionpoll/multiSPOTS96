@@ -25,8 +25,10 @@ public enum EnumXLS_QColumnHeader {
 	DUM4("Dum4", 16, EnumXLSMeasure.COMMON), //
 	VAL_TIME("time", 17, EnumXLSMeasure.COMMON), //
 	VAL_STIM1("value1", 18, EnumXLSMeasure.COMMON), //
-	N_STIM1("n_val1", 19, EnumXLSMeasure.COMMON), VAL_STIM2("value2", 20, EnumXLSMeasure.COMMON), //
-	N_STIM2("n_val2", 21, EnumXLSMeasure.COMMON), VAL_SUM("sum", 22, EnumXLSMeasure.COMMON), //
+	N_STIM1("n_val1", 19, EnumXLSMeasure.COMMON), // 
+	VAL_STIM2("value2", 20, EnumXLSMeasure.COMMON), //
+	N_STIM2("n_val2", 21, EnumXLSMeasure.COMMON), //
+	VAL_SUM("sum", 22, EnumXLSMeasure.COMMON), //
 	VAL_PI("PI", 23, EnumXLSMeasure.COMMON);
 
 	private final String name;
