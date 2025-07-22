@@ -1,11 +1,11 @@
 package plugins.fmp.multiSPOTS96.tools.toExcel;
 
-public enum EnumXLSMeasure {
-	SPOT("spot"), MOVE("move"), COMMON("common");
+public enum EnumColumnType {
+	SPOT("spot"), MOVE("move"), COMMON("common"), DESCRIPTOR("descriptor"), MEASURE("measure");
 
 	private String label;
 
-	EnumXLSMeasure(String label) {
+	EnumColumnType(String label) {
 		this.label = label;
 	}
 

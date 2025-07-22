@@ -6,36 +6,37 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum EnumXLS_QColumnHeader {
-	DATE("Date", 0, EnumXLSMeasure.COMMON), //
-	EXP_BOXID("Box_ID", 1, EnumXLSMeasure.COMMON), //
-	CAGEID("Cage_ID", 2, EnumXLSMeasure.COMMON), //
-	EXP_EXPT("Expmt", 3, EnumXLSMeasure.COMMON), //
-	EXP_STRAIN("Strain", 4, EnumXLSMeasure.COMMON), //
-	EXP_SEX("Sex", 5, EnumXLSMeasure.COMMON), //
-	EXP_STIM1("Stim1", 6, EnumXLSMeasure.COMMON), //
-	EXP_CONC1("Conc1", 7, EnumXLSMeasure.COMMON), //
-	EXP_STIM2("Stim2", 8, EnumXLSMeasure.COMMON), //
-	EXP_CONC2("Conc2", 9, EnumXLSMeasure.COMMON), //
-	CAGE_POS("Position", 10, EnumXLSMeasure.COMMON), //
-	CAGE_NFLIES("NFlies", 11, EnumXLSMeasure.COMMON), //
-	CAGE_STRAIN("Cage_strain", 12, EnumXLSMeasure.COMMON), //
-	CAGE_SEX("Cage_sex", 13, EnumXLSMeasure.COMMON), //
-	CAGE_AGE("Cage_age", 14, EnumXLSMeasure.COMMON), //
-	CAGE_COMMENT("Cage_comment", 15, EnumXLSMeasure.COMMON), //
-	DUM4("Dum4", 16, EnumXLSMeasure.COMMON), //
-	VAL_TIME("time", 17, EnumXLSMeasure.COMMON), //
-	VAL_STIM1("value1", 18, EnumXLSMeasure.COMMON), //
-	N_STIM1("n_val1", 19, EnumXLSMeasure.COMMON), // 
-	VAL_STIM2("value2", 20, EnumXLSMeasure.COMMON), //
-	N_STIM2("n_val2", 21, EnumXLSMeasure.COMMON), //
-	VAL_SUM("sum", 22, EnumXLSMeasure.COMMON), //
-	VAL_PI("PI", 23, EnumXLSMeasure.COMMON);
+	DATE("Date", 0, EnumColumnType.DESCRIPTOR), //
+	EXP_BOXID("Box_ID", 1, EnumColumnType.DESCRIPTOR), //
+	CAGEID("Cage_ID", 2, EnumColumnType.DESCRIPTOR), //
+	EXP_EXPT("Expmt", 3, EnumColumnType.DESCRIPTOR), //
+	EXP_STRAIN("Strain", 4, EnumColumnType.DESCRIPTOR), //
+	EXP_SEX("Sex", 5, EnumColumnType.DESCRIPTOR), //
+	EXP_STIM1("Stim1", 6, EnumColumnType.DESCRIPTOR), //
+	EXP_CONC1("Conc1", 7, EnumColumnType.DESCRIPTOR), //
+	EXP_STIM2("Stim2", 8, EnumColumnType.DESCRIPTOR), //
+	EXP_CONC2("Conc2", 9, EnumColumnType.DESCRIPTOR), //
+	CAGE_POS("Position", 10, EnumColumnType.DESCRIPTOR), //
+	CAGE_NFLIES("NFlies", 11, EnumColumnType.DESCRIPTOR), //
+	CAGE_STRAIN("Cage_strain", 12, EnumColumnType.DESCRIPTOR), //
+	CAGE_SEX("Cage_sex", 13, EnumColumnType.DESCRIPTOR), //
+	CAGE_AGE("Cage_age", 14, EnumColumnType.DESCRIPTOR), //
+	CAGE_COMMENT("Cage_comment", 15, EnumColumnType.DESCRIPTOR), //
+	DUM4("Dum4", 16, EnumColumnType.DESCRIPTOR), //
+	
+	VAL_TIME("time", 17, EnumColumnType.MEASURE), //
+	VAL_STIM1("value1", 18, EnumColumnType.MEASURE), //
+	N_STIM1("n_val1", 19, EnumColumnType.MEASURE), // 
+	VAL_STIM2("value2", 20, EnumColumnType.MEASURE), //
+	N_STIM2("n_val2", 21, EnumColumnType.MEASURE), //
+	VAL_SUM("sum", 22, EnumColumnType.MEASURE), //
+	VAL_PI("PI", 23, EnumColumnType.MEASURE);
 
 	private final String name;
 	private int value;
-	private final EnumXLSMeasure type;
+	private final EnumColumnType type;
 
-	EnumXLS_QColumnHeader(String label, int value, EnumXLSMeasure type) {
+	EnumXLS_QColumnHeader(String label, int value, EnumColumnType type) {
 		this.name = label;
 		this.value = value;
 		this.type = type;
@@ -71,7 +72,7 @@ public enum EnumXLS_QColumnHeader {
 		return name;
 	}
 
-	public EnumXLSMeasure toType() {
+	public EnumColumnType toType() {
 		return type;
 	}
 
