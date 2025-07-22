@@ -319,7 +319,7 @@ public class ChartCage {
 	 * @param startFrame the starting frame number
 	 */
 	private void addPointsAndUpdateExtrema(XYSeries seriesXY, XLSResults xlsResults, int startFrame) {
-		if (seriesXY == null || xlsResults == null || xlsResults.getValuesOutLength() > 0) {
+		if (seriesXY == null || xlsResults == null || xlsResults.getValuesOutLength() < 1) {
 			LOGGER.warning("Cannot add points: series, results, or values are null");
 			return;
 		}
