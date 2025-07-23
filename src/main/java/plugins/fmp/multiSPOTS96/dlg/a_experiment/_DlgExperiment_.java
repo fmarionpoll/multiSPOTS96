@@ -35,12 +35,12 @@ public class _DlgExperiment_ extends JPanel implements ViewerListener, ChangeLis
 
 	PopupPanel capPopupPanel = null;
 	public JTabbedPane tabsPane = new JTabbedPane();
-	public Options tabOptions = new Options();
 	public Infos tabInfos = new Infos();
 	public Filter tabFilter = new Filter();
 	Edit tabEdit = new Edit();
 	public Intervals tabIntervals = new Intervals();
-
+	CorrectDrift tabCorrectDrift = new CorrectDrift();
+	public Options tabOptions = new Options();
 	private MultiSPOTS96 parent0 = null;
 
 	public void init(JPanel mainPanel, String string, MultiSPOTS96 parent0) {
@@ -65,6 +65,9 @@ public class _DlgExperiment_ extends JPanel implements ViewerListener, ChangeLis
 
 		tabOptions.init(tabsLayout, parent0);
 		tabsPane.addTab("Options", null, tabOptions, "Options to display data");
+
+		tabCorrectDrift.init(tabsLayout, parent0);
+		tabsPane.addTab("Correct drift", null, tabCorrectDrift, "Correct image drift with time");
 
 		tabsPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
@@ -114,9 +117,12 @@ public class _DlgExperiment_ extends JPanel implements ViewerListener, ChangeLis
 					placeViewerNextToDialogBox(v, parent0.mainFrame);
 					v.toFront();
 					v.requestFocus();
-					v.addListener(parent);
 					v.setTitle(exp.seqCamData.getDecoratedImageName(0));
 					v.setRepeat(false);
+
+					v.addListener(parent);
+					v.addListener(tabCorrectDrift);
+					tabCorrectDrift.resetFrameIndex();
 				}
 			}
 		});

@@ -275,10 +275,11 @@ public class GaspardRigidRegistration {
 		}
 
 		translation.scale(1.0 / n);
+
 		if (translation.lengthSquared() > MIN_TRANSLATION_THRESHOLD) {
 			change = true;
 			img = applyTranslation2D(img, -1, translation, true);
-//            LOGGER.info("Applied translation correction: (" + translation.x + ", " + translation.y + ")");
+			LOGGER.info("Applied translation correction: (" + translation.x + ", " + translation.y + ")");
 		} else {
 			LOGGER.fine("Translation correction skipped (too small)");
 		}

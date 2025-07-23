@@ -26,7 +26,8 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public int diskRadius = 5;
 	public boolean doRegistration = false;
 	public int referenceFrame = 0;
-	public long fromFrame = 0;
+	public int fromFrame = 0;
+	public int toFrame = -1;
 	public boolean doCreateBinDir = false;
 
 	public boolean loopRunning = false;
