@@ -193,10 +193,7 @@ public class CreateCages extends JPanel {
 			points.add(new Point2D.Double(rect.x, rect.y + rect.height));
 			points.add(new Point2D.Double(rect.x + rect.width, rect.y + rect.height));
 			points.add(new Point2D.Double(rect.x + rect.width, rect.y));
-//			points.add(new Point2D.Double(rect.x + rect.width / 5, rect.y + rect.height / 5));
-//			points.add(new Point2D.Double(rect.x + rect.width * 4 / 5, rect.y + rect.height / 5));
-//			points.add(new Point2D.Double(rect.x + rect.width * 4 / 5, rect.y + rect.height * 2 / 3));
-//			points.add(new Point2D.Double(rect.x + rect.width / 5, rect.y + rect.height * 2 / 3));
+
 			polygon2D = new Polygon2D(points);
 		}
 		return polygon2D;

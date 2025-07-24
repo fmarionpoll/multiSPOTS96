@@ -18,7 +18,7 @@ public class DetectFlyFromCleanBackground extends BuildSeries {
 	// -----------------------------------------
 
 	void analyzeExperiment(Experiment exp) {
-		if (!zloadDrosoTrack(exp))
+		if (!loadSeqCamDataAndCages(exp))
 			return;
 		if (!checkBoundsForCages(exp))
 			return;

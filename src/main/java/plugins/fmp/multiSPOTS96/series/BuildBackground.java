@@ -111,7 +111,7 @@ public class BuildBackground extends BuildSeries {
      */
     private ProcessingResult<Void> loadExperimentData(Experiment experiment) {
         try {
-            boolean loadSuccess = zloadDrosoTrack(experiment);
+            boolean loadSuccess = loadSeqCamDataAndCages(experiment);
             if (!loadSuccess) {
                 return ProcessingResult.failure("Failed to load DrosoTrack data");
             }

@@ -119,7 +119,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 			}
 
 			final int t = ii;
-			progressBar1.setMessage("Analyze frame: " + t + "//" + iiLast);
+
 			String fileName = exp.seqCamData.getFileNameFromImageList(t);
 			if (fileName == null) {
 				System.out.println("filename null at t=" + t);

@@ -59,6 +59,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B, ImageTransformEnums.RGB_DIFFS,
 			ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB, ImageTransformEnums.B_HSB };
 	private JComboBox<ImageTransformEnums> spotsTransformsComboBox = new JComboBox<ImageTransformEnums>(transforms);
+
 	private String[] directions = new String[] { "threshold >", "threshold <" };
 	private JComboBox<String> spotsDirectionComboBox = new JComboBox<String>(directions);
 	private JSpinner spotsThresholdSpinner = new JSpinner(new SpinnerNumberModel(35, 0, 255, 1));
@@ -250,7 +251,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			exp.seqCamData.getSequence().removeOverlay(overlayThreshold);
 			overlayThreshold.setSequence(exp.seqCamData.getSequence());
 		}
-		//overlayThreshold.setReferenceImage(exp.seqCamData.getReferenceImage());
+		// overlayThreshold.setReferenceImage(exp.seqCamData.getReferenceImage());
 		exp.seqCamData.getSequence().addOverlay(overlayThreshold);
 	}
 

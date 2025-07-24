@@ -4,35 +4,32 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Logger;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.vecmath.Vector2d;
 
-import icy.gui.frame.progress.ProgressFrame;
 import icy.gui.viewer.Viewer;
 import icy.gui.viewer.ViewerEvent;
 import icy.gui.viewer.ViewerListener;
-import icy.image.IcyBufferedImage;
-import icy.image.ImageUtil;
 import icy.sequence.DimensionId;
+import icy.util.StringUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.tools.GaspardRigidRegistration;
+import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
+import plugins.fmp.multiSPOTS96.series.Registration;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
+import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
+import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 
-public class CorrectDrift extends JPanel implements ViewerListener {
+public class CorrectDrift extends JPanel implements ViewerListener, PropertyChangeListener {
 
 	/**
 	 * 
@@ -45,10 +42,18 @@ public class CorrectDrift extends JPanel implements ViewerListener {
 	int step = 1;
 	int maxLast = 99999999;
 	JSpinner referenceFrameJSpinner = new JSpinner(new SpinnerNumberModel(val, min, max, step));
+	public static final ImageTransformEnums[] TRANSFORMS = { ImageTransformEnums.NONE, ImageTransformEnums.R_RGB,
+			ImageTransformEnums.G_RGB, ImageTransformEnums.B_RGB, ImageTransformEnums.R2MINUS_GB,
+			ImageTransformEnums.G2MINUS_RB, ImageTransformEnums.B2MINUS_RG, ImageTransformEnums.RGB,
+			ImageTransformEnums.GBMINUS_2R, ImageTransformEnums.RBMINUS_2G, ImageTransformEnums.RGMINUS_2B,
+			ImageTransformEnums.RGB_DIFFS, ImageTransformEnums.H_HSB, ImageTransformEnums.S_HSB,
+			ImageTransformEnums.B_HSB, ImageTransformEnums.DERICHE, ImageTransformEnums.DERICHE_COLOR };
+	private JComboBox<ImageTransformEnums> transformsComboBox = new JComboBox<ImageTransformEnums>(TRANSFORMS);
 	JButton runButton = new JButton("Run");
 
 	private MultiSPOTS96 parent0 = null;
 	JComboBoxExperiment editExpList = new JComboBoxExperiment();
+	private Registration registration = null;
 
 	void init(GridLayout capLayout, MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
@@ -63,6 +68,8 @@ public class CorrectDrift extends JPanel implements ViewerListener {
 		add(panel0);
 
 		JPanel panel1 = new JPanel(flowlayout);
+		panel1.add(new JLabel("image transformation:"));
+		panel1.add(transformsComboBox);
 		add(panel1);
 
 		JPanel panel2 = new JPanel(flowlayout);
@@ -78,7 +85,10 @@ public class CorrectDrift extends JPanel implements ViewerListener {
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
-					executeRegistration(exp);
+					if (runButton.getText().equals("Run"))
+						executeRegistration(exp);
+					else
+						stopComputation();
 				}
 			}
 		});
@@ -93,6 +103,20 @@ public class CorrectDrift extends JPanel implements ViewerListener {
 						if (v.getPositionT() != newValue)
 							v.setPositionT((int) newValue);
 					}
+				}
+			}
+		});
+
+		transformsComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null && exp.seqKymos != null) {
+					int index = transformsComboBox.getSelectedIndex();
+					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
+							.getCanvas();
+					updateTransformFunctionsOfCanvas(exp);
+					canvas.setTransformStep1Index(index + 1);
 				}
 			}
 		});
@@ -119,84 +143,51 @@ public class CorrectDrift extends JPanel implements ViewerListener {
 	}
 
 	void executeRegistration(Experiment exp) {
-		int refFrame = (int) referenceFrameJSpinner.getValue();
-		correctDriftAndRotation(exp, 0, refFrame - 1, refFrame);
-
+		registration = new Registration();
+		registration.options = initParameters(exp);
+		registration.stopFlag = false;
+		registration.addPropertyChangeListener(this);
+		registration.execute();
+		runButton.setText("STOP");
 	}
 
-	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(CorrectDrift.class.getName());
-	/** Minimum threshold for considering a translation significant */
-	private static final double MIN_TRANSLATION_THRESHOLD = 0.001;
-	/** Minimum threshold for considering a rotation significant */
-	private static final double MIN_ROTATION_THRESHOLD = 0.001;
+	private BuildSeriesOptions initParameters(Experiment exp) {
+		BuildSeriesOptions options = new BuildSeriesOptions();
+		int referenceFrame = (int) referenceFrameJSpinner.getValue();
 
-	private boolean correctDriftAndRotation(Experiment exp, int iiFirst, int iiLast, int referenceFrame) {
-		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack");
+		options.fromFrame = 0;
+		options.toFrame = referenceFrame - 1;
+		options.referenceFrame = referenceFrame;
+		options.expList = parent0.expListCombo;
+		options.transformop = (ImageTransformEnums) transformsComboBox.getSelectedItem();
+		return options;
+	}
 
-		String fileNameReference = exp.seqCamData.getFileNameFromImageList(referenceFrame);
-		final IcyBufferedImage referenceImage = imageIORead(fileNameReference);
+	private void stopComputation() {
+		if (registration != null && !registration.stopFlag)
+			registration.stopFlag = true;
+		runButton.setText("Run");
+	}
 
-		for (int ii = iiFirst; ii < iiLast; ii++) {
-
-			final int t = ii;
-			progressBar1.setMessage("Analyze frame: " + t + "//" + iiLast);
-			String fileName = exp.seqCamData.getFileNameFromImageList(t);
-			if (fileName == null) {
-				System.out.println("filename null at t=" + t);
-				continue;
-			}
-
-			IcyBufferedImage workImage = imageIORead(fileName);
-			int referenceChannel = 0;
-			Vector2d translation = GaspardRigidRegistration.findTranslation2D(workImage, referenceChannel, referenceImage,
-					referenceChannel);
-			boolean change = false;
-			if (translation.lengthSquared() > MIN_TRANSLATION_THRESHOLD) {
-				change = true;
-				workImage = GaspardRigidRegistration.applyTranslation2D(workImage, -1, translation, true);
-				LOGGER.info("Applied translation correction: (" + translation.x + ", " + translation.y + ")");
-			}
-
-			boolean rotate = false;
-			if (!change) 
-				translation = null;
-			double angle = GaspardRigidRegistration.findRotation2D(workImage, referenceChannel, referenceImage, referenceChannel, translation);
-			if (Math.abs(angle) > MIN_ROTATION_THRESHOLD) {
-				rotate = true;
-				workImage = GaspardRigidRegistration.applyRotation2D(workImage, -1, angle, true);
-				LOGGER.info("Applied rotation correction: " + Math.toDegrees(angle) + " degrees");
-				Vector2d translation2 = GaspardRigidRegistration.getTranslation2D(workImage, referenceImage,
-						referenceChannel);
-				if (translation2.lengthSquared() > MIN_TRANSLATION_THRESHOLD) {
-					workImage = GaspardRigidRegistration.applyTranslation2D(workImage, -1, translation2, true);
-				}
-			}
-
-			System.out.println("image:" + t + "  change=" + change + "  rotation=" + rotate);
-			if (rotate)
-				GaspardRigidRegistration.getTranslation2D(workImage, referenceImage, referenceChannel);
-
-			if (change || rotate) {
-				File outputfile = new File(fileName);
-				RenderedImage image = ImageUtil.toRGBImage(workImage);
-				boolean success = ImageUtil.save(image, "jpg", outputfile);
-				System.out.println("save file " + fileName + " --->" + success);
-			}
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (StringUtil.equals("thread_ended", evt.getPropertyName())) {
+			runButton.setText("Run");
+			runButton.removePropertyChangeListener(this);
 		}
-
-		progressBar1.close();
-		return true;
 	}
 
-	public IcyBufferedImage imageIORead(String name) {
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(new File(name));
-		} catch (IOException e) {
-			e.printStackTrace();
+	private void updateTransformFunctionsOfCanvas(Experiment exp) {
+		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
+		if (canvas.getTransformStep1ItemCount() < (transformsComboBox.getItemCount() + 1)) {
+			canvas.updateTransformsComboStep1(TRANSFORMS);
 		}
-		return IcyBufferedImage.createFrom(image);
+		int index = transformsComboBox.getSelectedIndex();
+		canvas.selectImageTransformFunctionStep1(index + 1, null);
 	}
+
+//	private void displayTransform(Experiment exp) {
+//		updateTransformFunctionsOfCanvas(exp);
+//	}
 
 }

@@ -50,7 +50,8 @@ public enum ImageTransformEnums {
 	SUBTRACT_T0("t-t0", new SubtractReferenceImage()), //
 	SUBTRACT_TM1("t-(t-1)", new SubtractReferenceImage()), //
 	SUBTRACT_REF("t-ref", new SubtractReferenceImage()), //
-	SUBTRACT("neg(t-ref)", new ImageMinusBackground()), SUBTRACT_1RSTCOL("[t-t0]", new SubtractColumn(0)), //
+	SUBTRACT("neg(t-ref)", new ImageMinusBackground()), //
+	SUBTRACT_1RSTCOL("[t-t0]", new SubtractColumn(0)), //
 	//
 	NORM_BRMINUSG("|aR+bG+cB|", new LinearCombinationNormed(-1, 2, -1)), //
 	RGB_TO_H1H2H3("H1H2H3", new H1H2H3()), //
@@ -64,7 +65,8 @@ public enum ImageTransformEnums {
 	THRESHOLD_COLORS("threshold colors", new ThresholdColors()), //
 	SORT_CHAN0COLS("sort col/chan0", new SortChan0Columns()), //
 	SORT_SUMDIFFCOLS("sort col/SumDiff", new SortSumDiffColumns()), //
-	ZIGZAG("remove spikes", new None()), NONE("none", new None());
+	ZIGZAG("remove spikes", new None()), //
+	NONE("none", new None());
 
 	private ImageTransformInterface klass;
 	private String label;

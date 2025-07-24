@@ -17,7 +17,7 @@ public class DetectFlyUsingSimpleThreshold extends BuildSeries {
 	// -----------------------------------------------------
 
 	void analyzeExperiment(Experiment exp) {
-		if (!zloadDrosoTrack(exp))
+		if (!loadSeqCamDataAndCages(exp))
 			return;
 		if (!checkBoundsForCages(exp))
 			return;

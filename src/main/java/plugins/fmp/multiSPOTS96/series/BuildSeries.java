@@ -178,7 +178,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		return IcyBufferedImage.createFrom(image);
 	}
 
-	protected boolean zloadDrosoTrack(Experiment exp) {
+	protected boolean loadSeqCamDataAndCages(Experiment exp) {
 		exp.seqCamData.attachSequence(
 				exp.seqCamData.getImageLoader().initSequenceFromFirstImage(exp.seqCamData.getImagesList(true)));
 		boolean flag = exp.load_MS96_cages();
