@@ -58,41 +58,41 @@ public class GaspardRigidRegistration {
 	/**
 	 * Finds the 2D translation between two images using spectral correlation.
 	 * 
-	 * @param source  the source image
+	 * @param sourceImage  the source image
 	 * @param sourceC the source channel
-	 * @param target  the target image
+	 * @param targetImage  the target image
 	 * @param targetC the target channel
 	 * @return the translation vector
 	 * @throws IllegalArgumentException      if images are null or have different
 	 *                                       sizes
 	 * @throws UnsupportedOperationException if images have different dimensions
 	 */
-	public static Vector2d findTranslation2D(IcyBufferedImage source, int sourceC, IcyBufferedImage target,
+	public static Vector2d findTranslation2D(IcyBufferedImage sourceImage, int sourceC, IcyBufferedImage targetImage,
 			int targetC) {
-		if (source == null) {
+		if (sourceImage == null) {
 			throw new IllegalArgumentException("Source image cannot be null");
 		}
-		if (target == null) {
+		if (targetImage == null) {
 			throw new IllegalArgumentException("Target image cannot be null");
 		}
-		if (sourceC < 0 || sourceC >= source.getSizeC()) {
+		if (sourceC < 0 || sourceC >= sourceImage.getSizeC()) {
 			throw new IllegalArgumentException("Invalid source channel: " + sourceC);
 		}
-		if (targetC < 0 || targetC >= target.getSizeC()) {
+		if (targetC < 0 || targetC >= targetImage.getSizeC()) {
 			throw new IllegalArgumentException("Invalid target channel: " + targetC);
 		}
 
-		if (!source.getBounds().equals(target.getBounds())) {
+		if (!sourceImage.getBounds().equals(targetImage.getBounds())) {
 			throw new UnsupportedOperationException("Cannot register images of different size (yet)");
 		}
 
-		int width = source.getWidth();
-		int height = source.getHeight();
+		int width = sourceImage.getWidth();
+		int height = sourceImage.getHeight();
 
 		LOGGER.fine("Finding translation between images: " + width + "x" + height);
 
-		float[] _source = Array1DUtil.arrayToFloatArray(source.getDataXY(sourceC), source.isSignedDataType());
-		float[] _target = Array1DUtil.arrayToFloatArray(target.getDataXY(targetC), target.isSignedDataType());
+		float[] _source = Array1DUtil.arrayToFloatArray(sourceImage.getDataXY(sourceC), sourceImage.isSignedDataType());
+		float[] _target = Array1DUtil.arrayToFloatArray(targetImage.getDataXY(targetC), targetImage.isSignedDataType());
 
 		float[] correlationMap = spectralCorrelation(_source, _target, width, height);
 
@@ -402,9 +402,9 @@ public class GaspardRigidRegistration {
 	/**
 	 * Finds the 2D rotation between two images with optional previous translation.
 	 * 
-	 * @param source              the source image
+	 * @param sourceImage         the source image
 	 * @param sourceC             the source channel
-	 * @param target              the target image
+	 * @param targetImage         the target image
 	 * @param targetC             the target channel
 	 * @param previousTranslation the previous translation applied (can be null)
 	 * @return the rotation angle in radians
@@ -412,23 +412,23 @@ public class GaspardRigidRegistration {
 	 * @throws UnsupportedOperationException if images have different sizes and no
 	 *                                       previous translation
 	 */
-	public static double findRotation2D(IcyBufferedImage source, int sourceC, IcyBufferedImage target, int targetC,
+	public static double findRotation2D(IcyBufferedImage sourceImage, int sourceC, IcyBufferedImage targetImage, int targetC,
 			Vector2d previousTranslation) {
-		if (source == null) {
+		if (sourceImage == null) {
 			throw new IllegalArgumentException("Source image cannot be null");
 		}
-		if (target == null) {
+		if (targetImage == null) {
 			throw new IllegalArgumentException("Target image cannot be null");
 		}
 
-		if (!source.getBounds().equals(target.getBounds())) {
+		if (!sourceImage.getBounds().equals(targetImage.getBounds())) {
 			// Both sizes are different. What to do?
 			if (previousTranslation != null) {
 				// the source has most probably been translated previously, let's grow the
 				// target accordingly (just need to know where the original data has to go)
 				int xAlign = previousTranslation.x > 0 ? SwingConstants.LEFT : SwingConstants.RIGHT;
 				int yAlign = previousTranslation.y > 0 ? SwingConstants.TOP : SwingConstants.BOTTOM;
-				target = IcyBufferedImageUtil.scale(target, source.getSizeX(), source.getSizeY(), false, xAlign,
+				targetImage = IcyBufferedImageUtil.scale(targetImage, sourceImage.getSizeX(), sourceImage.getSizeY(), false, xAlign,
 						yAlign);
 			} else {
 				throw new UnsupportedOperationException("Cannot register images of different size (yet)");
@@ -436,8 +436,8 @@ public class GaspardRigidRegistration {
 		}
 
 		// Convert to Log-Polar
-		IcyBufferedImage sourceLogPol = toLogPolar(source.getImage(sourceC));
-		IcyBufferedImage targetLogPol = toLogPolar(target.getImage(targetC));
+		IcyBufferedImage sourceLogPol = toLogPolar(sourceImage.getImage(sourceC));
+		IcyBufferedImage targetLogPol = toLogPolar(targetImage.getImage(targetC));
 
 		int width = sourceLogPol.getWidth(), height = sourceLogPol.getHeight();
 

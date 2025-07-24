@@ -148,8 +148,8 @@ public class CorrectDrift extends JPanel implements ViewerListener {
 			}
 
 			IcyBufferedImage workImage = imageIORead(fileName);
-			int referenceChannel = -1;
-			Vector2d translation = GaspardRigidRegistration.getTranslation2D(workImage, referenceImage,
+			int referenceChannel = 0;
+			Vector2d translation = GaspardRigidRegistration.findTranslation2D(workImage, referenceChannel, referenceImage,
 					referenceChannel);
 			boolean change = false;
 			if (translation.lengthSquared() > MIN_TRANSLATION_THRESHOLD) {
@@ -159,7 +159,9 @@ public class CorrectDrift extends JPanel implements ViewerListener {
 			}
 
 			boolean rotate = false;
-			double angle = GaspardRigidRegistration.getRotation2D(workImage, referenceImage, referenceChannel);
+			if (!change) 
+				translation = null;
+			double angle = GaspardRigidRegistration.findRotation2D(workImage, referenceChannel, referenceImage, referenceChannel, translation);
 			if (Math.abs(angle) > MIN_ROTATION_THRESHOLD) {
 				rotate = true;
 				workImage = GaspardRigidRegistration.applyRotation2D(workImage, -1, angle, true);
