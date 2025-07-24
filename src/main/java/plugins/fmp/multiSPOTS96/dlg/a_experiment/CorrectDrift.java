@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -17,6 +18,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.vecmath.Vector2d;
 
 import icy.gui.frame.progress.ProgressFrame;
 import icy.gui.viewer.Viewer;
@@ -122,6 +124,13 @@ public class CorrectDrift extends JPanel implements ViewerListener {
 
 	}
 
+	/** Logger for this class */
+	private static final Logger LOGGER = Logger.getLogger(CorrectDrift.class.getName());
+	/** Minimum threshold for considering a translation significant */
+	private static final double MIN_TRANSLATION_THRESHOLD = 0.001;
+	/** Minimum threshold for considering a rotation significant */
+	private static final double MIN_ROTATION_THRESHOLD = 0.001;
+
 	private boolean correctDriftAndRotation(Experiment exp, int iiFirst, int iiLast, int referenceFrame) {
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack");
 
@@ -140,12 +149,31 @@ public class CorrectDrift extends JPanel implements ViewerListener {
 
 			IcyBufferedImage workImage = imageIORead(fileName);
 			int referenceChannel = -1;
-			boolean change = GaspardRigidRegistration.correctTranslation2D(workImage, referenceImage, referenceChannel);
-			boolean rotate = GaspardRigidRegistration.correctRotation2D(workImage, referenceImage, referenceChannel);
+			Vector2d translation = GaspardRigidRegistration.getTranslation2D(workImage, referenceImage,
+					referenceChannel);
+			boolean change = false;
+			if (translation.lengthSquared() > MIN_TRANSLATION_THRESHOLD) {
+				change = true;
+				workImage = GaspardRigidRegistration.applyTranslation2D(workImage, -1, translation, true);
+				LOGGER.info("Applied translation correction: (" + translation.x + ", " + translation.y + ")");
+			}
+
+			boolean rotate = false;
+			double angle = GaspardRigidRegistration.getRotation2D(workImage, referenceImage, referenceChannel);
+			if (Math.abs(angle) > MIN_ROTATION_THRESHOLD) {
+				rotate = true;
+				workImage = GaspardRigidRegistration.applyRotation2D(workImage, -1, angle, true);
+				LOGGER.info("Applied rotation correction: " + Math.toDegrees(angle) + " degrees");
+				Vector2d translation2 = GaspardRigidRegistration.getTranslation2D(workImage, referenceImage,
+						referenceChannel);
+				if (translation2.lengthSquared() > MIN_TRANSLATION_THRESHOLD) {
+					workImage = GaspardRigidRegistration.applyTranslation2D(workImage, -1, translation2, true);
+				}
+			}
 
 			System.out.println("image:" + t + "  change=" + change + "  rotation=" + rotate);
 			if (rotate)
-				GaspardRigidRegistration.correctTranslation2D(workImage, referenceImage, referenceChannel);
+				GaspardRigidRegistration.getTranslation2D(workImage, referenceImage, referenceChannel);
 
 			if (change || rotate) {
 				File outputfile = new File(fileName);

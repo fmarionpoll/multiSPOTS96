@@ -305,10 +305,10 @@ public class BuildSpotsKymos extends BuildSeries {
 
 	private void adjustImage(IcyBufferedImage workImage, IcyBufferedImage referenceImage) {
 		int referenceChannel = 0;
-		GaspardRigidRegistration.correctTranslation2D(workImage, referenceImage, referenceChannel);
+		GaspardRigidRegistration.getTranslation2D(workImage, referenceImage, referenceChannel);
 		boolean rotate = GaspardRigidRegistration.correctRotation2D(workImage, referenceImage, referenceChannel);
 		if (rotate)
-			GaspardRigidRegistration.correctTranslation2D(workImage, referenceImage, referenceChannel);
+			GaspardRigidRegistration.getTranslation2D(workImage, referenceImage, referenceChannel);
 	}
 
 	private void closeKymoViewers(Experiment exp) {

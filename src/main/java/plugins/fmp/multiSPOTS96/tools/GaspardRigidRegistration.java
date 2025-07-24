@@ -255,6 +255,17 @@ public class GaspardRigidRegistration {
 	 * @throws IllegalArgumentException if img or ref is null
 	 */
 	public static boolean correctTranslation2D(IcyBufferedImage img, IcyBufferedImage ref, int referenceChannel) {
+		Vector2d translation = GaspardRigidRegistration.getTranslation2D(img, ref, referenceChannel);
+		boolean change = false;
+		if (translation.lengthSquared() > MIN_TRANSLATION_THRESHOLD) {
+			change = true;
+			img = GaspardRigidRegistration.applyTranslation2D(img, -1, translation, true);
+			LOGGER.info("Applied translation correction: (" + translation.x + ", " + translation.y + ")");
+		}
+		return change;
+	}
+
+	public static Vector2d getTranslation2D(IcyBufferedImage img, IcyBufferedImage ref, int referenceChannel) {
 		if (img == null) {
 			throw new IllegalArgumentException("Image cannot be null");
 		}
@@ -262,7 +273,6 @@ public class GaspardRigidRegistration {
 			throw new IllegalArgumentException("Reference image cannot be null");
 		}
 
-		boolean change = false;
 		Vector2d translation = new Vector2d();
 		int n = 0;
 		int minC = referenceChannel == -1 ? 0 : referenceChannel;
@@ -275,15 +285,7 @@ public class GaspardRigidRegistration {
 		}
 
 		translation.scale(1.0 / n);
-
-		if (translation.lengthSquared() > MIN_TRANSLATION_THRESHOLD) {
-			change = true;
-			img = applyTranslation2D(img, -1, translation, true);
-			LOGGER.info("Applied translation correction: (" + translation.x + ", " + translation.y + ")");
-		} else {
-			LOGGER.fine("Translation correction skipped (too small)");
-		}
-		return change;
+		return translation;
 	}
 
 	/**
@@ -348,7 +350,19 @@ public class GaspardRigidRegistration {
 	 * @return true if a correction was applied, false otherwise
 	 * @throws IllegalArgumentException if img or ref is null
 	 */
+
 	public static boolean correctRotation2D(IcyBufferedImage img, IcyBufferedImage ref, int referenceChannel) {
+		boolean rotate = false;
+		double angle = GaspardRigidRegistration.getRotation2D(img, ref, referenceChannel);
+		if (Math.abs(angle) > MIN_ROTATION_THRESHOLD) {
+			rotate = true;
+			img = GaspardRigidRegistration.applyRotation2D(img, -1, angle, true);
+			LOGGER.info("Applied rotation correction: " + Math.toDegrees(angle) + " degrees");
+		}
+		return rotate;
+	}
+
+	public static double getRotation2D(IcyBufferedImage img, IcyBufferedImage ref, int referenceChannel) {
 		if (img == null) {
 			throw new IllegalArgumentException("Image cannot be null");
 		}
@@ -356,7 +370,6 @@ public class GaspardRigidRegistration {
 			throw new IllegalArgumentException("Reference image cannot be null");
 		}
 
-		boolean change = false;
 		double angle = 0.0;
 		int n = 0;
 
@@ -367,16 +380,9 @@ public class GaspardRigidRegistration {
 			angle += findRotation2D(img, c, ref, c);
 			n++;
 		}
-
 		angle /= n;
-		if (Math.abs(angle) > MIN_ROTATION_THRESHOLD) {
-			change = true;
-			img = applyRotation2D(img, -1, angle, true);
-//            LOGGER.info("Applied rotation correction: " + Math.toDegrees(angle) + " degrees");
-		} else {
-			LOGGER.fine("Rotation correction skipped (too small)");
-		}
-		return change;
+
+		return angle;
 	}
 
 	/**
