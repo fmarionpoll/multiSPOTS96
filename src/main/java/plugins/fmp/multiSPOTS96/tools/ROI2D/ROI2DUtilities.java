@@ -53,7 +53,7 @@ public class ROI2DUtilities {
 		}
 		return new Polygon2D(new Rectangle2D.Double(x0, y0, width0, height0));
 	}
-
+	
 	public static void saveToXML_ROI(Node node, ROI2D roi) {
 		final Node nodeROI = XMLUtil.setElement(node, ID_ROIMC);
 		if (!roi.saveToXML(nodeROI)) {

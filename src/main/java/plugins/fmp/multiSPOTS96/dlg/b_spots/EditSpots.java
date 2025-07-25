@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import icy.canvas.Canvas2D;
@@ -21,12 +23,11 @@ import icy.type.geom.Polygon2D;
 import icy.type.geom.Polyline2D;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotProperties;
+
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
-import plugins.kernel.roi.roi2d.ROI2DShape;
+
 
 public class EditSpots extends JPanel {
 	/**
@@ -34,21 +35,22 @@ public class EditSpots extends JPanel {
 	 */
 	private static final long serialVersionUID = -7582410775062671523L;
 
-	private JCheckBox selectSpotsCheckBox = new JCheckBox("Select spots");
-	private JCheckBox displaySnakeCheckBox = new JCheckBox("Display snake over spots");
-	private JButton centerSpotsToSnakeButton = new JButton("Center spots to snake");
+	private JComboBox<String> typeCombo = new JComboBox<String>(new String[] { "spot", "cage" });
+	
+	private JCheckBox selectRoisCheckBox = new JCheckBox("Select");
+	private JCheckBox displaySnakeCheckBox = new JCheckBox("Display snake");
+	private JButton centerRoisToSnakeButton = new JButton("Center rois to snake");
 	private MultiSPOTS96 parent0 = null;
-	private PositionWithTimePanel editPositionWithTime = null;
+//	private PositionWithTimePanel editPositionWithTime = null;
 
 	public ROI2DPolygon roiPerimeter = null;
 	public ROI2DPolyLine roiSnake = null;
-	private ArrayList<Spot> enclosedSpots = null;
+	private ArrayList<ROI2D> enclosedRois = null;
 
-	private JButton erodeButton = new JButton("Contract spots");
-	private JButton dilateButton = new JButton("Dilate spots");
-	private JButton editSpotsWithTimeButton = new JButton("Change spots position with time");
+	private JButton erodeButton = new JButton("Contract rois");
+	private JButton dilateButton = new JButton("Dilate rois");
+	//private JButton editSpotsWithTimeButton = new JButton("Change spots position with time");
 
-	private JCheckBox selectCagesCheckBox = new JCheckBox("Select cages");
 
 	void init(GridLayout capLayout, MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
@@ -57,36 +59,37 @@ public class EditSpots extends JPanel {
 		flowLayout.setVgap(0);
 
 		JPanel panel0 = new JPanel(flowLayout);
-		panel0.add(selectSpotsCheckBox);
-		panel0.add(displaySnakeCheckBox);
-		panel0.add(centerSpotsToSnakeButton);
+		panel0.add(new JLabel("select type of rois"));
+		panel0.add(typeCombo);
 		add(panel0);
-
+		
 		JPanel panel1 = new JPanel(flowLayout);
-		panel1.add(dilateButton);
-		panel1.add(erodeButton);
-		panel1.add(editSpotsWithTimeButton);
+		panel1.add(selectRoisCheckBox);
+		panel1.add(displaySnakeCheckBox);
+		panel1.add(centerRoisToSnakeButton);
 		add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(selectCagesCheckBox);
+		panel2.add(dilateButton);
+		panel2.add(erodeButton);
+//		panel2.add(editSpotsWithTimeButton);
 		add(panel2);
 
+
 		defineActionListeners();
-		updateSpotsButtonsState(false, false);
+		updateButtonsStateAccordingToSelectRois(false, false);
 	}
 
 	private void defineActionListeners() {
-
-		selectSpotsCheckBox.addActionListener(new ActionListener() {
+		selectRoisCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp == null)
 					return;
-				boolean isSelected = selectSpotsCheckBox.isSelected();
-				updateSpotsButtonsState(isSelected, false);
-				showSpotsFrame(exp, isSelected);
+				boolean isSelected = selectRoisCheckBox.isSelected();
+				updateButtonsStateAccordingToSelectRois(isSelected, false);
+				showFrameEnclosingRois(exp, isSelected);
 			}
 		});
 
@@ -98,18 +101,18 @@ public class EditSpots extends JPanel {
 					return;
 				boolean isSelected = displaySnakeCheckBox.isSelected();
 				showSnake(exp, isSelected);
-				showSpotsFrame(exp, !isSelected);
-				updateSpotsButtonsState(true, isSelected);
+				showFrameEnclosingRois(exp, !isSelected);
+				updateButtonsStateAccordingToSelectRois(true, isSelected);
 			}
 		});
 
-		centerSpotsToSnakeButton.addActionListener(new ActionListener() {
+		centerRoisToSnakeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp == null)
 					return;
-				updateSpotsFromSnake(exp);
+				updateRoisFromSnake(exp);
 			}
 		});
 
@@ -119,7 +122,7 @@ public class EditSpots extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp == null)
 					return;
-				resizeSpots(exp, +1);
+				resizeRois(exp, +1);
 			}
 		});
 
@@ -129,67 +132,30 @@ public class EditSpots extends JPanel {
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp == null)
 					return;
-				resizeSpots(exp, -1);
+				resizeRois(exp, -1);
 			}
 		});
-
-		editSpotsWithTimeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp == null)
-					return;
-				openDialog();
-			}
-		});
-
-		selectCagesCheckBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-				if (exp == null)
-					return;
-				boolean isSelected = selectCagesCheckBox.isSelected();
-				updateCagesButtonsState(isSelected, false);
-				showCagesFrame(exp, isSelected);
-			}
-		});
-
-	}
-
-	public void openDialog() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-		if (exp != null) {
-			if (editPositionWithTime == null)
-				editPositionWithTime = new PositionWithTimePanel();
-			editPositionWithTime.initialize(parent0);
-		}
-	}
-
-	public void closeDialog() {
-		editPositionWithTime.close();
 	}
 
 	// --------------------------------------
 
-	private void updateSpotsButtonsState(boolean enableSnake, boolean enableCenter) {
+	private void updateButtonsStateAccordingToSelectRois(boolean enableSnake, boolean enableCenter) {
 		displaySnakeCheckBox.setEnabled(enableSnake);
-		centerSpotsToSnakeButton.setEnabled(enableCenter);
+		centerRoisToSnakeButton.setEnabled(enableCenter);
 	}
 
-	private void showSpotsFrame(Experiment exp, boolean show) {
+	private void showFrameEnclosingRois(Experiment exp, boolean show) {
 		if (show) {
-			setSpotsFrame(exp);
+			setEnclosingFrame(exp);
 		} else {
 			exp.seqCamData.getSequence().removeROI(roiPerimeter);
 		}
 	}
 
-	private void setSpotsFrame(Experiment exp) {
+	private void setEnclosingFrame(Experiment exp) {
 		exp.seqCamData.getSequence().removeROI(roiPerimeter);
 		showSnake(exp, false);
-		if (roiPerimeter == null)
-			createRoiPerimeterEnclosingSpots(exp);
+		createPerimeterEnclosingRois(exp);
 		exp.seqCamData.getSequence().addROI(roiPerimeter);
 		exp.seqCamData.getSequence().setSelectedROI(roiPerimeter);
 
@@ -204,14 +170,19 @@ public class EditSpots extends JPanel {
 
 	private void showSnake(Experiment exp, boolean show) {
 		exp.seqCamData.getSequence().removeROI(roiSnake);
+		String selectedRoiType = (String) typeCombo.getSelectedItem();
+		
 		if (show) {
 			exp.seqCamData.getSequence().removeROI(roiPerimeter);
-			enclosedSpots = exp.cagesArray.getSpotsEnclosed(roiPerimeter);
-			if (enclosedSpots.size() > 0) {
+			if (enclosedRois.size() > 0) {
 				ArrayList<Point2D> listPoint = new ArrayList<Point2D>();
-				for (Spot spot : enclosedSpots) {
-					Rectangle rect = spot.getRoi().getBounds();
-					Point2D.Double point = new Point2D.Double(rect.getCenterX(), rect.getCenterY());
+				for (ROI2D roi: enclosedRois) {
+					Rectangle rect = roi.getBounds();	
+					Point2D.Double point = null;
+					if (selectedRoiType.contains("cage"))
+						point = new Point2D.Double(rect.getX(), rect.getY());
+					else
+						point = new Point2D.Double(rect.getCenterX(), rect.getCenterY());
 					listPoint.add(point);
 				}
 				roiSnake = new ROI2DPolyLine(listPoint);
@@ -219,71 +190,62 @@ public class EditSpots extends JPanel {
 				exp.seqCamData.getSequence().addROI(roiSnake);
 				exp.seqCamData.getSequence().setSelectedROI(roiSnake);
 
-				exp.seqCamData.displaySpecificROIs(false, "spot");
+				exp.seqCamData.displaySpecificROIs(false, selectedRoiType);
 				makeSureRectangleIsVisible(exp, roiSnake.getBounds());
 			}
 		} else {
 			roiSnake = null;
 			exp.seqCamData.getSequence().addROI(roiPerimeter);
-			exp.seqCamData.displaySpecificROIs(true, "spot");
+			exp.seqCamData.displaySpecificROIs(true, selectedRoiType);
 		}
 	}
 
-	private void createRoiPerimeterEnclosingSpots(Experiment exp) {
-		ArrayList<ROI2D> listSpotsRoisPresent = exp.seqCamData.getROIsContainingString("spot");
-		ArrayList<ROI2D> listSpotsRoisSelected = new ArrayList<ROI2D>();
-		for (ROI2D roi : listSpotsRoisPresent) {
+	private void createPerimeterEnclosingRois(Experiment exp) {
+		String selectedRoiType = (String) typeCombo.getSelectedItem();
+		ArrayList<ROI2D> listRoisPresent = exp.seqCamData.getROIsContainingString(selectedRoiType);
+		ArrayList<ROI2D> listRoisSelected = new ArrayList<ROI2D>();
+		for (ROI2D roi : listRoisPresent) {
 			if (roi.isSelected())
-				listSpotsRoisSelected.add(roi);
+				listRoisSelected.add(roi);
 		}
-		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(
-				listSpotsRoisSelected.size() > 0 ? listSpotsRoisSelected : listSpotsRoisPresent, "spot");
+		enclosedRois = listRoisSelected.size() > 0 ? listRoisSelected : listRoisPresent;
+		
+		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(enclosedRois, selectedRoiType);
 		roiPerimeter = new ROI2DPolygon(polygon);
 		roiPerimeter.setName("perimeter");
 		roiPerimeter.setColor(Color.YELLOW);
 	}
 
-	private void updateSpotsFromSnake(Experiment exp) {
-		if (enclosedSpots == null || enclosedSpots.size() < 1 || roiSnake == null)
+	private void updateRoisFromSnake(Experiment exp) {
+		if (enclosedRois == null || enclosedRois.size() < 1 || roiSnake == null)
 			return;
 
-		ArrayList<ROI2D> listRoisSeq = exp.seqCamData.getROIsContainingString("spot");
+		String selectedRoiType = (String) typeCombo.getSelectedItem();
 		Polyline2D snake = roiSnake.getPolyline2D();
 		int i = 0;
-		for (Spot spot : enclosedSpots) {
+		for (ROI2D roi : enclosedRois) {
 			double x = snake.xpoints[i];
 			double y = snake.ypoints[i];
-			SpotProperties prop = spot.getProperties();
-			prop.setSpotXCoord((int) x);
-			prop.setSpotYCoord((int) y);
-
-			ROI2D roi = spot.getRoi();
-			Rectangle rect = spot.getRoi().getBounds();
-			Point2D.Double point = new Point2D.Double(x - rect.width / 2, y - rect.height / 2);
-			roi.setPosition2D(point);
-
-			String name = roi.getName();
-			for (ROI2D roiSeq : listRoisSeq) {
-				if (roiSeq.getName().equals(name)) {
-					listRoisSeq.remove(roiSeq);
-					roiSeq.setPosition2D(point);
-					break;
-				}
-			}
 			i++;
+			
+			Rectangle rect = roi.getBounds();
+			Point2D.Double point = null;
+			if (selectedRoiType.contains("cage"))
+				point = new Point2D.Double(x, y);
+			else
+				point = new Point2D.Double(x - rect.width / 2, y - rect.height / 2);
+			roi.setPosition2D(point);
 		}
 
-		exp.seqCamData.displaySpecificROIs(true, "spot");
+		exp.seqCamData.displaySpecificROIs(true, selectedRoiType);
 	}
 
-	private void resizeSpots(Experiment exp, int delta) {
-		enclosedSpots = exp.cagesArray.getSpotsEnclosed(roiPerimeter);
-		if (enclosedSpots.size() > 0) {
-			for (Spot spot : enclosedSpots) {
-				ROI2DShape roi = (ROI2DShape) spot.getRoi();
+	private void resizeRois(Experiment exp, int delta) {
+		if (enclosedRois.size() > 0) {
+			for (ROI2D roi : enclosedRois) {
+				//ROI2DShape roi = (ROI2DShape) spot.getRoi();
 				exp.seqCamData.getSequence().removeROI(roi);
-				roi = (ROI2DShape) ROI2DUtilities.resizeROI(roi, delta);
-				spot.setRoi(roi);
+				roi = ROI2DUtilities.resizeROI(roi, delta);
 				exp.seqCamData.getSequence().addROI(roi);
 			}
 		} else {
@@ -299,48 +261,9 @@ public class EditSpots extends JPanel {
 			roiSnake = null;
 			roiPerimeter = null;
 			displaySnakeCheckBox.setSelected(false);
-			selectSpotsCheckBox.setSelected(false);
+			selectRoisCheckBox.setSelected(false);
 		}
 	}
 
-	// ------------------------------
-
-	private void updateCagesButtonsState(boolean enableSnake, boolean enableCenter) {
-//		displaySnakeCheckBox.setEnabled(enableSnake);
-//		centerSpotsToSnakeButton.setEnabled(enableCenter);
-	}
-
-	private void showCagesFrame(Experiment exp, boolean show) {
-		if (show) {
-			setCagesFrame(exp);
-		} else {
-			exp.seqCamData.getSequence().removeROI(roiPerimeter);
-		}
-	}
-
-	private void setCagesFrame(Experiment exp) {
-		exp.seqCamData.getSequence().removeROI(roiPerimeter);
-//		showSnake(exp, false);
-		if (roiPerimeter == null)
-			createRoiPerimeterEnclosingCages(exp);
-		exp.seqCamData.getSequence().addROI(roiPerimeter);
-		exp.seqCamData.getSequence().setSelectedROI(roiPerimeter);
-
-		makeSureRectangleIsVisible(exp, roiPerimeter.getBounds());
-	}
-
-	private void createRoiPerimeterEnclosingCages(Experiment exp) {
-		ArrayList<ROI2D> listCagesRoisPresent = exp.seqCamData.getROIsContainingString("cage");
-		ArrayList<ROI2D> listCagesRoisSelected = new ArrayList<ROI2D>();
-		for (ROI2D roi : listCagesRoisPresent) {
-			if (roi.isSelected())
-				listCagesRoisSelected.add(roi);
-		}
-		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(
-				listCagesRoisSelected.size() > 0 ? listCagesRoisSelected : listCagesRoisPresent, "cage");
-		roiPerimeter = new ROI2DPolygon(polygon);
-		roiPerimeter.setName("perimeter");
-		roiPerimeter.setColor(Color.YELLOW);
-	}
 
 }
