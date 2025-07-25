@@ -57,8 +57,7 @@ public enum ImageTransformEnums {
 	RGB_TO_H1H2H3("H1H2H3", new H1H2H3()), //
 	L1DIST_TO_1RSTCOL("L1[t-t0]", new L1DistanceToColumn(0)),
 	COLORDISTANCE_L1_Y("color dist L1", new YDifferenceL(0, 0, 4, 0, false)),
-	COLORDISTANCE_L2_Y("color dist L2", new YDifferenceL(0, 0, 5, 0, true)),
-	DERICHE("edge detection", new Deriche(1., true)), //
+	COLORDISTANCE_L2_Y("color dist L2", new YDifferenceL(0, 0, 5, 0, true)), DERICHE("edges", new Deriche(1., true)), //
 	DERICHE_COLOR("Deriche's edges", new Deriche(1., false)), //
 	MINUSHORIZAVG("remove Hz traces", new RemoveHorizontalAverage()), //
 	THRESHOLD_SINGLE("threshold 1 value", new ThresholdSingleValue()), //
