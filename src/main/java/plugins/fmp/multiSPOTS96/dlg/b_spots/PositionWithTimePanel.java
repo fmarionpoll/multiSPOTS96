@@ -246,7 +246,7 @@ public class PositionWithTimePanel extends JPanel implements ListSelectionListen
 				listRoisAtT.add(kymoROI2D.getInputRoi());
 			}
 		}
-		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(listRoisAtT);
+		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(listRoisAtT, "spot");
 
 		removeFrameAroundSpots(exp.seqCamData.getSequence());
 		envelopeRoi_initial = new ROI2DPolygon(polygon);

@@ -224,4 +224,5 @@ public class Registration extends BuildSeries {
 //		}
 //		return IcyBufferedImage.createFrom(image);
 //	}
+
 }

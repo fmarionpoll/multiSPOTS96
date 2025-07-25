@@ -26,7 +26,7 @@ import plugins.kernel.roi.roi2d.ROI2DShape;
 public class ROI2DUtilities {
 	private static final String ID_ROIMC = "roiMC";
 
-	public static Polygon2D getPolygonEnclosingROI2Ds(ArrayList<ROI2D> listRois) {
+	public static Polygon2D getPolygonEnclosingROI2Ds(ArrayList<ROI2D> listRois, String filter) {
 		ROI2D roi1 = listRois.get(0);
 		Rectangle rect0 = roi1.getBounds();
 		int x0 = (int) rect0.getX();
@@ -35,13 +35,17 @@ public class ROI2DUtilities {
 		int height0 = (int) rect0.getHeight();
 
 		for (ROI2D roi : listRois) {
-			if (!roi.getName().contains("spot"))
+			if (!roi.getName().contains(filter))
 				continue;
 			Rectangle rect1 = roi.getBounds();
 			int x1 = (int) rect1.getX();
 			int y1 = (int) rect1.getY();
 			int width1 = x1 - x0 + (int) rect1.getWidth();
 			int height1 = y1 - y0 + (int) rect1.getHeight();
+			if (x1 < x0)
+				x0 = x1;
+			if (y1 < y0)
+				y0 = y1;
 			if (width1 > width0)
 				width0 = width1;
 			if (height1 > height0)

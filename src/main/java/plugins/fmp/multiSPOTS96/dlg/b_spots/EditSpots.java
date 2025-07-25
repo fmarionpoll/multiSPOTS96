@@ -46,8 +46,9 @@ public class EditSpots extends JPanel {
 
 	private JButton erodeButton = new JButton("Contract spots");
 	private JButton dilateButton = new JButton("Dilate spots");
-
 	private JButton editSpotsWithTimeButton = new JButton("Change spots position with time");
+
+	private JCheckBox selectCagesCheckBox = new JCheckBox("Select cages");
 
 	void init(GridLayout capLayout, MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
@@ -64,19 +65,15 @@ public class EditSpots extends JPanel {
 		JPanel panel1 = new JPanel(flowLayout);
 		panel1.add(dilateButton);
 		panel1.add(erodeButton);
+		panel1.add(editSpotsWithTimeButton);
 		add(panel1);
 
 		JPanel panel2 = new JPanel(flowLayout);
-		panel2.add(editSpotsWithTimeButton);
+		panel2.add(selectCagesCheckBox);
 		add(panel2);
 
 		defineActionListeners();
-		updateButtonsState(false, false);
-	}
-
-	private void updateButtonsState(boolean enableSnake, boolean enableCenter) {
-		displaySnakeCheckBox.setEnabled(enableSnake);
-		centerSpotsToSnakeButton.setEnabled(enableCenter);
+		updateSpotsButtonsState(false, false);
 	}
 
 	private void defineActionListeners() {
@@ -88,8 +85,8 @@ public class EditSpots extends JPanel {
 				if (exp == null)
 					return;
 				boolean isSelected = selectSpotsCheckBox.isSelected();
-				updateButtonsState(isSelected, false);
-				showFrame(exp, isSelected);
+				updateSpotsButtonsState(isSelected, false);
+				showSpotsFrame(exp, isSelected);
 			}
 		});
 
@@ -101,8 +98,8 @@ public class EditSpots extends JPanel {
 					return;
 				boolean isSelected = displaySnakeCheckBox.isSelected();
 				showSnake(exp, isSelected);
-				showFrame(exp, !isSelected);
-				updateButtonsState(true, isSelected);
+				showSpotsFrame(exp, !isSelected);
+				updateSpotsButtonsState(true, isSelected);
 			}
 		});
 
@@ -113,8 +110,6 @@ public class EditSpots extends JPanel {
 				if (exp == null)
 					return;
 				updateSpotsFromSnake(exp);
-				// update colors
-				// remove snake
 			}
 		});
 
@@ -148,6 +143,18 @@ public class EditSpots extends JPanel {
 			}
 		});
 
+		selectCagesCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp == null)
+					return;
+				boolean isSelected = selectCagesCheckBox.isSelected();
+				updateCagesButtonsState(isSelected, false);
+				showCagesFrame(exp, isSelected);
+			}
+		});
+
 	}
 
 	public void openDialog() {
@@ -165,7 +172,12 @@ public class EditSpots extends JPanel {
 
 	// --------------------------------------
 
-	private void showFrame(Experiment exp, boolean show) {
+	private void updateSpotsButtonsState(boolean enableSnake, boolean enableCenter) {
+		displaySnakeCheckBox.setEnabled(enableSnake);
+		centerSpotsToSnakeButton.setEnabled(enableCenter);
+	}
+
+	private void showSpotsFrame(Experiment exp, boolean show) {
 		if (show) {
 			setSpotsFrame(exp);
 		} else {
@@ -198,9 +210,8 @@ public class EditSpots extends JPanel {
 			if (enclosedSpots.size() > 0) {
 				ArrayList<Point2D> listPoint = new ArrayList<Point2D>();
 				for (Spot spot : enclosedSpots) {
-					SpotProperties prop = spot.getProperties();
-					Point2D.Double point = new Point2D.Double(prop.getSpotXCoord() + prop.getSpotRadius(),
-							prop.getSpotYCoord() + prop.getSpotRadius());
+					Rectangle rect = spot.getRoi().getBounds();
+					Point2D.Double point = new Point2D.Double(rect.getCenterX(), rect.getCenterY());
 					listPoint.add(point);
 				}
 				roiSnake = new ROI2DPolyLine(listPoint);
@@ -226,7 +237,7 @@ public class EditSpots extends JPanel {
 				listSpotsRoisSelected.add(roi);
 		}
 		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(
-				listSpotsRoisSelected.size() > 0 ? listSpotsRoisSelected : listSpotsRoisPresent);
+				listSpotsRoisSelected.size() > 0 ? listSpotsRoisSelected : listSpotsRoisPresent, "spot");
 		roiPerimeter = new ROI2DPolygon(polygon);
 		roiPerimeter.setName("perimeter");
 		roiPerimeter.setColor(Color.YELLOW);
@@ -240,13 +251,15 @@ public class EditSpots extends JPanel {
 		Polyline2D snake = roiSnake.getPolyline2D();
 		int i = 0;
 		for (Spot spot : enclosedSpots) {
+			double x = snake.xpoints[i];
+			double y = snake.ypoints[i];
 			SpotProperties prop = spot.getProperties();
-			prop.setSpotXCoord((int) snake.xpoints[i]);
-			prop.setSpotYCoord((int) snake.ypoints[i]);
-			ROI2D roi = spot.getRoi();
+			prop.setSpotXCoord((int) x);
+			prop.setSpotYCoord((int) y);
 
-			Point2D.Double point = new Point2D.Double(snake.xpoints[i] - prop.getSpotRadius(),
-					snake.ypoints[i] - prop.getSpotRadius());
+			ROI2D roi = spot.getRoi();
+			Rectangle rect = spot.getRoi().getBounds();
+			Point2D.Double point = new Point2D.Double(x - rect.width / 2, y - rect.height / 2);
 			roi.setPosition2D(point);
 
 			String name = roi.getName();
@@ -288,6 +301,46 @@ public class EditSpots extends JPanel {
 			displaySnakeCheckBox.setSelected(false);
 			selectSpotsCheckBox.setSelected(false);
 		}
+	}
+
+	// ------------------------------
+
+	private void updateCagesButtonsState(boolean enableSnake, boolean enableCenter) {
+//		displaySnakeCheckBox.setEnabled(enableSnake);
+//		centerSpotsToSnakeButton.setEnabled(enableCenter);
+	}
+
+	private void showCagesFrame(Experiment exp, boolean show) {
+		if (show) {
+			setCagesFrame(exp);
+		} else {
+			exp.seqCamData.getSequence().removeROI(roiPerimeter);
+		}
+	}
+
+	private void setCagesFrame(Experiment exp) {
+		exp.seqCamData.getSequence().removeROI(roiPerimeter);
+//		showSnake(exp, false);
+		if (roiPerimeter == null)
+			createRoiPerimeterEnclosingCages(exp);
+		exp.seqCamData.getSequence().addROI(roiPerimeter);
+		exp.seqCamData.getSequence().setSelectedROI(roiPerimeter);
+
+		makeSureRectangleIsVisible(exp, roiPerimeter.getBounds());
+	}
+
+	private void createRoiPerimeterEnclosingCages(Experiment exp) {
+		ArrayList<ROI2D> listCagesRoisPresent = exp.seqCamData.getROIsContainingString("cage");
+		ArrayList<ROI2D> listCagesRoisSelected = new ArrayList<ROI2D>();
+		for (ROI2D roi : listCagesRoisPresent) {
+			if (roi.isSelected())
+				listCagesRoisSelected.add(roi);
+		}
+		Polygon2D polygon = ROI2DUtilities.getPolygonEnclosingROI2Ds(
+				listCagesRoisSelected.size() > 0 ? listCagesRoisSelected : listCagesRoisPresent, "cage");
+		roiPerimeter = new ROI2DPolygon(polygon);
+		roiPerimeter.setName("perimeter");
+		roiPerimeter.setColor(Color.YELLOW);
 	}
 
 }
