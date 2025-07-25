@@ -31,6 +31,7 @@ public class Edit extends JPanel {
 					EnumXLSColumnHeader.CAGE_SEX, EnumXLSColumnHeader.CAGE_STRAIN, EnumXLSColumnHeader.CAGE_AGE });
 
 	private JComboBox<String> fieldOldValuesCombo = new JComboBox<String>();
+	private JButton refreshButton = new JButton("Refresh");
 	private JTextField newValueTextField = new JTextField(10);
 	private JButton applyButton = new JButton("Apply");
 
@@ -51,6 +52,7 @@ public class Edit extends JPanel {
 		panel0.add(new JLabel("Field name "));
 		panel0.add(fieldNamesCombo);
 		fieldNamesCombo.setPreferredSize(new Dimension(bWidth, bHeight));
+		panel0.add(refreshButton);
 		add(panel0);
 
 		bWidth = 200;
@@ -90,6 +92,13 @@ public class Edit extends JPanel {
 			public void actionPerformed(final ActionEvent e) {
 				editExpList.getFieldValuesToCombo(fieldOldValuesCombo,
 						(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
+			}
+		});
+
+		refreshButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				initEditCombos();
 			}
 		});
 	}
