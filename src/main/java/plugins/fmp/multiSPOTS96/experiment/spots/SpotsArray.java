@@ -682,8 +682,9 @@ public class SpotsArray {
 			if (spot == null) {
 				spot = new Spot();
 				spotsList.add(spot);
+				spot.getProperties().importFromCsv(spotData);
 			}
-			spot.getProperties().importFromCsv(spotData);
+
 		}
 		return null;
 	}

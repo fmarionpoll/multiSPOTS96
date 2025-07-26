@@ -248,10 +248,10 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 	private void updateTransformFunctionsOfCanvas(Experiment exp) {
 		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
 		if (canvas.getTransformStep1ItemCount() < (transformsComboBox.getItemCount() + 1)) {
-			canvas.updateTransformsComboStep1(TRANSFORMS);
+			canvas.updateTransformsStep1(TRANSFORMS);
 		}
 		int index = transformsComboBox.getSelectedIndex();
-		canvas.selectImageTransformFunctionStep1(index + 1, null);
+		canvas.setTransformStep1(index + 1, null);
 	}
 
 //	private void displayTransform(Experiment exp) {
