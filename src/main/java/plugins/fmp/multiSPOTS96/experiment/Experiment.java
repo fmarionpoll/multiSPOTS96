@@ -455,7 +455,7 @@ public class Experiment {
 
 	public boolean load_MS96_cages() {
 		String fileName = getXML_MS96_cages_Location(cagesArray.ID_MS96_cages_XML);
-		return cagesArray.xmlReadCagesFromFileNoQuestion(fileName, this);
+		return cagesArray.xmlReadCagesFromFileNoQuestion(fileName);
 	}
 
 	public boolean save_MS96_cages() {
@@ -676,7 +676,7 @@ public class Experiment {
 			if (filename == null)
 				return false;
 		}
-		return cagesArray.xmlReadCagesFromFileNoQuestion(filename, this);
+		return cagesArray.xmlReadCagesFromFileNoQuestion(filename);
 	}
 
 	private String findFile_3Locations(String xmlFileName, int first, int second, int third) {
@@ -740,8 +740,7 @@ public class Experiment {
 
 	private boolean replaceSpotsFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
-		if (cagesArray.cagesList.size() == 0)
-			load_MS96_cages();
+		load_MS96_cages();
 		boolean flag = false;
 		for (Cage cage : cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
@@ -751,13 +750,14 @@ public class Experiment {
 				}
 			}
 		}
+		if (flag)
+			save_MS96_cages();
 		return flag;
 	}
 
 	private boolean replaceCageFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
-		if (cagesArray.cagesList.size() == 0)
-			load_MS96_cages();
+		load_MS96_cages();
 		boolean flag = false;
 		for (Cage cage : cagesArray.cagesList) {
 			if (cage.getField(fieldEnumCode).equals(oldValue)) {
@@ -766,6 +766,8 @@ public class Experiment {
 			}
 
 		}
+		if (flag)
+			save_MS96_cages();
 		return flag;
 	}
 
@@ -777,16 +779,14 @@ public class Experiment {
 	}
 
 	private void addSpotsValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
-		if (cagesArray.cagesList.size() == 0)
-			load_MS96_cages();
+		load_MS96_cages();
 		for (Cage cage : cagesArray.cagesList)
 			for (Spot spot : cage.spotsArray.getSpotsList())
 				addValue(spot.getField(fieldEnumCode), textList);
 	}
 
 	private void addCagesValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
-		if (cagesArray.cagesList.size() == 0)
-			load_MS96_cages();
+		load_MS96_cages();
 		for (Cage cage : cagesArray.cagesList)
 			addValue(cage.getField(fieldEnumCode), textList);
 	}

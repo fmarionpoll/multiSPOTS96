@@ -215,7 +215,7 @@ public class CagesArray {
 		if (filedummy != null) {
 			for (int i = 0; i < filedummy.length; i++) {
 				String csFile = filedummy[i];
-				wasOk &= xmlReadCagesFromFileNoQuestion(csFile, exp);
+				wasOk &= xmlReadCagesFromFileNoQuestion(csFile);
 			}
 		}
 		return wasOk;
@@ -229,22 +229,6 @@ public class CagesArray {
 			return false;
 
 		if (xmlLoadCages(XMLUtil.getRootElement(doc))) {
-			return true;
-		} else {
-			System.out.println("Cages:xmlReadCagesFromFileNoQuestion() failed to load cages from file");
-			return false;
-		}
-	}
-
-	public boolean xmlReadCagesFromFileNoQuestion(String tempname, Experiment exp) {
-		if (tempname == null)
-			return false;
-		final Document doc = XMLUtil.loadDocument(tempname);
-		if (doc == null)
-			return false;
-
-		if (xmlLoadCages(XMLUtil.getRootElement(doc))) {
-			transferCagesToSequenceAsROIs(exp.seqCamData);
 			return true;
 		} else {
 			System.out.println("Cages:xmlReadCagesFromFileNoQuestion() failed to load cages from file");

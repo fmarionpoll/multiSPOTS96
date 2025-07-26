@@ -101,6 +101,7 @@ public class Edit extends JPanel {
 				initEditCombos();
 			}
 		});
+
 	}
 
 	void applyChange() {

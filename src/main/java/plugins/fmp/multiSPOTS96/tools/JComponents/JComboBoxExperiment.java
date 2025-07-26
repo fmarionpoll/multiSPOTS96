@@ -260,6 +260,7 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 		List<String> textList = new ArrayList<>();
 		for (int i = 0; i < getItemCount(); i++) {
 			Experiment exp = getItemAt(i);
+			exp.load_MS96_experiment();
 			exp.getFieldValues(field, textList);
 		}
 		return textList;
