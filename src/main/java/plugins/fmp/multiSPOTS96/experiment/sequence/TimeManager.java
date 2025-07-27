@@ -136,8 +136,7 @@ public class TimeManager {
 			else
 				result = mid;
 		} else
-			result = Math.abs(value - camImages_time_ms[low]) < Math
-					.abs(value - camImages_time_ms[high]) ? low : high;
+			result = Math.abs(value - camImages_time_ms[low]) < Math.abs(value - camImages_time_ms[high]) ? low : high;
 
 		return result;
 	}
@@ -236,7 +235,7 @@ public class TimeManager {
 		double factor = 60000.;
 
 		for (int i = 0; i < nFrames; i++) {
-			camImages_time_min[i] = camImages_time_min[i] / factor;
+			camImages_time_min[i] = ((double) camImages_time_ms[i]) / factor;
 		}
 		return camImages_time_min;
 	}

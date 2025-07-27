@@ -442,6 +442,18 @@ public class Level2D extends Polyline2D {
 	}
 
 	/**
+	 * Get maximum of the Y values
+	 */
+	public double getMaximum_Y() {
+		double maximum = ypoints[0];
+		for (int i = 0; i < npoints; i++) {
+			if (ypoints[i] > maximum)
+				maximum = ypoints[i];
+		}
+		return maximum;
+	}
+
+	/**
 	 * Applies a threshold to all Y-coordinates. Values greater than the threshold
 	 * are set to 1, others to 0.
 	 * 

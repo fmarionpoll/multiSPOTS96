@@ -242,14 +242,10 @@ public class ChartCageArrayFrame extends IcyFrame {
 	/**
 	 * Creates chart panels for all cages in the experiment.
 	 * 
-	 * @param chartCage        the chart builder
-	 * @param xlsResultsArray  the primary data array
-	 * @param xlsResultsArray2 the secondary data array
 	 * @param xlsExportOptions the export options
 	 */
 	private void createChartPanelArray(XLSExportOptions xlsExportOptions) {
 		int indexCage = 0;
-//		int createdCharts = 0;
 		for (int row = 0; row < experiment.cagesArray.nCagesAlongY; row++) {
 			for (int col = 0; col < experiment.cagesArray.nCagesAlongX; col++, indexCage++) {
 				if (indexCage < xlsExportOptions.cageIndexFirst || indexCage > xlsExportOptions.cageIndexLast)
@@ -263,7 +259,6 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 				ChartPanel chartPanel = createChartPanelForCage(cage, row, col, xlsExportOptions);
 				chartPanelArray[row][col] = new ChartCagePair(chartPanel, cage);
-//				createdCharts++;
 			}
 		}
 

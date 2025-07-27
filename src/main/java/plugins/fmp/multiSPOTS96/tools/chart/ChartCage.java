@@ -14,10 +14,12 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
+import plugins.fmp.multiSPOTS96.experiment.cages.CageProperties;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportMeasuresFromSpot;
+import plugins.fmp.multiSPOTS96.experiment.spots.SpotMeasure;
+import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
-import plugins.fmp.multiSPOTS96.tools.toExcel.XLSResults;
 
 /**
  * Utility class for creating and managing cage charts. This class provides
@@ -204,47 +206,6 @@ public class ChartCage {
 	 * @param token           token to append to series names
 	 * @return XYSeriesCollection containing the cage's data
 	 */
-	XYSeriesCollection getSpotDataFromOneCage(Experiment exp, Cage cage, XLSExportOptions xlsExportOptions) {
-		if (cage == null || cage.spotsArray == null || cage.spotsArray.getSpotsCount() < 1) {
-			LOGGER.warning("Cannot get spot data: spot array is empty or cage is null");
-			return new XYSeriesCollection();
-		}
-
-		XYSeriesCollection xySeriesCollection = null;
-//		int seriesCount = 0;
-		XLSExportMeasuresFromSpot xlsExportMeasuresSpot = new XLSExportMeasuresFromSpot();
-
-		for (Spot spot : cage.spotsArray.getSpotsList()) {
-			if (xySeriesCollection == null) {
-				xySeriesCollection = new XYSeriesCollection();
-			}
-			XLSResults xlsResults = xlsExportMeasuresSpot.getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot,
-					xlsExportOptions);
-			double scalingFactorToPhysicalUnits = 1.;
-			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
-
-			XYSeries seriesXY = createXYSeriesFromXLSResults(xlsResults, spot.getName());
-			if (seriesXY != null) {
-				seriesXY.setDescription(buildSeriesDescription(xlsResults, cage));
-				xySeriesCollection.addSeries(seriesXY);
-//				seriesCount++;
-				updateGlobalMaxMin();
-			}
-		}
-
-		// LOGGER.fine("Extracted " + seriesCount + " series for cage ID: " +
-		// cage.getProperties().getCageID());
-		return xySeriesCollection;
-	}
-
-	/**
-	 * Extracts spot data from one cage in the results array.
-	 * 
-	 * @param xlsResultsArray the results array to search
-	 * @param cage            the cage to get data for
-	 * @param token           token to append to series names
-	 * @return XYSeriesCollection containing the cage's data
-	 */
 	XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage, XLSExportOptions xlsExportOptions) {
 		if (cage == null || cage.spotsArray == null || cage.spotsArray.getSpotsCount() < 1) {
 			LOGGER.warning("Cannot get spot data: spot array is empty or cage is null");
@@ -252,23 +213,16 @@ public class ChartCage {
 		}
 
 		XYSeriesCollection xySeriesCollection = null;
-//		int seriesCount = 0;
-		XLSExportMeasuresFromSpot xlsExportMeasuresSpot = new XLSExportMeasuresFromSpot();
 
 		for (Spot spot : cage.spotsArray.getSpotsList()) {
 			if (xySeriesCollection == null) {
 				xySeriesCollection = new XYSeriesCollection();
 			}
-			XLSResults xlsResults = xlsExportMeasuresSpot.getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot,
-					xlsExportOptions);
-			double scalingFactorToPhysicalUnits = 1.;
-			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
 
-			XYSeries seriesXY = createXYSeriesFromXLSResults(xlsResults, spot.getName());
+			XYSeries seriesXY = createXYSeriesFromSpotMeasure(exp, spot, xlsExportOptions);
 			if (seriesXY != null) {
-				seriesXY.setDescription(buildSeriesDescription(xlsResults, cage));
+				seriesXY.setDescription(buildSeriesDescriptionFromCageAndSpot(cage, spot));
 				xySeriesCollection.addSeries(seriesXY);
-//				seriesCount++;
 				updateGlobalMaxMin();
 			}
 		}
@@ -281,42 +235,46 @@ public class ChartCage {
 	/**
 	 * Builds a description string for a series.
 	 * 
-	 * @param xlsResults the results data
-	 * @param cage       the cage data
+	 * @param cage the cage
+	 * @param spot the spot
 	 * @return formatted description string
 	 */
-	private String buildSeriesDescription(XLSResults xlsResults, Cage cage) {
-		return "ID:" + xlsResults.getCageID() + ":Pos:" + xlsResults.getCagePosition() + ":nflies:"
-				+ cage.getProperties().getCageNFlies() + ":R:" + xlsResults.getColor().getRed() + ":G:"
-				+ xlsResults.getColor().getGreen() + ":B:" + xlsResults.getColor().getBlue();
+	private String buildSeriesDescriptionFromCageAndSpot(Cage cage, Spot spot) {
+		CageProperties cageProp = cage.getProperties();
+		Color color = spot.getProperties().getColor();
+		return "ID:" + cageProp.getCageID() + ":Pos:" + cageProp.getCagePosition() + ":nflies:"
+				+ cageProp.getCageNFlies() + ":R:" + color.getRed() + ":G:" + color.getGreen() + ":B:"
+				+ color.getBlue();
 	}
 
-	/**
-	 * Creates an XY series from results data.
-	 * 
-	 * @param xlsResults the results data
-	 * @param name       the series name
-	 * @return XYSeries containing the data points
-	 */
-	private XYSeries createXYSeriesFromXLSResults(XLSResults xlsResults, String name) {
-		if (xlsResults == null) {
-			LOGGER.warning("Cannot create XY series: results is null");
-			return null;
+	private XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot, XLSExportOptions xlsExportOptions) {
+		XYSeries seriesXY = new XYSeries(spot.getName(), false);
+
+		if (exp.seqCamData.getTimeManager().getCamImagesTime_Ms() == null)
+			exp.seqCamData.build_MsTimesArray_From_FileNamesList();
+		double[] camImages_time_min = exp.seqCamData.getTimeManager().getCamImagesTime_Minutes();
+		SpotMeasure spotMeasure = spot.getMeasurements(xlsExportOptions.exportType);
+		Level2D spotLevel2D = spotMeasure.getLevel2D();
+		double divider = 1.;
+		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT) {
+			divider = spotLevel2D.getMaximum_Y();
 		}
 
-		XYSeries seriesXY = new XYSeries(name, false);
+		int npoints = spotMeasure.getLevel2DNPoints();
 
-		if (xlsResults.getValuesOutLength() > 0) {
-			xmax = xlsResults.getValuesOutLength();
-			ymax = xlsResults.getValuesOut()[0];
-			ymin = ymax;
-			addPointsAndUpdateExtrema(seriesXY, xlsResults, 0);
-			// LOGGER.fine("Created series '" + name + "' with " +
-			// xlsResults.valuesOut.length + " points");
-		} else {
-			LOGGER.warning("No data points in results for series '" + name + "'");
+		for (int j = 0; j < npoints; j++) {
+			double x = camImages_time_min[j];
+			double y = spotLevel2D.getYAt(j) / divider;
+			seriesXY.add(x, y);
+
+			if (ymax < y) {
+				ymax = y;
+			}
+			if (ymin > y) {
+				ymin = y;
+			}
+			x++;
 		}
-
 		return seriesXY;
 	}
 
@@ -351,39 +309,6 @@ public class ChartCage {
 //						"Updated global extrema: Y[" + globalYMin + ", " + globalYMax + "], X[0, " + globalXMax + "]");
 //			}
 		}
-	}
-
-	/**
-	 * Adds data points to a series and updates local extrema.
-	 * 
-	 * @param seriesXY   the series to add points to
-	 * @param xlsResults the results data
-	 * @param startFrame the starting frame number
-	 */
-	private void addPointsAndUpdateExtrema(XYSeries seriesXY, XLSResults xlsResults, int startFrame) {
-		if (seriesXY == null || xlsResults == null || xlsResults.getValuesOutLength() < 1) {
-			LOGGER.warning("Cannot add points: series, results, or values are null");
-			return;
-		}
-
-		int x = 0;
-		int npoints = xlsResults.getValuesOutLength();
-
-		for (int j = 0; j < npoints; j++) {
-			double y = xlsResults.getValuesOut()[j];
-			seriesXY.add(x + startFrame, y);
-
-			if (ymax < y) {
-				ymax = y;
-			}
-			if (ymin > y) {
-				ymin = y;
-			}
-			x++;
-		}
-
-		// LOGGER.fine("Added " + npoints + " points to series, local extrema: Y[" +
-		// ymin + ", " + ymax + "]");
 	}
 
 	/**
