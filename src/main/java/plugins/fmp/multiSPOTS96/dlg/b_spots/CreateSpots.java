@@ -92,7 +92,7 @@ public class CreateSpots extends JPanel {
 						cageFound = exp.cagesArray.cagesList.get(0);
 
 					if (cageFound != null) {
-						exp.seqCamData.centerOnRoi(cageFound.getRoi());
+						exp.seqCamData.centerDisplayOnRoi(cageFound.getRoi());
 						changeGrid(exp, cageFound);
 					}
 

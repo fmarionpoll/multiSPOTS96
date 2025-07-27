@@ -150,7 +150,7 @@ public class XLSResults {
 		}
 	}
 
-	public void transferMeasuresToValuesOut(double scalingFactorToPhysicalUnits, EnumXLSExport xlsExport) {
+	public void transferDataValuesToValuesOut(double scalingFactorToPhysicalUnits, EnumXLSExport xlsExport) {
 		if (valuesOutLength == 0 || dataValues == null || dataValues.size() < 1)
 			return;
 

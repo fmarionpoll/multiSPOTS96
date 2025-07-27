@@ -167,7 +167,7 @@ public class Charts extends JPanel implements SequenceListener {
 				cageFound = exp.cagesArray.findFirstSelectedCage();
 			if (cageFound == null)
 				return null;
-			exp.seqCamData.centerOnRoi(cageFound.getRoi());
+			exp.seqCamData.centerDisplayOnRoi(cageFound.getRoi());
 			String cageNumber = CageString.getCageNumberFromCageRoiName(cageFound.getRoi().getName());
 			first = Integer.parseInt(cageNumber);
 			last = first;

@@ -69,9 +69,8 @@ public class _DlgExperiment_ extends JPanel implements ViewerListener, ChangeLis
 		tabCorrectDrift.init(tabsLayout, parent0);
 		tabsPane.addTab("Correct drift", null, tabCorrectDrift, "Correct image drift with time");
 
-		CorrectDriftRefactored tabCorrectDrift2 = new CorrectDriftRefactored(parent0.expListCombo);
-//		tabCorrectDrift2.init(tabsLayout, parent0);
-		tabsPane.addTab("Correct drift", null, tabCorrectDrift2, "Correct image drift with time");
+//		CorrectDriftRefactored tabCorrectDrift2 = new CorrectDriftRefactored(parent0.expListCombo);
+//		tabsPane.addTab("Correct drift", null, tabCorrectDrift2, "Correct image drift with time");
 
 		tabsPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 

@@ -216,4 +216,14 @@ public class ImageLoader {
 	public int getNTotalFrames() {
 		return nTotalFrames;
 	}
+
+	public boolean checkIfNFramesIsValid() {
+		int nFrames = getImagesCount();
+		if (nFrames != getNTotalFrames())
+			System.out.println("error: nFrames (seqCamData.camImagesList.size()):" + nFrames
+					+ " is different from seqCamData.getImageLoader().getNTotalFrames():" + getNTotalFrames());
+		if (nFrames < 1)
+			return false;
+		return true;
+	}
 }

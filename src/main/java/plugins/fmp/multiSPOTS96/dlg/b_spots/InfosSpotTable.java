@@ -355,7 +355,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 			if (cage != null) {
 				ROI2D cageRoi = cage.getRoi();
 				if (cageRoi != null)
-					exp.seqCamData.centerOnRoi(cageRoi);
+					exp.seqCamData.centerDisplayOnRoi(cageRoi);
 				else
 					System.out.println("cage roi not found");
 			} else

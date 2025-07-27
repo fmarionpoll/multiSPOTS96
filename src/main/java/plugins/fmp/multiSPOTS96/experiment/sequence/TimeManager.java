@@ -24,7 +24,8 @@ public class TimeManager {
 	private long lastImage_ms = 0;
 	private long duration_ms = 0;
 	private long binImage_ms = 0;
-	private long[] camImages_array_ms = null;
+	private long[] camImages_time_ms = null;
+	private double[] camImages_time_min = null;
 
 	private long binFirst_ms = 0;
 	private long binLast_ms = 0;
@@ -109,24 +110,38 @@ public class TimeManager {
 		return filetime;
 	}
 
+	public void build_MsTimeArray_From_FileNamesList(ImageLoader imageLoader) {
+		int nFrames = imageLoader.getNTotalFrames();
+		camImages_time_ms = new long[nFrames];
+
+		FileTime firstImage_FileTime = getFileTimeFromStructuredName(imageLoader, 0);
+		long firstImage_ms = firstImage_FileTime.toMillis();
+
+		for (int i = 0; i < nFrames; i++) {
+			FileTime image_FileTime = getFileTimeFromStructuredName(imageLoader, i);
+			long image_ms = image_FileTime.toMillis() - firstImage_ms;
+			camImages_time_ms[i] = image_ms;
+		}
+	}
+
 	public int findNearestIntervalWithBinarySearch(long value, int low, int high) {
 		int result = -1;
 		if (high - low > 1) {
 			int mid = (low + high) / 2;
 
-			if (camImages_array_ms[mid] > value)
+			if (camImages_time_ms[mid] > value)
 				result = findNearestIntervalWithBinarySearch(value, low, mid);
-			else if (camImages_array_ms[mid] < value)
+			else if (camImages_time_ms[mid] < value)
 				result = findNearestIntervalWithBinarySearch(value, mid, high);
 			else
 				result = mid;
 		} else
-			result = Math.abs(value - camImages_array_ms[low]) < Math
-					.abs(value - camImages_array_ms[high]) ? low : high;
+			result = Math.abs(value - camImages_time_ms[low]) < Math
+					.abs(value - camImages_time_ms[high]) ? low : high;
 
 		return result;
 	}
-	
+
 	private int findProperFilterIfAny(String fileName) {
 		for (int i = 1; i < timePatternArray.length; i++) {
 			if (timePatternArray[i].findMatch(fileName))
@@ -210,12 +225,24 @@ public class TimeManager {
 		this.binDuration_ms = durationMs;
 	}
 
-	public long[] getCamImagesArrayMs() {
-		return camImages_array_ms;
+	public long[] getCamImagesTime_Ms() {
+		return camImages_time_ms;
 	}
 
-	public void setCamImagesArrayMs(long[] imagesArray) {
-		this.camImages_array_ms = imagesArray;
+	public double[] getCamImagesTime_Minutes() {
+		int nFrames = camImages_time_ms.length;
+		if (camImages_time_min == null || camImages_time_min.length != nFrames)
+			camImages_time_min = new double[nFrames];
+		double factor = 60000.;
+
+		for (int i = 0; i < nFrames; i++) {
+			camImages_time_min[i] = camImages_time_min[i] / factor;
+		}
+		return camImages_time_min;
+	}
+
+	public void setCamImagesTime_Ms(long[] imagesArray) {
+		this.camImages_time_ms = imagesArray;
 	}
 
 	public long getDeltaImage() {

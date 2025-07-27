@@ -338,6 +338,13 @@ public class SequenceCamData implements AutoCloseable {
 		}
 	}
 
+	public boolean build_MsTimesArray_From_FileNamesList() {
+		if (!getImageLoader().checkIfNFramesIsValid())
+			return false;
+		getTimeManager().build_MsTimeArray_From_FileNamesList(getImageLoader());
+		return true;
+	}
+
 	// === VIEWER OPERATIONS ===
 
 	/**
@@ -468,7 +475,7 @@ public class SequenceCamData implements AutoCloseable {
 		roiManager.removeROIsContainingString(seq, string);
 	}
 
-	public void centerOnRoi(ROI2D roi) {
+	public void centerDisplayOnRoi(ROI2D roi) {
 		roiManager.centerOnRoi(seq, roi);
 	}
 

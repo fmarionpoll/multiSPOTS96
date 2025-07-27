@@ -305,7 +305,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		NumberAxis xAxis = setXaxis("", xlsExportOptions);
 		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
-		XYSeriesCollection xyDataSetList = chartCage.getSpotDataFromOneCage(experiment, cage, xlsExportOptions);
+		XYSeriesCollection xyDataSetList = chartCage.getSpotDataDirectlyFromOneCage(experiment, cage, xlsExportOptions);
 		XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList, xAxis, yAxis);
 
 		JFreeChart chart = new JFreeChart(null, // title - the chart title (null permitted).
@@ -541,7 +541,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		ROI2D roi = spot.getRoi();
 		if (roi != null) {
 			exp.seqCamData.getSequence().setFocusedROI(roi);
-			exp.seqCamData.centerOnRoi(roi);
+			exp.seqCamData.centerDisplayOnRoi(roi);
 		}
 	}
 
@@ -612,7 +612,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		Cage cage = exp.cagesArray.getCageFromSpotROIName(spotName);
 		if (cage != null) {
 			ROI2D cageRoi = cage.getRoi();
-			exp.seqCamData.centerOnRoi(cageRoi);
+			exp.seqCamData.centerDisplayOnRoi(cageRoi);
 		} else {
 			LOGGER.warning("Could not find cage for spot: " + spotName);
 		}

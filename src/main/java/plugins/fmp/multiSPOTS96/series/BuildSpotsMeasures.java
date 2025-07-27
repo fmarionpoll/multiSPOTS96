@@ -94,7 +94,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 		threadRunning = true;
 		stopFlag = false;
-		if (!exp.build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList())
+		if (!exp.seqCamData.build_MsTimesArray_From_FileNamesList())
 			return false;
 
 		int iiFirst = 0;

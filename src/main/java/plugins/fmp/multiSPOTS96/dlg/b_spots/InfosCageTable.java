@@ -188,7 +188,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 			Cage cage = exp.cagesArray.getCageFromID(cageID);
 			ROI2D roi = cage.getRoi();
 			exp.seqCamData.getSequence().setFocusedROI(roi);
-			exp.seqCamData.centerOnRoi(roi);
+			exp.seqCamData.centerDisplayOnRoi(roi);
 			roi.setSelected(true);
 		}
 	}

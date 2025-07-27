@@ -60,7 +60,7 @@ public class XLSResultsArray {
 						kymoBinCol_Ms, xlsExportOptions.buildExcelStepMs));
 				if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT)
 					results.relativeToMaximum(); // relativeToT0();
-				results.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
+				results.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
 				resultsList.add(results);
 			}
 		}

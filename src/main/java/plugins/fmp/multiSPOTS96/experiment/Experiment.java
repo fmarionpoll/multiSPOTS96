@@ -308,27 +308,6 @@ public class Experiment {
 		}
 	}
 
-	public boolean build_MsTimeIntervalsArray_From_SeqCamData_FileNamesList() {
-		int nFrames = seqCamData.getImageLoader().getImagesCount();
-		if (nFrames != seqCamData.getImageLoader().getNTotalFrames())
-			System.out.println("error: nFrames (seqCamData.camImagesList.size()):" + nFrames
-					+ " is different from seqCamData.getImageLoader().getNTotalFrames():"
-					+ seqCamData.getImageLoader().getNTotalFrames());
-		if (nFrames < 1)
-			return false;
-
-		seqCamData.getTimeManager().setCamImagesArrayMs(new long[seqCamData.getImageLoader().getNTotalFrames()]);
-
-		FileTime firstImage_FileTime = seqCamData.getFileTimeFromStructuredName(0);
-		long firstImage_ms = firstImage_FileTime.toMillis();
-		for (int i = 0; i < seqCamData.getImageLoader().getNTotalFrames(); i++) {
-			FileTime image_FileTime = seqCamData.getFileTimeFromStructuredName(i);
-			long image_ms = image_FileTime.toMillis() - firstImage_ms;
-			seqCamData.getTimeManager().getCamImagesArrayMs()[i] = image_ms;
-		}
-		return true;
-	}
-
 	public String getBinNameFromKymoFrameStep() {
 		return BIN + seqCamData.getTimeManager().getBinDurationMs() / 1000;
 	}

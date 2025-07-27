@@ -378,7 +378,7 @@ public class Display extends JPanel implements ViewerListener {
 		String spotName = (String) kymographsCombo.getSelectedItem();
 		Spot spot = exp.cagesArray.getSpotFromROIName(spotName);
 		if (spot != null) {
-			exp.seqCamData.centerOnRoi(spot.getRoi());
+			exp.seqCamData.centerDisplayOnRoi(spot.getRoi());
 			exp.seqCamData.getSequence().setSelectedROI(spot.getRoi());
 		}
 	}

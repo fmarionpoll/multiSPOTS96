@@ -218,9 +218,51 @@ public class ChartCage {
 			if (xySeriesCollection == null) {
 				xySeriesCollection = new XYSeriesCollection();
 			}
-			XLSResults xlsResults = xlsExportMeasuresSpot.getSpotResults(exp, cage, spot, xlsExportOptions);
+			XLSResults xlsResults = xlsExportMeasuresSpot.getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot,
+					xlsExportOptions);
 			double scalingFactorToPhysicalUnits = 1.;
-			xlsResults.transferMeasuresToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
+			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
+
+			XYSeries seriesXY = createXYSeriesFromXLSResults(xlsResults, spot.getName());
+			if (seriesXY != null) {
+				seriesXY.setDescription(buildSeriesDescription(xlsResults, cage));
+				xySeriesCollection.addSeries(seriesXY);
+//				seriesCount++;
+				updateGlobalMaxMin();
+			}
+		}
+
+		// LOGGER.fine("Extracted " + seriesCount + " series for cage ID: " +
+		// cage.getProperties().getCageID());
+		return xySeriesCollection;
+	}
+
+	/**
+	 * Extracts spot data from one cage in the results array.
+	 * 
+	 * @param xlsResultsArray the results array to search
+	 * @param cage            the cage to get data for
+	 * @param token           token to append to series names
+	 * @return XYSeriesCollection containing the cage's data
+	 */
+	XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage, XLSExportOptions xlsExportOptions) {
+		if (cage == null || cage.spotsArray == null || cage.spotsArray.getSpotsCount() < 1) {
+			LOGGER.warning("Cannot get spot data: spot array is empty or cage is null");
+			return new XYSeriesCollection();
+		}
+
+		XYSeriesCollection xySeriesCollection = null;
+//		int seriesCount = 0;
+		XLSExportMeasuresFromSpot xlsExportMeasuresSpot = new XLSExportMeasuresFromSpot();
+
+		for (Spot spot : cage.spotsArray.getSpotsList()) {
+			if (xySeriesCollection == null) {
+				xySeriesCollection = new XYSeriesCollection();
+			}
+			XLSResults xlsResults = xlsExportMeasuresSpot.getXLSResultsDataValuesFromSpotMeasures(exp, cage, spot,
+					xlsExportOptions);
+			double scalingFactorToPhysicalUnits = 1.;
+			xlsResults.transferDataValuesToValuesOut(scalingFactorToPhysicalUnits, xlsExportOptions.exportType);
 
 			XYSeries seriesXY = createXYSeriesFromXLSResults(xlsResults, spot.getName());
 			if (seriesXY != null) {
