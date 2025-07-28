@@ -136,11 +136,12 @@ public class BuildSpotsKymos extends BuildSeries {
 				vData.setTitle("Frame #" + ii + " /" + iiLast);
 			}
 
+			progressBar1.setMessage("Analyze frame: " + t + "//" + iiLast);
+			final IcyBufferedImage sourceImage = loadImageFromIndex(exp, t);
+
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					progressBar1.setMessage("Analyze frame: " + t + "//" + iiLast);
-					IcyBufferedImage sourceImage = loadImageFromIndex(exp, t);
 					int sizeC = sourceImage.getSizeC();
 					IcyBufferedImageCursor cursorSource = new IcyBufferedImageCursor(sourceImage);
 					for (Cage cage : exp.cagesArray.cagesList) {

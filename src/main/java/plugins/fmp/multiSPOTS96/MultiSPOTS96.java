@@ -22,7 +22,7 @@ import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
 public class MultiSPOTS96 extends PluginActionable {
 
-	public IcyFrame mainFrame = new IcyFrame("multiSPOTS96 July 27, 2025", true, true, true, true);
+	public IcyFrame mainFrame = new IcyFrame("multiSPOTS96 July 28, 2025", true, true, true, true);
 	public JComboBoxExperiment expListCombo = new JComboBoxExperiment();
 
 	public _DlgBrowse_ dlgBrowse = new _DlgBrowse_();
