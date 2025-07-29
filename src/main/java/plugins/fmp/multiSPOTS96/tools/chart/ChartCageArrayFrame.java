@@ -306,8 +306,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 		JFreeChart chart = new JFreeChart(null, // title - the chart title (null permitted).
 				null, // titleFont - the font for displaying the chart title (null permitted)
 				cageXYPlot, // plot - controller of the visual representation of the data
-				false); // createLegend - legend not created
-						// for the chart
+				false); // createLegend - legend not created for the chart
 
 		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 

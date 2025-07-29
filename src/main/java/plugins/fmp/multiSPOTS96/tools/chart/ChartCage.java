@@ -180,7 +180,7 @@ public class ChartCage {
 		return nFlies;
 	}
 
-	private void setXYPlotBackGroundAccordingToNFlies(XYPlot xyPlot, int nFlies) {
+	public void setXYPlotBackGroundAccordingToNFlies(XYPlot xyPlot, int nFlies) {
 		if (nFlies > 0) {
 			xyPlot.setBackgroundPaint(BACKGROUND_WITH_DATA);
 			xyPlot.setDomainGridlinePaint(GRID_WITH_DATA);
