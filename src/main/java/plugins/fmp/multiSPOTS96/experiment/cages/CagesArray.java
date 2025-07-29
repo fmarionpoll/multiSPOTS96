@@ -21,7 +21,6 @@ import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.sequence.ROIOperation;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
-import plugins.fmp.multiSPOTS96.experiment.sequence.TInterval;
 import plugins.fmp.multiSPOTS96.experiment.sequence.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
@@ -30,9 +29,7 @@ import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
 import plugins.fmp.multiSPOTS96.tools.JComponents.exceptions.FileDialogException;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
@@ -815,55 +812,6 @@ public class CagesArray {
 	}
 
 	// ------------------------------------------------
-
-	public int findCagesListFirstTInterval(long intervalT) {
-		if (cagesListTimeIntervals == null) {
-			cagesListTimeIntervals = new TIntervalsArray();
-			addCagesListTInterval(0);
-		}
-		return cagesListTimeIntervals.findStartItem(intervalT);
-	}
-
-	public long getCagesListTIntervalsAt(int selectedItem) {
-		if (cagesListTimeIntervals == null)
-			addCagesListTInterval(0);
-		return cagesListTimeIntervals.getTIntervalAt(selectedItem).start;
-	}
-
-	public int addCagesListTInterval(long start) {
-		long end = -1;
-		TInterval interval = new TInterval(start, end);
-		int item = cagesListTimeIntervals.addIfNew(interval);
-
-		for (Cage cage : cagesList) {
-			List<ROI2DAlongT> listCageRoiAlongT = cage.getListROIAlongT();
-			ROI2D roi = cage.getRoi();
-			if (item > 0)
-				roi = (ROI2D) listCageRoiAlongT.get(item - 1).getInputRoi().getCopy();
-			try {
-				listCageRoiAlongT.add(item, new ROI2DAlongT(start, roi));
-			} catch (ROI2DValidationException e) {
-				System.err.println("Error creating ROI2DAlongT for cage: " + e.getMessage());
-				e.printStackTrace();
-			}
-
-			if (cage.getSpotsArray().findFirstTimeInterval(start) < 0) {
-				cage.getSpotsArray().addTimeInterval(start);
-			}
-
-		}
-		return item;
-	}
-
-	public void deleteCagesListTInterval(long start) {
-		cagesListTimeIntervals.deleteIntervalStartingAt(start);
-		for (Cage cage : cagesList) {
-			cage.removeROIAlongTListItem(start);
-			cage.getSpotsArray().deleteTimeInterval(start);
-		}
-	}
-
-	// --------------------------------------------------
 
 	public boolean load_SpotsMeasures(String directory) {
 		SpotsArray spotsArray = getSpotsArrayFromAllCages();

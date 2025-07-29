@@ -39,7 +39,6 @@ public class EditSpots extends JPanel {
 	private JCheckBox displaySnakeCheckBox = new JCheckBox("Display snake");
 	private JButton centerRoisToSnakeButton = new JButton("Center rois to snake");
 	private MultiSPOTS96 parent0 = null;
-//	private PositionWithTimePanel editPositionWithTime = null;
 
 	public ROI2DPolygon roiPerimeter = null;
 	public ROI2DPolyLine roiSnake = null;
@@ -47,8 +46,6 @@ public class EditSpots extends JPanel {
 
 	private JButton erodeButton = new JButton("Contract rois");
 	private JButton dilateButton = new JButton("Dilate rois");
-	// private JButton editSpotsWithTimeButton = new JButton("Change spots position
-	// with time");
 
 	void init(GridLayout capLayout, MultiSPOTS96 parent0) {
 		this.parent0 = parent0;

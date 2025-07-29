@@ -28,8 +28,9 @@ import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
 import plugins.fmp.multiSPOTS96.tools.GaspardRigidRegistration;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DProcessingException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DWithMask;
 
 public class BuildSpotsKymos extends BuildSeries {
 	public Sequence seqData = new Sequence();
@@ -165,7 +166,7 @@ public class BuildSpotsKymos extends BuildSeries {
 	}
 
 	private void analyzeImageWithSpot2(IcyBufferedImageCursor cursorSource, Spot spot, int t, int sizeC) {
-		ROI2DAlongT roiT = spot.getRoiAtTime(t);
+		ROI2DWithMask roiT = spot.getROIMask();
 		Point[] maskPoints = roiT.getMaskPoints();
 		if (maskPoints == null) {
 			return; // No mask points available
@@ -276,29 +277,20 @@ public class BuildSpotsKymos extends BuildSeries {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
 				int imageHeight = 0;
-				for (ROI2DAlongT roiT : spot.getRoiAlongTList()) {
-					try {
-						roiT.buildMask2DFromInputRoi();
-					} catch (ROI2DProcessingException e) {
-						System.err.println(
-								"Error building mask for ROI at time " + roiT.getTimePoint() + ": " + e.getMessage());
-						e.printStackTrace();
-						continue;
-					}
-
-					// TODO transform into ROIT and add to outer
-					// subtract booleanmap from booleantmap of roiT
-
-					try {
-						int imageHeight_i = roiT.getMask2DHeight();
-						if (imageHeight_i > imageHeight)
-							imageHeight = imageHeight_i;
-					} catch (ROI2DProcessingException e) {
-						System.err.println("Error getting mask height for ROI at time " + roiT.getTimePoint() + ": "
-								+ e.getMessage());
-						e.printStackTrace();
-					}
+				ROI2DWithMask roiT = null;
+				try {
+					roiT = new ROI2DWithMask(spot.getRoi());
+					roiT.buildMask2DFromInputRoi();
+					int imageHeight_i = roiT.getMask2DHeight();
+					if (imageHeight_i > imageHeight)
+						imageHeight = imageHeight_i;
+				} catch (ROI2DProcessingException | ROI2DValidationException e) {
+					System.err.println("Error getting mask height for ROI at time " + spot.getRoi().getName() + ": "
+							+ e.getMessage());
+					e.printStackTrace();
 				}
+				spot.setROIMask(roiT);
+
 				spot.setSpotImage(new IcyBufferedImage(kymoImageWidth, imageHeight, numC, dataType));
 			}
 		}

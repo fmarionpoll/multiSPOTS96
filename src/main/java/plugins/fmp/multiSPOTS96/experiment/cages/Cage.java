@@ -6,6 +6,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,8 +20,6 @@ import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotString;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotsArray;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 import plugins.kernel.roi.roi2d.ROI2DEllipse;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
@@ -27,13 +27,16 @@ import plugins.kernel.roi.roi2d.ROI2DRectangle;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Cage implements Comparable<Cage>, AutoCloseable {
+	private static final Logger LOGGER = Logger.getLogger(ModernCage.class.getName());
+
 	private ROI2D cageROI2D = null;
-	private ArrayList<ROI2DAlongT> listCageRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
 	public BooleanMask2D cageMask2D = null;
-	public FlyPositions flyPositions = new FlyPositions();
 	public CageProperties prop = new CageProperties();
+
+	public FlyPositions flyPositions = new FlyPositions();
 	public SpotsArray spotsArray = new SpotsArray();
+	private final AtomicBoolean closed = new AtomicBoolean(false);
 
 	public boolean valid = false;
 	public boolean bDetect = true;
@@ -73,7 +76,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public void setRoi(ROI2DShape roi) {
 		cageROI2D = roi;
-		listCageRoiAlongT.clear();
 	}
 
 	public String getCageNumberFromRoiName() {
@@ -311,47 +313,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	// --------------------------------------------
 
-	public List<ROI2DAlongT> getListROIAlongT() {
-		if (listCageRoiAlongT.size() < 1)
-			initROIAlongTList();
-		return listCageRoiAlongT;
-	}
-
-	public ROI2DAlongT getROIAtT(long t) {
-		if (listCageRoiAlongT.size() < 1)
-			initROIAlongTList();
-
-		ROI2DAlongT spotRoi = null;
-		for (ROI2DAlongT item : listCageRoiAlongT) {
-			if (t < item.getTimePoint())
-				break;
-			spotRoi = item;
-		}
-		return spotRoi;
-	}
-
-	public void removeROIAlongTListItem(long t) {
-		ROI2DAlongT itemFound = null;
-		for (ROI2DAlongT item : listCageRoiAlongT) {
-			if (t != item.getTimePoint())
-				continue;
-			itemFound = item;
-		}
-		if (itemFound != null)
-			listCageRoiAlongT.remove(itemFound);
-	}
-
-	private void initROIAlongTList() {
-		try {
-			listCageRoiAlongT.add(new ROI2DAlongT(0, cageROI2D));
-		} catch (ROI2DValidationException e) {
-			System.err.println("Error creating ROI2DAlongT for cage: " + e.getMessage());
-			e.printStackTrace();
-			// Create a default ROI2DAlongT without parameters as fallback
-			listCageRoiAlongT.add(new ROI2DAlongT());
-		}
-	}
-
 	public void mapSpotsToCageColumnRow() {
 		Rectangle rect = cageROI2D.getBounds();
 		int deltaX = rect.width / 8;
@@ -388,25 +349,6 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 				items++;
 		return items;
 	}
-
-//	public ArrayList<Spot> combineSpotsWithSameStimulusConcentration() {
-//		ArrayList<Spot> spotsList = new ArrayList<Spot>(2);
-//		for (Spot spotSource : spotsArray.getSpotsList()) {
-//			String test = spotSource.getCombinedStimulusConcentration();
-//			boolean found = false;
-//			for (Spot spot : spotsList) {
-//				if (test.equals(spot.getCombinedStimulusConcentration())) {
-//					found = true;
-//					spot.addMeasurements(spotSource);
-//					break;
-//				}
-//			}
-//			if (!found) {
-//				spotsList.add(new Spot(spotSource, true));
-//			}
-//		}
-//		return spotsList;
-//	}
 
 	public Spot combineSpotsWith(String stim, String conc) {
 		Spot spotCombined = null;
@@ -451,7 +393,10 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	@Override
 	public void close() throws Exception {
-		// TODO Auto-generated method stub
-
+		if (closed.compareAndSet(false, true)) {
+			LOGGER.fine("Closing cage: "); // + data.getName());
+			// Cleanup resources if needed
+			flyPositions.clear();
+		}
 	}
 }

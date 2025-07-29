@@ -14,8 +14,9 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DProcessingException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DWithMask;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformInterface;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 
@@ -146,7 +147,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 						continue;
 					}
 
-					ROI2DAlongT roiT = spot.getRoiAtTime(t);
+					ROI2DWithMask roiT = spot.getROIMask();
 					ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly, roiT);
 					spot.getFlyPresent().setIsPresent(ii_local, results.nPoints_fly_present);
 					spot.getSum().setValueAt(ii_local, results.sumOverThreshold / results.npoints_in);
@@ -165,7 +166,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 	}
 
 	private ResultsThreshold measureSpotOverThreshold(IcyBufferedImageCursor cursorToMeasureArea,
-			IcyBufferedImageCursor cursorToDetectFly, ROI2DAlongT roiT) {
+			IcyBufferedImageCursor cursorToDetectFly, ROI2DWithMask roiT) {
 
 		ResultsThreshold result = new ResultsThreshold();
 		Point[] maskPoints = roiT.getMaskPoints();
@@ -237,18 +238,15 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 		for (Cage cage : exp.cagesArray.cagesList) {
 			for (Spot spot : cage.spotsArray.getSpotsList()) {
-				if (spot.getRoiAlongTList().size() < 1)
-					spot.initRoiTList(spot.getRoi());
-
-				for (ROI2DAlongT roiT : spot.getRoiAlongTList()) {
-					try {
-						roiT.buildMask2DFromInputRoi();
-					} catch (ROI2DProcessingException e) {
-						System.err.println(
-								"Error building mask for ROI at time " + roiT.getTimePoint() + ": " + e.getMessage());
-						e.printStackTrace();
-					}
+				ROI2DWithMask roiT = null;
+				try {
+					roiT = new ROI2DWithMask(spot.getRoi());
+					roiT.buildMask2DFromInputRoi();
+				} catch (ROI2DProcessingException | ROI2DValidationException e) {
+					System.err.println("Error building mask for ROI: " + e.getMessage());
+					e.printStackTrace();
 				}
+				spot.setROIMask(roiT);
 			}
 		}
 	}

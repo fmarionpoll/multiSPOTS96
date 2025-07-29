@@ -13,9 +13,8 @@ import icy.image.IcyBufferedImage;
 import icy.roi.BooleanMask2D;
 import icy.roi.ROI2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DAlongT;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DWithMask;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
@@ -38,9 +37,6 @@ public class Spot implements Comparable<Spot> {
 
 	// === CONSTANTS ===
 	private static final String ID_META = "metaMC";
-	private static final String ID_INTERVALS = "INTERVALS";
-	private static final String ID_NINTERVALS = "nintervals";
-	private static final String ID_INTERVAL = "interval_";
 //	private static final String DEFAULT_STIMULUS = "..";
 //	private static final String DEFAULT_CONCENTRATION = "..";
 //	private static final double DEFAULT_SPOT_VOLUME = 0.5;
@@ -48,7 +44,9 @@ public class Spot implements Comparable<Spot> {
 
 	// === CORE FIELDS ===
 	private ROI2DShape spotROI2D;
-	private final List<ROI2DAlongT> roiAlongTList = new ArrayList<>();
+	private ROI2DWithMask spotMask;
+//	private final List<ROI2DAlongT> roiAlongTList = new ArrayList<>();
+
 	private final SpotProperties properties;
 	private final SpotMeasurements measurements;
 	private final SpotMetadata metadata;
@@ -63,7 +61,6 @@ public class Spot implements Comparable<Spot> {
 	 */
 	public Spot(ROI2DShape roi) {
 		this.spotROI2D = Objects.requireNonNull(roi, "ROI cannot be null");
-		initRoiTList(roi);
 		this.properties = new SpotProperties();
 		this.measurements = new SpotMeasurements();
 		this.metadata = new SpotMetadata();
@@ -94,8 +91,6 @@ public class Spot implements Comparable<Spot> {
 		if (sourceSpot.spotROI2D != null) {
 			this.spotROI2D = (ROI2DShape) sourceSpot.spotROI2D.getCopy();
 		}
-
-		this.roiAlongTList.addAll(sourceSpot.roiAlongTList);
 	}
 
 	// === COMPARISON ===
@@ -145,9 +140,6 @@ public class Spot implements Comparable<Spot> {
 		if (includeMeasurements) {
 			this.measurements.copyFrom(sourceSpot.measurements);
 		}
-
-		this.roiAlongTList.clear();
-		this.roiAlongTList.addAll(sourceSpot.roiAlongTList);
 	}
 
 	/**
@@ -202,19 +194,6 @@ public class Spot implements Comparable<Spot> {
 	 */
 	public void setRoi(ROI2DShape roi) {
 		this.spotROI2D = roi;
-		initRoiTList(roi);
-	}
-
-	public void initRoiTList(ROI2D roi) {
-		this.roiAlongTList.clear();
-		ROI2DAlongT roiT = null;
-		try {
-			roiT = new ROI2DAlongT(0, roi);
-		} catch (ROI2DValidationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.roiAlongTList.add(roiT);
 	}
 
 	/**
@@ -231,6 +210,14 @@ public class Spot implements Comparable<Spot> {
 		Rectangle bounds = spotROI2D.getBounds();
 		position.translate(bounds.height / 2, bounds.width / 2);
 		return position;
+	}
+
+	public ROI2DWithMask getROIMask() {
+		return spotMask;
+	}
+
+	public void setROIMask(ROI2DWithMask roiMasked) {
+		this.spotMask = roiMasked;
 	}
 
 	// === NAMING AND IDENTIFICATION ===
@@ -591,60 +578,6 @@ public class Spot implements Comparable<Spot> {
 		measurements.transferRoiMeasuresToLevel2D();
 	}
 
-	// === ROI ALONG TIME MANAGEMENT ===
-
-	/**
-	 * Gets the list of ROIs along time.
-	 * 
-	 * @return the ROI list
-	 */
-	public List<ROI2DAlongT> getRoiAlongTList() {
-		return new ArrayList<>(roiAlongTList);
-	}
-
-	/**
-	 * Gets the ROI at a specific time.
-	 * 
-	 * @param time the time
-	 * @return the ROI at that time, or null if not found
-	 */
-	public ROI2DAlongT getRoiAtTime(long time) {
-		int index = 0;
-		for (ROI2DAlongT roiT : roiAlongTList) {
-			if (roiT.getTimePoint() >= time)
-				break;
-			if (index >= (roiAlongTList.size() - 1))
-				break;
-			index++;
-		}
-		return roiAlongTList.get(index);
-	}
-
-	/**
-	 * Removes ROI along time list item at the specified time.
-	 * 
-	 * @param time the time to remove
-	 */
-	public void removeRoiAtTime(long time) {
-		roiAlongTList.removeIf(roi -> roi.getTimePoint() == time);
-	}
-
-	/**
-	 * Initializes the ROI along time list.
-	 */
-	public void initializeRoiAlongTList() {
-		roiAlongTList.clear();
-		if (spotROI2D != null) {
-			try {
-				ROI2DAlongT roiAlongT = new ROI2DAlongT(0, spotROI2D);
-				roiAlongTList.add(roiAlongT);
-			} catch (ROI2DValidationException e) {
-				// Log error but don't fail
-				System.err.println("Failed to initialize ROI along time: " + e.getMessage());
-			}
-		}
-	}
-
 	// === IMAGE PROCESSING ===
 
 	/**
@@ -778,8 +711,8 @@ public class Spot implements Comparable<Spot> {
 				return false;
 			}
 
-			// Load ROI along time
-			return loadRoiAlongTFromXml(node);
+			return true;
+
 		} catch (Exception e) {
 			System.err.println("Error loading spot from XML: " + e.getMessage());
 			return false;
@@ -812,59 +745,12 @@ public class Spot implements Comparable<Spot> {
 			if (nodeMeta != null)
 				ROI2DUtilities.saveToXML_ROI(nodeMeta, spotROI2D);
 
-			// Save ROI along time
-			return saveRoiAlongTToXml(node);
+			return true;
+
 		} catch (Exception e) {
 			System.err.println("Error saving spot to XML: " + e.getMessage());
 			return false;
 		}
-	}
-
-	// === PRIVATE HELPER METHODS ===
-
-	private boolean loadRoiAlongTFromXml(Node node) {
-		Node intervalsNode = XMLUtil.getElement(node, ID_INTERVALS);
-		if (intervalsNode == null) {
-			return true; // No intervals to load
-		}
-
-		int nIntervals = XMLUtil.getElementIntValue(intervalsNode, ID_NINTERVALS, 0);
-		roiAlongTList.clear();
-
-		for (int i = 0; i < nIntervals; i++) {
-			Node intervalNode = XMLUtil.getElement(intervalsNode, ID_INTERVAL + i);
-			if (intervalNode != null) {
-				try {
-					ROI2DAlongT roiAlongT = new ROI2DAlongT();
-					if (roiAlongT.loadFromXML(intervalNode)) {
-						roiAlongTList.add(roiAlongT);
-					}
-				} catch (Exception e) {
-					System.err.println("Error loading ROI along time " + i + ": " + e.getMessage());
-				}
-			}
-		}
-
-		return true;
-	}
-
-	private boolean saveRoiAlongTToXml(Node node) {
-		if (roiAlongTList.isEmpty()) {
-			return true; // Nothing to save
-		}
-
-		Node intervalsNode = XMLUtil.setElement(node, ID_INTERVALS);
-		XMLUtil.setElementIntValue(intervalsNode, ID_NINTERVALS, roiAlongTList.size());
-
-		for (int i = 0; i < roiAlongTList.size(); i++) {
-			Node intervalNode = XMLUtil.setElement(intervalsNode, ID_INTERVAL + i);
-			ROI2DAlongT roiAlongT = roiAlongTList.get(i);
-			if (!roiAlongT.saveToXML(intervalNode)) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	// === INNER CLASSES ===

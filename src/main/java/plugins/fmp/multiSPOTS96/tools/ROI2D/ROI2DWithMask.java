@@ -1,7 +1,6 @@
 package plugins.fmp.multiSPOTS96.tools.ROI2D;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.w3c.dom.Node;
@@ -19,15 +18,14 @@ import icy.util.XMLUtil;
  * @author MultiSPOTS96 Team
  * @version 2.0
  */
-public class ROI2DAlongT implements XMLPersistent {
+public class ROI2DWithMask implements XMLPersistent {
 
-	private static final Logger logger = Logger.getLogger(ROI2DAlongT.class.getName());
+	private static final Logger logger = Logger.getLogger(ROI2DWithMask.class.getName());
 
 	// Private fields with proper encapsulation
-	private int index = 0;
-	private long timePoint = 0;
+
 	private ROI2D inputRoi = null;
-	private ArrayList<ArrayList<int[]>> masksList = null;
+//	private ArrayList<ArrayList<int[]>> masksList = null;
 	private BooleanMask2D inputMask = null;
 	private BooleanMask2D inputMaskNoFly = null;
 	private Point[] maskPoints = null;
@@ -41,71 +39,15 @@ public class ROI2DAlongT implements XMLPersistent {
 	 * @param roi       The ROI at this time point
 	 * @throws ROI2DValidationException If parameters are invalid
 	 */
-	public ROI2DAlongT(long timePoint, ROI2D roi) throws ROI2DValidationException {
-		setTimePoint(timePoint);
+	public ROI2DWithMask(ROI2D roi) throws ROI2DValidationException {
 		setInputRoi(roi);
 	}
 
 	/**
 	 * Creates a new ROI2DAlongT with default values.
 	 */
-	public ROI2DAlongT() {
+	public ROI2DWithMask() {
 		// Default constructor
-	}
-
-	/**
-	 * Gets the time point.
-	 * 
-	 * @return The time point
-	 */
-	public long getTimePoint() {
-		return timePoint;
-	}
-
-	/**
-	 * Gets the time point (compatibility method).
-	 * 
-	 * @return The time point
-	 * @deprecated Use getTimePoint() instead
-	 */
-	@Deprecated
-	public long getT() {
-		return timePoint;
-	}
-
-	/**
-	 * Sets the time point.
-	 * 
-	 * @param timePoint The time point (must be non-negative)
-	 * @throws ROI2DValidationException If the time point is negative
-	 */
-	public void setTimePoint(long timePoint) throws ROI2DValidationException {
-		if (timePoint < 0) {
-			throw new ROI2DValidationException("timePoint", timePoint, "Time point must be non-negative");
-		}
-		this.timePoint = timePoint;
-	}
-
-	/**
-	 * Gets the index.
-	 * 
-	 * @return The index
-	 */
-	public int getIndex() {
-		return index;
-	}
-
-	/**
-	 * Sets the index.
-	 * 
-	 * @param index The index (must be non-negative)
-	 * @throws ROI2DValidationException If the index is negative
-	 */
-	public void setIndex(int index) throws ROI2DValidationException {
-		if (index < 0) {
-			throw new ROI2DValidationException("index", index, "Index must be non-negative");
-		}
-		this.index = index;
 	}
 
 	/**
@@ -133,24 +75,6 @@ public class ROI2DAlongT implements XMLPersistent {
 
 		// Clear dependent data when ROI changes
 		clearMaskData();
-	}
-
-	/**
-	 * Gets the masks list.
-	 * 
-	 * @return The masks list, or null if not set
-	 */
-	public ArrayList<ArrayList<int[]>> getMasksList() {
-		return masksList;
-	}
-
-	/**
-	 * Sets the masks list.
-	 * 
-	 * @param masksList The masks list to set
-	 */
-	public void setMasksList(ArrayList<ArrayList<int[]>> masksList) {
-		this.masksList = masksList;
 	}
 
 	/**
@@ -294,7 +218,7 @@ public class ROI2DAlongT implements XMLPersistent {
 	 * @return A formatted summary string
 	 */
 	public String getSummary() {
-		return String.format("ROI2DAlongT[index=%d, time=%d, hasMask=%s, points=%d]", index, timePoint, hasMaskData(),
+		return String.format("ROI2DWithMask[ hasMask=%s, points=%d]", hasMaskData(),
 				maskPoints != null ? maskPoints.length : 0);
 	}
 
@@ -305,19 +229,6 @@ public class ROI2DAlongT implements XMLPersistent {
 			if (nodeMeta == null) {
 				logger.warning("No metadata node found in XML");
 				return false;
-			}
-
-			index = XMLUtil.getElementIntValue(nodeMeta, ROI2DConstants.XML.ID_INDEX, 0);
-			timePoint = XMLUtil.getElementLongValue(nodeMeta, ROI2DConstants.XML.ID_START, 0);
-
-			// Validate loaded values
-			if (index < 0) {
-				logger.warning("Invalid index in XML: " + index);
-				index = 0;
-			}
-			if (timePoint < 0) {
-				logger.warning("Invalid time point in XML: " + timePoint);
-				timePoint = 0;
 			}
 
 			inputRoi = ROI2DUtilities.loadFromXML_ROI(nodeMeta);
@@ -340,9 +251,6 @@ public class ROI2DAlongT implements XMLPersistent {
 				logger.warning("Failed to create metadata node in XML");
 				return false;
 			}
-
-			XMLUtil.setElementIntValue(nodeMeta, ROI2DConstants.XML.ID_INDEX, index);
-			XMLUtil.setElementLongValue(nodeMeta, ROI2DConstants.XML.ID_START, timePoint);
 
 			if (inputRoi != null) {
 				ROI2DUtilities.saveToXML_ROI(nodeMeta, inputRoi);
