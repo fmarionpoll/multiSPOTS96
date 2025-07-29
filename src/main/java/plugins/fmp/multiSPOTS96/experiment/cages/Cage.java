@@ -26,7 +26,7 @@ import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
-public class Cage implements Comparable<Cage> {
+public class Cage implements Comparable<Cage>, AutoCloseable {
 	private ROI2D cageROI2D = null;
 	private ArrayList<ROI2DAlongT> listCageRoiAlongT = new ArrayList<ROI2DAlongT>();
 	public int kymographIndex = -1;
@@ -447,5 +447,11 @@ public class Cage implements Comparable<Cage> {
 				spot1.getCombinedStimulusConcentration() + " / " + spot2.getCombinedStimulusConcentration());
 		spotSUM.computeSUM(spot1, spot2);
 		return spotSUM;
+	}
+
+	@Override
+	public void close() throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 }

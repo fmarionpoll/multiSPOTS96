@@ -68,6 +68,18 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 		CageData cageData = CageData.createValid(roi, properties);
 		return builder().withData(cageData).build();
 	}
+	
+	/**
+	 * Creates a valid cage with observable properties.
+	 * 
+	 * @param roi the ROI for the cage
+	 * @param properties the observable properties
+	 * @return the created cage
+	 */
+	public static ModernCage createValidWithObservableProperties(ROI2D roi, ObservableCageProperties properties) {
+		CageData cageData = CageData.createValid(roi, properties);
+		return builder().withData(cageData).build();
+	}
 
 	public static ModernCage createInvalid(ROI2D roi, String reason) {
 		CageData cageData = CageData.createInvalid(roi, reason);
@@ -107,6 +119,57 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 	public SpotsArray getSpotsArray() {
 		ensureNotClosed();
 		return spotsArray;
+	}
+	
+	/**
+	 * Adds an observer to the cage properties if they are observable.
+	 * 
+	 * @param observer the observer to add
+	 * @return true if the observer was added, false if properties are not observable
+	 */
+	public boolean addPropertyObserver(ObservableCageProperties.PropertyChangeObserver observer) {
+		ensureNotClosed();
+		if (data.getProperties() instanceof ObservableCageProperties) {
+			((ObservableCageProperties) data.getProperties()).addObserver(observer);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Removes an observer from the cage properties if they are observable.
+	 * 
+	 * @param observer the observer to remove
+	 * @return true if the observer was removed, false if properties are not observable
+	 */
+	public boolean removePropertyObserver(ObservableCageProperties.PropertyChangeObserver observer) {
+		ensureNotClosed();
+		if (data.getProperties() instanceof ObservableCageProperties) {
+			((ObservableCageProperties) data.getProperties()).removeObserver(observer);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks if this cage has observable properties.
+	 * 
+	 * @return true if the properties are observable
+	 */
+	public boolean hasObservableProperties() {
+		return data.getProperties() instanceof ObservableCageProperties;
+	}
+	
+	/**
+	 * Gets the observable properties if available.
+	 * 
+	 * @return the observable properties, or null if not available
+	 */
+	public ObservableCageProperties getObservableProperties() {
+		if (hasObservableProperties()) {
+			return (ObservableCageProperties) data.getProperties();
+		}
+		return null;
 	}
 
 	// === OPERATIONS ===
