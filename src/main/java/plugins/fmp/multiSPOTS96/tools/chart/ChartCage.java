@@ -156,46 +156,42 @@ public class ChartCage {
 	 * @param xyPlot             the plot to update
 	 */
 	private void updatePlotBackgroundAccordingToNFlies(XYSeriesCollection xySeriesCollection, XYPlot xyPlot) {
+		int nFlies = getNFliesFromxySeriesCollectionDescription(xySeriesCollection);
+		setXYPlotBackGroundAccordingToNFlies(xyPlot, nFlies);
+	}
+
+	private int getNFliesFromxySeriesCollectionDescription(XYSeriesCollection xySeriesCollection) {
+		int nFlies = -1;
 		if (xySeriesCollection == null || xySeriesCollection.getSeriesCount() == 0) {
 			LOGGER.warning("Cannot update plot background: dataset is null or empty");
-			return;
+			return nFlies;
 		}
 
 		try {
 			String[] description = xySeriesCollection.getSeries(0).getDescription().split(DESCRIPTION_DELIMITER);
 			if (description.length < 6) {
 				LOGGER.warning("Invalid series description format, using default background");
-				setDefaultBackground(xyPlot);
-				return;
+				return nFlies;
 			}
-
-			int nflies = Integer.parseInt(description[5]);
-			if (nflies > 0) {
-				xyPlot.setBackgroundPaint(BACKGROUND_WITH_DATA);
-				xyPlot.setDomainGridlinePaint(GRID_WITH_DATA);
-				xyPlot.setRangeGridlinePaint(GRID_WITH_DATA);
-				// LOGGER.fine("Set background for chart with " + nflies + " flies");
-			} else {
-				xyPlot.setBackgroundPaint(BACKGROUND_WITHOUT_DATA);
-				xyPlot.setDomainGridlinePaint(GRID_WITHOUT_DATA);
-				xyPlot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
-				// LOGGER.fine("Set background for chart with no flies");
-			}
+			nFlies = Integer.parseInt(description[5]);
 		} catch (NumberFormatException e) {
 			LOGGER.warning("Could not parse number of flies from description: " + e.getMessage());
-			setDefaultBackground(xyPlot);
 		}
+		return nFlies;
 	}
 
-	/**
-	 * Sets the default background for a plot.
-	 * 
-	 * @param subplot the plot to update
-	 */
-	private void setDefaultBackground(XYPlot subplot) {
-		subplot.setBackgroundPaint(BACKGROUND_WITHOUT_DATA);
-		subplot.setDomainGridlinePaint(GRID_WITHOUT_DATA);
-		subplot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
+	private void setXYPlotBackGroundAccordingToNFlies(XYPlot xyPlot, int nFlies) {
+		if (nFlies > 0) {
+			xyPlot.setBackgroundPaint(BACKGROUND_WITH_DATA);
+			xyPlot.setDomainGridlinePaint(GRID_WITH_DATA);
+			xyPlot.setRangeGridlinePaint(GRID_WITH_DATA);
+			// LOGGER.fine("Set background for chart with " + nflies + " flies");
+		} else {
+			xyPlot.setBackgroundPaint(BACKGROUND_WITHOUT_DATA);
+			xyPlot.setDomainGridlinePaint(GRID_WITHOUT_DATA);
+			xyPlot.setRangeGridlinePaint(GRID_WITHOUT_DATA);
+			// LOGGER.fine("Set background for chart with no flies");
+		}
 	}
 
 	/**

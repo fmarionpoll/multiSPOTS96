@@ -25,7 +25,7 @@ public class _DlgSpotMeasure_ extends JPanel implements PropertyChangeListener, 
 	public PopupPanel capPopupPanel = null;
 	JTabbedPane tabsPane = new JTabbedPane();
 	ThresholdSimple tabSimpleThreshold = new ThresholdSimple();
-//			ThresholdColors colorsThreshold = new ThresholdColors();
+//	ThresholdColors colorsThreshold = new ThresholdColors();
 	Edit tabEdit = new Edit();
 	public Charts tabCharts = new Charts();
 	public LoadSave tabFile = new LoadSave();
@@ -51,8 +51,8 @@ public class _DlgSpotMeasure_ extends JPanel implements PropertyChangeListener, 
 		id_threshold = order;
 		order++;
 
-//		colorsThreshold.init(gridLayout, parent0);	
-//		colorsThreshold.addPropertyChangeListener( this);
+//		colorsThreshold.init(gridLayout, parent0);
+//		colorsThreshold.addPropertyChangeListener(this);
 //		tabsPane.addTab("Colors threshold", null, colorsThreshold, "Measure area using colors defined by user");
 //		order++;
 
