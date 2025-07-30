@@ -1,12 +1,33 @@
 package plugins.fmp.multiSPOTS96.experiment.cages;
 
 import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 import org.w3c.dom.Element;
 
 import icy.util.XMLUtil;
 
 public class CageProperties {
+	// Property names for PropertyChange events
+	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_CAGE_ID = "cageID";
+	public static final String PROPERTY_CAGE_POSITION = "cagePosition";
+	public static final String PROPERTY_COLOR = "color";
+	public static final String PROPERTY_ARRAY_INDEX = "arrayIndex";
+	public static final String PROPERTY_ARRAY_COLUMN = "arrayColumn";
+	public static final String PROPERTY_ARRAY_ROW = "arrayRow";
+	public static final String PROPERTY_CAGE_NFLIES = "cageNFlies";
+	public static final String PROPERTY_FLY_AGE = "flyAge";
+	public static final String PROPERTY_CHECKED = "checked";
+	public static final String PROPERTY_COMMENT = "comment";
+	public static final String PROPERTY_FLY_SEX = "flySex";
+	public static final String PROPERTY_FLY_STRAIN = "flyStrain";
+	public static final String PROPERTY_STR_CAGE_NUMBER = "strCageNumber";
+
+	// PropertyChangeSupport for firing events
+	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
 	public int version = 1;
 
 	public int cageID = -1;
@@ -45,42 +66,127 @@ public class CageProperties {
 	}
 
 	public void setSelected(boolean selected) {
+		int oldValue = cageNFlies;
 		cageNFlies = selected ? 1 : 0;
+		propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_NFLIES, oldValue, cageNFlies);
+	}
+
+	// PropertyChangeListener support methods
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(listener);
+	}
+
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 	}
 
 	public void copy(CageProperties propFrom) {
+		int oldArrayIndex = arrayIndex;
+		int oldArrayColumn = arrayColumn;
+		int oldArrayRow = arrayRow;
+		int oldCageID = cageID;
+		int oldCagePosition = cagePosition;
+		Color oldColor = color;
+		int oldCageNFlies = cageNFlies;
+		int oldFlyAge = flyAge;
+		String oldComment = comment;
+		String oldFlySex = flySex;
+		String oldStrCageNumber = strCageNumber;
+		String oldFlyStrain = flyStrain;
+
 		arrayIndex = propFrom.arrayIndex;
 		arrayColumn = propFrom.arrayColumn;
 		arrayRow = propFrom.arrayRow;
 		cageID = propFrom.cageID;
 		cagePosition = propFrom.cagePosition;
 		color = propFrom.color;
-
 		cageNFlies = propFrom.cageNFlies;
 		flyAge = propFrom.flyAge;
 		comment = propFrom.comment;
 		flySex = propFrom.flySex;
 		strCageNumber = propFrom.strCageNumber;
 		flyStrain = propFrom.flyStrain;
+
+		// Fire PropertyChange events for all changed properties
+		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_INDEX, oldArrayIndex, arrayIndex);
+		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_COLUMN, oldArrayColumn, arrayColumn);
+		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_ROW, oldArrayRow, arrayRow);
+		propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_ID, oldCageID, cageID);
+		propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_POSITION, oldCagePosition, cagePosition);
+		propertyChangeSupport.firePropertyChange(PROPERTY_COLOR, oldColor, color);
+		propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_NFLIES, oldCageNFlies, cageNFlies);
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLY_AGE, oldFlyAge, flyAge);
+		propertyChangeSupport.firePropertyChange(PROPERTY_COMMENT, oldComment, comment);
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLY_SEX, oldFlySex, flySex);
+		propertyChangeSupport.firePropertyChange(PROPERTY_STR_CAGE_NUMBER, oldStrCageNumber, strCageNumber);
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLY_STRAIN, oldFlyStrain, flyStrain);
 	}
 
 	public void paste(CageProperties propTo) {
+		// Store old values for PropertyChange events
+		int oldArrayIndex = propTo.arrayIndex;
+		int oldArrayColumn = propTo.arrayColumn;
+		int oldArrayRow = propTo.arrayRow;
+		int oldCageID = propTo.cageID;
+		int oldCagePosition = propTo.cagePosition;
+		Color oldColor = propTo.color;
+		int oldCageNFlies = propTo.cageNFlies;
+		int oldFlyAge = propTo.flyAge;
+		String oldComment = propTo.comment;
+		String oldFlySex = propTo.flySex;
+		String oldStrCageNumber = propTo.strCageNumber;
+		String oldFlyStrain = propTo.flyStrain;
+
 		propTo.arrayIndex = arrayIndex;
 		propTo.arrayColumn = arrayColumn;
 		propTo.arrayRow = arrayRow;
 		propTo.cageID = cageID;
 		propTo.cagePosition = cagePosition;
 		propTo.color = color;
-
 		propTo.cageNFlies = cageNFlies;
 		propTo.flyAge = flyAge;
 		propTo.comment = comment;
 		propTo.flySex = flySex;
 		propTo.strCageNumber = strCageNumber;
 		propTo.flyStrain = flyStrain;
+
+		// Fire PropertyChange events for all changed properties
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_INDEX, oldArrayIndex, propTo.arrayIndex);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_COLUMN, oldArrayColumn, propTo.arrayColumn);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_ROW, oldArrayRow, propTo.arrayRow);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_ID, oldCageID, propTo.cageID);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_POSITION, oldCagePosition, propTo.cagePosition);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_COLOR, oldColor, propTo.color);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_NFLIES, oldCageNFlies, propTo.cageNFlies);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_FLY_AGE, oldFlyAge, propTo.flyAge);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_COMMENT, oldComment, propTo.comment);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_FLY_SEX, oldFlySex, propTo.flySex);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_STR_CAGE_NUMBER, oldStrCageNumber, propTo.strCageNumber);
+		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_FLY_STRAIN, oldFlyStrain, propTo.flyStrain);
 	}
 
 	public boolean xmlLoadCageParameters(Element xmlVal) {
+		// Store old values for PropertyChange events
+		int oldCageID = cageID;
+		int oldCagePosition = cagePosition;
+		int oldArrayIndex = arrayIndex;
+		int oldArrayColumn = arrayColumn;
+		int oldArrayRow = arrayRow;
+		int oldCageNFlies = cageNFlies;
+		int oldFlyAge = flyAge;
+		String oldComment = comment;
+		String oldFlySex = flySex;
+		String oldFlyStrain = flyStrain;
+		Color oldColor = color;
+
 		cageID = XMLUtil.getElementIntValue(xmlVal, ID_CAGEID, cageID);
 		cagePosition = XMLUtil.getElementIntValue(xmlVal, ID_CAGEPOSITION, cagePosition);
 		arrayIndex = XMLUtil.getElementIntValue(xmlVal, ID_ARRAYINDEX, arrayIndex);
@@ -96,6 +202,20 @@ public class CageProperties {
 		int g = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_G, color.getGreen());
 		int b = XMLUtil.getElementIntValue(xmlVal, ID_COLOR_B, color.getBlue());
 		color = new Color(r, g, b);
+
+		// Fire PropertyChange events for all changed properties
+		propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_ID, oldCageID, cageID);
+		propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_POSITION, oldCagePosition, cagePosition);
+		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_INDEX, oldArrayIndex, arrayIndex);
+		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_COLUMN, oldArrayColumn, arrayColumn);
+		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_ROW, oldArrayRow, arrayRow);
+		propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_NFLIES, oldCageNFlies, cageNFlies);
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLY_AGE, oldFlyAge, flyAge);
+		propertyChangeSupport.firePropertyChange(PROPERTY_COMMENT, oldComment, comment);
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLY_SEX, oldFlySex, flySex);
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLY_STRAIN, oldFlyStrain, flyStrain);
+		propertyChangeSupport.firePropertyChange(PROPERTY_COLOR, oldColor, color);
+
 		return true;
 	}
 
@@ -122,7 +242,9 @@ public class CageProperties {
 	}
 
 	public void setCagePosition(int pos) {
+		int oldValue = this.cagePosition;
 		this.cagePosition = pos;
+		propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_POSITION, oldValue, this.cagePosition);
 	}
 
 	public int getCageID() {
@@ -130,7 +252,9 @@ public class CageProperties {
 	}
 
 	public void setCageID(int cageID) {
+		int oldValue = this.cageID;
 		this.cageID = cageID;
+		propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_ID, oldValue, this.cageID);
 	}
 
 	public int getCageNFlies() {
@@ -138,7 +262,9 @@ public class CageProperties {
 	}
 
 	public void setCageNFlies(int nFlies) {
+		int oldValue = this.cageNFlies;
 		this.cageNFlies = nFlies;
+		propertyChangeSupport.firePropertyChange(PROPERTY_CAGE_NFLIES, oldValue, this.cageNFlies);
 	}
 
 	public int getVersion() {
@@ -146,7 +272,9 @@ public class CageProperties {
 	}
 
 	public void setVersion(int version) {
+		int oldValue = this.version;
 		this.version = version;
+		propertyChangeSupport.firePropertyChange(PROPERTY_VERSION, oldValue, this.version);
 	}
 
 	public Color getColor() {
@@ -154,7 +282,9 @@ public class CageProperties {
 	}
 
 	public void setColor(Color color) {
+		Color oldValue = this.color;
 		this.color = color;
+		propertyChangeSupport.firePropertyChange(PROPERTY_COLOR, oldValue, this.color);
 	}
 
 	public int getArrayIndex() {
@@ -162,7 +292,9 @@ public class CageProperties {
 	}
 
 	public void setArrayIndex(int arrayIndex) {
+		int oldValue = this.arrayIndex;
 		this.arrayIndex = arrayIndex;
+		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_INDEX, oldValue, this.arrayIndex);
 	}
 
 	public int getArrayColumn() {
@@ -170,7 +302,9 @@ public class CageProperties {
 	}
 
 	public void setArrayColumn(int arrayColumn) {
+		int oldValue = this.arrayColumn;
 		this.arrayColumn = arrayColumn;
+		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_COLUMN, oldValue, this.arrayColumn);
 	}
 
 	public int getArrayRow() {
@@ -178,7 +312,9 @@ public class CageProperties {
 	}
 
 	public void setArrayRow(int arrayRow) {
+		int oldValue = this.arrayRow;
 		this.arrayRow = arrayRow;
+		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_ROW, oldValue, this.arrayRow);
 	}
 
 	public int getFlyAge() {
@@ -186,7 +322,9 @@ public class CageProperties {
 	}
 
 	public void setFlyAge(int flyAge) {
+		int oldValue = this.flyAge;
 		this.flyAge = flyAge;
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLY_AGE, oldValue, this.flyAge);
 	}
 
 	public boolean getChecked() {
@@ -194,7 +332,9 @@ public class CageProperties {
 	}
 
 	public void setChecked(boolean checked) {
+		boolean oldValue = this.checked;
 		this.checked = checked;
+		propertyChangeSupport.firePropertyChange(PROPERTY_CHECKED, oldValue, this.checked);
 	}
 
 	public String getComment() {
@@ -202,7 +342,9 @@ public class CageProperties {
 	}
 
 	public void setComment(String comment) {
+		String oldValue = this.comment;
 		this.comment = comment;
+		propertyChangeSupport.firePropertyChange(PROPERTY_COMMENT, oldValue, this.comment);
 	}
 
 	public String getFlySex() {
@@ -210,7 +352,9 @@ public class CageProperties {
 	}
 
 	public void setFlySex(String flySex) {
+		String oldValue = this.flySex;
 		this.flySex = flySex;
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLY_SEX, oldValue, this.flySex);
 	}
 
 	public String getFlyStrain() {
@@ -218,7 +362,9 @@ public class CageProperties {
 	}
 
 	public void setFlyStrain(String flyStrain) {
+		String oldValue = this.flyStrain;
 		this.flyStrain = flyStrain;
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLY_STRAIN, oldValue, this.flyStrain);
 	}
 
 	public String getStrCageNumber() {
@@ -226,7 +372,9 @@ public class CageProperties {
 	}
 
 	public void setStrCageNumber(String strCageNumber) {
+		String oldValue = this.strCageNumber;
 		this.strCageNumber = strCageNumber;
+		propertyChangeSupport.firePropertyChange(PROPERTY_STR_CAGE_NUMBER, oldValue, this.strCageNumber);
 	}
 
 }

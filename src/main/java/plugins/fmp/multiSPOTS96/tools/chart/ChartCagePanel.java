@@ -10,7 +10,7 @@ import org.jfree.chart.plot.XYPlot;
 
 import icy.util.StringUtil;
 
-public class ChartPanelPropertiesListener extends ChartPanel implements PropertyChangeListener, AutoCloseable {
+public class ChartCagePanel extends ChartPanel implements PropertyChangeListener, AutoCloseable {
 
 	/**
 	 * 
@@ -28,9 +28,9 @@ public class ChartPanelPropertiesListener extends ChartPanel implements Property
 	/** Grid color for charts without data */
 	private static final Color GRID_WITHOUT_DATA = Color.WHITE;
 
-	public ChartPanelPropertiesListener(JFreeChart chart, int width, int height, int minimumDrawWidth,
-			int minimumDrawHeight, int maximumDrawWidth, int maximumDrawHeight, boolean useBuffer, boolean properties,
-			boolean copy, boolean save, boolean print, boolean zoom) {
+	public ChartCagePanel(JFreeChart chart, int width, int height, int minimumDrawWidth, int minimumDrawHeight,
+			int maximumDrawWidth, int maximumDrawHeight, boolean useBuffer, boolean properties, boolean copy,
+			boolean save, boolean print, boolean zoom) {
 		super(chart, width, height, minimumDrawWidth, minimumDrawHeight, maximumDrawWidth, maximumDrawHeight, useBuffer,
 				properties, copy, save, print, zoom);
 		// TODO Auto-generated constructor stub
@@ -41,15 +41,15 @@ public class ChartPanelPropertiesListener extends ChartPanel implements Property
 //		// TODO Auto-generated constructor stub
 //	}
 
-	private void updateFlyCountDisplay(int cageID, int flyCount) {
+	private void updateFlyCountDisplay(int flyCount) {
 		XYPlot xyPlot = getChart().getXYPlot();
 		setXYPlotBackGroundAccordingToNFlies(xyPlot, flyCount);
 	}
 
-	private void updateCageColorDisplay(int cageID, java.awt.Color color) {
-		XYPlot xyPlot = getChart().getXYPlot();
-		xyPlot.setBackgroundPaint(color);
-	}
+//	private void updateCageColorDisplay(int cageID, java.awt.Color color) {
+//		XYPlot xyPlot = getChart().getXYPlot();
+//		xyPlot.setBackgroundPaint(color);
+//	}
 
 	private void setXYPlotBackGroundAccordingToNFlies(XYPlot xyPlot, int flyCount) {
 		if (flyCount > 0) {
@@ -94,8 +94,8 @@ public class ChartPanelPropertiesListener extends ChartPanel implements Property
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (StringUtil.equals("cageNFlies", evt.getPropertyName())) {
-			// TODO
-			// updateFlyCountDisplay(source.getCageID(), (Integer) newValue);
+			int flyCount = (int) evt.getNewValue();
+			updateFlyCountDisplay(flyCount);
 		}
 
 	}

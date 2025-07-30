@@ -279,11 +279,11 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param xlsExportOptions the export options
 	 * @return configured ChartPanel
 	 */
-	private ChartPanelPropertiesListener createChartPanelForCage(Cage cage, int row, int col, XLSExportOptions xlsExportOptions) {
+	private ChartCagePanel createChartPanelForCage(Cage cage, int row, int col, XLSExportOptions xlsExportOptions) {
 
 		if (cage.spotsArray.getSpotsCount() < 1) {
 //			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
-			ChartPanelPropertiesListener chartPanel = new ChartPanelPropertiesListener(null, // jfreechart
+			ChartCagePanel chartPanel = new ChartCagePanel(null, // jfreechart
 					DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, // preferred width, height of the panel
 					MIN_CHART_WIDTH, MIN_CHART_HEIGHT, // minimal drawing width, drawing height
 					MAX_CHART_WIDTH, MAX_CHART_HEIGHT, // maximumDrawWidth, maximumDrawHeight
@@ -312,7 +312,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 
-		ChartPanelPropertiesListener chartPanel = new ChartPanelPropertiesListener(chart, // jfreechart
+		ChartCagePanel chartPanel = new ChartCagePanel(chart, // jfreechart
 				DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, // preferred width, height of the panel
 				MIN_CHART_WIDTH, MIN_CHART_HEIGHT, // minimal drawing width, drawing height
 				MAX_CHART_WIDTH, MAX_CHART_HEIGHT, // maximumDrawWidth, maximumDrawHeight
