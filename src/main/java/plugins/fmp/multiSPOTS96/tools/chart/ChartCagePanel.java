@@ -9,9 +9,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 
 import icy.util.StringUtil;
+import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 
 public class ChartCagePanel extends ChartPanel implements PropertyChangeListener, AutoCloseable {
-
 	/**
 	 * 
 	 */
@@ -27,6 +27,8 @@ public class ChartCagePanel extends ChartPanel implements PropertyChangeListener
 
 	/** Grid color for charts without data */
 	private static final Color GRID_WITHOUT_DATA = Color.WHITE;
+	
+	private Cage cageListened = null;
 
 	public ChartCagePanel(JFreeChart chart, int width, int height, int minimumDrawWidth, int minimumDrawHeight,
 			int maximumDrawWidth, int maximumDrawHeight, boolean useBuffer, boolean properties, boolean copy,
@@ -54,11 +56,16 @@ public class ChartCagePanel extends ChartPanel implements PropertyChangeListener
 			// LOGGER.fine("Set background for chart with no flies");
 		}
 	}
+	
+	public void subscribeToCagePropertiesUpdates(Cage cage) {
+		this.cageListened = cage;
+		this.cageListened.getProperties().addPropertyChangeListener(this); 
+	}
 
 	@Override
 	public void close() throws Exception {
-		// TODO Auto-generated method stub
-
+		this.cageListened.getProperties().removePropertyChangeListener(this); 
+		this.cageListened = null;
 	}
 
 	@Override
@@ -72,26 +79,3 @@ public class ChartCagePanel extends ChartPanel implements PropertyChangeListener
 
 }
 
-CageProperties cageProps = new CageProperties();
-
-//Add a listener for all property changes
-cageProps.addPropertyChangeListener(new PropertyChangeListener() {
- @Override
- public void propertyChange(PropertyChangeEvent evt) {
-     System.out.println("Property " + evt.getPropertyName() + 
-                       " changed from " + evt.getOldValue() + 
-                       " to " + evt.getNewValue());
- }
-});
-
-//Add a listener for specific property changes
-cageProps.addPropertyChangeListener(CageProperties.PROPERTY_COLOR, 
- new PropertyChangeListener() {
-     @Override
-     public void propertyChange(PropertyChangeEvent evt) {
-         // Handle color changes specifically
-     }
- });
-
-//Now when you change properties, listeners will be notified
-cageProps.setColor(Color.RED);  // This will fire a PropertyChange event

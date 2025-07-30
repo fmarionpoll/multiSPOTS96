@@ -50,10 +50,10 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
  * @see org.jfree.data.xy.XYSeriesCollection
  * @see plugins.fmp.multiSPOTS96.experiment.cages.Cage
  */
-public class ChartCageUtil {
+public class ChartCageBuild {
 
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ChartCageUtil.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ChartCageBuild.class.getName());
 
 	/** Default stroke width for chart lines */
 	private static final float DEFAULT_STROKE_WIDTH = 0.5f;
@@ -83,31 +83,31 @@ public class ChartCageUtil {
 	private static final String DESCRIPTION_DELIMITER = ":";
 
 	/** Flag indicating if global min/max values have been set */
-	private boolean flagMaxMinSet = false;
+	private static boolean flagMaxMinSet = false;
 
 	/** Global maximum Y value across all series */
-	private double globalYMax = 0;
+	private static double globalYMax = 0;
 
 	/** Global minimum Y value across all series */
-	private double globalYMin = 0;
+	private static double globalYMin = 0;
 
 	/** Global maximum X value across all series */
-	private double globalXMax = 0;
+	private static double globalXMax = 0;
 
 	/** Current maximum Y value for the current series */
-	private double ymax = 0;
+	private static double ymax = 0;
 
 	/** Current minimum Y value for the current series */
-	private double ymin = 0;
+	private static double ymin = 0;
 
 	/** Current maximum X value for the current series */
-	private double xmax = 0;
+	private static double xmax = 0;
 
 	/**
 	 * Initializes the global min/max tracking variables. This method should be
 	 * called before processing new data to reset the global extrema tracking.
 	 */
-	public void initMaxMin() {
+	static public void initMaxMin() {
 		ymax = 0;
 		ymin = 0;
 		xmax = 0;
@@ -128,7 +128,7 @@ public class ChartCageUtil {
 	 * @return configured XYPlot ready for chart creation
 	 * @throws IllegalArgumentException if any parameter is null
 	 */
-	public XYPlot buildXYPlot(XYSeriesCollection xySeriesCollection, NumberAxis xAxis, NumberAxis yAxis) {
+	static public XYPlot buildXYPlot(XYSeriesCollection xySeriesCollection, NumberAxis xAxis, NumberAxis yAxis) {
 		if (xySeriesCollection == null) {
 			throw new IllegalArgumentException("XYSeriesCollection cannot be null");
 		}
@@ -155,12 +155,12 @@ public class ChartCageUtil {
 	 * @param xySeriesCollection the dataset to analyze
 	 * @param xyPlot             the plot to update
 	 */
-	private void updatePlotBackgroundAccordingToNFlies(XYSeriesCollection xySeriesCollection, XYPlot xyPlot) {
+	private static void updatePlotBackgroundAccordingToNFlies(XYSeriesCollection xySeriesCollection, XYPlot xyPlot) {
 		int nFlies = getNFliesFromxySeriesCollectionDescription(xySeriesCollection);
 		setXYPlotBackGroundAccordingToNFlies(xyPlot, nFlies);
 	}
 
-	private int getNFliesFromxySeriesCollectionDescription(XYSeriesCollection xySeriesCollection) {
+	private static int getNFliesFromxySeriesCollectionDescription(XYSeriesCollection xySeriesCollection) {
 		int nFlies = -1;
 		if (xySeriesCollection == null || xySeriesCollection.getSeriesCount() == 0) {
 			LOGGER.warning("Cannot update plot background: dataset is null or empty");
@@ -180,7 +180,7 @@ public class ChartCageUtil {
 		return nFlies;
 	}
 
-	private void setXYPlotBackGroundAccordingToNFlies(XYPlot xyPlot, int nFlies) {
+	private static void setXYPlotBackGroundAccordingToNFlies(XYPlot xyPlot, int nFlies) {
 		if (nFlies > 0) {
 			xyPlot.setBackgroundPaint(BACKGROUND_WITH_DATA);
 			xyPlot.setDomainGridlinePaint(GRID_WITH_DATA);
@@ -202,7 +202,7 @@ public class ChartCageUtil {
 	 * @param options    list of options
 	 * @return XYSeriesCollection containing the cage's data
 	 */
-	XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage, XLSExportOptions xlsExportOptions) {
+	static XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage, XLSExportOptions xlsExportOptions) {
 		if (cage == null || cage.spotsArray == null || cage.spotsArray.getSpotsCount() < 1) {
 			LOGGER.warning("Cannot get spot data: spot array is empty or cage is null");
 			return new XYSeriesCollection();
@@ -235,7 +235,7 @@ public class ChartCageUtil {
 	 * @param spot the spot
 	 * @return formatted description string
 	 */
-	private String buildSeriesDescriptionFromCageAndSpot(Cage cage, Spot spot) {
+	private static String buildSeriesDescriptionFromCageAndSpot(Cage cage, Spot spot) {
 		CageProperties cageProp = cage.getProperties();
 		Color color = spot.getProperties().getColor();
 		return "ID:" + cageProp.getCageID() + ":Pos:" + cageProp.getCagePosition() + ":nflies:"
@@ -243,7 +243,7 @@ public class ChartCageUtil {
 				+ color.getBlue();
 	}
 
-	private XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot, XLSExportOptions xlsExportOptions) {
+	private static XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot, XLSExportOptions xlsExportOptions) {
 		XYSeries seriesXY = new XYSeries(spot.getName(), false);
 
 		if (exp.seqCamData.getTimeManager().getCamImagesTime_Ms() == null)
@@ -277,7 +277,7 @@ public class ChartCageUtil {
 	/**
 	 * Updates the global min/max values based on current series extrema.
 	 */
-	private void updateGlobalMaxMin() {
+	private static void updateGlobalMaxMin() {
 		if (!flagMaxMinSet) {
 			globalYMax = ymax;
 			globalYMin = ymin;
@@ -313,7 +313,7 @@ public class ChartCageUtil {
 	 * @param xySeriesCollection the dataset to render
 	 * @return configured XYLineAndShapeRenderer
 	 */
-	private XYLineAndShapeRenderer getSubPlotRenderer(XYSeriesCollection xySeriesCollection) {
+	private static XYLineAndShapeRenderer getSubPlotRenderer(XYSeriesCollection xySeriesCollection) {
 		if (xySeriesCollection == null) {
 			LOGGER.warning("Cannot create renderer: dataset is null");
 			return null;

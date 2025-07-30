@@ -297,13 +297,12 @@ public class ChartCageArrayFrame extends IcyFrame {
 			return chartPanel;
 		}
 
-		ChartCageUtil chartCage = new ChartCageUtil();
-		chartCage.initMaxMin();
-		XYSeriesCollection xyDataSetList = chartCage.getSpotDataDirectlyFromOneCage(experiment, cage, xlsExportOptions);
+		ChartCageBuild.initMaxMin();
+		XYSeriesCollection xyDataSetList = ChartCageBuild.getSpotDataDirectlyFromOneCage(experiment, cage, xlsExportOptions);
 
 		NumberAxis xAxis = setXaxis("", xlsExportOptions);
 		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
-		XYPlot xyPlot = chartCage.buildXYPlot(xyDataSetList, xAxis, yAxis);
+		XYPlot xyPlot = ChartCageBuild.buildXYPlot(xyDataSetList, xAxis, yAxis);
 
 		JFreeChart chart = new JFreeChart(null, // title - the chart title (null permitted).
 				null, // titleFont - the font for displaying the chart title (null permitted)
@@ -312,7 +311,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 
 		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 
-		ChartCagePanel chartPanel = new ChartCagePanel(chart, // jfreechart
+		ChartCagePanel chartCagePanel = new ChartCagePanel(chart, // jfreechart
 				DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, // preferred width, height of the panel
 				MIN_CHART_WIDTH, MIN_CHART_HEIGHT, // minimal drawing width, drawing height
 				MAX_CHART_WIDTH, MAX_CHART_HEIGHT, // maximumDrawWidth, maximumDrawHeight
@@ -323,8 +322,9 @@ public class ChartCageArrayFrame extends IcyFrame {
 				false, // zoom options not added to the popup menu
 				true); // tooltips enabled for the chart
 
-		chartPanel.addChartMouseListener(new SpotChartMouseListener(experiment, xlsExportOptions));
-		return chartPanel;
+		chartCagePanel.addChartMouseListener(new SpotChartMouseListener(experiment, xlsExportOptions));
+		chartCagePanel.subscribeToCagePropertiesUpdates(cage);
+		return chartCagePanel;
 	}
 
 	/**
