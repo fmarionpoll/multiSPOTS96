@@ -50,10 +50,10 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
  * @see org.jfree.data.xy.XYSeriesCollection
  * @see plugins.fmp.multiSPOTS96.experiment.cages.Cage
  */
-public class ChartCage {
+public class ChartCageUtil {
 
 	/** Logger for this class */
-	private static final Logger LOGGER = Logger.getLogger(ChartCage.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ChartCageUtil.class.getName());
 
 	/** Default stroke width for chart lines */
 	private static final float DEFAULT_STROKE_WIDTH = 0.5f;
@@ -180,7 +180,7 @@ public class ChartCage {
 		return nFlies;
 	}
 
-	public void setXYPlotBackGroundAccordingToNFlies(XYPlot xyPlot, int nFlies) {
+	private void setXYPlotBackGroundAccordingToNFlies(XYPlot xyPlot, int nFlies) {
 		if (nFlies > 0) {
 			xyPlot.setBackgroundPaint(BACKGROUND_WITH_DATA);
 			xyPlot.setDomainGridlinePaint(GRID_WITH_DATA);
@@ -197,9 +197,9 @@ public class ChartCage {
 	/**
 	 * Extracts spot data from one cage in the results array.
 	 * 
-	 * @param xlsResultsArray the results array to search
-	 * @param cage            the cage to get data for
-	 * @param token           token to append to series names
+	 * @param experiment the stack of images and assoc items
+	 * @param cage       the cage to get data for
+	 * @param options    list of options
 	 * @return XYSeriesCollection containing the cage's data
 	 */
 	XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage, XLSExportOptions xlsExportOptions) {
@@ -386,4 +386,5 @@ public class ChartCage {
 	public boolean isGlobalMaxMinSet() {
 		return flagMaxMinSet;
 	}
+
 }

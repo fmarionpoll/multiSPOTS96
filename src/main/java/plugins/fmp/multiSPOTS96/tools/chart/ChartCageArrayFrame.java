@@ -145,7 +145,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param parent0          the parent MultiSPOTS96 instance
 	 * @throws IllegalArgumentException if any required parameter is null
 	 */
-	public void createPanel(String title, Experiment exp, XLSExportOptions xlsExportOptions, MultiSPOTS96 parent0) {
+	public void createMainChartPanel(String title, Experiment exp, XLSExportOptions xlsExportOptions,
+			MultiSPOTS96 parent0) {
 		if (exp == null) {
 			throw new IllegalArgumentException("Experiment cannot be null");
 		}
@@ -169,6 +170,7 @@ public class ChartCageArrayFrame extends IcyFrame {
 				new Dimension(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT), true, true, true, true);
 		JScrollPane scrollPane = new JScrollPane(mainChartPanel);
 		mainChartFrame.add(scrollPane);
+
 		chartPanelArray = new ChartCagePair[nPanelsAlongY][nPanelsAlongX];
 
 //		LOGGER.info("Created chart panel with " + nPanelsAlongY + "x" + nPanelsAlongX + " grid");
@@ -277,11 +279,11 @@ public class ChartCageArrayFrame extends IcyFrame {
 	 * @param xlsExportOptions the export options
 	 * @return configured ChartPanel
 	 */
-	private ChartPanel createChartPanelForCage(Cage cage, int row, int col, XLSExportOptions xlsExportOptions) {
+	private ChartPanelPropertiesListener createChartPanelForCage(Cage cage, int row, int col, XLSExportOptions xlsExportOptions) {
 
 		if (cage.spotsArray.getSpotsCount() < 1) {
 //			LOGGER.fine("Skipping cage " + cage.getProperties().getCageID() + " - no spots");
-			ChartPanel chartPanel = new ChartPanel(null, // jfreechart
+			ChartPanelPropertiesListener chartPanel = new ChartPanelPropertiesListener(null, // jfreechart
 					DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, // preferred width, height of the panel
 					MIN_CHART_WIDTH, MIN_CHART_HEIGHT, // minimal drawing width, drawing height
 					MAX_CHART_WIDTH, MAX_CHART_HEIGHT, // maximumDrawWidth, maximumDrawHeight
@@ -295,22 +297,22 @@ public class ChartCageArrayFrame extends IcyFrame {
 			return chartPanel;
 		}
 
-		ChartCage chartCage = new ChartCage();
+		ChartCageUtil chartCage = new ChartCageUtil();
 		chartCage.initMaxMin();
+		XYSeriesCollection xyDataSetList = chartCage.getSpotDataDirectlyFromOneCage(experiment, cage, xlsExportOptions);
 
 		NumberAxis xAxis = setXaxis("", xlsExportOptions);
 		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
-		XYSeriesCollection xyDataSetList = chartCage.getSpotDataDirectlyFromOneCage(experiment, cage, xlsExportOptions);
-		XYPlot cageXYPlot = chartCage.buildXYPlot(xyDataSetList, xAxis, yAxis);
+		XYPlot xyPlot = chartCage.buildXYPlot(xyDataSetList, xAxis, yAxis);
 
 		JFreeChart chart = new JFreeChart(null, // title - the chart title (null permitted).
 				null, // titleFont - the font for displaying the chart title (null permitted)
-				cageXYPlot, // plot - controller of the visual representation of the data
+				xyPlot, // plot - controller of the visual representation of the data
 				false); // createLegend - legend not created for the chart
 
 		chart.setID("row:" + row + ":icol:" + col + ":cageID:" + cage.getProperties().getCagePosition());
 
-		ChartPanel chartPanel = new ChartPanel(chart, // jfreechart
+		ChartPanelPropertiesListener chartPanel = new ChartPanelPropertiesListener(chart, // jfreechart
 				DEFAULT_CHART_WIDTH, DEFAULT_CHART_HEIGHT, // preferred width, height of the panel
 				MIN_CHART_WIDTH, MIN_CHART_HEIGHT, // minimal drawing width, drawing height
 				MAX_CHART_WIDTH, MAX_CHART_HEIGHT, // maximumDrawWidth, maximumDrawHeight
