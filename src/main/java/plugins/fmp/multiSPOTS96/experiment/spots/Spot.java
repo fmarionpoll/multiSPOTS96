@@ -178,6 +178,7 @@ public class Spot implements Comparable<Spot> {
 		Objects.requireNonNull(spot2, "Spot2 cannot be null");
 		int n1 = spot1.getProperties().getCountAggregatedSpots();
 		int n2 = spot2.getProperties().getCountAggregatedSpots();
+		System.out.println(getProperties().getName()+ " -- " +"n1=" + n1 + " n2="+n2);
 		this.measurements.computeSUM(spot1.measurements, n1, spot2.measurements, n2);
 	}
 
@@ -238,7 +239,7 @@ public class Spot implements Comparable<Spot> {
 		if (spotROI2D != null) {
 			spotROI2D.setName(name);
 		}
-		properties.setSourceName(name);
+		properties.setName(name);
 	}
 
 	/**
@@ -247,10 +248,11 @@ public class Spot implements Comparable<Spot> {
 	 * @return the spot name
 	 */
 	public String getName() {
-		if (properties.getSourceName() == null) {
-			properties.setSourceName(getRoi() != null ? getRoi().getName() : "unnamed_spot");
+		if (properties.getName() == null) {
+			String name = getRoi() != null ? getRoi().getName() : "unnamed_spot";
+			properties.setName(name);
 		}
-		return properties.getSourceName();
+		return properties.getName();
 	}
 
 	/**
@@ -667,7 +669,7 @@ public class Spot implements Comparable<Spot> {
 	 * @return the CSV data string
 	 */
 	public String exportMeasuresOneType(EnumSpotMeasures measureType, String csvSeparator) {
-		return measurements.exportOneType(properties.getSourceName(), properties.getSpotArrayIndex(), measureType,
+		return measurements.exportOneType(properties.getName(), properties.getSpotArrayIndex(), measureType,
 				csvSeparator);
 	}
 
@@ -707,7 +709,7 @@ public class Spot implements Comparable<Spot> {
 				spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
 				if (spotROI2D != null) {
 					spotROI2D.setColor(getProperties().getColor());
-					getProperties().setSourceName(spotROI2D.getName());
+					getProperties().setName(spotROI2D.getName());
 				}
 			}
 

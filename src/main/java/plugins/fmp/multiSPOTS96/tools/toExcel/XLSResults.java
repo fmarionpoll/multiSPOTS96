@@ -29,7 +29,7 @@ public class XLSResults {
 	}
 
 	public XLSResults(CageProperties cageProperties, SpotProperties spotProperties, int nFrames) {
-		this.name = spotProperties.getSourceName();
+		this.name = spotProperties.getName();
 		this.color = spotProperties.getColor();
 		this.nflies = cageProperties.getCageNFlies();
 		this.cageID = cageProperties.getCageID();

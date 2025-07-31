@@ -57,7 +57,7 @@ public class SpotProperties {
 
 	// === CORE FIELDS ===
 	private int version;
-	private String sourceName;
+	private String name;
 	private int cageID;
 	private int cagePosition;
 	private int cageRow;
@@ -125,7 +125,7 @@ public class SpotProperties {
 		Objects.requireNonNull(source, "Source properties cannot be null");
 
 		this.version = source.version;
-		this.sourceName = source.sourceName;
+		this.name = source.name;
 		this.cageID = source.cageID;
 		this.cagePosition = source.cagePosition;
 		this.cageRow = source.cageRow;
@@ -156,7 +156,7 @@ public class SpotProperties {
 			return true;
 		}
 
-		return !Objects.equals(this.sourceName, other.sourceName) || this.cageID != other.cageID
+		return !Objects.equals(this.name, other.name) || this.cageID != other.cageID
 				|| this.cagePosition != other.cagePosition || this.cageRow != other.cageRow
 				|| this.cageColumn != other.cageColumn || this.spotArrayIndex != other.spotArrayIndex
 				|| !Objects.equals(this.color, other.color) || !Objects.equals(this.stimulus, other.stimulus)
@@ -176,8 +176,8 @@ public class SpotProperties {
 	 * 
 	 * @return the source name
 	 */
-	public String getSourceName() {
-		return sourceName;
+	public String getName() {
+		return name;
 	}
 
 	/**
@@ -185,8 +185,8 @@ public class SpotProperties {
 	 * 
 	 * @param sourceName the source name
 	 */
-	public void setSourceName(String sourceName) {
-		this.sourceName = sourceName;
+	public void setName(String sourceName) {
+		this.name = sourceName;
 	}
 
 	/**
@@ -519,7 +519,7 @@ public class SpotProperties {
 	 * @return true if valid
 	 */
 	public boolean isValid() {
-		return sourceName != null && !sourceName.trim().isEmpty() && cageID >= -1 && cagePosition >= 0 && cageRow >= -1
+		return name != null && !name.trim().isEmpty() && cageID >= -1 && cagePosition >= 0 && cageRow >= -1
 				&& cageColumn >= -1 && spotArrayIndex >= -1 && color != null && stimulus != null
 				&& !stimulus.trim().isEmpty() && concentration != null && !concentration.trim().isEmpty()
 				&& stimulusI != null && !stimulusI.trim().isEmpty() && spotVolume > 0 && spotNPixels > 0
@@ -534,7 +534,7 @@ public class SpotProperties {
 	public List<String> getValidationErrors() {
 		List<String> errors = new java.util.ArrayList<>();
 
-		if (sourceName == null || sourceName.trim().isEmpty()) {
+		if (name == null || name.trim().isEmpty()) {
 			errors.add("Source name is required");
 		}
 
@@ -720,12 +720,12 @@ public class SpotProperties {
 
 		try {
 			int index = 0;
-			this.sourceName = data[index++];
+			this.name = data[index++];
 			this.spotArrayIndex = Integer.parseInt(data[index++]);
 			this.cageID = Integer.parseInt(data[index++]);
 
 			if (this.cageID < 0) {
-				this.cageID = SpotString.getCageIDFromSpotName(this.sourceName);
+				this.cageID = SpotString.getCageIDFromSpotName(this.name);
 			}
 
 			this.cagePosition = Integer.parseInt(data[index++]);
@@ -782,7 +782,7 @@ public class SpotProperties {
 		Objects.requireNonNull(csvSeparator, "CSV separator cannot be null");
 
 		StringBuilder sbf = new StringBuilder();
-		List<String> row = Arrays.asList(sourceName != null ? sourceName : "", String.valueOf(spotArrayIndex),
+		List<String> row = Arrays.asList(name != null ? name : "", String.valueOf(spotArrayIndex),
 				String.valueOf(cageID), String.valueOf(cagePosition), String.valueOf(cageColumn),
 				String.valueOf(cageRow), String.valueOf(spotVolume), String.valueOf(spotNPixels),
 				String.valueOf(spotRadius), stimulus != null ? stimulus.replace(",", ".") : "",
@@ -801,7 +801,7 @@ public class SpotProperties {
 		if (obj == null || getClass() != obj.getClass())
 			return false;
 		SpotProperties other = (SpotProperties) obj;
-		return Objects.equals(sourceName, other.sourceName) && cageID == other.cageID
+		return Objects.equals(name, other.name) && cageID == other.cageID
 				&& cagePosition == other.cagePosition && cageRow == other.cageRow && cageColumn == other.cageColumn
 				&& spotArrayIndex == other.spotArrayIndex && Objects.equals(color, other.color)
 				&& Objects.equals(stimulus, other.stimulus) && Objects.equals(concentration, other.concentration)
@@ -813,7 +813,7 @@ public class SpotProperties {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(sourceName, cageID, cagePosition, cageRow, cageColumn, spotArrayIndex, color, stimulus,
+		return Objects.hash(name, cageID, cagePosition, cageRow, cageColumn, spotArrayIndex, color, stimulus,
 				concentration, stimulusI, spotVolume, spotNPixels, spotRadius, spotXCoord, spotYCoord, descriptionOK,
 				versionInfos);
 	}
@@ -822,6 +822,6 @@ public class SpotProperties {
 	public String toString() {
 		return String.format(
 				"SpotProperties{name='%s', cageID=%d, position=%d, stimulus='%s', concentration='%s', volume=%.2f}",
-				sourceName, cageID, cagePosition, stimulus, concentration, spotVolume);
+				name, cageID, cagePosition, stimulus, concentration, spotVolume);
 	}
 }

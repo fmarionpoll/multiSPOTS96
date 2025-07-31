@@ -370,7 +370,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			return null;
 		Spot spotPI = new Spot();
 		spotPI.getProperties().setCageID(spot1.getProperties().getCageID());
-		spotPI.getProperties().setSourceName("PI");
+		spotPI.getProperties().setName("PI");
 		spotPI.getProperties().setStimulus("PI");
 		spotPI.getProperties().setConcentration(
 				spot1.getCombinedStimulusConcentration() + " / " + spot2.getCombinedStimulusConcentration());
@@ -383,7 +383,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			return null;
 		Spot spotSUM = new Spot();
 		spotSUM.getProperties().setCageID(spot1.getProperties().getCageID());
-		spotSUM.getProperties().setSourceName("SUM");
+		spotSUM.getProperties().setName("SUM");
 		spotSUM.getProperties().setStimulus("SUM");
 		spotSUM.getProperties().setConcentration(
 				spot1.getCombinedStimulusConcentration() + " / " + spot2.getCombinedStimulusConcentration());

@@ -96,7 +96,7 @@ public final class SpotData {
 
 	// Computed properties
 	public String getName() {
-		return Optional.ofNullable(properties.getSourceName()).orElse(roi.getName());
+		return Optional.ofNullable(properties.getName()).orElse(roi.getName());
 	}
 
 	public Point2D getCenter() {
