@@ -69,6 +69,7 @@ public class SpotProperties {
 	private String stimulusI;
 	private double spotVolume;
 	private int spotNPixels;
+	private int spotsCombined;
 	private int spotRadius;
 	private int spotXCoord;
 	private int spotYCoord;
@@ -90,6 +91,7 @@ public class SpotProperties {
 		this.spotRadius = DEFAULT_SPOT_RADIUS;
 		this.spotXCoord = DEFAULT_SPOT_X_COORD;
 		this.spotYCoord = DEFAULT_SPOT_Y_COORD;
+		this.spotsCombined = 1;
 		this.color = DEFAULT_COLOR;
 		this.cageID = -1;
 		this.cagePosition = 0;
@@ -138,6 +140,7 @@ public class SpotProperties {
 		this.spotRadius = source.spotRadius;
 		this.spotXCoord = source.spotXCoord;
 		this.spotYCoord = source.spotYCoord;
+		this.spotsCombined = source.spotsCombined;
 		this.descriptionOK = source.descriptionOK;
 		this.versionInfos = source.versionInfos;
 	}
@@ -161,6 +164,7 @@ public class SpotProperties {
 				|| !Objects.equals(this.stimulusI, other.stimulusI)
 				|| Double.compare(this.spotVolume, other.spotVolume) != 0 || this.spotNPixels != other.spotNPixels
 				|| this.spotRadius != other.spotRadius || this.spotXCoord != other.spotXCoord
+				|| this.spotsCombined != other.spotsCombined
 				|| this.spotYCoord != other.spotYCoord || this.descriptionOK != other.descriptionOK
 				|| this.versionInfos != other.versionInfos;
 	}
@@ -443,6 +447,14 @@ public class SpotProperties {
 		this.spotYCoord = spotYCoord;
 	}
 
+	public int getSpotsCombined() {
+		return this.spotsCombined;
+	}
+	
+	public void setSpotsCombined(int spotsCombined) {
+		this.spotsCombined = spotsCombined;
+	}
+	
 	// === STATUS ===
 
 	/**

@@ -185,8 +185,8 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		for (Cage cage : exp.cagesArray.cagesList) {
 			
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
-			Spot spot1 = cage.combineSpotsWith(stim1, conc1);
-			Spot spot2 = cage.combineSpotsWith(stim2, conc2);
+			Spot spot1 = cage.combineSpotsWithSameStimConc(stim1, conc1);
+			Spot spot2 = cage.combineSpotsWithSameStimConc(stim2, conc2);
 			Spot spotSUM = cage.createSpotSUM(spot1, spot2);
 			Spot spotPI = cage.createSpotPI(spot1, spot2);
 			
@@ -243,10 +243,17 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 			XLSResults xlsPI, XLSResults xlsSUM, EnumXLSExport xlsExportType) {
 		pt.y = EnumXLS_QColumnHeader.VAL_TIME.getValue();
 		XLSUtils.setValue(sheet, pt, options.transpose, t);
+		
 		pt.y = EnumXLS_QColumnHeader.VAL_STIM1.getValue();
 		writeDataToXLS(sheet, pt, t, xlsStim1);
+		pt.y = EnumXLS_QColumnHeader.N_STIM1.getValue();
+		writeDataToXLS(sheet, pt, t, xlsStim1);
+		
 		pt.y = EnumXLS_QColumnHeader.VAL_STIM2.getValue();
 		writeDataToXLS(sheet, pt, t, xlsStim2);
+		pt.y = EnumXLS_QColumnHeader.N_STIM2.getValue();
+		writeDataToXLS(sheet, pt, t, xlsStim2);
+		
 		pt.y = EnumXLS_QColumnHeader.VAL_SUM.getValue();
 		writeDataToXLS(sheet, pt, t, xlsSUM);
 		pt.y = EnumXLS_QColumnHeader.VAL_PI.getValue();
@@ -302,18 +309,8 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 			return Integer.toString(cage.getProperties().getFlyAge());
 		case CAGE_COMMENT:
 			return cage.getProperties().getComment();
-//		case DUM4:
-//			break;
-//		case VAL_TIME:
-//			break;
-//		case VAL_STIM1:
-//			break;
-//		case VAL_STIM2:
-//			break;
-//		case VAL_SUM:
-//			break;
-//		case VAL_PI:
-//			break;
+
+
 		default:
 			break;
 		}

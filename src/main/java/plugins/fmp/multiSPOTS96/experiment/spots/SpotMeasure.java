@@ -136,7 +136,7 @@ public class SpotMeasure {
 	 * @param measure1 the first measure
 	 * @param measure2 the second measure
 	 */
-	public void computePI(SpotMeasure measure1, SpotMeasure measure2) {
+	public void computePI(SpotMeasure measure1, int n1, SpotMeasure measure2, int n2) {
 		if (measure1 == null || measure2 == null) {
 			return;
 		}
@@ -145,15 +145,15 @@ public class SpotMeasure {
 			if (level2D.npoints != measure1.level2D.npoints) {
 				level2D = new Level2D(measure1.level2D.npoints);
 			}
-			level2D.computePI_Y(measure1.level2D, measure2.level2D);
+			level2D.computePI_Y(measure1.level2D, n1, measure2.level2D, n2);
 		}
 
 		if (measure1.values != null && measure1.values.length > 0 && measure2.values != null
 				&& measure2.values.length > 0) {
 			this.values = new double[measure1.values.length];
 			for (int i = 0; i < measure1.values.length; i++) {
-				double value1 = measure1.values[i];
-				double value2 = measure2.values[i];
+				double value1 = measure1.values[i]/(double)n1;
+				double value2 = measure2.values[i]/(double)n2;
 				double sum = value1 + value2;
 				this.values[i] = sum > 0 ? (value1 - value2) / sum : 0;
 			}
@@ -166,7 +166,7 @@ public class SpotMeasure {
 	 * @param measure1 the first measure
 	 * @param measure2 the second measure
 	 */
-	public void computeSUM(SpotMeasure measure1, SpotMeasure measure2) {
+	public void computeSUM(SpotMeasure measure1, int n1, SpotMeasure measure2, int n2) {
 		if (measure1 == null || measure2 == null) {
 			return;
 		}
@@ -175,14 +175,14 @@ public class SpotMeasure {
 			if (level2D.npoints != measure1.level2D.npoints) {
 				level2D = new Level2D(measure1.level2D.npoints);
 			}
-			level2D.computeSUM_Y(measure1.level2D, measure2.level2D);
+			level2D.computeSUM_Y(measure1.level2D, n1, measure2.level2D, n2);
 		}
 
 		if (measure1.values != null && measure1.values.length > 0 && measure2.values != null
 				&& measure2.values.length > 0) {
 			this.values = new double[measure1.values.length];
 			for (int i = 0; i < measure1.values.length; i++) {
-				this.values[i] = measure1.values[i] + measure2.values[i];
+				this.values[i] = measure1.values[i]/(double)n1 + measure2.values[i]/(double)n2;
 			}
 		}
 	}
@@ -193,7 +193,7 @@ public class SpotMeasure {
 	 * @param measure1 the first measure
 	 * @param measure2 the second measure
 	 */
-	public void combineIsPresent(SpotMeasure measure1, SpotMeasure measure2) {
+	public void combineIsPresent(SpotMeasure measure1, int n1, SpotMeasure measure2, int n2) {
 		if (measure1 == null || measure2 == null) {
 			return;
 		}
@@ -202,7 +202,7 @@ public class SpotMeasure {
 			if (level2D.npoints != measure1.level2D.npoints) {
 				level2D = new Level2D(measure1.level2D.npoints);
 			}
-			level2D.computeIsPresent_Y(measure1.level2D, measure2.level2D);
+			level2D.computeIsPresent_Y(measure1.level2D, n1, measure2.level2D, n2);
 		}
 	}
 

@@ -473,7 +473,7 @@ public class Level2D extends Polyline2D {
 	 * @param data2 the second data source
 	 * @throws IllegalArgumentException if either data source is null
 	 */
-	public void computePI_Y(Level2D data1, Level2D data2) {
+	public void computePI_Y(Level2D data1, int n1, Level2D data2, int n2) {
 		if (data1 == null || data2 == null) {
 			throw new IllegalArgumentException("Data sources cannot be null");
 		}
@@ -482,8 +482,8 @@ public class Level2D extends Polyline2D {
 		ensureCapacity(maxPoints);
 
 		for (int i = 0; i < maxPoints; i++) {
-			double value1 = (i < data1.npoints) ? data1.ypoints[i] : 0.0;
-			double value2 = (i < data2.npoints) ? data2.ypoints[i] : 0.0;
+			double value1 = (i < data1.npoints) ? data1.ypoints[i]/(double)n1 : 0.0;
+			double value2 = (i < data2.npoints) ? data2.ypoints[i]/(double)n2 : 0.0;
 			double sum = value1 + value2;
 
 			if (Math.abs(sum) > EPSILON) {
@@ -501,7 +501,7 @@ public class Level2D extends Polyline2D {
 	 * @param data2 the second data source
 	 * @throws IllegalArgumentException if either data source is null
 	 */
-	public void computeSUM_Y(Level2D data1, Level2D data2) {
+	public void computeSUM_Y(Level2D data1, int n1, Level2D data2, int n2) {
 		if (data1 == null || data2 == null) {
 			throw new IllegalArgumentException("Data sources cannot be null");
 		}
@@ -510,8 +510,8 @@ public class Level2D extends Polyline2D {
 		ensureCapacity(maxPoints);
 
 		for (int i = 0; i < maxPoints; i++) {
-			double value1 = (i < data1.npoints) ? data1.ypoints[i] : 0.0;
-			double value2 = (i < data2.npoints) ? data2.ypoints[i] : 0.0;
+			double value1 = (i < data1.npoints) ? data1.ypoints[i]/(double)n1 : 0.0;
+			double value2 = (i < data2.npoints) ? data2.ypoints[i]/(double)n2 : 0.0;
 			ypoints[i] = value1 + value2;
 		}
 	}
@@ -524,7 +524,7 @@ public class Level2D extends Polyline2D {
 	 * @param data2 the second data source
 	 * @throws IllegalArgumentException if either data source is null
 	 */
-	public void computeIsPresent_Y(Level2D data1, Level2D data2) {
+	public void computeIsPresent_Y(Level2D data1,int n1, Level2D data2, int n2) {
 		if (data1 == null || data2 == null) {
 			throw new IllegalArgumentException("Data sources cannot be null");
 		}
@@ -533,8 +533,8 @@ public class Level2D extends Polyline2D {
 		ensureCapacity(maxPoints);
 
 		for (int i = 0; i < maxPoints; i++) {
-			double value1 = (i < data1.npoints) ? data1.ypoints[i] : 0.0;
-			double value2 = (i < data2.npoints) ? data2.ypoints[i] : 0.0;
+			double value1 = (i < data1.npoints) ? data1.ypoints[i]/(double)n1 : 0.0;
+			double value2 = (i < data2.npoints) ? data2.ypoints[i]/(double)n2 : 0.0;
 			ypoints[i] = (value1 + value2 > EPSILON) ? MAX_THRESHOLD : MIN_THRESHOLD;
 		}
 	}

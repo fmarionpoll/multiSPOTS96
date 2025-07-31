@@ -150,6 +150,7 @@ public class Spot implements Comparable<Spot> {
 	public void addMeasurements(Spot sourceSpot) {
 		Objects.requireNonNull(sourceSpot, "Source spot cannot be null");
 		this.measurements.addFrom(sourceSpot.measurements);
+		this.getProperties().setSpotsCombined(this.getProperties().getSpotsCombined() + 1);
 	}
 
 	/**
@@ -161,7 +162,9 @@ public class Spot implements Comparable<Spot> {
 	public void computePI(Spot spot1, Spot spot2) {
 		Objects.requireNonNull(spot1, "Spot1 cannot be null");
 		Objects.requireNonNull(spot2, "Spot2 cannot be null");
-		this.measurements.computePI(spot1.measurements, spot2.measurements);
+		int n1 = spot1.getProperties().getSpotsCombined();
+		int n2 = spot2.getProperties().getSpotsCombined();
+		this.measurements.computePI(spot1.measurements, n1, spot2.measurements, n2);
 	}
 
 	/**
@@ -173,7 +176,9 @@ public class Spot implements Comparable<Spot> {
 	public void computeSUM(Spot spot1, Spot spot2) {
 		Objects.requireNonNull(spot1, "Spot1 cannot be null");
 		Objects.requireNonNull(spot2, "Spot2 cannot be null");
-		this.measurements.computeSUM(spot1.measurements, spot2.measurements);
+		int n1 = spot1.getProperties().getSpotsCombined();
+		int n2 = spot2.getProperties().getSpotsCombined();
+		this.measurements.computeSUM(spot1.measurements, n1, spot2.measurements, n2);
 	}
 
 	// === ROI MANAGEMENT ===
@@ -791,16 +796,16 @@ public class Spot implements Comparable<Spot> {
 			flyPresent.addMeasures(source.flyPresent);
 		}
 
-		void computePI(SpotMeasurements measure1, SpotMeasurements measure2) {
-			sumIn.computePI(measure1.sumIn, measure2.sumIn);
-			sumClean.computePI(measure1.sumClean, measure2.sumClean);
-			flyPresent.combineIsPresent(measure1.flyPresent, measure2.flyPresent);
+		void computePI(SpotMeasurements measure1, int n1, SpotMeasurements measure2, int n2) {
+			sumIn.computePI(measure1.sumIn, n1, measure2.sumIn, n2);
+			sumClean.computePI(measure1.sumClean, n1, measure2.sumClean, n2);
+			flyPresent.combineIsPresent(measure1.flyPresent, n1, measure2.flyPresent, n2);
 		}
 
-		void computeSUM(SpotMeasurements measure1, SpotMeasurements measure2) {
-			sumIn.computeSUM(measure1.sumIn, measure2.sumIn);
-			sumClean.computeSUM(measure1.sumClean, measure2.sumClean);
-			flyPresent.combineIsPresent(measure1.flyPresent, measure2.flyPresent);
+		void computeSUM(SpotMeasurements measure1, int n1, SpotMeasurements measure2, int n2) {
+			sumIn.computeSUM(measure1.sumIn, n1, measure2.sumIn, n2);
+			sumClean.computeSUM(measure1.sumClean, n1, measure2.sumClean, n2);
+			flyPresent.combineIsPresent(measure1.flyPresent, n1, measure2.flyPresent, n2);
 		}
 
 		SpotMeasure getSumIn() {

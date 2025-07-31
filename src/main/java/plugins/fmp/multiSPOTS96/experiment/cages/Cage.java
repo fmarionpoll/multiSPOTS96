@@ -350,7 +350,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return items;
 	}
 
-	public Spot combineSpotsWith(String stim, String conc) {
+	public Spot combineSpotsWithSameStimConc(String stim, String conc) {
 		Spot spotCombined = null;
 		for (Spot spotSource : spotsArray.getSpotsList()) {
 			if (stim.equals(spotSource.getProperties().getStimulus())
