@@ -15,10 +15,7 @@ import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 public class SpotLevel2D {
 
 	// === CONSTANTS ===
-//	private static final String DEFAULT_NAME = "no_name";
 	private static final double DEFAULT_FACTOR = 1.0;
-//	private static final int DEFAULT_SPAN = 5;
-//	private static final double DEFAULT_THRESHOLD = 1.0;
 
 	// === CORE FIELDS ===
 	private Level2D level2D;
@@ -58,11 +55,6 @@ public class SpotLevel2D {
 
 	// === CORE OPERATIONS ===
 
-	/**
-	 * Copies level2D data from another SpotMeasure.
-	 * 
-	 * @param source the source measure
-	 */
 	public void copyLevel2D(SpotLevel2D source) {
 		if (source != null && source.getLevel2D() != null) {
 			setLevel2D(source.getLevel2D().clone());
@@ -71,143 +63,80 @@ public class SpotLevel2D {
 
 	// === LEVEL2D MANAGEMENT ===
 
-	/**
-	 * Clears the level2D data.
-	 */
 	public void clearLevel2D() {
 		setLevel2D(new Level2D());
 	}
-
-	/**
-	 * Initializes level2D from measure values.
-	 * 
-	 * @param name the name for the level2D
-	 */
 
 	public void transferValuesToLevel2D(double[] values) {
 		if (values == null || values.length == 0) {
 			return;
 		}
-
 		int npoints = values.length;
 		double[] xpoints = new double[npoints];
 		double[] ypoints = new double[npoints];
-
 		for (int i = 0; i < npoints; i++) {
 			xpoints[i] = i;
 			ypoints[i] = values[i];
 		}
-
 		setLevel2D(new Level2D(xpoints, ypoints, npoints));
 	}
 
 	public double[] transferLevel2DToValues() {
-
 		double[] values = new double[level2D.npoints];
-
 		for (int i = 0; i < level2D.npoints; i++) {
 			values[i] = level2D.ypoints[i];
 		}
-
 		return values;
 	}
 
-	/**
-	 * Initializes level2D from boolean values.
-	 * 
-	 * @param name the name for the level2D
-	 */
 	public void transferIsPresentToLevel2D(int[] isPresent) {
 		if (isPresent == null || isPresent.length == 0) {
 			return;
 		}
-
 		int npoints = isPresent.length;
 		double[] xpoints = new double[npoints];
 		double[] ypoints = new double[npoints];
-
 		for (int i = 0; i < npoints; i++) {
 			xpoints[i] = i;
 			ypoints[i] = isPresent[i] > 0 ? 1.0 : 0.0;
 		}
-
 		setLevel2D(new Level2D(xpoints, ypoints, npoints));
 	}
 
-	/**
-	 * Gets the number of points in level2D.
-	 * 
-	 * @return the number of points
-	 */
 	public int getLevel2DNPoints() {
 		return level2D != null ? level2D.npoints : 0;
 	}
 
-	/**
-	 * Gets the level2D data.
-	 * 
-	 * @return the level2D
-	 */
 	public Level2D getLevel2D() {
 		return level2D;
 	}
 
-	/**
-	 * Sets the level2D data.
-	 * 
-	 * @param level2D the level2D to set
-	 */
 	public void setLevel2D(Level2D level2D) {
 		this.level2D = level2D;
 	}
 
 	// === NAME MANAGEMENT ===
 
-	/**
-	 * Gets the name of this measure.
-	 * 
-	 * @return the name
-	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * Sets the name of this measure.
-	 * 
-	 * @param name the name
-	 */
 	public void setName(String name) {
 		this.name = Objects.requireNonNull(name, "Name cannot be null");
 	}
 
 	// === ROI MANAGEMENT ===
 
-	/**
-	 * Gets the ROI associated with this measure.
-	 * 
-	 * @return the ROI
-	 */
 	public ROI2DPolyLine getRoi() {
 		return roi;
 	}
 
-	/**
-	 * Sets the ROI for this measure.
-	 * 
-	 * @param roi the ROI to set
-	 */
 	public void setRoi(ROI2DPolyLine roi) {
 		this.roi = roi;
 	}
 
 	// === VALIDATION ===
 
-	/**
-	 * Checks if there are any measurements done.
-	 * 
-	 * @return true if measurements exist
-	 */
 	public boolean isThereAnyMeasuresDone() {
 		return level2D != null && level2D.npoints > 0;
 	}
@@ -221,28 +150,6 @@ public class SpotLevel2D {
 	 * @param outputBinMs the output bin in milliseconds
 	 * @return the subsampled data
 	 */
-	public List<Double> getLevel2DYAsSubsampledList(long seriesBinMs, long outputBinMs) {
-		if (level2D == null || level2D.npoints == 0) {
-			return new ArrayList<>();
-		}
-
-		long maxMs = (level2D.ypoints.length - 1) * seriesBinMs;
-		long npoints = (maxMs / outputBinMs) + 1;
-
-		List<Double> result = new ArrayList<>();
-		for (long i = 0; i < npoints; i++) {
-			long timeMs = i * outputBinMs;
-			int index = (int) (timeMs / seriesBinMs);
-
-			if (index < level2D.ypoints.length) {
-				result.add(level2D.ypoints[index]);
-			} else {
-				result.add(0.0);
-			}
-		}
-
-		return result;
-	}
 
 	/**
 	 * Gets level2D Y data.

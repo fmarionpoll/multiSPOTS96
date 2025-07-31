@@ -49,7 +49,6 @@ public class Spot implements Comparable<Spot> {
 
 	private final SpotProperties properties;
 	private final SpotMeasurements measurements;
-	private SpotLevel2D level2D;
 	private final SpotMetadata metadata;
 
 	// === CONSTRUCTORS ===
@@ -364,11 +363,11 @@ public class Spot implements Comparable<Spot> {
 	public long isThereAnyMeasuresDone(EnumXLSExport option) {
 		switch (option) {
 		case AREA_SUM:
-			return measurements.getSumIn().getValues().length;
+			return measurements.getSumIn().getCount();
 		case AREA_SUMCLEAN:
-			return measurements.getSumClean().getLevel2DNPoints();
+			return measurements.getSumClean().getCount();
 		case AREA_FLYPRESENT:
-			return measurements.getFlyPresent().getLevel2DNPoints();
+			return measurements.getFlyPresent().getCount();
 		default:
 			return 0;
 		}
@@ -555,7 +554,7 @@ public class Spot implements Comparable<Spot> {
 	 */
 	public boolean hasMeasurements(EnumXLSExport option) {
 		SpotMeasure measure = getMeasurements(option);
-		return measure != null && measure.isThereAnyMeasuresDone();
+		return measure != null && measure.getCount() > 0;
 	}
 
 	// === MEASUREMENTS PROCESSING ===
@@ -573,7 +572,7 @@ public class Spot implements Comparable<Spot> {
 		if (measure == null) {
 			return new ArrayList<>();
 		}
-		return measure.getLevel2DYAsSubsampledList(seriesBinMs, outputBinMs);
+		return measure.getValuesAsSubsampledList(seriesBinMs, outputBinMs);
 	}
 
 	/**

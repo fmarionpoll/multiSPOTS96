@@ -1,36 +1,24 @@
 package plugins.fmp.multiSPOTS96.experiment.spots;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
-/**
- * Encapsulates spot measurements with clean separation of concerns and
- * validation.
- * 
- * <p>
- * This class provides comprehensive measurement capabilities for spots
- * including level2D data, values, presence indicators, and ROI management.
- * </p>
- * 
- * @author MultiSPOTS96
- * @version 2.3.3
- */
 public class SpotMeasure {
 
 	// === CONSTANTS ===
-//	private static final String DEFAULT_NAME = "no_name";
 	private static final double DEFAULT_FACTOR = 1.0;
-//	private static final int DEFAULT_SPAN = 5;
-//	private static final double DEFAULT_THRESHOLD = 1.0;
 
 	// === CORE FIELDS ===
-
 	private double[] values;
 	private double[] valuesNormalized;
 	private int[] isPresent;
 	private double factor;
 	private int measuredFromNSpots = 1;
 	private String name;
+
+	private SpotLevel2D spotLevel2D = null;
 
 	// === CONSTRUCTORS ===
 
@@ -43,48 +31,32 @@ public class SpotMeasure {
 	public SpotMeasure(String name) {
 		this.name = Objects.requireNonNull(name, "Name cannot be null");
 		this.factor = DEFAULT_FACTOR;
-
 	}
 
 	// === CORE OPERATIONS ===
 
-	/**
-	 * Copies measurements from another SpotMeasure.
-	 * 
-	 * @param source the source measure
-	 */
 	public void copyMeasures(SpotMeasure source) {
 		if (source == null) {
 			return;
 		}
-
 		if (source.values != null && source.values.length > 0) {
 			this.values = Arrays.copyOf(source.values, source.values.length);
 		}
-
 		if (source.isPresent != null && source.isPresent.length > 0) {
 			this.isPresent = Arrays.copyOf(source.isPresent, source.isPresent.length);
 		}
 	}
 
-	/**
-	 * Adds measurements from another SpotMeasure.
-	 * 
-	 * @param source the source measure
-	 */
 	public void addMeasures(SpotMeasure source) {
 		if (source == null) {
 			return;
 		}
-
 		if (source.values != null && source.values.length > 0) {
 			addValues(source.values);
 		}
-
 		if (source.isPresent != null && source.isPresent.length > 0) {
 			addPresence(source.isPresent);
 		}
-
 		measuredFromNSpots++;
 	}
 
@@ -98,7 +70,7 @@ public class SpotMeasure {
 		if (measure1 == null || measure2 == null) {
 			return;
 		}
-
+		// assume normalized - if not, compute it
 		if (measure1.values != null && measure1.values.length > 0 && measure2.values != null
 				&& measure2.values.length > 0) {
 			this.values = new double[measure1.valuesNormalized.length];
@@ -194,90 +166,50 @@ public class SpotMeasure {
 
 	// === DATA ACCESS ===
 
-	/**
-	 * Gets the values array.
-	 * 
-	 * @return the values array
-	 */
+	public int getCount() {
+		return values.length;
+	}
+
 	public double[] getValues() {
 		return values;
 	}
 
-	/**
-	 * Sets a single value in the values array.
-	 * 
-	 * @param index the index to set
-	 * @param value the value to set
-	 */
+	public void setValues(double[] values) {
+		this.values = values;
+	}
+
 	public void setValueAt(int index, double value) {
 		if (values != null && index >= 0 && index < values.length) {
 			values[index] = value;
 		}
 	}
 
-	/**
-	 * Sets a single value in the values array.
-	 * 
-	 * @param index the index to set
-	 * @param value the value to set
-	 */
 	public double getValueAt(int index) {
 		return values[index];
 	}
 
-	/**
-	 * Sets the values array.
-	 * 
-	 * @param values the values array
-	 */
-	public void setValues(double[] values) {
-		this.values = values;
-	}
-
-	/**
-	 * Gets the presence array.
-	 * 
-	 * @return the presence array
-	 */
-	public int[] getIsPresentArray() {
+	public int[] getIsPresent() {
 		return isPresent;
 	}
 
-	/**
-	 * Sets the presence array.
-	 * 
-	 * @param isPresent the presence array
-	 */
 	public void setIsPresent(int[] isPresent) {
 		this.isPresent = isPresent;
 	}
 
-	/**
-	 * Sets a single value in the presence array.
-	 * 
-	 * @param index the index to set
-	 * @param value the value to set
-	 */
-	public void setIsPresent(int index, int value) {
+	public int getIsPresentAt(int index) {
+		return isPresent[index];
+	}
+
+	public void setIsPresentAt(int index, int value) {
 		if (isPresent != null && index >= 0 && index < isPresent.length) {
 			isPresent[index] = value;
 		}
 	}
 
-	/**
-	 * Gets the factor.
-	 * 
-	 * @return the factor
-	 */
 	public double getFactor() {
 		return factor;
 	}
 
-	/**
-	 * Sets the factor.
-	 * 
-	 * @param factor the factor
-	 */
 	public void setFactor(double factor) {
 		this.factor = factor;
 	}
@@ -288,6 +220,10 @@ public class SpotMeasure {
 
 	public void setMeasuredFromNSpots(int n) {
 		this.measuredFromNSpots = n;
+	}
+
+	public SpotLevel2D getSpotLevel2D() {
+		return spotLevel2D;
 	}
 
 	// === PRIVATE HELPER METHODS ===
@@ -313,6 +249,25 @@ public class SpotMeasure {
 	}
 
 	// === UTILITY METHODS ===
+
+	public List<Double> getValuesAsSubsampledList(long seriesBinMs, long outputBinMs) {
+		if (values == null || values.length == 0) {
+			return new ArrayList<>();
+		}
+		long maxMs = (values.length - 1) * seriesBinMs;
+		long npoints = (maxMs / outputBinMs) + 1;
+		List<Double> result = new ArrayList<>();
+		for (long i = 0; i < npoints; i++) {
+			long timeMs = i * outputBinMs;
+			int index = (int) (timeMs / seriesBinMs);
+			if (index < values.length) {
+				result.add(values[index]);
+			} else {
+				result.add(0.0);
+			}
+		}
+		return result;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
