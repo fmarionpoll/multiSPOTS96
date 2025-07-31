@@ -365,6 +365,12 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		return spotCombined;
 	}
 
+	public void normalizeSpotMeasures() {
+		for (Spot spot : spotsArray.getSpotsList()) {
+			spot.normalizeMeasures();
+		}
+	}
+
 	public Spot createSpotPI(Spot spot1, Spot spot2) {
 		if (spot1 == null || spot2 == null)
 			return null;

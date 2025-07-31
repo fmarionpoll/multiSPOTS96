@@ -49,6 +49,7 @@ public class Spot implements Comparable<Spot> {
 
 	private final SpotProperties properties;
 	private final SpotMeasurements measurements;
+	private SpotLevel2D level2D;
 	private final SpotMetadata metadata;
 
 	// === CONSTRUCTORS ===
@@ -178,8 +179,12 @@ public class Spot implements Comparable<Spot> {
 		Objects.requireNonNull(spot2, "Spot2 cannot be null");
 		int n1 = spot1.getProperties().getCountAggregatedSpots();
 		int n2 = spot2.getProperties().getCountAggregatedSpots();
-		System.out.println(getProperties().getName()+ " -- " +"n1=" + n1 + " n2="+n2);
+		System.out.println(getProperties().getName() + " -- " + "n1=" + n1 + " n2=" + n2);
 		this.measurements.computeSUM(spot1.measurements, n1, spot2.measurements, n2);
+	}
+
+	public void normalizeMeasures() {
+		this.measurements.normalizeMeasures();
 	}
 
 	// === ROI MANAGEMENT ===
@@ -808,6 +813,11 @@ public class Spot implements Comparable<Spot> {
 			sumIn.computeSUM(measure1.sumIn, n1, measure2.sumIn, n2);
 			sumClean.computeSUM(measure1.sumClean, n1, measure2.sumClean, n2);
 			flyPresent.combineIsPresent(measure1.flyPresent, n1, measure2.flyPresent, n2);
+		}
+
+		void normalizeMeasures() {
+			sumIn.normalizeValues();
+			sumClean.normalizeValues();
 		}
 
 		SpotMeasure getSumIn() {

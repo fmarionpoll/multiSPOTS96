@@ -765,6 +765,11 @@ public class CagesArray {
 		}
 	}
 
+	public void normalizeSpotMeasures() {
+		for (Cage cage : cagesList)
+			cage.normalizeSpotMeasures();
+	}
+
 	public void transferMeasuresToLevel2D() {
 		for (Cage cage : cagesList) {
 			cage.getSpotsArray().transferMeasuresToLevel2D();
