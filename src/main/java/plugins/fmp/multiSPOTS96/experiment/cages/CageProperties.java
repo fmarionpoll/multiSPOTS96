@@ -28,24 +28,26 @@ public class CageProperties {
 	// PropertyChangeSupport for firing events
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-	public int version = 1;
+	private int version = 1;
 
-	public int cageID = -1;
-	public int cagePosition = 0;
-	public Color color = Color.MAGENTA;
+	private int cageID = -1;
+	private int cagePosition = 0;
+	private Color color = Color.MAGENTA;
 
-	public int arrayIndex = 0;
-	public int arrayColumn = -1;
-	public int arrayRow = -1;
+	private int arrayIndex = 0;
+	private int arrayColumn = -1;
+	private int arrayRow = -1;
 
-	public int cageNFlies = 0;
-	public int flyAge = 5;
-	public boolean checked = true;
+	private int cageNFlies = 0;
+	private int flyAge = 5;
+	private boolean checked = true;
 
-	public String comment = "..";
-	public String flySex = "..";
-	public String flyStrain = "..";
-	public String strCageNumber = "0";
+	private String comment = "..";
+	private String flySex = "..";
+	private String flyStrain = "..";
+	private String strCageNumber = "0";
+	private int countSpotsStim1 = 1;
+	private int countSpotsStim2 = 1;
 
 	private final String ID_NFLIES = "nflies";
 	private final String ID_AGE = "age";
@@ -114,6 +116,8 @@ public class CageProperties {
 		flySex = propFrom.flySex;
 		strCageNumber = propFrom.strCageNumber;
 		flyStrain = propFrom.flyStrain;
+		countSpotsStim1 = propFrom.countSpotsStim1;
+		countSpotsStim2 = propFrom.countSpotsStim2;
 
 		// Fire PropertyChange events for all changed properties
 		propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_INDEX, oldArrayIndex, arrayIndex);
@@ -157,6 +161,9 @@ public class CageProperties {
 		propTo.flySex = flySex;
 		propTo.strCageNumber = strCageNumber;
 		propTo.flyStrain = flyStrain;
+		propTo.countSpotsStim1 = countSpotsStim1;
+		propTo.countSpotsStim2 = countSpotsStim2;
+		
 
 		// Fire PropertyChange events for all changed properties
 		propTo.propertyChangeSupport.firePropertyChange(PROPERTY_ARRAY_INDEX, oldArrayIndex, propTo.arrayIndex);
@@ -376,5 +383,20 @@ public class CageProperties {
 		this.strCageNumber = strCageNumber;
 		propertyChangeSupport.firePropertyChange(PROPERTY_STR_CAGE_NUMBER, oldValue, this.strCageNumber);
 	}
+	
+	public int getCountSpotsStim1() {
+		return countSpotsStim1;
+	}
+	
+	public void setCountSpotsStim1(int countSpotsStim1) {
+		this.countSpotsStim1 = countSpotsStim1;
+	}
 
+	public int getCountSpotsStim2() {
+		return countSpotsStim2;
+	}
+	
+	public void setCountSpotsStim2(int countSpotsStim2) {
+		this.countSpotsStim2 = countSpotsStim2;
+	}
 }

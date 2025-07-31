@@ -161,7 +161,7 @@ public final class ModernCagesArray implements AutoCloseable {
 			}
 
 			String cageName = cage.getData().getName();
-			int cageID = cage.getData().getProperties().cageID;
+			int cageID = cage.getData().getProperties().getCageID();
 
 			// Check for duplicates
 			if (cagesByID.containsKey(cageID)) {
@@ -342,7 +342,7 @@ public final class ModernCagesArray implements AutoCloseable {
 
 			for (ModernCage cage : otherArray.getCages()) {
 				String cageName = cage.getData().getName();
-				int cageID = cage.getData().getProperties().cageID;
+				int cageID = cage.getData().getProperties().getCageID();
 
 				if (!cagesByID.containsKey(cageID) && !cagesByName.containsKey(cageName)) {
 					cages.add(cage);

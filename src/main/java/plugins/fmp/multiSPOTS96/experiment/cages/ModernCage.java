@@ -229,7 +229,7 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 			if (data.getProperties() == null) {
 				isValid = false;
 				issues.append("Properties are null; ");
-			} else if (data.getProperties().cageID < 0) {
+			} else if (data.getProperties().getCageID() < 0) {
 				isValid = false;
 				issues.append("Cage ID is invalid; ");
 			}
@@ -246,7 +246,7 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 			if (isValid) {
 				return CageOperationResult.success("VALIDATE", "Cage validation passed").toBuilder()
 						.processingTimeMs(processingTime).addMetadata("cageName", name)
-						.addMetadata("cageID", data.getProperties().cageID).build();
+						.addMetadata("cageID", data.getProperties().getCageID()).build();
 			} else {
 				return CageOperationResult
 						.failure("VALIDATE", new IllegalStateException("Validation failed"),
@@ -286,18 +286,18 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 			return false;
 		ModernCage that = (ModernCage) obj;
 		return Objects.equals(data.getName(), that.data.getName())
-				&& Objects.equals(data.getProperties().cageID, that.data.getProperties().cageID);
+				&& Objects.equals(data.getProperties().getCageID(), that.data.getProperties().getCageID());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(data.getName(), data.getProperties().cageID);
+		return Objects.hash(data.getName(), data.getProperties().getCageID());
 	}
 
 	@Override
 	public String toString() {
 		return String.format("ModernCage{name='%s', id=%d, valid=%b, spots=%d}", data.getName(),
-				data.getProperties().cageID, data.isValid(), spotsArray.getSpotsList().size());
+				data.getProperties().getCageID(), data.isValid(), spotsArray.getSpotsList().size());
 	}
 
 	// === PRIVATE HELPER METHODS ===
@@ -324,10 +324,10 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 	private Spot createEllipseSpot(int position, Point2D.Double center, int radius) {
 		Ellipse2D ellipse = new Ellipse2D.Double(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
 		ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
-		roiEllipse.setName(SpotString.createSpotString(data.getProperties().cageID, position));
+		roiEllipse.setName(SpotString.createSpotString(data.getProperties().getCageID(), position));
 
 		Spot spot = new Spot(roiEllipse);
-		spot.getProperties().setCageID(data.getProperties().cageID);
+		spot.getProperties().setCageID(data.getProperties().getCageID());
 		spot.getProperties().setCagePosition(position);
 		spot.getProperties().setSpotRadius(radius);
 		spot.getProperties().setSpotXCoord((int) center.getX());

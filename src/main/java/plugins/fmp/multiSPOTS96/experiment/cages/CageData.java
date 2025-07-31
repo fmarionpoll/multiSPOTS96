@@ -122,18 +122,18 @@ public final class CageData {
         if (obj == null || getClass() != obj.getClass()) return false;
         CageData cageData = (CageData) obj;
         return Objects.equals(getName(), cageData.getName()) &&
-               Objects.equals(properties.cageID, cageData.properties.cageID);
+               Objects.equals(properties.getCageID(), cageData.properties.getCageID());
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), properties.cageID);
+        return Objects.hash(getName(), properties.getCageID());
     }
     
     @Override
     public String toString() {
         return String.format("CageData{name='%s', cageID=%d, valid=%b, detectEnabled=%b}", 
-                           getName(), properties.cageID, valid, detectEnabled);
+                           getName(), properties.getCageID(), valid, detectEnabled);
     }
     
     public static class Builder {

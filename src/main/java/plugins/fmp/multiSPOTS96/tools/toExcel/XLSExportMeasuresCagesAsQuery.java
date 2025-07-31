@@ -192,8 +192,10 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 			
 			XLSResults xlsStim1 = getResultForCage(exp, cage, spot1, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
+			cage.getProperties().setCountSpotsStim1(spot1.getProperties().getCountAggregatedSpots());
 			XLSResults xlsStim2 = getResultForCage(exp, cage, spot2, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
+			cage.getProperties().setCountSpotsStim2(spot2.getProperties().getCountAggregatedSpots());
 			XLSResults xlsSUM = getResultForCage(exp, cage, spotSUM, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
 			XLSResults xlsPI = getResultForCage(exp, cage, spotPI, scalingFactorToPhysicalUnits, xlsExportOptions,
@@ -231,10 +233,16 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 			EnumXLSExport xlsExportType) {
 		boolean transpose = options.transpose;
 		for (int i = 0; i < headers.size(); i++) {
-			if (headers.get(i).toType() == EnumColumnType.DESCRIPTOR) {
-				String dummy = getDescriptor(exp, cage, headers.get(i));
+			if (headers.get(i).toType() == EnumColumnType.DESCRIPTOR_STR) {
+				String dummy = getDescriptorStr(exp, cage, headers.get(i));
 				pt.y = headers.get(i).getValue();
 				XLSUtils.setValue(sheet, pt, transpose, dummy);
+			}
+			
+			if (headers.get(i).toType() == EnumColumnType.DESCRIPTOR_INT) {
+				int value = getDescriptorInt(exp, cage, headers.get(i));
+				pt.y = headers.get(i).getValue();
+				XLSUtils.setValue(sheet, pt, transpose, value);
 			}
 		}
 	}
@@ -246,13 +254,13 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		
 		pt.y = EnumXLS_QColumnHeader.VAL_STIM1.getValue();
 		writeDataToXLS(sheet, pt, t, xlsStim1);
-		pt.y = EnumXLS_QColumnHeader.N_STIM1.getValue();
-		writeDataToXLS(sheet, pt, t, xlsStim1);
+//		pt.y = EnumXLS_QColumnHeader.N_STIM1.getValue();
+//		writeDataToXLS(sheet, pt, t, xlsStim1);
 		
 		pt.y = EnumXLS_QColumnHeader.VAL_STIM2.getValue();
 		writeDataToXLS(sheet, pt, t, xlsStim2);
-		pt.y = EnumXLS_QColumnHeader.N_STIM2.getValue();
-		writeDataToXLS(sheet, pt, t, xlsStim2);
+//		pt.y = EnumXLS_QColumnHeader.N_STIM2.getValue();
+//		writeDataToXLS(sheet, pt, t, xlsStim2);
 		
 		pt.y = EnumXLS_QColumnHeader.VAL_SUM.getValue();
 		writeDataToXLS(sheet, pt, t, xlsSUM);
@@ -272,7 +280,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		}
 	}
 
-	String getDescriptor(Experiment exp, Cage cage, EnumXLS_QColumnHeader col) {
+	String getDescriptorStr(Experiment exp, Cage cage, EnumXLS_QColumnHeader col) {
 		String dummy = null;
 		switch (col) {
 		case DATE:
@@ -297,19 +305,32 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		case EXP_CONC2:
 			return exp.getProperties().getField_conc2();
 
-		case CAGE_POS:
-			return Integer.toString(cage.getProperties().getArrayIndex());
-		case CAGE_NFLIES:
-			return Integer.toString(cage.getProperties().getCageNFlies());
 		case CAGE_STRAIN:
 			return cage.getProperties().getFlyStrain();
 		case CAGE_SEX:
 			return cage.getProperties().getFlySex();
-		case CAGE_AGE:
-			return Integer.toString(cage.getProperties().getFlyAge());
 		case CAGE_COMMENT:
 			return cage.getProperties().getComment();
-
+		
+		default:
+			break;
+		}
+		return dummy;
+	}
+	
+	int getDescriptorInt(Experiment exp, Cage cage, EnumXLS_QColumnHeader col) {
+		int dummy = -1;
+		switch (col) {
+		case CAGE_POS:
+			return cage.getProperties().getArrayIndex();
+		case CAGE_NFLIES:
+			return cage.getProperties().getCageNFlies();
+		case CAGE_AGE:
+			return cage.getProperties().getFlyAge();
+		case N_STIM1:
+			return cage.getProperties().getCountSpotsStim1();
+		case N_STIM2:
+			return cage.getProperties().getCountSpotsStim2();
 
 		default:
 			break;

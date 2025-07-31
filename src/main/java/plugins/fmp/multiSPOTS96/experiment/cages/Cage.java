@@ -79,8 +79,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	}
 
 	public String getCageNumberFromRoiName() {
-		prop.strCageNumber = cageROI2D.getName().substring(cageROI2D.getName().length() - 3);
-		return prop.strCageNumber;
+		prop.setStrCageNumber(cageROI2D.getName().substring(cageROI2D.getName().length() - 3));
+		return prop.getStrCageNumber();
 	}
 
 	public void clearMeasures() {
@@ -124,13 +124,13 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 		String stringValue = null;
 		switch (fieldEnumCode) {
 		case CAGE_SEX:
-			stringValue = prop.flySex;
+			stringValue = prop.getFlySex();
 			break;
 		case CAGE_AGE:
-			stringValue = String.valueOf(prop.flyAge);
+			stringValue = String.valueOf(prop.getFlyAge());
 			break;
 		case CAGE_STRAIN:
-			stringValue = prop.flyStrain;
+			stringValue = prop.getFlyStrain();
 			break;
 		default:
 			break;
@@ -141,14 +141,14 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public void setField(EnumXLSColumnHeader fieldEnumCode, String stringValue) {
 		switch (fieldEnumCode) {
 		case CAGE_SEX:
-			prop.flySex = stringValue;
+			prop.setFlySex(stringValue);
 			break;
 		case CAGE_AGE:
 			int ageValue = Integer.valueOf(stringValue);
-			prop.flyAge = ageValue;
+			prop.setFlyAge(ageValue);
 			break;
 		case CAGE_STRAIN:
-			prop.flyStrain = stringValue;
+			prop.setFlyStrain(stringValue);
 			break;
 		default:
 			break;
@@ -193,7 +193,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			return false;
 		xmlLoadCageLimits(xmlVal);
 		prop.xmlLoadCageParameters(xmlVal);
-		cageROI2D.setColor(prop.color);
+		cageROI2D.setColor(prop.getColor());
 		spotsArray.loadFromXml(xmlVal);
 		return true;
 	}
@@ -246,13 +246,13 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public String csvExportCageDescription(String sep) {
 		StringBuffer sbf = new StringBuffer();
 		List<String> row = new ArrayList<String>();
-		row.add(prop.strCageNumber);
+		row.add(prop.getStrCageNumber());
 		row.add(cageROI2D.getName());
-		row.add(Integer.toString(prop.cageNFlies));
-		row.add(Integer.toString(prop.flyAge));
-		row.add(prop.comment);
-		row.add(prop.flyStrain);
-		row.add(prop.flySex);
+		row.add(Integer.toString(prop.getCageNFlies()));
+		row.add(Integer.toString(prop.getFlyAge()));
+		row.add(prop.getComment());
+		row.add(prop.getFlyStrain());
+		row.add(prop.getFlySex());
 
 		int npoints = 0;
 		if (cageROI2D != null) {
@@ -286,9 +286,9 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	private Spot createEllipseSpot(int cagePosition, Point2D.Double center, int radius) {
 		Ellipse2D ellipse = new Ellipse2D.Double(center.x, center.y, 2 * radius, 2 * radius);
 		ROI2DEllipse roiEllipse = new ROI2DEllipse(ellipse);
-		roiEllipse.setName(SpotString.createSpotString(prop.cageID, cagePosition));
+		roiEllipse.setName(SpotString.createSpotString(prop.getCageID(), cagePosition));
 		Spot spot = new Spot(roiEllipse);
-		spot.getProperties().setCageID(prop.cageID);
+		spot.getProperties().setCageID(prop.getCageID());
 		spot.getProperties().setCagePosition(cagePosition);
 		spot.getProperties().setSpotRadius(radius);
 		spot.getProperties().setSpotXCoord((int) center.getX());
@@ -327,8 +327,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public void cleanUpSpotNames() {
 		for (int i = 0; i < spotsArray.getSpotsList().size(); i++) {
 			Spot spot = spotsArray.getSpotsList().get(i);
-			spot.setName(prop.cageID, i);
-			spot.getProperties().setCageID(prop.cageID);
+			spot.setName(prop.getCageID(), i);
+			spot.getProperties().setCageID(prop.getCageID());
 			spot.getProperties().setCagePosition(i);
 		}
 	}

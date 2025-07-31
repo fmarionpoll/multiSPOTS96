@@ -150,7 +150,7 @@ public class Spot implements Comparable<Spot> {
 	public void addMeasurements(Spot sourceSpot) {
 		Objects.requireNonNull(sourceSpot, "Source spot cannot be null");
 		this.measurements.addFrom(sourceSpot.measurements);
-		this.getProperties().setSpotsCombined(this.getProperties().getSpotsCombined() + 1);
+		this.getProperties().setCountAggregatedSpots(this.getProperties().getCountAggregatedSpots() + 1);
 	}
 
 	/**
@@ -162,8 +162,8 @@ public class Spot implements Comparable<Spot> {
 	public void computePI(Spot spot1, Spot spot2) {
 		Objects.requireNonNull(spot1, "Spot1 cannot be null");
 		Objects.requireNonNull(spot2, "Spot2 cannot be null");
-		int n1 = spot1.getProperties().getSpotsCombined();
-		int n2 = spot2.getProperties().getSpotsCombined();
+		int n1 = spot1.getProperties().getCountAggregatedSpots();
+		int n2 = spot2.getProperties().getCountAggregatedSpots();
 		this.measurements.computePI(spot1.measurements, n1, spot2.measurements, n2);
 	}
 
@@ -176,8 +176,8 @@ public class Spot implements Comparable<Spot> {
 	public void computeSUM(Spot spot1, Spot spot2) {
 		Objects.requireNonNull(spot1, "Spot1 cannot be null");
 		Objects.requireNonNull(spot2, "Spot2 cannot be null");
-		int n1 = spot1.getProperties().getSpotsCombined();
-		int n2 = spot2.getProperties().getSpotsCombined();
+		int n1 = spot1.getProperties().getCountAggregatedSpots();
+		int n2 = spot2.getProperties().getCountAggregatedSpots();
 		this.measurements.computeSUM(spot1.measurements, n1, spot2.measurements, n2);
 	}
 
