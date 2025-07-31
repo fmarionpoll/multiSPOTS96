@@ -254,14 +254,8 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		
 		pt.y = EnumXLS_QColumnHeader.VAL_STIM1.getValue();
 		writeDataToXLS(sheet, pt, t, xlsStim1);
-//		pt.y = EnumXLS_QColumnHeader.N_STIM1.getValue();
-//		writeDataToXLS(sheet, pt, t, xlsStim1);
-		
 		pt.y = EnumXLS_QColumnHeader.VAL_STIM2.getValue();
 		writeDataToXLS(sheet, pt, t, xlsStim2);
-//		pt.y = EnumXLS_QColumnHeader.N_STIM2.getValue();
-//		writeDataToXLS(sheet, pt, t, xlsStim2);
-		
 		pt.y = EnumXLS_QColumnHeader.VAL_SUM.getValue();
 		writeDataToXLS(sheet, pt, t, xlsSUM);
 		pt.y = EnumXLS_QColumnHeader.VAL_PI.getValue();
