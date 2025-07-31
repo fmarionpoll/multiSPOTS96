@@ -149,7 +149,6 @@ public class SpotMeasure {
 	public void normalizeValues() {
 		double maximum = getMaximumValue();
 		normalizeValuesTo(maximum);
-
 	}
 
 	/**
@@ -200,7 +199,7 @@ public class SpotMeasure {
 	 * 
 	 * @return the values array
 	 */
-	public double[] getValuesArray() {
+	public double[] getValues() {
 		return values;
 	}
 
@@ -231,7 +230,7 @@ public class SpotMeasure {
 	 * 
 	 * @param values the values array
 	 */
-	public void setValuesArray(double[] values) {
+	public void setValues(double[] values) {
 		this.values = values;
 	}
 
@@ -249,7 +248,7 @@ public class SpotMeasure {
 	 * 
 	 * @param isPresent the presence array
 	 */
-	public void setIsPresentArray(int[] isPresent) {
+	public void setIsPresent(int[] isPresent) {
 		this.isPresent = isPresent;
 	}
 

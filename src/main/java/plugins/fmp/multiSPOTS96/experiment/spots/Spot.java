@@ -364,7 +364,7 @@ public class Spot implements Comparable<Spot> {
 	public long isThereAnyMeasuresDone(EnumXLSExport option) {
 		switch (option) {
 		case AREA_SUM:
-			return measurements.getSumIn().getLevel2DNPoints();
+			return measurements.getSumIn().getValues().length;
 		case AREA_SUMCLEAN:
 			return measurements.getSumClean().getLevel2DNPoints();
 		case AREA_FLYPRESENT:
