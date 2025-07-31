@@ -60,7 +60,7 @@ public class ImageTransformOptions {
         validateLimitRelationships();
     }
     
-    // Getters
+	// Getters
     public ImageTransformEnums getTransform01() { return transform01; }
     public ImageTransformEnums getTransform02() { return transform02; }
     public ImageTransformEnums getOverlayTransform() { return overlayTransform; }

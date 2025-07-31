@@ -9,6 +9,8 @@ import java.awt.image.RenderedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -30,51 +32,66 @@ import icy.type.collection.array.Array1DUtil;
 import icy.util.StringUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.series.Registration;
+import plugins.fmp.multiSPOTS96.series.ProcessingResult;
+import plugins.fmp.multiSPOTS96.series.ProgressReporter;
+import plugins.fmp.multiSPOTS96.series.RegistrationOptions;
+import plugins.fmp.multiSPOTS96.series.RegistrationProcessor;
+import plugins.fmp.multiSPOTS96.series.SafeRegistrationProcessor;
 import plugins.fmp.multiSPOTS96.tools.GaspardRigidRegistration;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
+import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 
 public class CorrectDrift extends JPanel implements ViewerListener, PropertyChangeListener {
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger.getLogger(CorrectDrift.class.getName());
 
 	int val = 0; // set your own value, I used to check if it works
 	int min = 0;
 	int max = 10000;
 	int step = 1;
 	int maxLast = 99999999;
-	JSpinner startFrameJSpinner = new JSpinner(new SpinnerNumberModel(val, min, max, step));
-	JSpinner referenceFrameJSpinner = new JSpinner(new SpinnerNumberModel(val, min, max, step));
-	JButton runButton = new JButton("Run registration");
+	private final JSpinner startFrameJSpinner = new JSpinner(new SpinnerNumberModel(val, min, max, step));
+	private final JSpinner referenceFrameJSpinner = new JSpinner(new SpinnerNumberModel(val, min, max, step));
+	private final JButton runButton = new JButton("Run registration");
 
-	JSpinner xSpinner = new JSpinner(new SpinnerNumberModel(0, -500, 500, 1));
-	JSpinner ySpinner = new JSpinner(new SpinnerNumberModel(0, -500, 500, 1));
-	JButton testTranslationButton = new JButton("Test");
-	JButton applyTranslationButton = new JButton("Apply");
-	JButton restoreTranslationButton = new JButton("Restore 1 step");
+	private final JSpinner xSpinner = new JSpinner(new SpinnerNumberModel(0, -500, 500, 1));
+	private final JSpinner ySpinner = new JSpinner(new SpinnerNumberModel(0, -500, 500, 1));
+	private final JButton testTranslationButton = new JButton("Test");
+	private final JButton applyTranslationButton = new JButton("Apply");
+	private final JButton restoreTranslationButton = new JButton("Restore 1 step");
 	int previousX = 0;
 	int previousY = 0;
 	int previousT = 0;
 	double previousAngle = 0.;
 
-	JSpinner oSpinner = new JSpinner(new SpinnerNumberModel(0., -180., 180., 1.));
-	JButton testRotationButton = new JButton("Test");
-	JButton applyRotationButton = new JButton("Apply");
-	JButton restoreRotationButton = new JButton("Restore 1 step");
+	private final JSpinner angleSpinner = new JSpinner(new SpinnerNumberModel(0., -180., 180., 1.));
+	private final JButton testRotationButton = new JButton("Test");
+	private final JButton applyRotationButton = new JButton("Apply");
+	private final JButton restoreRotationButton = new JButton("Restore 1 step");
 
-	JSpinner squareSizeSpinner = new JSpinner(new SpinnerNumberModel(10, 0, 500, 1));
+	private final JSpinner squareSizeSpinner = new JSpinner(new SpinnerNumberModel(10, 0, 500, 1));
 
-	private MultiSPOTS96 parent0 = null;
-	JComboBoxExperiment editExpList = new JComboBoxExperiment();
-	private Registration registration = null;
+//	private MultiSPOTS96 parent0 = null;
+	private JComboBoxExperiment experimentList = new JComboBoxExperiment();
+//	private Registration registration = null;
+
+	private CompletableFuture<Void> currentTask;
+	private final RegistrationProcessor registrationProcessor = new SafeRegistrationProcessor();
 
 	void init(GridLayout capLayout, MultiSPOTS96 parent0) {
-		this.parent0 = parent0;
+		// this.parent0 = parent0;
+		this.experimentList = parent0.expListCombo;
+
+		initializeUI(capLayout);
+		defineActionListeners();
+		updateButtonStates();
+	}
+
+	private void initializeUI(GridLayout capLayout) {
 		setLayout(capLayout);
 
 		FlowLayout flowlayout = new FlowLayout(FlowLayout.LEFT);
@@ -105,7 +122,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 
 		JPanel rotationPanel = new JPanel(flowlayout);
 		rotationPanel.add(new JLabel("rotate (degrees)"));
-		rotationPanel.add(oSpinner);
+		rotationPanel.add(angleSpinner);
 		rotationPanel.add(testRotationButton);
 		rotationPanel.add(applyRotationButton);
 		rotationPanel.add(restoreRotationButton);
@@ -118,8 +135,6 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 
 		restoreTranslationButton.setEnabled(false);
 		restoreRotationButton.setEnabled(false);
-
-		defineActionListeners();
 	}
 
 	private void defineActionListeners() {
@@ -137,7 +152,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 		runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = getCurrentExperiment();
 				if (exp != null) {
 					if (runButton.getText().equals("Run"))
 						executeRegistration(exp);
@@ -151,7 +166,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 	private void startFrameJSpinnerListener() {
 		startFrameJSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = getCurrentExperiment();
 				if (exp != null && exp.seqCamData.getSequence() != null) {
 					Viewer v = exp.seqCamData.getSequence().getFirstViewer();
 					if (v != null) {
@@ -168,7 +183,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 		applyTranslationButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = getCurrentExperiment();
 				if (exp != null && exp.seqKymos != null) {
 					int x = (int) xSpinner.getValue();
 					int y = (int) ySpinner.getValue();
@@ -186,7 +201,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 		testTranslationButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = getCurrentExperiment();
 				if (exp != null && exp.seqKymos != null) {
 					int x = (int) xSpinner.getValue();
 					int y = (int) ySpinner.getValue();
@@ -200,7 +215,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 		restoreTranslationButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = getCurrentExperiment();
 				if (exp != null && exp.seqKymos != null) {
 					applyTranslation(exp, -previousX, -previousY);
 
@@ -216,9 +231,9 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 		applyRotationButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = getCurrentExperiment();
 				if (exp != null && exp.seqKymos != null) {
-					double angle = (double) oSpinner.getValue();
+					double angle = (double) angleSpinner.getValue();
 					applyRotation(exp, angle);
 
 					restoreRotationButton.setEnabled(true);
@@ -232,7 +247,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 		restoreRotationButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = getCurrentExperiment();
 				if (exp != null && exp.seqKymos != null) {
 					applyRotation(exp, previousAngle);
 
@@ -247,7 +262,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 		testRotationButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = getCurrentExperiment();
 				if (exp != null && exp.seqKymos != null) {
 
 				}
@@ -258,6 +273,28 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 	public void resetFrameIndex() {
 		startFrameJSpinner.setValue(0);
 		referenceFrameJSpinner.setValue(0);
+	}
+
+	/**
+	 * Gets the currently selected experiment.
+	 */
+	private Experiment getCurrentExperiment() {
+		return (Experiment) experimentList.getSelectedItem();
+	}
+
+	private void updateButtonStates() {
+		boolean isRunning = currentTask != null && !currentTask.isDone();
+
+		runButton.setEnabled(true);
+		startFrameJSpinner.setEnabled(!isRunning);
+		referenceFrameJSpinner.setEnabled(!isRunning);
+		applyTranslationButton.setEnabled(!isRunning);
+		applyRotationButton.setEnabled(!isRunning);
+		testTranslationButton.setEnabled(!isRunning);
+		testRotationButton.setEnabled(!isRunning);
+
+		// Enable restore button only if there's a previous translation
+		restoreTranslationButton.setEnabled(!isRunning && (previousX != 0 || previousY != 0));
 	}
 
 	@Override
@@ -282,31 +319,129 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 		viewer.removeListener(this);
 	}
 
-	void executeRegistration(Experiment exp) {
-		registration = new Registration();
-		registration.options = initParameters(exp);
-		registration.stopFlag = false;
-		registration.addPropertyChangeListener(this);
-		registration.execute();
+	private void executeRegistration(Experiment experiment) {
+		if (currentTask != null && !currentTask.isDone()) {
+			showError("Registration already in progress");
+			return;
+		}
+
+		// Create registration options
+		RegistrationOptions options = createRegistrationOptions(experiment);
+
+		// Validate options
+		ProcessingResult<Void> validationResult = options.validate();
+		if (validationResult.isFailure()) {
+			showError("Invalid registration options: " + validationResult.getErrorMessage());
+			return;
+		}
+
+		// Execute registration asynchronously
+		currentTask = CompletableFuture.runAsync(() -> {
+			try {
+				LOGGER.info("Starting registration for experiment: " + experiment.getResultsDirectory());
+
+				ProcessingResult<RegistrationProcessor.RegistrationResult> result = registrationProcessor
+						.correctDriftAndRotation(experiment, options);
+
+				if (result.isFailure()) {
+					showError("Registration failed: " + result.getErrorMessage());
+				} else {
+					RegistrationProcessor.RegistrationResult registrationResult = result.getDataOrThrow();
+					showSuccess(
+							"Registration completed successfully. Processed: " + registrationResult.getFramesProcessed()
+									+ " frames, Corrected: " + registrationResult.getFramesCorrected() + " frames");
+				}
+
+			} catch (Exception e) {
+				LOGGER.severe("Unexpected error during registration: " + e.getMessage());
+				showError("Unexpected error during registration: " + e.getMessage());
+			}
+		});
+
+		updateButtonStates();
 		runButton.setText("STOP");
 	}
 
-	private BuildSeriesOptions initParameters(Experiment exp) {
-		BuildSeriesOptions options = new BuildSeriesOptions();
-		int referenceFrame = (int) referenceFrameJSpinner.getValue();
+	/**
+	 * Stops the current computation.
+	 */
+	private void stopComputation() {
+		if (currentTask != null && !currentTask.isDone()) {
+			currentTask.cancel(true);
+			LOGGER.info("Registration stopped by user");
+		}
+		updateButtonStates();
+		runButton.setText("Run");
+	}
 
-		options.fromFrame = (int) startFrameJSpinner.getValue();
-		options.toFrame = referenceFrame - 1;
-		options.referenceFrame = referenceFrame;
-		options.expList = parent0.expListCombo;
-		options.transformop = ImageTransformEnums.NONE;
+	/**
+	 * Creates registration options from current UI state.
+	 */
+	private RegistrationOptions createRegistrationOptions(Experiment experiment) {
+		int referenceFrame = (int) referenceFrameJSpinner.getValue();
+		int startFrame = 0; // (int) startFrameJSpinner.getValue();
+
+		return new RegistrationOptions() //
+				.fromFrame(startFrame) //
+				.toFrame(referenceFrame - 1) //
+				.referenceFrame(referenceFrame) //
+				.translationThreshold(0.001) //
+				.rotationThreshold(0.001) //
+				.transformOptions(createTransformOptions(ImageTransformEnums.NONE)) //
+				.saveCorrectedImages(true) //
+				.preserveImageSize(true) //
+				.referenceChannel(0) //
+				.progressReporter(new ProgressReporter() {
+					@Override
+					public void updateMessage(String message) {
+						// Update progress message if needed
+					}
+
+					@Override
+					public void updateProgress(int percentage) {
+						// Update progress percentage if needed
+					}
+
+					@Override
+					public void completed() {
+						updateButtonStates();
+					}
+
+					@Override
+					public void failed(String errorMessage) {
+						showError(errorMessage);
+						updateButtonStates();
+					}
+
+					@Override
+					public boolean isCancelled() {
+						return false;
+					}
+				});
+	}
+
+	private ImageTransformOptions createTransformOptions(ImageTransformEnums transform) {
+		ImageTransformOptions options = new ImageTransformOptions();
+		options.transformOption = transform;
 		return options;
 	}
 
-	private void stopComputation() {
-		if (registration != null && !registration.stopFlag)
-			registration.stopFlag = true;
-		runButton.setText("Run registration");
+	/**
+	 * Shows an error message to the user.
+	 */
+	private void showError(String message) {
+		LOGGER.warning("User error: " + message);
+		// In a real implementation, you'd show this in the UI
+		// For now, we'll just log it
+	}
+
+	/**
+	 * Shows a success message to the user.
+	 */
+	private void showSuccess(String message) {
+		LOGGER.info("Success: " + message);
+		// In a real implementation, you'd show this in the UI
+		// For now, we'll just log it
 	}
 
 	@Override
@@ -316,10 +451,6 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 			runButton.removePropertyChangeListener(this);
 		}
 	}
-
-//	private void displayTransform(Experiment exp) {
-//		updateTransformFunctionsOfCanvas(exp);
-//	}
 
 	private boolean testTranslation(Experiment exp, int x, int y) {
 		int squareSize = (int) squareSizeSpinner.getValue();
@@ -334,17 +465,6 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 		if (v == null)
 			return false;
 
-//		Vector2d translation = new Vector2d(x, y);
-//		int t = (int) referenceFrameJSpinner.getValue();
-//		Sequence seq = exp.seqCamData.getSequence();
-//		IcyBufferedImage workImage = seq.getImage(t, 0);
-//		workImage = GaspardRigidRegistration.applyTranslation2D(workImage, -1, translation, true);
-//		seq.setImage(t, 0, workImage);
-//
-//		String fileName = exp.seqCamData.getFileNameFromImageList(t);
-//		File outputfile = new File(fileName);
-//		RenderedImage image = ImageUtil.toRGBImage(workImage);
-//		return ImageUtil.save(image, "jpg", outputfile);
 		return true;
 	}
 
