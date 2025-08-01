@@ -239,25 +239,6 @@ public class SpotMeasure {
 		spotLevel2D.transferIsPresent(isPresent);
 	}
 
-	public boolean exportYDataToCsv(StringBuilder sbf, String separator) {
-		transferValuesToLevel2D();
-		return spotLevel2D.exportYDataToCsv(sbf, separator);
-	}
-
-	public boolean importXYDataFromCsv(String[] data, int startAt) {
-		boolean flag = spotLevel2D.importXYDataFromCsv(data, startAt);
-		if (flag)
-			values = spotLevel2D.transferLevel2DToValues();
-		return flag;
-	}
-
-	public boolean importYDataFromCsv(String[] data, int startAt) {
-		boolean flag = spotLevel2D.importYDataFromCsv(data, startAt);
-		if (flag)
-			values = spotLevel2D.transferLevel2DToValues();
-		return flag;
-	}
-
 	// === PRIVATE HELPER METHODS ===
 
 	private void addValues(double[] sourceValues) {
@@ -353,4 +334,84 @@ public class SpotMeasure {
 		}
 
 	}
+
+	// === CSV EXPORT/IMPORT ===
+
+	/**
+	 * Exports Y data to CSV row.
+	 * 
+	 * @param sbf       the string buffer
+	 * @param separator the separator
+	 * @return true if successful
+	 */
+	public boolean exportYDataToCsv(StringBuilder sbf, String separator) {
+		if (values == null || values.length < 1) {
+			return false;
+		}
+		sbf.append(values.length);
+		sbf.append(separator);
+		for (int i = 0; i < values.length; i++) {
+			if (i > 0) {
+				sbf.append(separator);
+			}
+			sbf.append(values[i]);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Imports XY data from CSV row.
+	 * 
+	 * @param data    the CSV data
+	 * @param startAt the starting index
+	 * @return true if successful
+	 */
+	public boolean importXYDataFromCsv(String[] data, int startAt) {
+		if (data == null || data.length < startAt + 2) {
+			return false;
+		}
+
+		try {
+			int npoints = (data.length - startAt) / 2;
+			if (values == null || values.length != npoints)
+				values = new double[npoints];
+
+			for (int i = 0; i < npoints; i++) {
+				values[i] = Double.parseDouble(data[startAt + i * 2 + 1]);
+			}
+
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Imports Y data from CSV row.
+	 * 
+	 * @param data    the CSV data
+	 * @param startAt the starting index
+	 * @return true if successful
+	 */
+	public boolean importYDataFromCsv(String[] data, int startAt) {
+		if (data == null || data.length < startAt + 1) {
+			return false;
+		}
+
+		try {
+			int npoints = data.length - startAt;
+			if (values == null || values.length != npoints)
+				values = new double[npoints];
+
+			for (int i = 0; i < npoints; i++) {
+				values[i] = Double.parseDouble(data[startAt + i]);
+			}
+			return true;
+
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
 }
