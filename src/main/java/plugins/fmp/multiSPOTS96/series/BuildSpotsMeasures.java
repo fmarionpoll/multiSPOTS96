@@ -32,6 +32,11 @@ public class BuildSpotsMeasures extends BuildSeries {
 	ImageTransformOptions transformOptions02 = null;
 	ImageTransformInterface transformFunctionFly = null;
 
+	// Memory optimization constants - now configurable via options
+	// private static final int BATCH_SIZE = 10; // Process frames in batches
+	// private static final int MAX_CONCURRENT_TASKS = 4; // Limit concurrent processing
+	// private static final boolean ENABLE_MEMORY_CLEANUP = true;
+
 	// --------------------------------------------
 
 	void analyzeExperiment(Experiment exp) {
@@ -107,16 +112,35 @@ public class BuildSpotsMeasures extends BuildSeries {
 		vData.setTitle(exp.seqCamData.getCSCamFileName() + ": " + iiFirst + "-" + iiLast);
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack");
 
-		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
+		final Processor processor = new Processor(Math.min(options.maxConcurrentTasks, SystemUtil.getNumberOfCPUs()));
 		processor.setThreadName("measureSpots");
 		processor.setPriority(Processor.NORM_PRIORITY);
-		int ntasks = iiLast - iiFirst;
-		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(ntasks);
-		tasks.clear();
 
 		initMeasureSpots(exp);
 
-		for (int ii = iiFirst; ii < iiLast; ii++) {
+		// Process frames in batches to control memory usage
+		for (int batchStart = iiFirst; batchStart < iiLast; batchStart += options.batchSize) {
+			if (stopFlag) break;
+			
+			int batchEnd = Math.min(batchStart + options.batchSize, iiLast);
+			processFrameBatch(exp, batchStart, batchEnd, iiFirst, iiLast, processor, progressBar1);
+			
+			// Force garbage collection between batches
+			if (options.enableMemoryCleanup) {
+				System.gc();
+			}
+		}
+		
+		progressBar1.close();
+		return true;
+	}
+
+	private void processFrameBatch(Experiment exp, int batchStart, int batchEnd, int iiFirst, int iiLast, 
+			Processor processor, ProgressFrame progressBar1) {
+		
+		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(batchEnd - batchStart);
+
+		for (int ii = batchStart; ii < batchEnd; ii++) {
 			if (options.concurrentDisplay) {
 				IcyBufferedImage sourceImage0 = imageIORead(exp.seqCamData.getFileNameFromImageList(ii));
 				seqData.setImage(0, 0, sourceImage0);
@@ -132,70 +156,123 @@ public class BuildSpotsMeasures extends BuildSeries {
 				continue;
 			}
 
-			final IcyBufferedImage sourceImage = imageIORead(fileName);
-			final IcyBufferedImage transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage,
-					transformOptions01);
-			final IcyBufferedImage transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage,
-					transformOptions02);
-			final IcyBufferedImageCursor cursorToDetectFly = new IcyBufferedImageCursor(transformToDetectFly);
-			final IcyBufferedImageCursor cursorToMeasureArea = new IcyBufferedImageCursor(transformToMeasureArea);
-
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-
-					int ii_local = t - iiFirst;
-					for (Cage cage : exp.cagesArray.cagesList) {
-						for (Spot spot : cage.spotsArray.getSpotsList()) {
-							if (!spot.isReadyForAnalysis()) {
-								continue;
-							}
-
-							ROI2DWithMask roiT = spot.getROIMask();
-							ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly,
-									roiT);
-							spot.getFlyPresent().setIsPresentAt(ii_local, results.nPoints_fly_present);
-							spot.getSum().setValueAt(ii_local, results.sumOverThreshold / results.npoints_in);
-							if (results.nPoints_no_fly != results.npoints_in)
-								spot.getSum().setValueAt(ii_local,
-										results.sumTot_no_fly_over_threshold / results.nPoints_no_fly);
-						}
-					}
+					processSingleFrame(exp, t, iiFirst, fileName);
 				}
 			}));
 		}
+		
 		waitFuturesCompletion(processor, tasks, null);
-		progressBar1.close();
-		return true;
+	}
+
+	private void processSingleFrame(Experiment exp, int frameIndex, int iiFirst, String fileName) {
+		IcyBufferedImage sourceImage = null;
+		IcyBufferedImage transformToMeasureArea = null;
+		IcyBufferedImage transformToDetectFly = null;
+		IcyBufferedImageCursor cursorToDetectFly = null;
+		IcyBufferedImageCursor cursorToMeasureArea = null;
+		
+		try {
+			sourceImage = imageIORead(fileName);
+			transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage, transformOptions01);
+			transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage, transformOptions02);
+			
+			cursorToDetectFly = new IcyBufferedImageCursor(transformToDetectFly);
+			cursorToMeasureArea = new IcyBufferedImageCursor(transformToMeasureArea);
+
+			int ii_local = frameIndex - iiFirst;
+			for (Cage cage : exp.cagesArray.cagesList) {
+				for (Spot spot : cage.spotsArray.getSpotsList()) {
+					if (!spot.isReadyForAnalysis()) {
+						continue;
+					}
+
+					ROI2DWithMask roiT = spot.getROIMask();
+					ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly, roiT);
+					spot.getFlyPresent().setIsPresentAt(ii_local, results.nPoints_fly_present);
+					spot.getSum().setValueAt(ii_local, results.sumOverThreshold / results.npoints_in);
+					if (results.nPoints_no_fly != results.npoints_in)
+						spot.getSum().setValueAt(ii_local,
+								results.sumTot_no_fly_over_threshold / results.nPoints_no_fly);
+				}
+			}
+		} finally {
+			// Clean up image resources
+			if (options.enableMemoryCleanup) {
+				if (sourceImage != null) sourceImage = null;
+				if (transformToMeasureArea != null) transformToMeasureArea = null;
+				if (transformToDetectFly != null) transformToDetectFly = null;
+				if (cursorToDetectFly != null) cursorToDetectFly = null;
+				if (cursorToMeasureArea != null) cursorToMeasureArea = null;
+			}
+		}
 	}
 
 	private ResultsThreshold measureSpotOverThreshold(IcyBufferedImageCursor cursorToMeasureArea,
 			IcyBufferedImageCursor cursorToDetectFly, ROI2DWithMask roiT) {
 
 		ResultsThreshold result = new ResultsThreshold();
-		Point[] maskPoints = roiT.getMaskPoints();
-		if (maskPoints == null) {
-			result.npoints_in = 0;
-			return result;
-		}
-		result.npoints_in = maskPoints.length;
+		
+		if (options.usePrimitiveArrays) {
+			// Use memory-efficient primitive arrays instead of Point objects
+			int[][] maskCoords = roiT.getMaskPointsAsArrays();
+			if (maskCoords == null) {
+				result.npoints_in = 0;
+				return result;
+			}
+			
+			int[] maskX = maskCoords[0];
+			int[] maskY = maskCoords[1];
+			result.npoints_in = maskX.length;
 
-		for (int offset = 0; offset < maskPoints.length; offset++) {
-			Point pt = maskPoints[offset];
-			int value = (int) cursorToMeasureArea.get((int) pt.getX(), (int) pt.getY(), 0);
-			int value_to_detect_fly = (int) cursorToDetectFly.get((int) pt.getX(), (int) pt.getY(), 0);
+			for (int offset = 0; offset < maskX.length; offset++) {
+				int x = maskX[offset];
+				int y = maskY[offset];
+				int value = (int) cursorToMeasureArea.get(x, y, 0);
+				int value_to_detect_fly = (int) cursorToDetectFly.get(x, y, 0);
 
-			boolean isFlyThere = isFlyPresent(value_to_detect_fly);
-			if (!isFlyThere) {
-				result.nPoints_no_fly++;
-			} else
-				result.nPoints_fly_present++;
-
-			if (isOverThreshold(value)) {
-				result.sumOverThreshold += value;
-				result.nPointsOverThreshold++;
+				boolean isFlyThere = isFlyPresent(value_to_detect_fly);
 				if (!isFlyThere) {
-					result.sumTot_no_fly_over_threshold += value;
+					result.nPoints_no_fly++;
+				} else
+					result.nPoints_fly_present++;
+
+				if (isOverThreshold(value)) {
+					result.sumOverThreshold += value;
+					result.nPointsOverThreshold++;
+					if (!isFlyThere) {
+						result.sumTot_no_fly_over_threshold += value;
+					}
+				}
+			}
+		} else {
+			// Use original Point[] approach for backward compatibility
+			Point[] maskPoints = roiT.getMaskPoints();
+			if (maskPoints == null) {
+				result.npoints_in = 0;
+				return result;
+			}
+			result.npoints_in = maskPoints.length;
+
+			for (int offset = 0; offset < maskPoints.length; offset++) {
+				Point pt = maskPoints[offset];
+				int value = (int) cursorToMeasureArea.get((int) pt.getX(), (int) pt.getY(), 0);
+				int value_to_detect_fly = (int) cursorToDetectFly.get((int) pt.getX(), (int) pt.getY(), 0);
+
+				boolean isFlyThere = isFlyPresent(value_to_detect_fly);
+				if (!isFlyThere) {
+					result.nPoints_no_fly++;
+				} else
+					result.nPoints_fly_present++;
+
+				if (isOverThreshold(value)) {
+					result.sumOverThreshold += value;
+					result.nPointsOverThreshold++;
+					if (!isFlyThere) {
+						result.sumTot_no_fly_over_threshold += value;
+					}
 				}
 			}
 		}

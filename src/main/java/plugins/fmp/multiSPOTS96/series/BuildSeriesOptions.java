@@ -91,6 +91,13 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public int background_jitter = 1;
 	public int spotRadius = 5;
 
+	// Memory optimization options
+	public int batchSize = 10; // Number of frames to process in each batch
+	public int maxConcurrentTasks = 4; // Maximum number of concurrent processing tasks
+	public boolean enableMemoryCleanup = true; // Enable explicit memory cleanup
+	public boolean usePrimitiveArrays = true; // Use primitive arrays instead of Point objects
+	public boolean enableGarbageCollection = true; // Force GC between batches
+
 	// -----------------------
 
 	void copyTo(BuildSeriesOptions destination) {

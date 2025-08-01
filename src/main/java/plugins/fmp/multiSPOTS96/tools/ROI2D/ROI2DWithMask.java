@@ -29,6 +29,9 @@ public class ROI2DWithMask implements XMLPersistent {
 	private BooleanMask2D inputMask = null;
 	private BooleanMask2D inputMaskNoFly = null;
 	private Point[] maskPoints = null;
+	// Memory-efficient alternative using primitive arrays
+	private int[] maskX = null;
+	private int[] maskY = null;
 	private int yMax = 0;
 	private int yMin = 0;
 
@@ -111,6 +114,62 @@ public class ROI2DWithMask implements XMLPersistent {
 	 */
 	public Point[] getMaskPoints() {
 		return maskPoints != null ? maskPoints.clone() : null;
+	}
+
+	/**
+	 * Gets the mask points as primitive arrays for memory efficiency.
+	 * 
+	 * @return Array containing [xCoords, yCoords] or null if no mask
+	 */
+	public int[][] getMaskPointsAsArrays() {
+		if (maskPoints == null || maskPoints.length == 0) {
+			return null;
+		}
+		
+		if (maskX == null || maskY == null) {
+			// Convert Point[] to primitive arrays
+			maskX = new int[maskPoints.length];
+			maskY = new int[maskPoints.length];
+			for (int i = 0; i < maskPoints.length; i++) {
+				maskX[i] = maskPoints[i].x;
+				maskY[i] = maskPoints[i].y;
+			}
+		}
+		
+		return new int[][]{maskX, maskY};
+	}
+
+	/**
+	 * Gets the number of mask points.
+	 * 
+	 * @return Number of mask points
+	 */
+	public int getMaskPointCount() {
+		return maskPoints != null ? maskPoints.length : 0;
+	}
+
+	/**
+	 * Gets a single mask point by index using primitive coordinates.
+	 * 
+	 * @param index The point index
+	 * @return Array [x, y] or null if invalid index
+	 */
+	public int[] getMaskPointAt(int index) {
+		if (maskPoints == null || index < 0 || index >= maskPoints.length) {
+			return null;
+		}
+		
+		if (maskX == null || maskY == null) {
+			// Convert Point[] to primitive arrays
+			maskX = new int[maskPoints.length];
+			maskY = new int[maskPoints.length];
+			for (int i = 0; i < maskPoints.length; i++) {
+				maskX[i] = maskPoints[i].x;
+				maskY[i] = maskPoints[i].y;
+			}
+		}
+		
+		return new int[]{maskX[index], maskY[index]};
 	}
 
 	/**
@@ -199,6 +258,8 @@ public class ROI2DWithMask implements XMLPersistent {
 		inputMask = null;
 		inputMaskNoFly = null;
 		maskPoints = null;
+		maskX = null;
+		maskY = null;
 		yMax = 0;
 		yMin = 0;
 	}
