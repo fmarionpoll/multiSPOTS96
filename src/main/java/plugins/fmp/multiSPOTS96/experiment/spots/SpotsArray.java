@@ -543,7 +543,7 @@ public class SpotsArray {
 			SpotMeasure sumIn = spot.getSum();
 			SpotMeasure sumClean = spot.getSumClean();
 			if (sumIn != null && sumClean != null) {
-				sumClean.buildRunningMedianFromValuesArray(span, sumIn.getValuesArray());
+				sumClean.buildRunningMedianFromValuesArray(span, sumIn.getValues());
 			}
 		});
 	}

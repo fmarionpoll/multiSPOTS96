@@ -8,7 +8,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,8 +20,6 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceKymos;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotMeasure;
-import plugins.fmp.multiSPOTS96.series.BuildMedianFromSpotMeasure;
-import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 
 public class Edit extends JPanel implements PropertyChangeListener {
 	/**
@@ -36,8 +33,7 @@ public class Edit extends JPanel implements PropertyChangeListener {
 	private JComboBox<String> directionCombo = new JComboBox<String>(new String[] { "up", "down" });
 	private String buildMedianString = "Build median";
 	private JButton buildMedianButton = new JButton(buildMedianString);
-	private JCheckBox allSeriesCheckBox = new JCheckBox("ALL (current to last)", false);
-	private BuildMedianFromSpotMeasure threadbuildMedian = null;
+
 	private MultiSPOTS96 parent0 = null;
 
 	void init(GridLayout capLayout, MultiSPOTS96 parent0) {
@@ -58,8 +54,6 @@ public class Edit extends JPanel implements PropertyChangeListener {
 		add(panel2);
 
 		JPanel panel3 = new JPanel(layoutLeft);
-		panel3.add(buildMedianButton);
-		panel3.add(allSeriesCheckBox);
 		add(panel3);
 
 		roiTypeCombo.setSelectedIndex(1);
@@ -85,50 +79,6 @@ public class Edit extends JPanel implements PropertyChangeListener {
 			}
 		});
 
-		buildMedianButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				if (buildMedianButton.getText().equals(buildMedianString))
-					startDetection();
-				else
-					stopDetection();
-			}
-		});
-	}
-
-	void startDetection() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-		if (exp != null) {
-			threadbuildMedian = new BuildMedianFromSpotMeasure();
-			threadbuildMedian.options = initDetectOptions(exp);
-			threadbuildMedian.addPropertyChangeListener(this);
-			threadbuildMedian.execute();
-			buildMedianButton.setText("STOP");
-		}
-	}
-
-	private void stopDetection() {
-		if (threadbuildMedian != null && !threadbuildMedian.stopFlag)
-			threadbuildMedian.stopFlag = true;
-	}
-
-	private BuildSeriesOptions initDetectOptions(Experiment exp) {
-		BuildSeriesOptions options = new BuildSeriesOptions();
-		// list of stack experiments
-		options.expList = parent0.expListCombo;
-		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
-		if (allSeriesCheckBox.isSelected())
-			options.expList.index1 = options.expList.getItemCount() - 1;
-		else
-			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
-		options.detectAllSeries = allSeriesCheckBox.isSelected();
-		if (!allSeriesCheckBox.isSelected()) {
-			options.seriesLast = options.seriesFirst;
-		} else {
-			options.seriesFirst = 0;
-		}
-
-		return options;
 	}
 
 	void cutAndInterpolate(Experiment exp) {
@@ -166,14 +116,14 @@ public class Edit extends JPanel implements PropertyChangeListener {
 	}
 
 	private void removeAndUpdate(SequenceKymos seqKymos, Spot spot, SpotMeasure spotMeasure, ROI2D roi) {
-		spotMeasure.cutAndInterpolatePointsEnclosedInSelectedRoi(roi);
-		spotMeasure.transferROItoLevel2D();
+		spotMeasure.getSpotLevel2D().cutAndInterpolatePointsEnclosedInSelectedRoi(roi);
+		spotMeasure.getSpotLevel2D().transferROItoLevel2D();
 	}
 
 	private void compensateAndUpdate(SequenceKymos seqKymos, Spot spot, SpotMeasure spotMeasure, ROI2D roi) {
 		boolean bAdd = (directionCombo.getSelectedIndex() == 0);
-		spotMeasure.compensateOffsetUsingSelectedRoi(roi, bAdd);
-		spotMeasure.transferROItoLevel2D();
+		spotMeasure.getSpotLevel2D().compensateOffsetUsingSelectedRoi(roi, bAdd);
+		spotMeasure.getSpotLevel2D().transferROItoLevel2D();
 	}
 
 	@Override

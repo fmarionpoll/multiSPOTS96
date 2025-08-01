@@ -624,15 +624,6 @@ public class Spot implements Comparable<Spot> {
 	}
 
 	/**
-	 * Builds running median from sum Level2D.
-	 * 
-	 * @param imageHeight the image height
-	 */
-	public void buildRunningMedianFromSumLevel2D(int imageHeight) {
-		measurements.buildRunningMedianFromSumLevel2D(imageHeight);
-	}
-
-	/**
 	 * Transfers spot measures to ROIs.
 	 * 
 	 * @param imageHeight the image height
@@ -839,7 +830,7 @@ public class Spot implements Comparable<Spot> {
 
 		private void restoreClippedMeasure(SpotMeasure measure) {
 			if (measure != null) {
-				measure.restoreCroppedLevel2D();
+				measure.getSpotLevel2D().restoreCroppedLevel2D();
 			}
 		}
 
@@ -854,44 +845,44 @@ public class Spot implements Comparable<Spot> {
 
 		void transferRoiMeasuresToLevel2D() {
 			if (sumIn != null)
-				sumIn.transferROItoLevel2D();
+				sumIn.getSpotLevel2D().transferROItoLevel2D();
 			if (sumClean != null)
-				sumClean.transferROItoLevel2D();
+				sumClean.getSpotLevel2D().transferROItoLevel2D();
 			if (flyPresent != null)
-				flyPresent.transferROItoLevel2D();
+				flyPresent.getSpotLevel2D().transferROItoLevel2D();
 		}
 
 		void adjustLevel2DMeasuresToImageWidth(int imageWidth) {
 			if (sumIn != null)
-				sumIn.adjustLevel2DToImageWidth(imageWidth);
+				sumIn.getSpotLevel2D().adjustLevel2DToImageWidth(imageWidth);
 			if (sumClean != null)
-				sumClean.adjustLevel2DToImageWidth(imageWidth);
+				sumClean.getSpotLevel2D().adjustLevel2DToImageWidth(imageWidth);
 			if (flyPresent != null)
-				flyPresent.adjustLevel2DToImageWidth(imageWidth);
+				flyPresent.getSpotLevel2D().adjustLevel2DToImageWidth(imageWidth);
 		}
 
 		void cropLevel2DMeasuresToImageWidth(int imageWidth) {
 			if (sumIn != null)
-				sumIn.cropLevel2DToNPoints(imageWidth);
+				sumIn.getSpotLevel2D().cropLevel2DToNPoints(imageWidth);
 			if (sumClean != null)
-				sumClean.cropLevel2DToNPoints(imageWidth);
+				sumClean.getSpotLevel2D().cropLevel2DToNPoints(imageWidth);
 			if (flyPresent != null)
-				flyPresent.cropLevel2DToNPoints(imageWidth);
+				flyPresent.getSpotLevel2D().cropLevel2DToNPoints(imageWidth);
 		}
 
 		void initializeLevel2DMeasures() {
 			if (sumIn != null)
-				sumIn.clearLevel2D();
+				sumIn.getSpotLevel2D().clearLevel2D();
 			if (sumClean != null)
-				sumClean.clearLevel2D();
+				sumClean.getSpotLevel2D().clearLevel2D();
 			if (flyPresent != null)
-				flyPresent.clearLevel2D();
+				flyPresent.getSpotLevel2D().clearLevel2D();
 		}
 
 		List<ROI2D> transferLevel2DToRois(int imageHeight) {
 			List<ROI2D> rois = new ArrayList<>();
 			if (sumIn != null) {
-				ROI2DPolyLine roi = sumIn.getROIForImage("sum", 0, imageHeight);
+				ROI2DPolyLine roi = sumIn.getSpotLevel2D().getROIForImage("sum", 0, imageHeight);
 				if (roi != null)
 					rois.add(roi);
 			}
@@ -909,19 +900,13 @@ public class Spot implements Comparable<Spot> {
 
 		private void transferRoiToMeasureValue(ROI2D roi, int imageHeight, SpotMeasure measure) {
 			if (roi != null && measure != null) {
-				measure.transferROItoLevel2D();
+				measure.getSpotLevel2D().transferROItoLevel2D();
 			}
 		}
 
 		private void transferRoiToMeasureBoolean(ROI2D roi, SpotMeasure measure) {
 			if (roi != null && measure != null) {
-				measure.transferROItoLevel2D();
-			}
-		}
-
-		void buildRunningMedianFromSumLevel2D(int imageHeight) {
-			if (sumIn != null && sumIn.getLevel2D() != null) {
-				sumIn.buildRunningMedianFromValuesArray(5, sumIn.getLevel2D().ypoints);
+				measure.getSpotLevel2D().transferROItoLevel2D();
 			}
 		}
 

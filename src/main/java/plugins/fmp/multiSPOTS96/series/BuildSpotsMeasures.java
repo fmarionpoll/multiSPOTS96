@@ -150,10 +150,11 @@ public class BuildSpotsMeasures extends BuildSeries {
 							if (!spot.isReadyForAnalysis()) {
 								continue;
 							}
-		
+
 							ROI2DWithMask roiT = spot.getROIMask();
-							ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly, roiT);
-							spot.getFlyPresent().setIsPresent(ii_local, results.nPoints_fly_present);
+							ResultsThreshold results = measureSpotOverThreshold(cursorToMeasureArea, cursorToDetectFly,
+									roiT);
+							spot.getFlyPresent().setIsPresentAt(ii_local, results.nPoints_fly_present);
 							spot.getSum().setValueAt(ii_local, results.sumOverThreshold / results.npoints_in);
 							if (results.nPoints_no_fly != results.npoints_in)
 								spot.getSum().setValueAt(ii_local,
@@ -224,9 +225,9 @@ public class BuildSpotsMeasures extends BuildSeries {
 				spot.getProperties().setCagePosition(spotPosition);
 				spot.getProperties().setCageID(cage.getProperties().getCageID());
 				spot.getProperties().setSpotArrayIndex(spotArrayGlobalIndex);
-				spot.getSum().setValuesArray(new double[nFrames]);
-				spot.getSumClean().setValuesArray(new double[nFrames]);
-				spot.getFlyPresent().setIsPresentArray(new int[nFrames]);
+				spot.getSum().setValues(new double[nFrames]);
+				spot.getSumClean().setValues(new double[nFrames]);
+				spot.getFlyPresent().setIsPresent(new int[nFrames]);
 				spotArrayGlobalIndex++;
 				spotPosition++;
 			}

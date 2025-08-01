@@ -17,7 +17,6 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CageProperties;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.experiment.spots.SpotMeasure;
-import plugins.fmp.multiSPOTS96.tools.polyline.Level2D;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 
@@ -202,7 +201,8 @@ public class ChartCageBuild {
 	 * @param options    list of options
 	 * @return XYSeriesCollection containing the cage's data
 	 */
-	static XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage, XLSExportOptions xlsExportOptions) {
+	static XYSeriesCollection getSpotDataDirectlyFromOneCage(Experiment exp, Cage cage,
+			XLSExportOptions xlsExportOptions) {
 		if (cage == null || cage.spotsArray == null || cage.spotsArray.getSpotsCount() < 1) {
 			LOGGER.warning("Cannot get spot data: spot array is empty or cage is null");
 			return new XYSeriesCollection();
@@ -243,24 +243,24 @@ public class ChartCageBuild {
 				+ color.getBlue();
 	}
 
-	private static XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot, XLSExportOptions xlsExportOptions) {
+	private static XYSeries createXYSeriesFromSpotMeasure(Experiment exp, Spot spot,
+			XLSExportOptions xlsExportOptions) {
 		XYSeries seriesXY = new XYSeries(spot.getName(), false);
 
 		if (exp.seqCamData.getTimeManager().getCamImagesTime_Ms() == null)
 			exp.seqCamData.build_MsTimesArray_From_FileNamesList();
 		double[] camImages_time_min = exp.seqCamData.getTimeManager().getCamImagesTime_Minutes();
 		SpotMeasure spotMeasure = spot.getMeasurements(xlsExportOptions.exportType);
-		Level2D spotLevel2D = spotMeasure.getLevel2D();
 		double divider = 1.;
 		if (xlsExportOptions.relativeToT0 && xlsExportOptions.exportType != EnumXLSExport.AREA_FLYPRESENT) {
-			divider = spotLevel2D.getMaximum_Y();
+			divider = spotMeasure.getMaximumValue();
 		}
 
-		int npoints = spotMeasure.getLevel2DNPoints();
+		int npoints = spotMeasure.getCount();
 
 		for (int j = 0; j < npoints; j++) {
 			double x = camImages_time_min[j];
-			double y = spotLevel2D.getYAt(j) / divider;
+			double y = spotMeasure.getValueAt(j) / divider;
 			seriesXY.add(x, y);
 
 			if (ymax < y) {

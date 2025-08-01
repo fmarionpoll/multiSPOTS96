@@ -3,7 +3,6 @@ package plugins.fmp.multiSPOTS96.experiment.spots;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,7 +66,7 @@ public class SpotLevel2D {
 		setLevel2D(new Level2D());
 	}
 
-	public void transferValuesToLevel2D(double[] values) {
+	public void transferValues(double[] values) {
 		if (values == null || values.length == 0) {
 			return;
 		}
@@ -89,7 +88,7 @@ public class SpotLevel2D {
 		return values;
 	}
 
-	public void transferIsPresentToLevel2D(int[] isPresent) {
+	public void transferIsPresent(int[] isPresent) {
 		if (isPresent == null || isPresent.length == 0) {
 			return;
 		}
@@ -288,37 +287,6 @@ public class SpotLevel2D {
 		if (polyline != null) {
 			level2D = new Level2D(polyline);
 		}
-	}
-
-	// === MEDIAN PROCESSING ===
-
-	/**
-	 * Builds running median.
-	 * 
-	 * @param span    the span
-	 * @param yvalues the Y values
-	 */
-	public void buildRunningMedianFromValuesArray(int span, double[] yvalues) {
-		if (yvalues == null || yvalues.length == 0) {
-			return;
-		}
-
-		int npoints = yvalues.length;
-
-		for (int i = 0; i < npoints; i++) {
-			int start = Math.max(0, i - span / 2);
-			int end = Math.min(npoints - 1, i + span / 2);
-			int count = end - start + 1;
-
-			double[] window = new double[count];
-			for (int j = 0; j < count; j++) {
-				window[j] = yvalues[start + j];
-			}
-
-			Arrays.sort(window);
-			level2D.ypoints[i] = window[count / 2];
-		}
-
 	}
 
 	// === OFFSET COMPENSATION ===

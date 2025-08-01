@@ -31,6 +31,7 @@ public class SpotMeasure {
 	public SpotMeasure(String name) {
 		this.name = Objects.requireNonNull(name, "Name cannot be null");
 		this.factor = DEFAULT_FACTOR;
+		this.spotLevel2D = new SpotLevel2D(name);
 	}
 
 	// === CORE OPERATIONS ===
@@ -167,6 +168,8 @@ public class SpotMeasure {
 	// === DATA ACCESS ===
 
 	public int getCount() {
+		if (values == null)
+			return 0;
 		return values.length;
 	}
 
@@ -222,8 +225,37 @@ public class SpotMeasure {
 		this.measuredFromNSpots = n;
 	}
 
+	// == interactions with Level2D ====
+
 	public SpotLevel2D getSpotLevel2D() {
 		return spotLevel2D;
+	}
+
+	public void transferValuesToLevel2D() {
+		spotLevel2D.transferValues(values);
+	}
+
+	public void transferIsPresentToLevel2D() {
+		spotLevel2D.transferIsPresent(isPresent);
+	}
+
+	public boolean exportYDataToCsv(StringBuilder sbf, String separator) {
+		transferValuesToLevel2D();
+		return spotLevel2D.exportYDataToCsv(sbf, separator);
+	}
+
+	public boolean importXYDataFromCsv(String[] data, int startAt) {
+		boolean flag = spotLevel2D.importXYDataFromCsv(data, startAt);
+		if (flag)
+			values = spotLevel2D.transferLevel2DToValues();
+		return flag;
+	}
+
+	public boolean importYDataFromCsv(String[] data, int startAt) {
+		boolean flag = spotLevel2D.importYDataFromCsv(data, startAt);
+		if (flag)
+			values = spotLevel2D.transferLevel2DToValues();
+		return flag;
 	}
 
 	// === PRIVATE HELPER METHODS ===
@@ -289,5 +321,36 @@ public class SpotMeasure {
 	public String toString() {
 		return String.format("SpotMeasure{name='%s', factor=%.2f, hasValues=%b, hasPresence=%b}", name, factor,
 				values != null, isPresent != null);
+	}
+
+	// === MEDIAN PROCESSING ===
+
+	/**
+	 * Builds running median.
+	 * 
+	 * @param span    the span
+	 * @param yvalues the Y values
+	 */
+	public void buildRunningMedianFromValuesArray(int span, double[] yvalues) {
+		if (yvalues == null || yvalues.length == 0) {
+			return;
+		}
+
+		int npoints = yvalues.length;
+
+		for (int i = 0; i < npoints; i++) {
+			int start = Math.max(0, i - span / 2);
+			int end = Math.min(npoints - 1, i + span / 2);
+			int count = end - start + 1;
+
+			double[] window = new double[count];
+			for (int j = 0; j < count; j++) {
+				window[j] = yvalues[start + j];
+			}
+
+			Arrays.sort(window);
+			values[i] = window[count / 2];
+		}
+
 	}
 }
