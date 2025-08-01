@@ -1,9 +1,6 @@
 package plugins.fmp.multiSPOTS96.series;
 
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,18 +9,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
-import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageCursor;
 import icy.sequence.Sequence;
-import icy.system.SystemUtil;
-import icy.system.thread.Processor;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
@@ -39,36 +31,34 @@ import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
  * Advanced optimized version of BuildSpotsMeasures with streaming processing,
  * compressed mask storage, and memory pool optimizations.
  * 
- * Features:
- * - Streaming image processing to avoid loading entire stack
- * - Compressed mask storage using run-length encoding
- * - Memory pool for reusing image objects
- * - Adaptive batch sizing based on available memory
- * - Advanced memory monitoring and management
+ * Features: - Streaming image processing to avoid loading entire stack -
+ * Compressed mask storage using run-length encoding - Memory pool for reusing
+ * image objects - Adaptive batch sizing based on available memory - Advanced
+ * memory monitoring and management
  */
 public class BuildSpotsMeasuresAdvanced extends BuildSeries {
-	
+
 	// === MEMORY POOL ===
 	private final LinkedBlockingQueue<IcyBufferedImage> imagePool = new LinkedBlockingQueue<>();
 	private final LinkedBlockingQueue<IcyBufferedImageCursor> cursorPool = new LinkedBlockingQueue<>();
 	private final int MAX_POOL_SIZE = 20;
 	private final AtomicInteger poolHits = new AtomicInteger(0);
 	private final AtomicInteger poolMisses = new AtomicInteger(0);
-	
+
 	// === STREAMING PROCESSING ===
 	private final StreamingImageProcessor streamingProcessor;
 	private final int STREAM_BUFFER_SIZE = 5; // Number of images to pre-load
-	
+
 	// === COMPRESSED MASK STORAGE ===
 	private final ConcurrentHashMap<String, CompressedMask> compressedMasks = new ConcurrentHashMap<>();
-	
+
 	// === ADAPTIVE MEMORY MANAGEMENT ===
 	private final MemoryMonitor memoryMonitor;
 	private final AdaptiveBatchSizer adaptiveBatchSizer;
-	
+
 	// === CONFIGURATION ===
 	private final AdvancedMemoryOptions advancedOptions;
-	
+
 	// === TRADITIONAL FIELDS ===
 	public Sequence seqData = new Sequence();
 	private ViewerFMP vData = null;
@@ -79,8 +69,11 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 	// --------------------------------------------
 
-	public BuildSpotsMeasuresAdvanced() {
-		this.advancedOptions = new AdvancedMemoryOptions();
+	public BuildSpotsMeasuresAdvanced(AdvancedMemoryOptions advancedOptions) {
+		if (advancedOptions == null)
+			this.advancedOptions = new AdvancedMemoryOptions();
+		else
+			this.advancedOptions = advancedOptions;
 		this.streamingProcessor = new StreamingImageProcessor(STREAM_BUFFER_SIZE);
 		this.memoryMonitor = new MemoryMonitor();
 		this.adaptiveBatchSizer = new AdaptiveBatchSizer(memoryMonitor);
@@ -169,15 +162,17 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 		try {
 			// Process frames using streaming approach
-			for (int batchStart = iiFirst; batchStart < iiLast; batchStart += adaptiveBatchSizer.getCurrentBatchSize()) {
-				if (stopFlag) break;
-				
+			for (int batchStart = iiFirst; batchStart < iiLast; batchStart += adaptiveBatchSizer
+					.getCurrentBatchSize()) {
+				if (stopFlag)
+					break;
+
 				int batchEnd = Math.min(batchStart + adaptiveBatchSizer.getCurrentBatchSize(), iiLast);
 				processFrameBatchAdvanced(exp, batchStart, batchEnd, iiFirst, iiLast, progressBar1);
-				
+
 				// Update adaptive batch sizing based on memory usage
 				adaptiveBatchSizer.updateBatchSize(memoryMonitor.getMemoryUsagePercent());
-				
+
 				// Force garbage collection if memory pressure is high
 				if (memoryMonitor.getMemoryUsagePercent() > advancedOptions.memoryThresholdPercent) {
 					System.gc();
@@ -186,20 +181,17 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		} finally {
 			streamingProcessor.stop();
 		}
-		
+
 		progressBar1.close();
 		return true;
 	}
 
-	private void processFrameBatchAdvanced(Experiment exp, int batchStart, int batchEnd, int iiFirst, int iiLast, 
+	private void processFrameBatchAdvanced(Experiment exp, int batchStart, int batchEnd, int iiFirst, int iiLast,
 			ProgressFrame progressBar1) {
-		
-		ThreadPoolExecutor executor = new ThreadPoolExecutor(
-			advancedOptions.maxConcurrentTasks, 
-			advancedOptions.maxConcurrentTasks,
-			0L, TimeUnit.MILLISECONDS,
-			new LinkedBlockingQueue<>(batchEnd - batchStart)
-		);
+
+		ThreadPoolExecutor executor = new ThreadPoolExecutor(advancedOptions.maxConcurrentTasks,
+				advancedOptions.maxConcurrentTasks, 0L, TimeUnit.MILLISECONDS,
+				new LinkedBlockingQueue<>(batchEnd - batchStart));
 
 		ArrayList<Future<?>> tasks = new ArrayList<>(batchEnd - batchStart);
 
@@ -222,7 +214,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				}
 			}));
 		}
-		
+
 		waitFuturesCompletion(null, tasks, null);
 		executor.shutdown();
 	}
@@ -233,7 +225,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		IcyBufferedImage transformToDetectFly = null;
 		IcyBufferedImageCursor cursorToDetectFly = null;
 		IcyBufferedImageCursor cursorToMeasureArea = null;
-		
+
 		try {
 			// Get image from streaming processor
 			sourceImage = streamingProcessor.getImage(frameIndex);
@@ -245,27 +237,32 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			// Get transformed images from pool or create new ones
 			transformToMeasureArea = getImageFromPool();
 			transformToDetectFly = getImageFromPool();
-			
+
 			if (transformToMeasureArea == null) {
 				transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage, transformOptions01);
 			} else {
-				// For pool reuse, we need to create a new image since the interface doesn't support in-place transformation
-				IcyBufferedImage newTransformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage, transformOptions01);
+				// For pool reuse, we need to create a new image since the interface doesn't
+				// support in-place transformation
+				IcyBufferedImage newTransformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage,
+						transformOptions01);
 				// Copy data to the pooled image
-				// Note: This is a simplified approach - in a real implementation, you might want to implement
+				// Note: This is a simplified approach - in a real implementation, you might
+				// want to implement
 				// a more sophisticated image copying mechanism
 				transformToMeasureArea = newTransformToMeasureArea;
 			}
-			
+
 			if (transformToDetectFly == null) {
 				transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage, transformOptions02);
 			} else {
-				// For pool reuse, we need to create a new image since the interface doesn't support in-place transformation
-				IcyBufferedImage newTransformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage, transformOptions02);
+				// For pool reuse, we need to create a new image since the interface doesn't
+				// support in-place transformation
+				IcyBufferedImage newTransformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage,
+						transformOptions02);
 				// Copy data to the pooled image
 				transformToDetectFly = newTransformToDetectFly;
 			}
-			
+
 			// Get cursors from pool
 			cursorToDetectFly = getCursorFromPool(transformToDetectFly);
 			cursorToMeasureArea = getCursorFromPool(transformToMeasureArea);
@@ -278,7 +275,8 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 					}
 
 					ROI2DWithMask roiT = spot.getROIMask();
-					ResultsThreshold results = measureSpotOverThresholdCompressed(cursorToMeasureArea, cursorToDetectFly, roiT);
+					ResultsThreshold results = measureSpotOverThresholdCompressed(cursorToMeasureArea,
+							cursorToDetectFly, roiT);
 					spot.getFlyPresent().setIsPresentAt(ii_local, results.nPoints_fly_present);
 					spot.getSum().setValueAt(ii_local, results.sumOverThreshold / results.npoints_in);
 					if (results.nPoints_no_fly != results.npoints_in)
@@ -299,14 +297,14 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			IcyBufferedImageCursor cursorToDetectFly, ROI2DWithMask roiT) {
 
 		ResultsThreshold result = new ResultsThreshold();
-		
+
 		// Get compressed mask coordinates
 		CompressedMask compressedMask = getCompressedMask(roiT);
 		if (compressedMask == null) {
 			result.npoints_in = 0;
 			return result;
 		}
-		
+
 		int[] maskX = compressedMask.getXCoordinates();
 		int[] maskY = compressedMask.getYCoordinates();
 		result.npoints_in = maskX.length;
@@ -336,7 +334,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 	private CompressedMask getCompressedMask(ROI2DWithMask roiT) {
 		String maskKey = roiT.getInputRoi().getName() + "_" + System.identityHashCode(roiT.getInputRoi());
-		
+
 		return compressedMasks.computeIfAbsent(maskKey, key -> {
 			Point[] maskPoints = roiT.getMaskPoints();
 			if (maskPoints == null || maskPoints.length == 0) {
@@ -441,7 +439,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		imagePool.clear();
 		cursorPool.clear();
 		compressedMasks.clear();
-		
+
 		System.out.println("Memory Pool Stats - Hits: " + poolHits.get() + ", Misses: " + poolMisses.get());
 		System.out.println("Hit Rate: " + (poolHits.get() * 100.0 / (poolHits.get() + poolMisses.get())) + "%");
 	}
@@ -467,18 +465,6 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	// === INNER CLASSES ===
 
 	/**
-	 * Advanced memory optimization options.
-	 */
-	public static class AdvancedMemoryOptions {
-		public int maxConcurrentTasks = 4;
-		public int memoryThresholdPercent = 80;
-		public boolean enableCompression = true;
-		public boolean enableMemoryPool = true;
-		public boolean enableStreaming = true;
-		public int compressionLevel = Deflater.BEST_SPEED;
-	}
-
-	/**
 	 * Compressed mask storage using run-length encoding.
 	 */
 	public static class CompressedMask {
@@ -491,12 +477,12 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			this.xCoords = new int[points.length];
 			this.yCoords = new int[points.length];
 			this.originalSize = points.length * 8; // 4 bytes per int, 2 ints per point
-			
+
 			for (int i = 0; i < points.length; i++) {
 				xCoords[i] = points[i].x;
 				yCoords[i] = points[i].y;
 			}
-			
+
 			// Compress using run-length encoding for consecutive coordinates
 			this.compressedData = compressCoordinates(xCoords, yCoords);
 		}
@@ -516,12 +502,12 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		private byte[] compressCoordinates(int[] x, int[] y) {
 			// Simple run-length encoding for consecutive coordinates
 			ArrayList<Byte> compressed = new ArrayList<>();
-			
+
 			for (int i = 0; i < x.length; i++) {
-				if (i > 0 && x[i] == x[i-1] + 1 && y[i] == y[i-1]) {
+				if (i > 0 && x[i] == x[i - 1] + 1 && y[i] == y[i - 1]) {
 					// Same row, consecutive column
 					compressed.add((byte) 1);
-				} else if (i > 0 && x[i] == x[i-1] && y[i] == y[i-1] + 1) {
+				} else if (i > 0 && x[i] == x[i - 1] && y[i] == y[i - 1] + 1) {
 					// Same column, consecutive row
 					compressed.add((byte) 2);
 				} else {
@@ -533,7 +519,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 					compressed.add((byte) (y[i] & 0xFF));
 				}
 			}
-			
+
 			byte[] result = new byte[compressed.size()];
 			for (int i = 0; i < compressed.size(); i++) {
 				result[i] = compressed.get(i);
@@ -680,8 +666,8 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 		public void initialize(int totalFrames, long availableMemoryMB) {
 			// Calculate optimal batch size based on available memory
-			int optimalBatchSize = (int) Math.min(maxBatchSize, 
-				Math.max(minBatchSize, availableMemoryMB / 100)); // Rough estimate
+			int optimalBatchSize = (int) Math.min(maxBatchSize, Math.max(minBatchSize, availableMemoryMB / 100)); // Rough
+																													// estimate
 			this.currentBatchSize = Math.min(optimalBatchSize, totalFrames);
 		}
 
@@ -699,4 +685,4 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			return currentBatchSize;
 		}
 	}
-} 
+}

@@ -24,8 +24,9 @@ import icy.util.StringUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
+import plugins.fmp.multiSPOTS96.series.AdvancedMemoryOptions;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.series.BuildSpotsMeasures;
+import plugins.fmp.multiSPOTS96.series.BuildSpotsMeasuresAdvanced;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 
@@ -37,10 +38,9 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 
 	private String detectString = "Detect";
 	private JButton detectButton = new JButton(detectString);
+	private JComboBox<String> memUseComboBox = new JComboBox<String>(
+			new String[] { "balanced", "conservative", "aggressive" });
 	private JCheckBox allSeriesCheckBox = new JCheckBox("ALL (current to last)", false);
-
-//	private JCheckBox topSpotCheckBox = new JCheckBox("red", true);
-//	private JCheckBox bottomSpotCheckBox = new JCheckBox("blue spots", true);
 
 	private JLabel spotsFilterLabel = new JLabel("Spots filter");
 	private String[] directions = new String[] { " threshold >", " threshold <" };
@@ -53,7 +53,6 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	private JComboBox<ImageTransformEnums> spotsTransformsComboBox = new JComboBox<ImageTransformEnums>(transforms);
 	private JComboBox<String> spotsDirectionComboBox = new JComboBox<String>(directions);
 	private JSpinner spotsThresholdSpinner = new JSpinner(new SpinnerNumberModel(35, 0, 255, 1));
-//	private JCheckBox spotsOverlayCheckBox = new JCheckBox("overlay");
 	private JToggleButton viewButton1 = new JToggleButton("View");
 	private JToggleButton viewButton2 = new JToggleButton("View");
 
@@ -62,7 +61,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	private JComboBox<String> fliesDirectionComboBox = new JComboBox<String>(directions);
 	private JSpinner fliesThresholdSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 255, 1));
 
-	private BuildSpotsMeasures threadDetectLevels = null;
+	private BuildSpotsMeasuresAdvanced processor = null;
 	private MultiSPOTS96 parent0 = null;
 
 	public void init(GridLayout gridLayout, MultiSPOTS96 parent0) {
@@ -73,6 +72,8 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 
 		JPanel panel0 = new JPanel(layoutLeft);
 		panel0.add(detectButton);
+		panel0.add(new JLabel("memory use"));
+		panel0.add(memUseComboBox);
 		panel0.add(allSeriesCheckBox);
 //		panel0.add(topSpotCheckBox);
 //		panel0.add(bottomSpotCheckBox);
@@ -84,7 +85,6 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		panel1.add(spotsDirectionComboBox);
 		panel1.add(spotsThresholdSpinner);
 		panel1.add(viewButton1);
-//		panel1.add(spotsOverlayCheckBox);
 		add(panel1);
 
 		JPanel panel2 = new JPanel(layoutLeft);
@@ -231,20 +231,44 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		}
 	}
 
+	AdvancedMemoryOptions createMemoryOptionsAccordingToUserSelection() {
+		String selected = (String) memUseComboBox.getSelectedItem();
+		switch (selected) {
+		case "conservative":
+			return AdvancedMemoryOptions.createConservative();
+		case "aggressive":
+			return AdvancedMemoryOptions.createAggressive();
+		case "balanced":
+		default:
+			return AdvancedMemoryOptions.createBalanced();
+		}
+	}
+
 	void startDetection() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			threadDetectLevels = new BuildSpotsMeasures();
-			threadDetectLevels.options = initDetectOptions(exp);
-			threadDetectLevels.addPropertyChangeListener(this);
-			threadDetectLevels.execute();
+			// AdvancedMemoryOptions memOptions = new AdvancedMemoryOptions();
+			AdvancedMemoryOptions memOptions = createMemoryOptionsAccordingToUserSelection();
+			// Validate configuration
+			AdvancedMemoryOptions.ValidationResult result = memOptions.validate();
+			if (result.isValid()) {
+				System.out.println("Custom configuration is valid");
+				System.out.println(memOptions.getConfigurationSummary());
+			} else {
+				System.err.println("Configuration issues: " + result);
+			}
+
+			processor = new BuildSpotsMeasuresAdvanced(memOptions);
+			processor.options = initDetectOptions(exp);
+			processor.addPropertyChangeListener(this);
+			processor.execute();
 			detectButton.setText("STOP");
 		}
 	}
 
 	private void stopDetection() {
-		if (threadDetectLevels != null && !threadDetectLevels.stopFlag)
-			threadDetectLevels.stopFlag = true;
+		if (processor != null && !processor.stopFlag)
+			processor.stopFlag = true;
 	}
 
 	private BuildSeriesOptions initDetectOptions(Experiment exp) {
