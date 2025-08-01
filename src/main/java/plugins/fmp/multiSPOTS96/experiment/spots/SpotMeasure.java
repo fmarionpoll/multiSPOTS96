@@ -12,7 +12,6 @@ public class SpotMeasure {
 
 	// === CORE FIELDS ===
 	private double[] values;
-	private double[] valuesNormalized;
 	private int[] isPresent;
 	private double factor;
 	private int measuredFromNSpots = 1;
@@ -67,17 +66,19 @@ public class SpotMeasure {
 	 * @param measure1 the first measure
 	 * @param measure2 the second measure
 	 */
-	public void computePI(SpotMeasure measure1, int n1, SpotMeasure measure2, int n2) {
+	public void computePI(SpotMeasure measure1, SpotMeasure measure2) {
 		if (measure1 == null || measure2 == null) {
 			return;
 		}
 		// assume normalized - if not, compute it
 		if (measure1.values != null && measure1.values.length > 0 && measure2.values != null
 				&& measure2.values.length > 0) {
-			this.values = new double[measure1.valuesNormalized.length];
-			for (int i = 0; i < measure1.valuesNormalized.length; i++) {
-				double value1 = measure1.valuesNormalized[i] / (double) n1;
-				double value2 = measure2.valuesNormalized[i] / (double) n2;
+			this.values = new double[measure1.values.length];
+			double max1 = measure1.getMaximumValue();
+			double max2 = measure2.getMaximumValue();
+			for (int i = 0; i < values.length; i++) {
+				double value1 = measure1.values[i] / max1;
+				double value2 = measure2.values[i] / max2;
 				double sum = value1 + value2;
 				this.values[i] = sum > 0 ? (value1 - value2) / sum : 0;
 			}

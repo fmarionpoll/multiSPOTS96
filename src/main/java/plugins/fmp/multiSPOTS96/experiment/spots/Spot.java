@@ -794,9 +794,8 @@ public class Spot implements Comparable<Spot> {
 		}
 
 		void computePI(SpotMeasurements measure1, int n1, SpotMeasurements measure2, int n2) {
-			sumIn.computePI(measure1.sumIn, n1, measure2.sumIn, n2);
-			sumClean.computePI(measure1.sumClean, n1, measure2.sumClean, n2);
-			flyPresent.combineIsPresent(measure1.flyPresent, n1, measure2.flyPresent, n2);
+			sumIn.computePI(measure1.sumIn, measure2.sumIn);
+			sumClean.computePI(measure1.sumClean, measure2.sumClean);
 		}
 
 		void computeSUM(SpotMeasurements measure1, int n1, SpotMeasurements measure2, int n2) {
