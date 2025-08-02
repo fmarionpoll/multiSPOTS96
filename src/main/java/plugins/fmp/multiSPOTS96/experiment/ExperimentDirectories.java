@@ -24,7 +24,7 @@ public class ExperimentDirectories {
 	private String resultsDirectory = null;
 	private String binSubDirectory = null;
 	public List<String> cameraImagesList = null;
-	public List<String> kymosImagesList = null;
+//	public List<String> kymosImagesList = null;
 
 	public String getBinSubDirectory() {
 		return binSubDirectory;
@@ -139,8 +139,8 @@ public class ExperimentDirectories {
 		resultsDirectory = getResultsDirectoryDialog(cameraImagesDirectory, Experiment.RESULTS, createResults);
 
 		binSubDirectory = getBinSubDirectoryFromTIFFLocation(expListBinSubDirectory, resultsDirectory);
-		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
-		kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
+//		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
+//		kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
 		return true;
 	}
 
@@ -150,8 +150,8 @@ public class ExperimentDirectories {
 		resultsDirectory = getResultsDirectory(cameraImagesDirectory, exptDirectory);
 
 		binSubDirectory = getBinSubDirectoryFromTIFFLocation(expListBinSubDirectory, resultsDirectory);
-		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
-		kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
+//		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
+//		kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
 		return true;
 	}
 
@@ -162,8 +162,8 @@ public class ExperimentDirectories {
 		this.resultsDirectory = getResultsDirectory(cameraImagesDirectory, Experiment.RESULTS);
 		this.binSubDirectory = getBinSubDirectoryFromTIFFLocation(null, resultsDirectory);
 
-		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
-		this.kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
+//		String kymosDir = resultsDirectory + File.separator + this.binSubDirectory;
+//		this.kymosImagesList = ExperimentDirectories.getImagesListFromPathV2(kymosDir, "tiff");
 		// TODO wrong if any bin
 		return true;
 	}

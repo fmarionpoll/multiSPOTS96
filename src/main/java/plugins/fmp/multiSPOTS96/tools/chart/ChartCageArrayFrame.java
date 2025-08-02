@@ -298,7 +298,8 @@ public class ChartCageArrayFrame extends IcyFrame {
 		}
 
 		ChartCageBuild.initMaxMin();
-		XYSeriesCollection xyDataSetList = ChartCageBuild.getSpotDataDirectlyFromOneCage(experiment, cage, xlsExportOptions);
+		XYSeriesCollection xyDataSetList = ChartCageBuild.getSpotDataDirectlyFromOneCage(experiment, cage,
+				xlsExportOptions);
 
 		NumberAxis xAxis = setXaxis("", xlsExportOptions);
 		NumberAxis yAxis = setYaxis(cage.getRoi().getName(), row, col, xlsExportOptions);
@@ -574,12 +575,12 @@ public class ChartCageArrayFrame extends IcyFrame {
 			return;
 		}
 
-		if (exp.seqKymos != null && exp.seqKymos.getSequence() != null) {
-			Viewer v = exp.seqKymos.getSequence().getFirstViewer();
-			if (v != null) {
-				v.setPositionT(spot.getSpotKymographT());
-			}
-		}
+//		if (exp.seqKymos != null && exp.seqKymos.getSequence() != null) {
+//			Viewer v = exp.seqKymos.getSequence().getFirstViewer();
+//			if (v != null) {
+//				v.setPositionT(spot.getSpotKymographT());
+//			}
+//		}
 	}
 
 	/**

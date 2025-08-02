@@ -128,8 +128,9 @@ public class LoadSaveExperimentOptimized extends JPanel
 	}
 
 	/**
-	 * Lazy loading Experiment wrapper that only loads full experiment data when needed.
-	 * This dramatically reduces memory usage by avoiding loading all experiments at once.
+	 * Lazy loading Experiment wrapper that only loads full experiment data when
+	 * needed. This dramatically reduces memory usage by avoiding loading all
+	 * experiments at once.
 	 */
 	private static class LazyExperiment extends Experiment {
 		private final ExperimentMetadata metadata;
@@ -147,8 +148,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 		}
 
 		/**
-		 * Loads the full experiment data only when this method is called.
-		 * This implements the lazy loading pattern.
+		 * Loads the full experiment data only when this method is called. This
+		 * implements the lazy loading pattern.
 		 */
 		public void loadIfNeeded() {
 			if (!isLoaded) {
@@ -158,7 +159,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 						Experiment fullExp = new Experiment(expDirectories);
 						// Copy essential public properties from the fully loaded experiment
 						this.seqCamData = fullExp.seqCamData;
-						this.seqKymos = fullExp.seqKymos;
+//						this.seqKymos = fullExp.seqKymos;
 						this.cagesArray = fullExp.cagesArray;
 						this.firstImage_FileTime = fullExp.firstImage_FileTime;
 						this.lastImage_FileTime = fullExp.lastImage_FileTime;
@@ -171,7 +172,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 					}
 				} catch (Exception e) {
 					Logger.getLogger(LazyExperiment.class.getName())
-						.warning("Error loading experiment " + metadata.getName() + ": " + e.getMessage());
+							.warning("Error loading experiment " + metadata.getName() + ": " + e.getMessage());
 				}
 			}
 		}
@@ -446,8 +447,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 	}
 
 	/**
-	 * Adds metadata to UI using lightweight Experiment objects.
-	 * IMPROVED: Uses LazyExperiment objects that only load data when needed
+	 * Adds metadata to UI using lightweight Experiment objects. IMPROVED: Uses
+	 * LazyExperiment objects that only load data when needed
 	 */
 	private void addMetadataToUI() {
 		try {
@@ -533,14 +534,10 @@ public class LoadSaveExperimentOptimized extends JPanel
 			// Get the experiment name from the directory path
 			String experimentName = new File(eDAF.getResultsDirectory()).getName();
 			String experimentPath = eDAF.getResultsDirectory();
-			
-			ExperimentMetadata metadata = new ExperimentMetadata(
-				experimentName,
-				experimentPath,
-				subDir
-			);
+
+			ExperimentMetadata metadata = new ExperimentMetadata(experimentName, experimentPath, subDir);
 			experimentMetadataList.add(metadata);
-			
+
 			// Create and add LazyExperiment
 			LazyExperiment lazyExp = new LazyExperiment(metadata);
 			parent0.expListCombo.addExperiment(lazyExp, false);
@@ -557,14 +554,10 @@ public class LoadSaveExperimentOptimized extends JPanel
 			// Get the experiment name from the directory path
 			String experimentName = new File(eDAF.getResultsDirectory()).getName();
 			String experimentPath = eDAF.getResultsDirectory();
-			
-			ExperimentMetadata metadata = new ExperimentMetadata(
-				experimentName,
-				experimentPath,
-				subDir
-			);
+
+			ExperimentMetadata metadata = new ExperimentMetadata(experimentName, experimentPath, subDir);
 			experimentMetadataList.add(metadata);
-			
+
 			// Create and add LazyExperiment
 			LazyExperiment lazyExp = new LazyExperiment(metadata);
 			parent0.expListCombo.addExperiment(lazyExp, false);

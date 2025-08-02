@@ -13,13 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import icy.roi.ROI2D;
 import icy.util.StringUtil;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceKymos;
-import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.experiment.spots.SpotMeasure;
 
 public class Edit extends JPanel implements PropertyChangeListener {
 	/**
@@ -82,49 +78,49 @@ public class Edit extends JPanel implements PropertyChangeListener {
 	}
 
 	void cutAndInterpolate(Experiment exp) {
-		SequenceKymos seqKymos = exp.seqKymos;
-		ROI2D roiRect = seqKymos.getSequence().getSelectedROI2D();
-		if (roiRect == null)
-			return;
-
-		int t = seqKymos.getSequence().getFirstViewer().getPositionT();
-		Spot spot = exp.cagesArray.getSpotAtGlobalIndex(t);
-		String optionSelected = (String) roiTypeCombo.getSelectedItem();
-		if (optionSelected.contains("sum"))
-			removeAndUpdate(seqKymos, spot, spot.getSum(), roiRect);
-		else if (optionSelected.contains("clean"))
-			removeAndUpdate(seqKymos, spot, spot.getSumClean(), roiRect);
-		else if (optionSelected.contains("fly"))
-			removeAndUpdate(seqKymos, spot, spot.getFlyPresent(), roiRect);
+//		SequenceKymos seqKymos = exp.seqKymos;
+//		ROI2D roiRect = seqKymos.getSequence().getSelectedROI2D();
+//		if (roiRect == null)
+//			return;
+//
+//		int t = seqKymos.getSequence().getFirstViewer().getPositionT();
+//		Spot spot = exp.cagesArray.getSpotAtGlobalIndex(t);
+//		String optionSelected = (String) roiTypeCombo.getSelectedItem();
+//		if (optionSelected.contains("sum"))
+//			removeAndUpdate(seqKymos, spot, spot.getSum(), roiRect);
+//		else if (optionSelected.contains("clean"))
+//			removeAndUpdate(seqKymos, spot, spot.getSumClean(), roiRect);
+//		else if (optionSelected.contains("fly"))
+//			removeAndUpdate(seqKymos, spot, spot.getFlyPresent(), roiRect);
 	}
 
 	void compensate(Experiment exp) {
-		SequenceKymos seqKymos = exp.seqKymos;
-		ROI2D roiRect = seqKymos.getSequence().getSelectedROI2D();
-		if (roiRect == null)
-			return;
-
-		int t = seqKymos.getSequence().getFirstViewer().getPositionT();
-		Spot spot = exp.cagesArray.getSpotAtGlobalIndex(t);
-		String optionSelected = (String) roiTypeCombo.getSelectedItem();
-		if (optionSelected.contains("sum"))
-			compensateAndUpdate(seqKymos, spot, spot.getSum(), roiRect);
-		else if (optionSelected.contains("clean"))
-			compensateAndUpdate(seqKymos, spot, spot.getSumClean(), roiRect);
-		else if (optionSelected.contains("fly"))
-			compensateAndUpdate(seqKymos, spot, spot.getFlyPresent(), roiRect);
+//		SequenceKymos seqKymos = exp.seqKymos;
+//		ROI2D roiRect = seqKymos.getSequence().getSelectedROI2D();
+//		if (roiRect == null)
+//			return;
+//
+//		int t = seqKymos.getSequence().getFirstViewer().getPositionT();
+//		Spot spot = exp.cagesArray.getSpotAtGlobalIndex(t);
+//		String optionSelected = (String) roiTypeCombo.getSelectedItem();
+//		if (optionSelected.contains("sum"))
+//			compensateAndUpdate(seqKymos, spot, spot.getSum(), roiRect);
+//		else if (optionSelected.contains("clean"))
+//			compensateAndUpdate(seqKymos, spot, spot.getSumClean(), roiRect);
+//		else if (optionSelected.contains("fly"))
+//			compensateAndUpdate(seqKymos, spot, spot.getFlyPresent(), roiRect);
 	}
 
-	private void removeAndUpdate(SequenceKymos seqKymos, Spot spot, SpotMeasure spotMeasure, ROI2D roi) {
-		spotMeasure.getSpotLevel2D().cutAndInterpolatePointsEnclosedInSelectedRoi(roi);
-		spotMeasure.getSpotLevel2D().transferROItoLevel2D();
-	}
-
-	private void compensateAndUpdate(SequenceKymos seqKymos, Spot spot, SpotMeasure spotMeasure, ROI2D roi) {
-		boolean bAdd = (directionCombo.getSelectedIndex() == 0);
-		spotMeasure.getSpotLevel2D().compensateOffsetUsingSelectedRoi(roi, bAdd);
-		spotMeasure.getSpotLevel2D().transferROItoLevel2D();
-	}
+//	private void removeAndUpdate(SequenceKymos seqKymos, Spot spot, SpotMeasure spotMeasure, ROI2D roi) {
+//		spotMeasure.getSpotLevel2D().cutAndInterpolatePointsEnclosedInSelectedRoi(roi);
+//		spotMeasure.getSpotLevel2D().transferROItoLevel2D();
+//	}
+//
+//	private void compensateAndUpdate(SequenceKymos seqKymos, Spot spot, SpotMeasure spotMeasure, ROI2D roi) {
+//		boolean bAdd = (directionCombo.getSelectedIndex() == 0);
+//		spotMeasure.getSpotLevel2D().compensateOffsetUsingSelectedRoi(roi, bAdd);
+//		spotMeasure.getSpotLevel2D().transferROItoLevel2D();
+//	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {

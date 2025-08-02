@@ -226,8 +226,8 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		if (exp != null) {
 			if (exp.seqCamData != null)
 				exp.seqCamData.updateOverlayThreshold(threshold, transform, ifGreater);
-			if (exp.seqKymos != null)
-				exp.seqKymos.updateOverlayThreshold(threshold, transform, ifGreater);
+//			if (exp.seqKymos != null)
+//				exp.seqKymos.updateOverlayThreshold(threshold, transform, ifGreater);
 		}
 	}
 
@@ -331,22 +331,22 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		if (exp.seqCamData != null) {
 			exp.seqCamData.updateOverlay();
 		}
-		if (exp.seqKymos != null)
-			exp.seqKymos.updateOverlay();
+//		if (exp.seqKymos != null)
+//			exp.seqKymos.updateOverlay();
 	}
 
 	private void removeOverlays(Experiment exp) {
 		if (exp.seqCamData != null)
 			exp.seqCamData.removeOverlay();
-		if (exp.seqKymos != null)
-			exp.seqKymos.removeOverlay();
+//		if (exp.seqKymos != null)
+//			exp.seqKymos.removeOverlay();
 	}
 
 	private void updateCanvasFunctions(Experiment exp, int index) {
 		if (exp.seqCamData != null)
 			updateCanvasFunction(exp.seqCamData, index);
-		if (exp.seqKymos != null)
-			updateCanvasFunction(exp.seqKymos, index);
+//		if (exp.seqKymos != null)
+//			updateCanvasFunction(exp.seqKymos, index);
 	}
 
 	private void updateCanvasFunction(SequenceCamData seqCamData, int index) {

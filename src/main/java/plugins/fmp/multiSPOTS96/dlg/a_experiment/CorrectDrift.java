@@ -184,7 +184,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = getCurrentExperiment();
-				if (exp != null && exp.seqKymos != null) {
+				if (exp != null) {
 					int x = (int) xSpinner.getValue();
 					int y = (int) ySpinner.getValue();
 					applyTranslation(exp, x, y);
@@ -202,7 +202,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = getCurrentExperiment();
-				if (exp != null && exp.seqKymos != null) {
+				if (exp != null) {
 					int x = (int) xSpinner.getValue();
 					int y = (int) ySpinner.getValue();
 					testTranslation(exp, x, y);
@@ -216,7 +216,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = getCurrentExperiment();
-				if (exp != null && exp.seqKymos != null) {
+				if (exp != null) {
 					applyTranslation(exp, -previousX, -previousY);
 
 					restoreTranslationButton.setEnabled(false);
@@ -232,7 +232,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = getCurrentExperiment();
-				if (exp != null && exp.seqKymos != null) {
+				if (exp != null) {
 					double angle = (double) angleSpinner.getValue();
 					applyRotation(exp, angle);
 
@@ -248,7 +248,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = getCurrentExperiment();
-				if (exp != null && exp.seqKymos != null) {
+				if (exp != null) {
 					applyRotation(exp, previousAngle);
 
 					restoreRotationButton.setEnabled(false);
@@ -263,7 +263,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = getCurrentExperiment();
-				if (exp != null && exp.seqKymos != null) {
+				if (exp != null) {
 
 				}
 			}
@@ -462,10 +462,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 		IcyBufferedImage imageReference = seq.getImage(referenceFrame, 0);
 		Sequence chessSeq = createChessboardImage(imageTest, imageReference, squareSize);
 		Viewer v = new Viewer(chessSeq, true);
-		if (v == null)
-			return false;
-
-		return true;
+		return (v != null);
 	}
 
 	private boolean applyTranslation(Experiment exp, int x, int y) {

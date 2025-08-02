@@ -209,11 +209,11 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 					int t = v.getPositionT();
 					v.setTitle(exp.seqCamData.getDecoratedImageName(t));
 				}
-				// TODO: check if the lines below are necessary
-				if (exp.seqKymos.getSequence() != null && sequenceEvent.getSequence() == exp.seqKymos.getSequence()) {
-					Viewer v = exp.seqKymos.getSequence().getFirstViewer();
-					v.setTitle("dummy");
-				}
+
+//				if (exp.seqKymos.getSequence() != null && sequenceEvent.getSequence() == exp.seqKymos.getSequence()) {
+//					Viewer v = exp.seqKymos.getSequence().getFirstViewer();
+//					v.setTitle("dummy");
+//				}
 			}
 		}
 	}

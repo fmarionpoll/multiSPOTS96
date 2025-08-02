@@ -1,6 +1,5 @@
 package plugins.fmp.multiSPOTS96.experiment;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -22,13 +21,8 @@ import icy.sequence.Sequence;
 import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
-import plugins.fmp.multiSPOTS96.experiment.sequence.ImageAdjustmentOptions;
-import plugins.fmp.multiSPOTS96.experiment.sequence.ImageFileDescriptor;
 import plugins.fmp.multiSPOTS96.experiment.sequence.ImageLoader;
-import plugins.fmp.multiSPOTS96.experiment.sequence.ImageProcessingResult;
-import plugins.fmp.multiSPOTS96.experiment.sequence.KymographConfiguration;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
-import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceKymos;
 import plugins.fmp.multiSPOTS96.experiment.sequence.TimeManager;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.Directories;
@@ -43,7 +37,7 @@ public class Experiment {
 	private String binSubDirectory = null;
 
 	public SequenceCamData seqCamData = null;
-	public SequenceKymos seqKymos = null;
+//	public SequenceKymos seqKymos = null;
 	public Sequence seqReference = null;
 	public CagesArray cagesArray = new CagesArray();
 
@@ -82,23 +76,23 @@ public class Experiment {
 	public Experiment() {
 		// Use builder pattern for modern initialization
 		seqCamData = SequenceCamData.builder().withStatus(EnumStatus.FILESTACK).build();
-		seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.defaultConfiguration())
-				.build();
+//		seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.defaultConfiguration())
+//				.build();
 	}
 
 	public Experiment(String expDirectory) {
 		// Use builder pattern with specific directory configuration
 		seqCamData = SequenceCamData.builder().withStatus(EnumStatus.FILESTACK).build();
-		seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.defaultConfiguration())
-				.build();
+//		seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.defaultConfiguration())
+//				.build();
 		this.resultsDirectory = expDirectory;
 	}
 
 	public Experiment(SequenceCamData seqCamData) {
 		this.seqCamData = seqCamData;
 		// Use builder for kymographs with default configuration
-		this.seqKymos = SequenceKymos.kymographBuilder()
-				.withConfiguration(KymographConfiguration.defaultConfiguration()).build();
+//		this.seqKymos = SequenceKymos.kymographBuilder()
+//				.withConfiguration(KymographConfiguration.defaultConfiguration()).build();
 		resultsDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
 		load_MS96_experiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML));
@@ -120,11 +114,11 @@ public class Experiment {
 		if (eADF.cameraImagesList.size() > 1)
 			getFileIntervalsFromSeqCamData();
 
-		if (eADF.kymosImagesList != null && eADF.kymosImagesList.size() > 0) {
-			// Use builder pattern with image list and quality configuration
-			seqKymos = SequenceKymos.kymographBuilder().withImageList(eADF.kymosImagesList)
-					.withConfiguration(KymographConfiguration.qualityProcessing()).build();
-		}
+//		if (eADF.kymosImagesList != null && eADF.kymosImagesList.size() > 0) {
+//			// Use builder pattern with image list and quality configuration
+//			seqKymos = SequenceKymos.kymographBuilder().withImageList(eADF.kymosImagesList)
+//					.withConfiguration(KymographConfiguration.qualityProcessing()).build();
+//		}
 	}
 
 	// ----------------------------------
@@ -212,8 +206,8 @@ public class Experiment {
 	}
 
 	public void closeSequences() {
-		if (seqKymos != null)
-			seqKymos.closeSequence();
+//		if (seqKymos != null)
+//			seqKymos.closeSequence();
 		if (seqCamData != null)
 			seqCamData.closeSequence();
 		if (seqReference != null)
@@ -228,11 +222,11 @@ public class Experiment {
 		load_MS96_experiment();
 		getFileIntervalsFromSeqCamData();
 
-		if (seqKymos == null) {
-			// Use builder pattern for kymographs initialization
-			seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.defaultConfiguration())
-					.build();
-		}
+//		if (seqKymos == null) {
+//			// Use builder pattern for kymographs initialization
+//			seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.defaultConfiguration())
+//					.build();
+//		}
 
 		return zxmlReadDrosoTrack(null);
 	}
@@ -476,23 +470,23 @@ public class Experiment {
 
 	final String csvSep = ";";
 
-	public boolean zloadKymographs() {
-		if (seqKymos == null) {
-			// Use builder pattern with quality processing configuration
-			seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.qualityProcessing())
-					.build();
-		}
-		// Use modern API for creating file list and loading kymographs
-		List<ImageFileDescriptor> fileList = seqKymos.createKymographFileList(getKymosBinFullDirectory(), cagesArray);
-		ImageFileDescriptor.getExistingFileNames(fileList);
-
-		// Use modern loading API with size adjustment - use deprecated method for
-		// dimensions
-		Rectangle maxDimensions = seqKymos.calculateMaxDimensions(fileList);
-		ImageProcessingResult result = seqKymos.loadKymographs(fileList,
-				ImageAdjustmentOptions.withSizeAdjustment(maxDimensions));
-		return result.isSuccess();
-	}
+//	public boolean zloadKymographs() {
+//		if (seqKymos == null) {
+//			// Use builder pattern with quality processing configuration
+//			seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.qualityProcessing())
+//					.build();
+//		}
+//		// Use modern API for creating file list and loading kymographs
+//		List<ImageFileDescriptor> fileList = seqKymos.createKymographFileList(getKymosBinFullDirectory(), cagesArray);
+//		ImageFileDescriptor.getExistingFileNames(fileList);
+//
+//		// Use modern loading API with size adjustment - use deprecated method for
+//		// dimensions
+//		Rectangle maxDimensions = seqKymos.calculateMaxDimensions(fileList);
+//		ImageProcessingResult result = seqKymos.loadKymographs(fileList,
+//				ImageAdjustmentOptions.withSizeAdjustment(maxDimensions));
+//		return result.isSuccess();
+//	}
 
 	// ------------------------------------------------
 
