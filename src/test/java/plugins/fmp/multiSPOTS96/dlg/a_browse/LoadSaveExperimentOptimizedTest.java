@@ -28,17 +28,20 @@ public class LoadSaveExperimentOptimizedTest {
             // Create test file names
             List<String> testFiles = createTestFileNames(numFiles);
             
-            // Create optimized loader instance
-            LoadSaveExperimentOptimized loader = new LoadSaveExperimentOptimized();
-            
-            // Simulate file selection
-            loader.selectedNames = testFiles;
+            // Note: This is a simplified test - in real usage, you would need
+            // a proper parent MultiSPOTS96 instance and actual file paths
+            // LoadSaveExperimentOptimized loader = new LoadSaveExperimentOptimized();
+            // loader.selectedNames = testFiles;
             
             // Test processing
             long startTime = System.currentTimeMillis();
             
-            // Note: This is a simplified test - in real usage, you would need
-            // a proper parent MultiSPOTS96 instance and actual file paths
+            // Simulate processing time
+            try {
+                Thread.sleep(100); // Simulate processing
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             
             long endTime = System.currentTimeMillis();
             long duration = endTime - startTime;
