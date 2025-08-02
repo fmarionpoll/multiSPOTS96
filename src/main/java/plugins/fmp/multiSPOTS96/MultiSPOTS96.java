@@ -15,20 +15,18 @@ import icy.preferences.GeneralPreferences;
 import plugins.fmp.multiSPOTS96.dlg.a_browse._DlgBrowse_;
 import plugins.fmp.multiSPOTS96.dlg.a_experiment._DlgExperiment_;
 import plugins.fmp.multiSPOTS96.dlg.b_spots._DlgSpots_;
-import plugins.fmp.multiSPOTS96.dlg.c_kymos._DlgKymos_;
 import plugins.fmp.multiSPOTS96.dlg.d_spotsMeasures._DlgSpotMeasure_;
 import plugins.fmp.multiSPOTS96.dlg.f_excel._DlgExcel_;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 
 public class MultiSPOTS96 extends PluginActionable {
 
-	public IcyFrame mainFrame = new IcyFrame("multiSPOTS96 July 31, 2025", true, true, true, true);
+	public IcyFrame mainFrame = new IcyFrame("multiSPOTS96 August 2, 2025", true, true, true, true);
 	public JComboBoxExperiment expListCombo = new JComboBoxExperiment();
 
 	public _DlgBrowse_ dlgBrowse = new _DlgBrowse_();
 	public _DlgExperiment_ dlgExperiment = new _DlgExperiment_();
 	public _DlgSpots_ dlgSpots = new _DlgSpots_();
-	public _DlgKymos_ dlgKymos = new _DlgKymos_();
 	public _DlgSpotMeasure_ dlgMeasure = new _DlgSpotMeasure_();
 	public _DlgExcel_ dlgExcel = new _DlgExcel_();
 
@@ -43,7 +41,6 @@ public class MultiSPOTS96 extends PluginActionable {
 		dlgBrowse.init(mainPanel, "Browse", this);
 		dlgExperiment.init(mainPanel, "Experiment", this);
 		dlgSpots.init(mainPanel, "Spots", this);
-		dlgKymos.init(mainPanel, "Kymographs", this);
 		dlgMeasure.init(mainPanel, "Measure spots", this);
 		dlgExcel.init(mainPanel, "Export", this);
 

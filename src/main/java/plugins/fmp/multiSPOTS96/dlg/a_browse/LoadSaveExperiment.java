@@ -52,19 +52,18 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 	public JPanel initPanel(MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
 
+		JPanel navPanel = new JPanel(new BorderLayout());
 		SequenceNameListRenderer renderer = new SequenceNameListRenderer();
 		parent0.expListCombo.setRenderer(renderer);
 		int bWidth = 30;
 		int height = 20;
 		previousButton.setPreferredSize(new Dimension(bWidth, height));
 		nextButton.setPreferredSize(new Dimension(bWidth, height));
+		navPanel.add(previousButton, BorderLayout.LINE_START);
+		navPanel.add(parent0.expListCombo, BorderLayout.CENTER);
+		navPanel.add(nextButton, BorderLayout.LINE_END);
 
-		JPanel sequencePanel0 = new JPanel(new BorderLayout());
-		sequencePanel0.add(previousButton, BorderLayout.LINE_START);
-		sequencePanel0.add(parent0.expListCombo, BorderLayout.CENTER);
-		sequencePanel0.add(nextButton, BorderLayout.LINE_END);
-
-		JPanel sequencePanel = new JPanel(new BorderLayout());
+		JPanel buttonPanel = new JPanel(new BorderLayout());
 		FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
 		layout.setVgap(1);
 		JPanel subPanel = new JPanel(layout);
@@ -73,14 +72,14 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		subPanel.add(searchButton);
 		subPanel.add(closeButton);
 		subPanel.add(filteredCheck);
-		sequencePanel.add(subPanel, BorderLayout.LINE_START);
+		buttonPanel.add(subPanel, BorderLayout.LINE_START);
 
 		defineActionListeners();
 		parent0.expListCombo.addItemListener(this);
 
 		JPanel twoLinesPanel = new JPanel(new GridLayout(2, 1));
-		twoLinesPanel.add(sequencePanel0);
-		twoLinesPanel.add(sequencePanel);
+		twoLinesPanel.add(navPanel);
+		twoLinesPanel.add(buttonPanel);
 
 		return twoLinesPanel;
 	}
@@ -284,10 +283,6 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			exp.transferSpotsROI_toSequence();
 			exp.load_MS96_spotsMeasures();
 			parent0.dlgMeasure.tabCharts.displayChartPanels(exp);
-
-			if (exp.seqKymos != null) {
-				parent0.dlgKymos.tabLoadSave.loadDefaultKymos(exp);
-			}
 
 			progressFrame.setMessage("Load data: update dialogs");
 			parent0.dlgExperiment.updateDialogs(exp);

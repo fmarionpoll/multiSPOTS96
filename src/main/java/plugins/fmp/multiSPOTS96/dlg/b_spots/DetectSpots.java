@@ -357,8 +357,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (StringUtil.equals("thread_ended", evt.getPropertyName())) {
 			startComputationButton.setText(detectString);
-			parent0.dlgKymos.tabDisplay.selectKymographImage(parent0.dlgKymos.tabDisplay.indexImagesCombo);
-			parent0.dlgKymos.tabDisplay.indexImagesCombo = -1;
 			selectCagesAccordingToOptions(detectSpots.options.selectedIndexes);
 		}
 	}

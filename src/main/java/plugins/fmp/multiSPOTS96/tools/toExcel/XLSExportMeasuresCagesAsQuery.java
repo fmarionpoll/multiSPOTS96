@@ -188,20 +188,24 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 				continue;
 
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
-			Spot spot1 = cage.combineSpotsWithSameStimConc(stim1, conc1);
-			Spot spot2 = cage.combineSpotsWithSameStimConc(stim2, conc2);
-			// normalize spot1 & spot2
-			Spot spotSUM = cage.createSpotSUM(spot1, spot2);
-			Spot spotPI = cage.createSpotPI(spot1, spot2);
 
+			Spot spot1 = cage.combineSpotsWithSameStimConc(stim1, conc1);
 			XLSResults xlsStim1 = getResultForCage(exp, cage, spot1, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
-			cage.getProperties().setCountSpotsStim1(spot1.getProperties().getCountAggregatedSpots());
+			if (spot1 != null)
+				cage.getProperties().setCountSpotsStim1(spot1.getProperties().getCountAggregatedSpots());
+
+			Spot spot2 = cage.combineSpotsWithSameStimConc(stim2, conc2);
 			XLSResults xlsStim2 = getResultForCage(exp, cage, spot2, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
-			cage.getProperties().setCountSpotsStim2(spot2.getProperties().getCountAggregatedSpots());
+			if (spot2 != null)
+				cage.getProperties().setCountSpotsStim2(spot2.getProperties().getCountAggregatedSpots());
+
+			Spot spotSUM = cage.createSpotSUM(spot1, spot2);
 			XLSResults xlsSUM = getResultForCage(exp, cage, spotSUM, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
+
+			Spot spotPI = cage.createSpotPI(spot1, spot2);
 			XLSResults xlsPI = getResultForCage(exp, cage, spotPI, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
 
