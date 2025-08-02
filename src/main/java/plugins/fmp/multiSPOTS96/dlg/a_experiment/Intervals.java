@@ -167,7 +167,7 @@ public class Intervals extends JPanel implements ItemListener {
 		if (v != null)
 			v.close();
 		parent0.dlgBrowse.loadSaveExperiment.closeCurrentExperiment();
-		parent0.dlgBrowse.loadSaveExperiment.openSelecteExperiment(exp);
+		parent0.dlgBrowse.loadSaveExperiment.openSelectedExperiment(exp);
 	}
 
 	public void getExptParms(Experiment exp) {

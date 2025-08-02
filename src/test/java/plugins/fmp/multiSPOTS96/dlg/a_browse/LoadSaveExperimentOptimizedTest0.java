@@ -11,9 +11,9 @@ import java.util.logging.Logger;
  * @author MultiSPOTS96
  * @version 1.0
  */
-public class LoadSaveExperimentOptimizedTest {
+public class LoadSaveExperimentOptimizedTest0 {
     
-    private static final Logger LOGGER = Logger.getLogger(LoadSaveExperimentOptimizedTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LoadSaveExperimentOptimizedTest0.class.getName());
     
     /**
      * Tests the optimized file loading with a specified number of files.

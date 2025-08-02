@@ -156,7 +156,8 @@ public class LoadSaveOptimizedUsageExample {
 
             public void cleanup() {
                 if (loadSaveExperiment != null) {
-                    loadSaveExperiment.shutdown();
+                    // Close all experiments and clean up resources
+                    loadSaveExperiment.closeAllExperiments();
                 }
             }
 
@@ -288,7 +289,7 @@ public class LoadSaveOptimizedUsageExample {
         // - Proper cleanup on shutdown
 
         // Demonstrate cleanup
-        loadSaveExperiment.shutdown();
+        loadSaveExperiment.closeAllExperiments();
 
         System.out.println("Memory management and cleanup completed");
     }
