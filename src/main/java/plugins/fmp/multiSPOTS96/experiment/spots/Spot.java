@@ -178,7 +178,6 @@ public class Spot implements Comparable<Spot> {
 		Objects.requireNonNull(spot2, "Spot2 cannot be null");
 		int n1 = spot1.getProperties().getCountAggregatedSpots();
 		int n2 = spot2.getProperties().getCountAggregatedSpots();
-		System.out.println(getProperties().getName() + " -- " + "n1=" + n1 + " n2=" + n2);
 		this.measurements.computeSUM(spot1.measurements, n1, spot2.measurements, n2);
 	}
 

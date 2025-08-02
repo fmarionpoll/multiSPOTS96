@@ -68,7 +68,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 				Experiment exp = expList.getItemAt(index);
 				exp.load_MS96_spotsMeasures();
 				progress.setMessage("Export experiment " + (index + 1) + " of " + nbexpts);
-
+				System.out.println("Export experiment " + (index + 1) + " of " + nbexpts);
 				String seriesIdentifier = CellReference.convertNumToColString(iSeries);
 				column = exportExperimentData(exp, options, column, seriesIdentifier);
 
@@ -183,6 +183,9 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		String conc2 = exp.getProperties().getField_conc2();
 
 		for (Cage cage : exp.cagesArray.cagesList) {
+
+			if (cage.spotsArray.getSpotsList().size() == 0)
+				continue;
 
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 			Spot spot1 = cage.combineSpotsWithSameStimConc(stim1, conc1);
