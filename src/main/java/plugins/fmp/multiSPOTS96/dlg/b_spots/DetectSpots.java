@@ -273,10 +273,10 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	private void updateTransformFunctionsOfCanvas(Experiment exp) {
 		Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer().getCanvas();
 		if (canvas.getTransformStep1ItemCount() < (spotsTransformsComboBox.getItemCount() + 1)) {
-			canvas.updateTransformsComboStep1(transforms);
+			canvas.updateTransformsStep1(transforms);
 		}
 		int index = spotsTransformsComboBox.getSelectedIndex();
-		canvas.selectImageTransformFunctionStep1(index + 1, null);
+		canvas.setTransformStep1(index + 1, null);
 	}
 
 	void updateOverlayThreshold() {
@@ -310,7 +310,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		options.detectFlies = false;
 
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
-		options.binSubDirectory = exp.getBinSubDirectory();
+//		options.binSubDirectory = exp.getBinSubDirectory();
 
 		options.fromFrame = exp.seqCamData.getCurrentFrame();
 

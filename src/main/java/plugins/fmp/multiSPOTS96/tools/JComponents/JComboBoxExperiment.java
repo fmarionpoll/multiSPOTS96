@@ -118,9 +118,9 @@ public class JComboBoxExperiment extends JComboBox<Experiment> {
 				@Override
 				public void run() {
 					progress.setMessage("Load experiment " + it + " of " + nexpts);
-					exp.setBinSubDirectory(stringExpBinSubDirectory);
-					if (stringExpBinSubDirectory == null)
-						exp.checkKymosDirectory(exp.getBinSubDirectory());
+//					exp.setBinSubDirectory(stringExpBinSubDirectory);
+//					if (stringExpBinSubDirectory == null)
+//						exp.checkKymosDirectory(exp.getBinSubDirectory());
 					exp.load_MS96_experiment();
 					exp.load_MS96_cages();
 					if (loadSpots)

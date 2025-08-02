@@ -34,7 +34,7 @@ public class Experiment {
 
 	private String camDataImagesDirectory = null;
 	private String resultsDirectory = null;
-	private String binSubDirectory = null;
+//	private String binSubDirectory = null;
 
 	public SequenceCamData seqCamData = null;
 //	public SequenceKymos seqKymos = null;
@@ -101,7 +101,7 @@ public class Experiment {
 	public Experiment(ExperimentDirectories eADF) {
 		camDataImagesDirectory = eADF.getCameraImagesDirectory();
 		resultsDirectory = eADF.getResultsDirectory();
-		binSubDirectory = eADF.getBinSubDirectory();
+//		binSubDirectory = eADF.getBinSubDirectory();
 		// Use builder pattern for modern sequence initialization
 		seqCamData = SequenceCamData.builder().withStatus(EnumStatus.FILESTACK).build();
 		String fileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
@@ -135,20 +135,20 @@ public class Experiment {
 		resultsDirectory = ExperimentDirectories.getParentIf(fileName, BIN);
 	}
 
-	public String getKymosBinFullDirectory() {
-		String filename = resultsDirectory;
-		if (binSubDirectory != null)
-			filename += File.separator + binSubDirectory;
-		return filename;
-	}
+//	public String getKymosBinFullDirectory() {
+//		String filename = resultsDirectory;
+//		if (binSubDirectory != null)
+//			filename += File.separator + binSubDirectory;
+//		return filename;
+//	}
 
-	public void setBinSubDirectory(String bin) {
-		binSubDirectory = bin;
-	}
+//	public void setBinSubDirectory(String bin) {
+//		binSubDirectory = bin;
+//	}
 
-	public String getBinSubDirectory() {
-		return binSubDirectory;
-	}
+//	public String getBinSubDirectory() {
+//		return binSubDirectory;
+//	}
 
 	public boolean createDirectoryIfDoesNotExist(String directory) {
 		Path pathDir = Paths.get(directory);
@@ -194,7 +194,7 @@ public class Experiment {
 				}
 			}
 		}
-		setBinSubDirectory(kymosSubDirectory);
+//		setBinSubDirectory(kymosSubDirectory);
 	}
 
 	public void setCameraImagesDirectory(String name) {
@@ -308,8 +308,8 @@ public class Experiment {
 
 	public String getDirectoryToSaveResults() {
 		Path dir = Paths.get(resultsDirectory);
-		if (binSubDirectory != null)
-			dir = dir.resolve(binSubDirectory);
+//		if (binSubDirectory != null)
+//			dir = dir.resolve(binSubDirectory);
 		String directory = dir.toAbsolutePath().toString();
 		if (!createDirectoryIfDoesNotExist(directory))
 			directory = null;
@@ -456,15 +456,15 @@ public class Experiment {
 		return false;
 	}
 
-	public boolean load_MS96_kymographs() {
-		// TODO write real code
-		return false;
-	}
+//	public boolean load_MS96_kymographs() {
+//		// TODO write real code
+//		return false;
+//	}
 
-	public boolean save_MS96_kymographs() {
-		// TODO write real code
-		return false;
-	}
+//	public boolean save_MS96_kymographs() {
+//		// TODO write real code
+//		return false;
+//	}
 
 	// -------------------------------
 

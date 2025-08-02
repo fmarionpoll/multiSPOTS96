@@ -34,7 +34,8 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 	// Memory optimization constants - now configurable via options
 	// private static final int BATCH_SIZE = 10; // Process frames in batches
-	// private static final int MAX_CONCURRENT_TASKS = 4; // Limit concurrent processing
+	// private static final int MAX_CONCURRENT_TASKS = 4; // Limit concurrent
+	// processing
 	// private static final boolean ENABLE_MEMORY_CLEANUP = true;
 
 	// --------------------------------------------
@@ -65,8 +66,8 @@ public class BuildSpotsMeasures extends BuildSeries {
 	}
 
 	private void saveComputation(Experiment exp) {
-		if (options.doCreateBinDir)
-			exp.setBinSubDirectory(exp.getBinNameFromKymoFrameStep());
+//		if (options.doCreateBinDir)
+//			exp.setBinSubDirectory(exp.getBinNameFromKymoFrameStep());
 		String directory = exp.getDirectoryToSaveResults();
 		if (directory == null)
 			return;
@@ -120,24 +121,25 @@ public class BuildSpotsMeasures extends BuildSeries {
 
 		// Process frames in batches to control memory usage
 		for (int batchStart = iiFirst; batchStart < iiLast; batchStart += options.batchSize) {
-			if (stopFlag) break;
-			
+			if (stopFlag)
+				break;
+
 			int batchEnd = Math.min(batchStart + options.batchSize, iiLast);
 			processFrameBatch(exp, batchStart, batchEnd, iiFirst, iiLast, processor, progressBar1);
-			
+
 			// Force garbage collection between batches
 			if (options.enableMemoryCleanup) {
 				System.gc();
 			}
 		}
-		
+
 		progressBar1.close();
 		return true;
 	}
 
-	private void processFrameBatch(Experiment exp, int batchStart, int batchEnd, int iiFirst, int iiLast, 
+	private void processFrameBatch(Experiment exp, int batchStart, int batchEnd, int iiFirst, int iiLast,
 			Processor processor, ProgressFrame progressBar1) {
-		
+
 		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(batchEnd - batchStart);
 
 		for (int ii = batchStart; ii < batchEnd; ii++) {
@@ -163,7 +165,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 				}
 			}));
 		}
-		
+
 		waitFuturesCompletion(processor, tasks, null);
 	}
 
@@ -173,12 +175,12 @@ public class BuildSpotsMeasures extends BuildSeries {
 		IcyBufferedImage transformToDetectFly = null;
 		IcyBufferedImageCursor cursorToDetectFly = null;
 		IcyBufferedImageCursor cursorToMeasureArea = null;
-		
+
 		try {
 			sourceImage = imageIORead(fileName);
 			transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage, transformOptions01);
 			transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage, transformOptions02);
-			
+
 			cursorToDetectFly = new IcyBufferedImageCursor(transformToDetectFly);
 			cursorToMeasureArea = new IcyBufferedImageCursor(transformToMeasureArea);
 
@@ -201,11 +203,16 @@ public class BuildSpotsMeasures extends BuildSeries {
 		} finally {
 			// Clean up image resources
 			if (options.enableMemoryCleanup) {
-				if (sourceImage != null) sourceImage = null;
-				if (transformToMeasureArea != null) transformToMeasureArea = null;
-				if (transformToDetectFly != null) transformToDetectFly = null;
-				if (cursorToDetectFly != null) cursorToDetectFly = null;
-				if (cursorToMeasureArea != null) cursorToMeasureArea = null;
+				if (sourceImage != null)
+					sourceImage = null;
+				if (transformToMeasureArea != null)
+					transformToMeasureArea = null;
+				if (transformToDetectFly != null)
+					transformToDetectFly = null;
+				if (cursorToDetectFly != null)
+					cursorToDetectFly = null;
+				if (cursorToMeasureArea != null)
+					cursorToMeasureArea = null;
 			}
 		}
 	}
@@ -214,7 +221,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 			IcyBufferedImageCursor cursorToDetectFly, ROI2DWithMask roiT) {
 
 		ResultsThreshold result = new ResultsThreshold();
-		
+
 		if (options.usePrimitiveArrays) {
 			// Use memory-efficient primitive arrays instead of Point objects
 			int[][] maskCoords = roiT.getMaskPointsAsArrays();
@@ -222,7 +229,7 @@ public class BuildSpotsMeasures extends BuildSeries {
 				result.npoints_in = 0;
 				return result;
 			}
-			
+
 			int[] maskX = maskCoords[0];
 			int[] maskY = maskCoords[1];
 			result.npoints_in = maskX.length;

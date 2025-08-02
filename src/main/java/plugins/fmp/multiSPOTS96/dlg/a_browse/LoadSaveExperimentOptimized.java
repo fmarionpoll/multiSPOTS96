@@ -99,22 +99,22 @@ public class LoadSaveExperimentOptimized extends JPanel
 	 * essential information needed for the dropdown.
 	 */
 	private static class ExperimentMetadata {
-		private final String name;
-		private final String path;
+		private final String cameraDirectory;
+		private final String resultsDirectory;
 		private final String subDirectory;
 
-		public ExperimentMetadata(String name, String path, String subDirectory) {
-			this.name = name;
-			this.path = path;
-			this.subDirectory = subDirectory;
+		public ExperimentMetadata(String cameraDirectory, String resultsDirectory, String binDirectory) {
+			this.cameraDirectory = cameraDirectory;
+			this.resultsDirectory = resultsDirectory;
+			this.subDirectory = binDirectory;
 		}
 
-		public String getName() {
-			return name;
+		public String getCameraDirectory() {
+			return cameraDirectory;
 		}
 
-		public String getPath() {
-			return path;
+		public String getResultsDirectory() {
+			return resultsDirectory;
 		}
 
 		public String getSubDirectory() {
@@ -123,7 +123,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 		@Override
 		public String toString() {
-			return name; // Used for dropdown display
+			return cameraDirectory; // Used for dropdown display
 		}
 	}
 
@@ -139,12 +139,12 @@ public class LoadSaveExperimentOptimized extends JPanel
 		public LazyExperiment(ExperimentMetadata metadata) {
 			this.metadata = metadata;
 			// Set the results directory to provide a meaningful display name
-			this.setResultsDirectory(metadata.getPath());
+			this.setResultsDirectory(metadata.getResultsDirectory());
 		}
 
 		@Override
 		public String toString() {
-			return metadata.getName();
+			return metadata.getCameraDirectory();
 		}
 
 		/**
@@ -155,7 +155,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 			if (!isLoaded) {
 				try {
 					ExperimentDirectories expDirectories = new ExperimentDirectories();
-					if (expDirectories.getDirectoriesFromExptPath(metadata.getSubDirectory(), metadata.getName())) {
+					if (expDirectories.getDirectoriesFromExptPath(metadata.getSubDirectory(),
+							metadata.getCameraDirectory())) {
 						Experiment fullExp = new Experiment(expDirectories);
 						// Copy essential public properties from the fully loaded experiment
 						this.seqCamData = fullExp.seqCamData;
@@ -171,8 +172,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 						this.isLoaded = true;
 					}
 				} catch (Exception e) {
-					Logger.getLogger(LazyExperiment.class.getName())
-							.warning("Error loading experiment " + metadata.getName() + ": " + e.getMessage());
+					Logger.getLogger(LazyExperiment.class.getName()).warning(
+							"Error loading experiment " + metadata.getCameraDirectory() + ": " + e.getMessage());
 				}
 			}
 		}
@@ -434,10 +435,9 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 			// Only check if the experiment directory exists and is valid
 			if (expDirectories.getDirectoriesFromExptPath(subDir, fileName)) {
-				// Create metadata object with minimal information
-				// Use the experiment name from fileName and construct the path
-				String experimentPath = subDir + File.separator + fileName;
-				ExperimentMetadata metadata = new ExperimentMetadata(fileName, experimentPath, subDir);
+				String camDataImagesDirectory = expDirectories.getCameraImagesDirectory();
+				String resultsDirectory = expDirectories.getResultsDirectory();
+				ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory, subDir);
 				experimentMetadataList.add(metadata);
 			}
 
@@ -528,14 +528,14 @@ public class LoadSaveExperimentOptimized extends JPanel
 	// UI Event Handlers
 	private void handleCreateButton() {
 		ExperimentDirectories eDAF = new ExperimentDirectories();
-		final String subDir = parent0.expListCombo.stringExpBinSubDirectory;
-		if (eDAF.getDirectoriesFromDialog(subDir, null, true)) {
+		final String binDirectory = parent0.expListCombo.stringExpBinSubDirectory;
+		if (eDAF.getDirectoriesFromDialog(binDirectory, null, true)) {
 			// Create metadata for new experiment
 			// Get the experiment name from the directory path
 			String experimentName = new File(eDAF.getResultsDirectory()).getName();
 			String experimentPath = eDAF.getResultsDirectory();
 
-			ExperimentMetadata metadata = new ExperimentMetadata(experimentName, experimentPath, subDir);
+			ExperimentMetadata metadata = new ExperimentMetadata(experimentName, experimentPath, binDirectory);
 			experimentMetadataList.add(metadata);
 
 			// Create and add LazyExperiment
@@ -548,14 +548,15 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 	private void handleOpenButton() {
 		ExperimentDirectories eDAF = new ExperimentDirectories();
-		final String subDir = parent0.expListCombo.stringExpBinSubDirectory;
-		if (eDAF.getDirectoriesFromDialog(subDir, null, false)) {
+		final String binDirectory = parent0.expListCombo.stringExpBinSubDirectory;
+		if (eDAF.getDirectoriesFromDialog(binDirectory, null, false)) {
 			// Create metadata for opened experiment
 			// Get the experiment name from the directory path
-			String experimentName = new File(eDAF.getResultsDirectory()).getName();
-			String experimentPath = eDAF.getResultsDirectory();
+			String camDataImagesDirectory = eDAF.getCameraImagesDirectory();
+			String resultsDirectory = eDAF.getResultsDirectory();
 
-			ExperimentMetadata metadata = new ExperimentMetadata(experimentName, experimentPath, subDir);
+			ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory,
+					binDirectory);
 			experimentMetadataList.add(metadata);
 
 			// Create and add LazyExperiment
