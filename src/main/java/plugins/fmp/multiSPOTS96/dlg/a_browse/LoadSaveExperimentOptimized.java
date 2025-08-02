@@ -73,11 +73,11 @@ public class LoadSaveExperimentOptimized extends JPanel
 	private static final long serialVersionUID = -690874563607080412L;
 	private static final Logger LOGGER = Logger.getLogger(LoadSaveExperimentOptimized.class.getName());
 
-	// Performance optimization constants
-	private static final int BATCH_SIZE = 10; // Process 10 files at a time
-	private static final int CACHE_SIZE = 100; // Cache size for directory information
-	private static final int TIMEOUT_MS = 30000; // 30 second timeout for file operations
-	private static final int MAX_CONCURRENT_THREADS = 4; // Limit concurrent file operations
+	// Performance optimization constants - REDUCED for better stability
+	private static final int BATCH_SIZE = 5; // Process 5 files at a time (reduced from 10)
+	private static final int CACHE_SIZE = 50; // Reduced cache size
+	private static final int TIMEOUT_MS = 15000; // 15 second timeout (reduced from 30)
+	private static final int MAX_CONCURRENT_THREADS = 2; // Reduced concurrent threads
 
 	// UI Components
 	private JButton createButton = new JButton("Create...");
@@ -246,6 +246,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 	/**
 	 * Processes selected files asynchronously with progress reporting.
+	 * IMPROVED: Better thread safety and UI updates
 	 */
 	private void processSelectedFilesAsync() {
 		isProcessing = true;
@@ -255,11 +256,11 @@ public class LoadSaveExperimentOptimized extends JPanel
 		ProgressFrame progressFrame = new ProgressFrame("Processing Selected Files");
 		progressFrame.setMessage("Initializing file processing...");
 
-		// Create background worker
+		// Create background worker with improved thread safety
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				processFilesInBatches(progressFrame);
+				processFilesSequentially(progressFrame);
 				return null;
 			}
 
@@ -267,7 +268,9 @@ public class LoadSaveExperimentOptimized extends JPanel
 			protected void done() {
 				isProcessing = false;
 				progressFrame.close();
-				updateBrowseInterface();
+				SwingUtilities.invokeLater(() -> {
+					updateBrowseInterface();
+				});
 			}
 		};
 
@@ -275,11 +278,12 @@ public class LoadSaveExperimentOptimized extends JPanel
 	}
 
 	/**
-	 * Processes files in batches to optimize performance.
+	 * Processes files sequentially to avoid thread conflicts.
+	 * IMPROVED: Sequential processing with proper UI updates
 	 * 
 	 * @param progressFrame The progress frame for user feedback
 	 */
-	private void processFilesInBatches(ProgressFrame progressFrame) {
+	private void processFilesSequentially(ProgressFrame progressFrame) {
 		final String subDir = parent0.expListCombo.stringExpBinSubDirectory;
 		final int totalFiles = selectedNames.size();
 
@@ -290,27 +294,32 @@ public class LoadSaveExperimentOptimized extends JPanel
 				processingCount.incrementAndGet();
 			}
 
-			// Process remaining files in batches
+			// Process remaining files in smaller batches
 			for (int i = 1; i < totalFiles; i += BATCH_SIZE) {
 				int endIndex = Math.min(i + BATCH_SIZE, totalFiles);
-				List<String> batch = selectedNames.subList(i, endIndex);
-
+				
 				// Update progress
-				progressFrame.setMessage(String.format("Processing files %d-%d of %d", i + 1, endIndex, totalFiles));
-				progressFrame.setPosition((double) (i / totalFiles));
+				final int currentBatch = i;
+				final int currentEndIndex = endIndex;
+				SwingUtilities.invokeLater(() -> {
+					progressFrame.setMessage(String.format("Processing files %d-%d of %d", currentBatch + 1, currentEndIndex, totalFiles));
+					progressFrame.setPosition((double) currentBatch / totalFiles);
+				});
 
-				// Process batch concurrently
-				List<CompletableFuture<Void>> futures = new ArrayList<>();
-				for (String fileName : batch) {
-					CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-						processSingleFile(fileName, subDir, false);
-					}, executorService);
-					futures.add(future);
+				// Process batch sequentially to avoid thread conflicts
+				for (int j = i; j < endIndex; j++) {
+					final String fileName = selectedNames.get(j);
+					processSingleFile(fileName, subDir, false);
+					processingCount.incrementAndGet();
+					
+					// Small delay to prevent UI freezing
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						break;
+					}
 				}
-
-				// Wait for batch completion
-				CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-				processingCount.addAndGet(batch.size());
 
 				// Force garbage collection after each batch
 				System.gc();
@@ -321,12 +330,15 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 		} catch (Exception e) {
 			LOGGER.severe("Error processing files: " + e.getMessage());
-			progressFrame.setMessage("Error: " + e.getMessage());
+			SwingUtilities.invokeLater(() -> {
+				progressFrame.setMessage("Error: " + e.getMessage());
+			});
 		}
 	}
 
 	/**
-	 * Processes a single file with caching and error handling.
+	 * Processes a single file with improved error handling.
+	 * IMPROVED: Better error handling and UI thread safety
 	 * 
 	 * @param fileName The file name to process
 	 * @param subDir   The subdirectory
@@ -341,18 +353,14 @@ public class LoadSaveExperimentOptimized extends JPanel
 				return;
 			}
 
-			// Process file with timeout
-			CompletableFuture<ExperimentDirectories> future = CompletableFuture.supplyAsync(() -> {
-				return createExperimentDirectories(fileName, subDir);
-			}, executorService);
-
-			ExperimentDirectories expDirectories = future.get();
+			// Process file synchronously to avoid thread conflicts
+			ExperimentDirectories expDirectories = createExperimentDirectories(fileName, subDir);
 			if (expDirectories != null) {
 				// Cache the result
 				CachedDirectoryInfo cacheInfo = new CachedDirectoryInfo(expDirectories);
 				directoryCache.put(fileName, cacheInfo);
 
-				// Add experiment
+				// Add experiment with proper UI thread handling
 				addExperimentFromDirectories(expDirectories, updateUI);
 			}
 
@@ -384,34 +392,28 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 	/**
 	 * Adds an experiment from cached directory information.
+	 * IMPROVED: Always use SwingUtilities.invokeLater for UI updates
 	 * 
 	 * @param cacheInfo The cached directory information
 	 * @param updateUI  Whether to update the UI immediately
 	 */
 	private void addExperimentFromCache(CachedDirectoryInfo cacheInfo, boolean updateUI) {
-		if (updateUI) {
-			SwingUtilities.invokeLater(() -> {
-				addExperimentToUI(cacheInfo.getExperimentDirectories());
-			});
-		} else {
+		SwingUtilities.invokeLater(() -> {
 			addExperimentToUI(cacheInfo.getExperimentDirectories());
-		}
+		});
 	}
 
 	/**
 	 * Adds an experiment from directory information.
+	 * IMPROVED: Always use SwingUtilities.invokeLater for UI updates
 	 * 
 	 * @param expDirectories The experiment directories
 	 * @param updateUI       Whether to update the UI immediately
 	 */
 	private void addExperimentFromDirectories(ExperimentDirectories expDirectories, boolean updateUI) {
-//		if (updateUI) {
 		SwingUtilities.invokeLater(() -> {
 			addExperimentToUI(expDirectories);
 		});
-//		} else {
-//			addExperimentToUI(expDirectories);
-//		}
 	}
 
 	/**
