@@ -405,13 +405,13 @@ public class LoadSaveExperimentOptimized extends JPanel
 	 * @param updateUI       Whether to update the UI immediately
 	 */
 	private void addExperimentFromDirectories(ExperimentDirectories expDirectories, boolean updateUI) {
-		if (updateUI) {
-			SwingUtilities.invokeLater(() -> {
-				addExperimentToUI(expDirectories);
-			});
-		} else {
+//		if (updateUI) {
+		SwingUtilities.invokeLater(() -> {
 			addExperimentToUI(expDirectories);
-		}
+		});
+//		} else {
+//			addExperimentToUI(expDirectories);
+//		}
 	}
 
 	/**
@@ -421,9 +421,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 	 */
 	private void addExperimentToUI(ExperimentDirectories expDirectories) {
 		try {
-			int item = parent0.expListCombo.addExperiment(new Experiment(expDirectories), false);
+			parent0.expListCombo.addExperiment(new Experiment(expDirectories), false);
 			parent0.dlgExperiment.tabInfos.initInfosCombos();
-			parent0.expListCombo.setSelectedIndex(item);
 		} catch (Exception e) {
 			LOGGER.warning("Error adding experiment to UI: " + e.getMessage());
 		}
