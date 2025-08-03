@@ -21,6 +21,7 @@ public class SpotsAreas extends JPanel {
 	JCheckBox sumCheckBox = new JCheckBox("area", true);
 	JCheckBox nPixelsCheckBox = new JCheckBox("n pixels", true);
 	JCheckBox t0CheckBox = new JCheckBox("(max-t)/max", true);
+	JCheckBox discardNoFlyCageCheckBox = new JCheckBox("discard cages with no fly", true);
 
 	void init(GridLayout capLayout) {
 		setLayout(capLayout);
@@ -31,6 +32,7 @@ public class SpotsAreas extends JPanel {
 		panel0.add(sumCheckBox);
 		panel0.add(nPixelsCheckBox);
 		panel0.add(t0CheckBox);
+		panel0.add(discardNoFlyCageCheckBox);
 		add(panel0);
 
 		JPanel panel1 = new JPanel(flowLayout0);

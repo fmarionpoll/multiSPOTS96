@@ -144,24 +144,6 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 			first = parent0.expListCombo.getSelectedIndex();
 			last = parent0.expListCombo.getSelectedIndex();
 		}
-		boolean fixedIntervals = tabCommonOptions.isFixedFrameButton.isSelected();
-
-//		XLSExportOptions options = XLSExportOptionsBuilder
-//		.forSpotAreas()
-//		.build();
-//		
-//		options.withSum(spotsAreas.sumCheckBox.isSelected());
-//		options.withRelativeToT0(spotsAreas.t0CheckBox.isSelected());
-//		options.withTranspose(tabCommonOptions.transposeCheckBox.isSelected());
-//		options.withBuildExcelStepMs(tabCommonOptions.getExcelBuildStep());
-//
-//		.withBuildExcelUnitMs(tabCommonOptions.binUnit.getMsUnitValue())
-//		.withNPixels(spotsAreas.nPixelsCheckBox.isSelected())
-//		.withFixedIntervals(fixedIntervals)
-//		.withTimeRange(tabCommonOptions.getStartAllMs(), tabCommonOptions.getEndAllMs())
-//		.withExportAllFiles(tabCommonOptions.exportAllFilesCheckBox.isSelected())
-//		.withExperimentList(parent0.expListCombo)
-//		.withExperimentRange(first, last);
 
 		XLSExportOptions options = new XLSExportOptions();
 		options.spotAreas = true;
@@ -172,13 +154,14 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 		options.transpose = tabCommonOptions.transposeCheckBox.isSelected();
 		options.buildExcelStepMs = tabCommonOptions.getExcelBuildStep();
 		options.buildExcelUnitMs = tabCommonOptions.binUnit.getMsUnitValue();
+		boolean fixedIntervals = tabCommonOptions.isFixedFrameButton.isSelected();
 		options.fixedIntervals = fixedIntervals;
 		options.startAll_Ms = tabCommonOptions.getStartAllMs();
 		options.endAll_Ms = tabCommonOptions.getEndAllMs();
 		options.collateSeries = false;
 		options.padIntervals = false;
 		options.absoluteTime = false;
-		options.onlyalive = false;
+		options.onlyalive = spotsAreas.discardNoFlyCageCheckBox.isSelected();
 		options.exportAllFiles = tabCommonOptions.exportAllFilesCheckBox.isSelected();
 		options.expList = parent0.expListCombo;
 		options.experimentIndexFirst = first;

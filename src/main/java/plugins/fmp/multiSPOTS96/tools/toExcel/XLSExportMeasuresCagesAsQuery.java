@@ -209,13 +209,19 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 			XLSResults xlsPI = getResultForCage(exp, cage, spotPI, scalingFactorToPhysicalUnits, xlsExportOptions,
 					xlsExportType);
 
-			int duration = 0;
-			if (xlsStim1 != null)
-				duration = xlsStim1.getValuesOutLength();
-			else if (xlsStim2 != null)
-				duration = xlsStim2.getValuesOutLength();
+			int tStart = 0;
+			int tEnd = 0;
+			if (xlsExportOptions.fixedIntervals) {
+				tStart = (int) xlsExportOptions.startAll_Ms / xlsExportOptions.buildExcelStepMs;
+				tEnd = (int) xlsExportOptions.endAll_Ms / xlsExportOptions.buildExcelStepMs;
+			} else {
+				if (xlsStim1 != null)
+					tEnd = xlsStim1.getValuesOutLength() - 1;
+				else if (xlsStim2 != null)
+					tEnd = xlsStim2.getValuesOutLength() - 1;
+			}
 
-			for (int t = 0; t < duration; t++) {
+			for (int t = tStart; t <= tEnd; t++) {
 				pt.y = 0;
 				writeCageProperties(sheet, pt, exp, charSeries, cage, xlsExportType);
 				pt.y -= 4;

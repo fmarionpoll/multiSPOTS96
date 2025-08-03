@@ -179,9 +179,9 @@ public class LoadSaveExperimentOptimized extends JPanel
 			}
 		}
 
-		public boolean isLoaded() {
-			return isLoaded;
-		}
+//		public boolean isLoaded() {
+//			return isLoaded;
+//		}
 	}
 
 	/**
