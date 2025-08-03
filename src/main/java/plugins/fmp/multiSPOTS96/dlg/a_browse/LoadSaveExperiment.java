@@ -258,14 +258,14 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			final Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null)
-				openSelecteExperiment(exp);
+				openSelectedExperiment(exp);
 		} else if (e.getStateChange() == ItemEvent.DESELECTED) {
 			Experiment exp = (Experiment) e.getItem();
 			closeViewsForCurrentExperiment(exp);
 		}
 	}
 
-	public boolean openSelecteExperiment(Experiment exp) {
+	public boolean openSelectedExperiment(Experiment exp) {
 		ProgressFrame progressFrame = new ProgressFrame("Load Data");
 		exp.load_MS96_experiment();
 

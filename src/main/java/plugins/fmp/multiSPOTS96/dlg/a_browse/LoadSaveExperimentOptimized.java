@@ -23,6 +23,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import icy.gui.frame.progress.ProgressFrame;
+import icy.gui.viewer.Viewer;
 import icy.sequence.Sequence;
 import icy.sequence.SequenceEvent;
 import icy.sequence.SequenceEvent.SequenceEventSourceType;
@@ -101,12 +102,12 @@ public class LoadSaveExperimentOptimized extends JPanel
 	private static class ExperimentMetadata {
 		private final String cameraDirectory;
 		private final String resultsDirectory;
-		private final String subDirectory;
+		private final String binDirectory;
 
 		public ExperimentMetadata(String cameraDirectory, String resultsDirectory, String binDirectory) {
 			this.cameraDirectory = cameraDirectory;
 			this.resultsDirectory = resultsDirectory;
-			this.subDirectory = binDirectory;
+			this.binDirectory = binDirectory;
 		}
 
 		public String getCameraDirectory() {
@@ -117,8 +118,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 			return resultsDirectory;
 		}
 
-		public String getSubDirectory() {
-			return subDirectory;
+		public String getBinDirectory() {
+			return binDirectory;
 		}
 
 		@Override
@@ -155,7 +156,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 			if (!isLoaded) {
 				try {
 					ExperimentDirectories expDirectories = new ExperimentDirectories();
-					if (expDirectories.getDirectoriesFromExptPath(metadata.getSubDirectory(),
+					if (expDirectories.getDirectoriesFromExptPath(metadata.getBinDirectory(),
 							metadata.getCameraDirectory())) {
 						Experiment fullExp = new Experiment(expDirectories);
 						// Copy essential public properties from the fully loaded experiment
@@ -494,8 +495,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 			List<String> imagesList = ExperimentDirectories.getImagesListFromPathV2(exp.seqCamData.getImagesDirectory(),
 					"jpg");
 			exp.seqCamData.loadImageList(imagesList);
-			parent0.dlgExperiment.updateViewerForSequenceCam(exp);
-
 			exp.seqCamData.getSequence().addListener(this);
 			if (exp.seqCamData != null) {
 				progressFrame.setMessage("Loading cages and spots...");
@@ -516,6 +515,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 			parent0.dlgExperiment.tabInfos.transferPreviousExperimentInfosToDialog(exp, exp);
 			progressFrame.close();
+			parent0.dlgExperiment.updateViewerForSequenceCam(exp);
 			return true;
 
 		} catch (Exception e) {
@@ -611,7 +611,11 @@ public class LoadSaveExperimentOptimized extends JPanel
 				openSelectedExperiment(exp);
 			}
 		} else if (e.getStateChange() == ItemEvent.DESELECTED) {
-			// Handle deselection if needed
+			Experiment exp = (Experiment) e.getItem();
+			if (exp != null)
+				closeViewsForCurrentExperiment(exp);
+			else
+				System.out.println("experiment = null");
 		}
 	}
 
@@ -620,6 +624,12 @@ public class LoadSaveExperimentOptimized extends JPanel
 			if (exp.seqCamData != null) {
 				exp.save_MS96_experiment();
 				exp.save_MS96_spotsMeasures();
+
+				if (exp.seqCamData.getSequence() != null) {
+					Viewer v = exp.seqCamData.getSequence().getFirstViewer();
+					if (v != null)
+						v.close();
+				}
 			}
 			exp.closeSequences();
 		}
