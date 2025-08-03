@@ -187,6 +187,9 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 			if (cage.spotsArray.getSpotsList().size() == 0)
 				continue;
 
+			if (xlsExportOptions.onlyalive && cage.getProperties().getCageNFlies() < 1)
+				continue;
+
 			double scalingFactorToPhysicalUnits = cage.spotsArray.getScalingFactorToPhysicalUnits(xlsExportType);
 
 			Spot spot1 = cage.combineSpotsWithSameStimConc(stim1, conc1);

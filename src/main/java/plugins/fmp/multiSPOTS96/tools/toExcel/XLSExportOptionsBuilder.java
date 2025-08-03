@@ -12,7 +12,6 @@ public class XLSExportOptionsBuilder {
 	// Basic export options
 	private boolean xyImage = DefaultOptions.XY_IMAGE;
 	private boolean xyCage = DefaultOptions.XY_CAGE;
-	private boolean xyCapillaries = DefaultOptions.XY_CAPILLARIES;
 	private boolean ellipseAxes = DefaultOptions.ELLIPSE_AXES;
 
 	// Movement and behavior options
@@ -20,14 +19,6 @@ public class XLSExportOptionsBuilder {
 	private boolean alive = DefaultOptions.ALIVE;
 	private boolean sleep = DefaultOptions.SLEEP;
 	private int sleepThreshold = ExcelExportConstants.DEFAULT_SLEEP_THRESHOLD;
-
-	// Level analysis options
-//	private boolean topLevel = DefaultOptions.TOP_LEVEL;
-//	private boolean topLevelDelta = DefaultOptions.TOP_LEVEL_DELTA;
-//	private boolean bottomLevel = DefaultOptions.BOTTOM_LEVEL;
-//	private boolean derivative = DefaultOptions.DERIVATIVE;
-//	private boolean lrPI = DefaultOptions.LR_PI;
-//	private double lrPIThreshold = DefaultOptions.LR_PI_THRESHOLD;
 
 	// Spot area options
 	private boolean spotAreas = DefaultOptions.SPOT_AREAS;
@@ -93,20 +84,12 @@ public class XLSExportOptionsBuilder {
 	public XLSExportOptionsBuilder(XLSExportOptions existing) {
 		this.xyImage = existing.xyImage;
 		this.xyCage = existing.xyCage;
-		this.xyCapillaries = existing.xyCapillaries;
 		this.ellipseAxes = existing.ellipseAxes;
 
 		this.distance = existing.distance;
 		this.alive = existing.alive;
 		this.sleep = existing.sleep;
 		this.sleepThreshold = existing.sleepThreshold;
-
-//		this.topLevel = existing.topLevel;
-//		this.topLevelDelta = existing.topLevelDelta;
-//		this.bottomLevel = existing.bottomLevel;
-//		this.derivative = existing.derivative;
-//		this.lrPI = existing.lrPI;
-//		this.lrPIThreshold = existing.lrPIThreshold;
 
 		this.spotAreas = existing.spotAreas;
 		this.sum = existing.sum;
@@ -159,11 +142,6 @@ public class XLSExportOptionsBuilder {
 
 	public XLSExportOptionsBuilder withXyCage(boolean xyCage) {
 		this.xyCage = xyCage;
-		return this;
-	}
-
-	public XLSExportOptionsBuilder withXyCapillaries(boolean xyCapillaries) {
-		this.xyCapillaries = xyCapillaries;
 		return this;
 	}
 
@@ -302,20 +280,12 @@ public class XLSExportOptionsBuilder {
 		// Copy all configured values
 		options.xyImage = this.xyImage;
 		options.xyCage = this.xyCage;
-		options.xyCapillaries = this.xyCapillaries;
 		options.ellipseAxes = this.ellipseAxes;
 
 		options.distance = this.distance;
 		options.alive = this.alive;
 		options.sleep = this.sleep;
 		options.sleepThreshold = this.sleepThreshold;
-
-//		options.topLevel = this.topLevel;
-//		options.topLevelDelta = this.topLevelDelta;
-//		options.bottomLevel = this.bottomLevel;
-//		options.derivative = this.derivative;
-//		options.lrPI = this.lrPI;
-//		options.lrPIThreshold = this.lrPIThreshold;
 
 		options.spotAreas = this.spotAreas;
 		options.sum = this.sum;

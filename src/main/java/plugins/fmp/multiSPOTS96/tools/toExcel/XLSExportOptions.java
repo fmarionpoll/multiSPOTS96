@@ -5,7 +5,6 @@ import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
 public class XLSExportOptions {
 	public boolean xyImage = true;
 	public boolean xyCage = true;
-	public boolean xyCapillaries = true;
 	public boolean ellipseAxes = false;
 
 	public boolean distance = false;
@@ -58,7 +57,6 @@ public class XLSExportOptions {
 	public void copy(XLSExportOptions xlsExportOptions) {
 		this.xyImage = xlsExportOptions.xyImage;
 		this.xyCage = xlsExportOptions.xyCage;
-		this.xyCapillaries = xlsExportOptions.xyCapillaries;
 		this.ellipseAxes = xlsExportOptions.ellipseAxes;
 
 		this.distance = xlsExportOptions.distance;
