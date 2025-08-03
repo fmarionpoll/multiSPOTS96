@@ -232,7 +232,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 				pt.x++;
 			}
 		}
-		pt.x++;
+//		pt.x++;
 		return pt.x;
 	}
 

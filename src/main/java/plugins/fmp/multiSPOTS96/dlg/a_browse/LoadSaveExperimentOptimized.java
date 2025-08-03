@@ -299,6 +299,13 @@ public class LoadSaveExperimentOptimized extends JPanel
 			}
 		});
 
+		filteredCheck.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				parent0.dlgExperiment.tabFilter.filterExperimentList(filteredCheck.isSelected());
+			}
+		});
+
 	}
 
 	/**
