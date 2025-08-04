@@ -116,6 +116,21 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	}
 
 	/**
+	 * Adds multiple LazyExperiments at once for maximum bulk loading performance.
+	 * This method completely bypasses all duplicate checking and individual item processing.
+	 * 
+	 * @param lazyExperiments List of LazyExperiments to add
+	 */
+	public void addLazyExperimentsBulk(List<LazyExperiment> lazyExperiments) {
+		long startTime = System.currentTimeMillis();
+		for (LazyExperiment lazyExp : lazyExperiments) {
+			addItem(lazyExp);
+		}
+		long endTime = System.currentTimeMillis();
+		LOGGER.info("Bulk added " + lazyExperiments.size() + " experiments in " + (endTime - startTime) + "ms");
+	}
+
+	/**
 	 * Converts a regular Experiment to a LazyExperiment for memory efficiency.
 	 * 
 	 * @param exp The experiment to convert
@@ -416,9 +431,46 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		return textList;
 	}
 
+	/**
+	 * Gets field values from all experiments WITHOUT loading them (for performance).
+	 * This method only works with LazyExperiments and uses metadata only.
+	 */
+	public List<String> getFieldValuesFromAllExperimentsLightweight(EnumXLSColumnHeader field) {
+		List<String> textList = new ArrayList<>();
+		for (int i = 0; i < getItemCount(); i++) {
+			Object item = super.getItemAt(i);
+			if (item instanceof LazyExperiment) {
+				LazyExperiment lazyExp = (LazyExperiment) item;
+				// For now, just add the experiment name as a placeholder
+				// This prevents loading all experiments just for combo box population
+				textList.add(lazyExp.toString());
+			} else if (item instanceof Experiment) {
+				Experiment exp = (Experiment) item;
+				// For regular experiments, we still need to load them
+				if (exp instanceof LazyExperiment) {
+					((LazyExperiment) exp).loadIfNeeded();
+				}
+				exp.load_MS96_experiment();
+				exp.getFieldValues(field, textList);
+			}
+		}
+		return textList;
+	}
+
 	public void getFieldValuesToCombo(JComboBox<String> combo, EnumXLSColumnHeader header) {
 		combo.removeAllItems();
 		List<String> textList = getFieldValuesFromAllExperiments(header);
+		java.util.Collections.sort(textList);
+		for (String text : textList)
+			combo.addItem(text);
+	}
+
+	/**
+	 * Gets field values to combo box WITHOUT loading experiments (for performance).
+	 */
+	public void getFieldValuesToComboLightweight(JComboBox<String> combo, EnumXLSColumnHeader header) {
+		combo.removeAllItems();
+		List<String> textList = getFieldValuesFromAllExperimentsLightweight(header);
 		java.util.Collections.sort(textList);
 		for (String text : textList)
 			combo.addItem(text);

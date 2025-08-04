@@ -373,20 +373,26 @@ public class LoadSaveExperimentOptimized extends JPanel
 	 */
 	private void addMetadataToUI() {
 		try {
+			long startTime = System.currentTimeMillis();
+			
 			// Clear existing items
 			parent0.expListCombo.removeAllItems();
 
-			// Add lightweight experiment objects to combo box
+			// Create all LazyExperiments first
+			List<LazyExperiment> lazyExperiments = new ArrayList<>();
 			for (ExperimentMetadata metadata : experimentMetadataList) {
 				LazyExperiment lazyExp = new LazyExperiment(metadata);
-				// Use addLazyExperimentDirect for maximum performance during bulk loading
-				parent0.expListCombo.addLazyExperimentDirect(lazyExp);
+				lazyExperiments.add(lazyExp);
 			}
+
+			// Add all experiments at once using bulk method for maximum performance
+			parent0.expListCombo.addLazyExperimentsBulk(lazyExperiments);
 
 			// Initialize infos combos
 			parent0.dlgExperiment.tabInfos.initInfosCombos();
 
-			LOGGER.info("Added " + experimentMetadataList.size() + " experiments to UI (metadata only)");
+			long endTime = System.currentTimeMillis();
+			LOGGER.info("Added " + experimentMetadataList.size() + " experiments to UI in " + (endTime - startTime) + "ms (metadata only)");
 
 		} catch (Exception e) {
 			LOGGER.warning("Error adding metadata to UI: " + e.getMessage());
@@ -461,7 +467,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 		// Create and add LazyExperiment directly
 		LazyExperiment lazyExp = new LazyExperiment(metadata);
-		parent0.expListCombo.addLazyExperiment(lazyExp, false);
+		parent0.expListCombo.addLazyExperimentDirect(lazyExp);
 		parent0.dlgExperiment.tabInfos.initInfosCombos();
 		parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
 		}
@@ -482,7 +488,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 		// Create and add LazyExperiment directly
 		LazyExperiment lazyExp = new LazyExperiment(metadata);
-		parent0.expListCombo.addLazyExperiment(lazyExp, false);
+		parent0.expListCombo.addLazyExperimentDirect(lazyExp);
 		parent0.dlgExperiment.tabInfos.initInfosCombos();
 		parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
 		}
