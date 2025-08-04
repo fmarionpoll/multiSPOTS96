@@ -753,9 +753,9 @@ public class CagesArray {
 		}
 	}
 
-	public void setFilterOfSpotsToAnalyze(boolean setFilter, BuildSeriesOptions options) {
+	public void setReadyToAnalyze(boolean setFilter, BuildSeriesOptions options) {
 		for (Cage cage : cagesList) {
-			cage.getSpotsArray().setFilterOfSpotsToAnalyze(setFilter, options);
+			cage.getSpotsArray().setReadyToAnalyze(setFilter, options);
 		}
 	}
 

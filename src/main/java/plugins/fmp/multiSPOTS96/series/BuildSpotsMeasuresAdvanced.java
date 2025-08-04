@@ -2,7 +2,6 @@ package plugins.fmp.multiSPOTS96.series;
 
 import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,13 +79,13 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	void analyzeExperiment(Experiment exp) {
 		getTimeLimitsOfSequence(exp);
 		loadExperimentDataToMeasureSpots(exp);
-		exp.cagesArray.setFilterOfSpotsToAnalyze(true, options);
+		exp.cagesArray.setReadyToAnalyze(true, options);
 		openViewers(exp);
 
 		if (measureSpotsAdvanced(exp))
 			saveComputation(exp);
 
-		exp.cagesArray.setFilterOfSpotsToAnalyze(false, options);
+		exp.cagesArray.setReadyToAnalyze(false, options);
 		closeViewers();
 		cleanupResources();
 	}
@@ -352,12 +351,6 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			sourceImage = streamingProcessor.getImage(frameIndex);
 			if (sourceImage == null) {
 				System.err.println("Failed to get image for frame " + frameIndex + ". Skipping processing.");
-				return;
-			}
-
-			// Validate source image
-			if (sourceImage == null) {
-				System.err.println("Source image is null for frame " + frameIndex + ". Skipping processing.");
 				return;
 			}
 

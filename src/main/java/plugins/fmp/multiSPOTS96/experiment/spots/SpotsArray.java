@@ -580,7 +580,7 @@ public class SpotsArray {
 	 * @param setFilter whether to set filter
 	 * @param options   the build series options
 	 */
-	public void setFilterOfSpotsToAnalyze(boolean setFilter, BuildSeriesOptions options) {
+	public void setReadyToAnalyze(boolean setFilter, BuildSeriesOptions options) {
 		spotsList.forEach(spot -> spot.setReadyForAnalysis(setFilter));
 	}
 
