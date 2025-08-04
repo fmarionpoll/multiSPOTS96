@@ -104,50 +104,50 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 	}
 
 	// === MEMORY MONITORING AND CLEANUP ===
-	
-	private void logMemoryUsage(String stage) {
-		Runtime runtime = Runtime.getRuntime();
-		long totalMemory = runtime.totalMemory();
-		long freeMemory = runtime.freeMemory();
-		long usedMemory = totalMemory - freeMemory;
-		long maxMemory = runtime.maxMemory();
-		
-		System.out.println("=== DIALOG " + stage + " ===");
-		System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
-		System.out.println("Free Memory: " + (freeMemory / 1024 / 1024) + " MB");
-		System.out.println("Total Memory: " + (totalMemory / 1024 / 1024) + " MB");
-		System.out.println("Max Memory: " + (maxMemory / 1024 / 1024) + " MB");
-		System.out.println("Memory Usage: " + (usedMemory * 100 / maxMemory) + "%");
-	}
-	
-	private void checkMemoryBeforeReturn() {
-		Runtime runtime = Runtime.getRuntime();
-		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
-		
-		System.out.println("=== DIALOG RETURN MEMORY CHECK ===");
-		System.out.println("Memory Usage: " + usagePercent + "%");
-		System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
-		System.out.println("Max Memory: " + (runtime.maxMemory() / 1024 / 1024) + " MB");
-		
-		if (usagePercent > 60) {
-			System.err.println("WARNING: High memory usage on dialog return: " + usagePercent + "%");
-			System.err.println("Consider forcing cleanup before dialog return");
-			
-			// Force cleanup if memory is high
-			forceDialogReturnCleanup();
-			
-			// Check again
-			usedMemory = runtime.totalMemory() - runtime.freeMemory();
-			usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
-			
-			System.out.println("After cleanup: " + usagePercent + "%");
-		}
-	}
-	
+
+//	private void logMemoryUsage(String stage) {
+//		Runtime runtime = Runtime.getRuntime();
+//		long totalMemory = runtime.totalMemory();
+//		long freeMemory = runtime.freeMemory();
+//		long usedMemory = totalMemory - freeMemory;
+//		long maxMemory = runtime.maxMemory();
+//		
+//		System.out.println("=== DIALOG " + stage + " ===");
+//		System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
+//		System.out.println("Free Memory: " + (freeMemory / 1024 / 1024) + " MB");
+//		System.out.println("Total Memory: " + (totalMemory / 1024 / 1024) + " MB");
+//		System.out.println("Max Memory: " + (maxMemory / 1024 / 1024) + " MB");
+//		System.out.println("Memory Usage: " + (usedMemory * 100 / maxMemory) + "%");
+//	}
+
+//	private void checkMemoryBeforeReturn() {
+//		Runtime runtime = Runtime.getRuntime();
+//		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
+//		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
+//		
+//		System.out.println("=== DIALOG RETURN MEMORY CHECK ===");
+//		System.out.println("Memory Usage: " + usagePercent + "%");
+//		System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
+//		System.out.println("Max Memory: " + (runtime.maxMemory() / 1024 / 1024) + " MB");
+//		
+//		if (usagePercent > 60) {
+//			System.err.println("WARNING: High memory usage on dialog return: " + usagePercent + "%");
+//			System.err.println("Consider forcing cleanup before dialog return");
+//			
+//			// Force cleanup if memory is high
+//			forceDialogReturnCleanup();
+//			
+//			// Check again
+//			usedMemory = runtime.totalMemory() - runtime.freeMemory();
+//			usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
+//			
+//			System.out.println("After cleanup: " + usagePercent + "%");
+//		}
+//	}
+
 	private void forceDialogReturnCleanup() {
-		System.out.println("=== FORCING DIALOG RETURN CLEANUP ===");
-		
+//		System.out.println("=== FORCING DIALOG RETURN CLEANUP ===");
+
 		// Force multiple GC passes
 		for (int i = 0; i < 3; i++) {
 			System.gc();
@@ -157,17 +157,17 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 				Thread.currentThread().interrupt();
 			}
 		}
-		
+
 		// Clear any dialog-specific caches
 		clearDialogCaches();
 	}
-	
+
 	private void clearDialogCaches() {
 		// Clear any caches specific to the dialog
 		// This will depend on what the dialog is caching
 		System.out.println("Cleared dialog caches");
 	}
-	
+
 	// Get processor using weak reference
 	private BuildSpotsMeasuresAdvanced getProcessor() {
 		if (processorRef != null) {
@@ -175,7 +175,7 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 		}
 		return null;
 	}
-	
+
 	// Set processor using weak reference
 	private void setProcessor(BuildSpotsMeasuresAdvanced processor) {
 		this.processorRef = new WeakReference<>(processor);
@@ -310,8 +310,8 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 	}
 
 	void startDetection() {
-		logMemoryUsage("Before Detection Start");
-		
+//		logMemoryUsage("Before Detection Start");
+
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
 			AdvancedMemoryOptions memOptions = new AdvancedMemoryOptions();
@@ -328,10 +328,10 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 			BuildSpotsMeasuresAdvanced processor = new BuildSpotsMeasuresAdvanced(memOptions);
 			processor.options = initDetectOptions(exp);
 			processor.addPropertyChangeListener(this);
-			
+
 			// Use weak reference to avoid memory leak
 			setProcessor(processor);
-			
+
 			processor.execute();
 			detectButton.setText("STOP");
 		}
@@ -460,50 +460,50 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (StringUtil.equals("thread_ended", evt.getPropertyName())) {
 			detectButton.setText(detectString);
-			
+
 			// Check memory before loading experiment data
 			checkMemoryBeforeLoading();
-			
+
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 			if (exp != null) {
 				// Use memory-optimized loading
 				loadExperimentDataOptimized(exp);
 				parent0.dlgMeasure.tabCharts.displayChartPanels(exp);
 			}
-			
+
 			// Clear processor reference to allow GC
 			processorRef = null;
-			
-			logMemoryUsage("After Detection Complete");
+
+//			logMemoryUsage("After Detection Complete");
 		}
 	}
-	
+
 	private void checkMemoryBeforeLoading() {
 		Runtime runtime = Runtime.getRuntime();
 		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
 		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
-		
+
 		System.out.println("=== BEFORE EXPERIMENT LOADING ===");
 		System.out.println("Memory Usage: " + usagePercent + "%");
 		System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
-		
+
 		if (usagePercent > 50) {
 			System.err.println("WARNING: High memory before loading experiment data!");
 			System.err.println("Forcing cleanup before loading...");
-			
+
 			// Force cleanup before loading
 			forcePreLoadingCleanup();
-			
+
 			// Check again
 			usedMemory = runtime.totalMemory() - runtime.freeMemory();
 			usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
 			System.out.println("After cleanup: " + usagePercent + "%");
 		}
 	}
-	
+
 	private void forcePreLoadingCleanup() {
 		System.out.println("=== FORCING PRE-LOADING CLEANUP ===");
-		
+
 		// Force multiple GC passes
 		for (int i = 0; i < 3; i++) {
 			System.gc();
@@ -514,28 +514,29 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 			}
 		}
 	}
-	
+
 	private void loadExperimentDataOptimized(Experiment exp) {
-		System.out.println("=== OPTIMIZED EXPERIMENT LOADING ===");
-		
+//		System.out.println("=== OPTIMIZED EXPERIMENT LOADING ===");
+
 		try {
 			// Load with memory monitoring
 			long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			
+
 			// Use original loading method for now (will be optimized later)
 			boolean success = exp.load_MS96_spotsMeasures();
-			
+
 			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			long memoryIncrease = endMemory - startMemory;
-			
-			System.out.println("Experiment loading completed: " + (success ? "SUCCESS" : "FAILED"));
-			System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-			
+
+//			System.out.println("Experiment loading completed: " + (success ? "SUCCESS" : "FAILED"));
+//			System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+
 			if (memoryIncrease > 1024 * 1024 * 1024) { // > 1GB
-				System.err.println("WARNING: Large memory increase during loading: " + (memoryIncrease / 1024 / 1024) + " MB");
+				System.err.println(
+						"WARNING: Large memory increase during loading: " + (memoryIncrease / 1024 / 1024) + " MB");
 				System.err.println("Consider implementing streaming loading for large datasets");
 			}
-			
+
 		} catch (Exception e) {
 			System.err.println("Error during optimized experiment loading: " + e.getMessage());
 			// Fallback to original method

@@ -221,9 +221,9 @@ public class CagesArray {
 	public boolean xmlReadCagesFromFileNoQuestion(String tempname) {
 		// Memory monitoring before loading
 		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		System.out.println("=== XML LOADING: CagesArray ===");
-		System.out.println("Loading file: " + tempname);
-		System.out.println("Memory before loading: " + (startMemory / 1024 / 1024) + " MB");
+		// System.out.println("=== XML LOADING: CagesArray ===");
+		// System.out.println("Loading file: " + tempname);
+		// System.out.println("Memory before loading: " + (startMemory / 1024 / 1024) + " MB");
 		
 		try {
 			final Document doc = XMLUtil.loadDocument(tempname);
@@ -244,10 +244,10 @@ public class CagesArray {
 			// Memory monitoring after loading
 			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			long memoryIncrease = endMemory - startMemory;
-			System.out.println("Memory after loading: " + (endMemory / 1024 / 1024) + " MB");
-			System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-			System.out.println("Loaded cages: " + cagesList.size());
-			System.out.println("=== XML LOADING COMPLETE ===");
+					// System.out.println("Memory after loading: " + (endMemory / 1024 / 1024) + " MB");
+		// System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+		// System.out.println("Loaded cages: " + cagesList.size());
+		// System.out.println("=== XML LOADING COMPLETE ===");
 			
 			return success;
 			
@@ -261,10 +261,10 @@ public class CagesArray {
 	public boolean xmlWriteCagesToFileNoQuestion(String tempname) {
 		// Memory monitoring before saving
 		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		System.out.println("=== XML SAVING: CagesArray ===");
-		System.out.println("Saving file: " + tempname);
-		System.out.println("Memory before saving: " + (startMemory / 1024 / 1024) + " MB");
-		System.out.println("Cages to save: " + cagesList.size());
+		// System.out.println("=== XML SAVING: CagesArray ===");
+		// System.out.println("Saving file: " + tempname);
+		// System.out.println("Memory before saving: " + (startMemory / 1024 / 1024) + " MB");
+		// System.out.println("Cages to save: " + cagesList.size());
 		
 		try {
 			final Document doc = XMLUtil.createDocument(true);
@@ -283,10 +283,10 @@ public class CagesArray {
 			// Memory monitoring after saving
 			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			long memoryIncrease = endMemory - startMemory;
-			System.out.println("Memory after saving: " + (endMemory / 1024 / 1024) + " MB");
-			System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-			System.out.println("Save success: " + success);
-			System.out.println("=== XML SAVING COMPLETE ===");
+					// System.out.println("Memory after saving: " + (endMemory / 1024 / 1024) + " MB");
+		// System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+		// System.out.println("Save success: " + success);
+		// System.out.println("=== XML SAVING COMPLETE ===");
 			
 			return success;
 			
@@ -308,7 +308,7 @@ public class CagesArray {
 			XMLUtil.setAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
 			XMLUtil.setAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
 			
-			System.out.println("Saving " + ncages + " cages with layout " + nCagesAlongX + "x" + nCagesAlongY);
+			// System.out.println("Saving " + ncages + " cages with layout " + nCagesAlongX + "x" + nCagesAlongY);
 			
 			for (Cage cage : cagesList) {
 				if (cage == null) {
@@ -352,7 +352,7 @@ public class CagesArray {
 			nColumnsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
 			nRowsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
 			
-			System.out.println("Loading " + ncages + " cages with layout " + nCagesAlongX + "x" + nCagesAlongY);
+			// System.out.println("Loading " + ncages + " cages with layout " + nCagesAlongX + "x" + nCagesAlongY);
 			
 			int loadedCages = 0;
 			for (int index = 0; index < ncages; index++) {
@@ -370,7 +370,7 @@ public class CagesArray {
 				}
 			}
 			
-			System.out.println("Successfully loaded " + loadedCages + " out of " + ncages + " cages");
+			// System.out.println("Successfully loaded " + loadedCages + " out of " + ncages + " cages");
 			return loadedCages > 0; // Return true if at least one cage was loaded
 			
 		} catch (Exception e) {

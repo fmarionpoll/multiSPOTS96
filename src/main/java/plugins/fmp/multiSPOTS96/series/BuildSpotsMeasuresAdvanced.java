@@ -581,7 +581,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	private void clearCompressedMaskCache() {
 		// Limit cache size to prevent unbounded growth
 		if (compressedMasks.size() > 1000) {
-			System.out.println("Clearing compressed mask cache (size: " + compressedMasks.size() + ")");
+//			System.out.println("Clearing compressed mask cache (size: " + compressedMasks.size() + ")");
 			compressedMasks.clear();
 		}
 	}
@@ -598,13 +598,13 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 		// Only trigger aggressive cleanup if memory usage is very high (>70%)
 		if (usagePercent > 70) {
-			System.out.println("=== HIGH MEMORY PRESSURE DETECTED: " + usagePercent + "% ===");
+//			System.out.println("=== HIGH MEMORY PRESSURE DETECTED: " + usagePercent + "% ===");
 			forceAggressiveCleanup();
 
 			// Reduce batch size for next batch
 			if (adaptiveBatchSizer != null) {
 				adaptiveBatchSizer.reduceBatchSize();
-				System.out.println("Reduced batch size due to memory pressure");
+//				System.out.println("Reduced batch size due to memory pressure");
 			}
 		}
 		// For moderate memory usage (50-70%), just do light cleanup
@@ -636,7 +636,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	// === ENHANCED POST-PROCESSING CLEANUP ===
 
 	private void enhancedPostProcessingCleanup() {
-		System.out.println("=== ENHANCED POST-PROCESSING CLEANUP ===");
+//		System.out.println("=== ENHANCED POST-PROCESSING CLEANUP ===");
 
 		// Force multiple GC passes with longer delays
 		for (int i = 0; i < 5; i++) {
@@ -654,14 +654,14 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		forceIcyCleanup();
 
 		// Final memory check
-		logMemoryUsage("After Enhanced Cleanup");
+//		logMemoryUsage("After Enhanced Cleanup");
 	}
 
 	private void clearAllCaches() {
 		// Clear compressed mask cache
 		if (compressedMasks != null) {
 			compressedMasks.clear();
-			System.out.println("Cleared compressed mask cache");
+//			System.out.println("Cleared compressed mask cache");
 		}
 
 		// Clear any other caches

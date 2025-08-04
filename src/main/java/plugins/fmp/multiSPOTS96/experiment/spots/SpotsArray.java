@@ -261,7 +261,7 @@ public class SpotsArray {
 	private boolean csvSaveSpotsOptimized(String directory) {
 		Path csvPath = Paths.get(directory, CSV_FILENAME);
 		
-		System.out.println("=== OPTIMIZED CSV WRITING ===");
+		// System.out.println("=== OPTIMIZED CSV WRITING ===");
 		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		
 		try (FileWriter writer = new FileWriter(csvPath.toFile())) {
@@ -278,7 +278,7 @@ public class SpotsArray {
 			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			long memoryIncrease = endMemory - startMemory;
 			
-			System.out.println("CSV writing completed. Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			// System.out.println("CSV writing completed. Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
 			
 			return true;
 		} catch (IOException e) {
@@ -352,7 +352,7 @@ public class SpotsArray {
 	}
 	
 	private void forcePostWritingCleanup() {
-		System.out.println("=== POST-CSV-WRITING CLEANUP ===");
+		// System.out.println("=== POST-CSV-WRITING CLEANUP ===");
 		
 		// Light cleanup - only one GC pass for better performance
 		System.gc();
@@ -361,7 +361,7 @@ public class SpotsArray {
 		// Log memory state after cleanup
 		Runtime runtime = Runtime.getRuntime();
 		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-		System.out.println("Post-writing cleanup completed. Memory: " + (usedMemory / 1024 / 1024) + " MB");
+		// System.out.println("Post-writing cleanup completed. Memory: " + (usedMemory / 1024 / 1024) + " MB");
 	}
 
 	// === XML OPERATIONS ===
@@ -380,8 +380,8 @@ public class SpotsArray {
 
 		// Memory monitoring before saving
 		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		System.out.println("    Saving SpotsArray - Memory: " + (startMemory / 1024 / 1024) + " MB");
-		System.out.println("    Spots to save: " + spotsList.size());
+		// System.out.println("    Saving SpotsArray - Memory: " + (startMemory / 1024 / 1024) + " MB");
+		// System.out.println("    Spots to save: " + spotsList.size());
 
 		try {
 			Node nodeSpotsArray = XMLUtil.setElement(node, ID_LISTOFSPOTS);
@@ -422,8 +422,8 @@ public class SpotsArray {
 			// Memory monitoring after saving
 			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			long memoryIncrease = endMemory - startMemory;
-			System.out.println("    SpotsArray saved - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-			System.out.println("    Successfully saved " + savedSpots + " out of " + spotsList.size() + " spots");
+					// System.out.println("    SpotsArray saved - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+		// System.out.println("    Successfully saved " + savedSpots + " out of " + spotsList.size() + " spots");
 
 			return savedSpots > 0; // Return true if at least one spot was saved
 			
@@ -448,7 +448,7 @@ public class SpotsArray {
 
 		// Memory monitoring before loading
 		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		System.out.println("    Loading SpotsArray - Memory: " + (startMemory / 1024 / 1024) + " MB");
+		// System.out.println("    Loading SpotsArray - Memory: " + (startMemory / 1024 / 1024) + " MB");
 
 		try {
 			Node nodeSpotsArray = XMLUtil.getElement(node, ID_LISTOFSPOTS);
@@ -463,7 +463,7 @@ public class SpotsArray {
 				return false;
 			}
 			
-			System.out.println("    Loading " + nitems + " spots");
+			// System.out.println("    Loading " + nitems + " spots");
 			spotsList.clear();
 
 			int loadedSpots = 0;
@@ -483,7 +483,7 @@ public class SpotsArray {
 					} else if (!spotSuccess) {
 						System.err.println("ERROR: Failed to load spot at index " + i);
 					} else {
-						System.out.println("    Skipped duplicate spot at index " + i);
+						// System.out.println("    Skipped duplicate spot at index " + i);
 					}
 				} catch (Exception e) {
 					System.err.println("ERROR loading spot at index " + i + ": " + e.getMessage());
@@ -493,8 +493,8 @@ public class SpotsArray {
 			// Memory monitoring after loading
 			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			long memoryIncrease = endMemory - startMemory;
-			System.out.println("    SpotsArray loaded - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-			System.out.println("    Successfully loaded " + loadedSpots + " out of " + nitems + " spots");
+					// System.out.println("    SpotsArray loaded - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+		// System.out.println("    Successfully loaded " + loadedSpots + " out of " + nitems + " spots");
 
 			return loadedSpots > 0; // Return true if at least one spot was loaded
 			

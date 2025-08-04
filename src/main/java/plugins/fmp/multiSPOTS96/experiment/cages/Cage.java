@@ -188,7 +188,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public boolean xmlLoadCage(Node node, int index) {
 		// Memory monitoring before loading
 		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		System.out.println("  Loading Cage " + index + " - Memory: " + (startMemory / 1024 / 1024) + " MB");
+		// System.out.println("  Loading Cage " + index + " - Memory: " + (startMemory / 1024 / 1024) + " MB");
 		
 		try {
 			if (node == null) {
@@ -228,8 +228,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			// Memory monitoring after loading
 			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			long memoryIncrease = endMemory - startMemory;
-			System.out.println("  Cage " + index + " loaded - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-			System.out.println("  Spots in cage: " + spotsArray.getSpotsCount());
+					// System.out.println("  Cage " + index + " loaded - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+		// System.out.println("  Spots in cage: " + spotsArray.getSpotsCount());
 			
 			return true;
 			
@@ -243,7 +243,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	public boolean xmlSaveCage(Node node, int index) {
 		// Memory monitoring before saving
 		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		System.out.println("  Saving Cage " + index + " - Memory: " + (startMemory / 1024 / 1024) + " MB");
+		// System.out.println("  Saving Cage " + index + " - Memory: " + (startMemory / 1024 / 1024) + " MB");
 		
 		try {
 			if (node == null) {
@@ -278,8 +278,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			// Memory monitoring after saving
 			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			long memoryIncrease = endMemory - startMemory;
-			System.out.println("  Cage " + index + " saved - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-			System.out.println("  Spots in cage: " + spotsArray.getSpotsCount());
+					// System.out.println("  Cage " + index + " saved - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+		// System.out.println("  Spots in cage: " + spotsArray.getSpotsCount());
 			
 			return true;
 			
@@ -297,7 +297,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 				cageROI2D = (ROI2D) ROI.createFromXML(xmlVal2);
 				if (cageROI2D != null) {
 					cageROI2D.setSelected(false);
-					System.out.println("    Loaded cage ROI: " + cageROI2D.getName());
+					// System.out.println("    Loaded cage ROI: " + cageROI2D.getName());
 				} else {
 					System.err.println("WARNING: Failed to create ROI from XML for cage limits");
 				}
@@ -319,7 +319,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			if (cageROI2D != null) {
 				cageROI2D.setSelected(false);
 				cageROI2D.saveToXML(xmlVal2);
-				System.out.println("    Saved cage ROI: " + cageROI2D.getName());
+				// System.out.println("    Saved cage ROI: " + cageROI2D.getName());
 			} else {
 				System.err.println("WARNING: No cage ROI to save");
 			}
