@@ -118,6 +118,33 @@ public class AdvancedMemoryOptions {
 		options.forcedGCThresholdPercent = 75;
 		return options;
 	}
+
+	/**
+	 * Creates a new AdvancedMemoryOptions with ultra-conservative settings for severe memory constraints.
+	 * This configuration is designed to minimize memory usage at the cost of some performance.
+	 */
+	public static AdvancedMemoryOptions createUltraConservative() {
+		AdvancedMemoryOptions options = new AdvancedMemoryOptions();
+		options.enableStreaming = true;
+		options.streamBufferSize = 1; // Minimal buffer
+		options.enablePrefetching = false; // Disable prefetching to save memory
+		options.maxImagePoolSize = 2; // Very small pool
+		options.maxCursorPoolSize = 2;
+		options.maxConcurrentTasks = 1; // Single-threaded to reduce memory overhead
+		options.minBatchSize = 1; // Process one frame at a time
+		options.maxBatchSize = 5; // Very small batches
+		options.memoryThresholdPercent = 60; // Lower threshold
+		options.enableForcedGC = true;
+		options.forcedGCThresholdPercent = 65; // More aggressive GC
+		options.gcFrequencyBatches = 2; // GC every 2 batches
+		options.enableCompression = true;
+		options.compressionLevel = Deflater.BEST_COMPRESSION; // Maximum compression
+		options.maxCachedMasks = 10; // Minimal mask cache
+		options.enableMemoryMonitoring = true;
+		options.enableMemoryLogging = true;
+		options.memoryLoggingThresholdPercent = 70;
+		return options;
+	}
 	
 	/**
 	 * Creates a new AdvancedMemoryOptions with aggressive settings for high-performance systems.
