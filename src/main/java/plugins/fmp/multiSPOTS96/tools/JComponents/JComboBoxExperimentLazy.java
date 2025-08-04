@@ -13,22 +13,28 @@ import icy.gui.frame.progress.ProgressFrame;
 import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.ExperimentDirectories;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
+import plugins.fmp.multiSPOTS96.tools.LazyExperiment;
+import plugins.fmp.multiSPOTS96.tools.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 
 /**
  * Memory-optimized version of JComboBoxExperiment that uses LazyExperiment
- * objects for reduced memory footprint when handling large numbers of experiments.
+ * objects for reduced memory footprint when handling large numbers of
+ * experiments.
  * 
  * <p>
  * Key features:
  * <ul>
- * <li><strong>Lazy Loading</strong>: Only loads full experiment data when needed</li>
- * <li><strong>Metadata Storage</strong>: Stores lightweight metadata for all experiments</li>
- * <li><strong>Memory Efficient</strong>: Dramatically reduces memory usage for large datasets</li>
- * <li><strong>Backward Compatible</strong>: Maintains same interface as JComboBoxExperiment</li>
+ * <li><strong>Lazy Loading</strong>: Only loads full experiment data when
+ * needed</li>
+ * <li><strong>Metadata Storage</strong>: Stores lightweight metadata for all
+ * experiments</li>
+ * <li><strong>Memory Efficient</strong>: Dramatically reduces memory usage for
+ * large datasets</li>
+ * <li><strong>Backward Compatible</strong>: Maintains same interface as
+ * JComboBoxExperiment</li>
  * </ul>
  * </p>
  * 
@@ -48,94 +54,6 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	// Metadata storage for lazy loading
 	private List<ExperimentMetadata> experimentMetadataList = new ArrayList<>();
 
-	/**
-	 * Lightweight metadata class for experiment information. Contains only
-	 * essential information needed for the dropdown.
-	 */
-	private static class ExperimentMetadata {
-		private final String cameraDirectory;
-		private final String resultsDirectory;
-		private final String binDirectory;
-
-		public ExperimentMetadata(String cameraDirectory, String resultsDirectory, String binDirectory) {
-			this.cameraDirectory = cameraDirectory;
-			this.resultsDirectory = resultsDirectory;
-			this.binDirectory = binDirectory;
-		}
-
-		public String getCameraDirectory() {
-			return cameraDirectory;
-		}
-
-		public String getResultsDirectory() {
-			return resultsDirectory;
-		}
-
-		public String getBinDirectory() {
-			return binDirectory;
-		}
-
-		@Override
-		public String toString() {
-			return cameraDirectory; // Used for dropdown display
-		}
-	}
-
-	/**
-	 * Lazy loading Experiment wrapper that only loads full experiment data when
-	 * needed. This dramatically reduces memory usage by avoiding loading all
-	 * experiments at once.
-	 */
-	private static class LazyExperiment extends Experiment {
-		private final ExperimentMetadata metadata;
-		private boolean isLoaded = false;
-
-		public LazyExperiment(ExperimentMetadata metadata) {
-			this.metadata = metadata;
-			// Set the results directory to provide a meaningful display name
-			this.setResultsDirectory(metadata.getResultsDirectory());
-		}
-
-		@Override
-		public String toString() {
-			return metadata.getCameraDirectory();
-		}
-
-		/**
-		 * Loads the full experiment data only when this method is called. This
-		 * implements the lazy loading pattern.
-		 */
-		public void loadIfNeeded() {
-			if (!isLoaded) {
-				try {
-					ExperimentDirectories expDirectories = new ExperimentDirectories();
-					if (expDirectories.getDirectoriesFromExptPath(metadata.getBinDirectory(),
-							metadata.getCameraDirectory())) {
-						Experiment fullExp = new Experiment(expDirectories);
-						// Copy essential public properties from the fully loaded experiment
-						this.seqCamData = fullExp.seqCamData;
-						this.cagesArray = fullExp.cagesArray;
-						this.firstImage_FileTime = fullExp.firstImage_FileTime;
-						this.lastImage_FileTime = fullExp.lastImage_FileTime;
-						this.col = fullExp.col;
-						this.chainToPreviousExperiment = fullExp.chainToPreviousExperiment;
-						this.chainToNextExperiment = fullExp.chainToNextExperiment;
-						this.chainImageFirst_ms = fullExp.chainImageFirst_ms;
-						this.experimentID = fullExp.experimentID;
-						this.isLoaded = true;
-					}
-				} catch (Exception e) {
-					Logger.getLogger(LazyExperiment.class.getName()).warning(
-							"Error loading experiment " + metadata.getCameraDirectory() + ": " + e.getMessage());
-				}
-			}
-		}
-
-		public boolean isLoaded() {
-			return isLoaded;
-		}
-	}
-
 	public JComboBoxExperimentLazy() {
 	}
 
@@ -150,7 +68,8 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	 * Adds a LazyExperiment to the combo box. This method ensures that only
 	 * lightweight experiment objects are stored initially.
 	 * 
-	 * @param exp The experiment to add (will be converted to LazyExperiment if needed)
+	 * @param exp             The experiment to add (will be converted to
+	 *                        LazyExperiment if needed)
 	 * @param allowDuplicates Whether to allow duplicate experiments
 	 * @return The index of the added experiment
 	 */
@@ -167,6 +86,36 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	}
 
 	/**
+	 * Adds a LazyExperiment directly to the combo box without conversion.
+	 * This is more efficient when you already have a LazyExperiment object.
+	 * 
+	 * @param lazyExp The LazyExperiment to add
+	 * @param allowDuplicates Whether to allow duplicate experiments
+	 * @return The index of the added experiment
+	 */
+	public int addLazyExperiment(LazyExperiment lazyExp, boolean allowDuplicates) {
+		String exptName = lazyExp.toString();
+		int index = getExperimentIndexFromExptName(exptName);
+		if (allowDuplicates || index < 0) {
+			addItem(lazyExp);
+			index = getItemCount() - 1; // Use the actual index instead of searching again
+		}
+		return index;
+	}
+
+	/**
+	 * Adds a LazyExperiment directly to the combo box without any duplicate checking.
+	 * This is the most efficient method for bulk loading.
+	 * 
+	 * @param lazyExp The LazyExperiment to add
+	 * @return The index of the added experiment
+	 */
+	public int addLazyExperimentDirect(LazyExperiment lazyExp) {
+		addItem(lazyExp);
+		return getItemCount() - 1;
+	}
+
+	/**
 	 * Converts a regular Experiment to a LazyExperiment for memory efficiency.
 	 * 
 	 * @param exp The experiment to convert
@@ -180,8 +129,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		// Create metadata from the experiment
 		ExperimentMetadata metadata = new ExperimentMetadata(
 				exp.seqCamData != null ? exp.seqCamData.getImagesDirectory() : exp.toString(),
-				exp.getResultsDirectory(),
-				stringExpBinSubDirectory);
+				exp.getResultsDirectory(), stringExpBinSubDirectory);
 
 		// Store metadata for future reference
 		experimentMetadataList.add(metadata);
@@ -312,12 +260,12 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 				@Override
 				public void run() {
 					progress.setMessage("Load experiment " + it + " of " + nexpts);
-					
+
 					// Ensure the experiment is loaded if it's a LazyExperiment
 					if (exp instanceof LazyExperiment) {
 						((LazyExperiment) exp).loadIfNeeded();
 					}
-					
+
 					exp.load_MS96_experiment();
 					exp.load_MS96_cages();
 					if (loadSpots)
@@ -420,9 +368,13 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		int position = -1;
 		if (filename != null) {
 			for (int i = 0; i < getItemCount(); i++) {
-				if (filename.equals(getItemAt(i).toString())) {
-					position = i;
-					break;
+				Object item = super.getItemAt(i);
+				if (item instanceof Experiment) {
+					Experiment exp = (Experiment) item;
+					if (filename.equals(exp.toString())) {
+						position = i;
+						break;
+					}
 				}
 			}
 		}
@@ -432,10 +384,14 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	public Experiment getExperimentFromExptName(String filename) {
 		Experiment exp = null;
 		for (int i = 0; i < getItemCount(); i++) {
-			String expString = getItemAt(i).toString();
-			if (filename.equals(expString)) {
-				exp = getItemAt(i);
-				break;
+			Object item = super.getItemAt(i);
+			if (item instanceof Experiment) {
+				Experiment experiment = (Experiment) item;
+				String expString = experiment.toString();
+				if (filename.equals(expString)) {
+					exp = experiment;
+					break;
+				}
 			}
 		}
 		return exp;
@@ -448,12 +404,12 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		List<String> textList = new ArrayList<>();
 		for (int i = 0; i < getItemCount(); i++) {
 			Experiment exp = getItemAt(i);
-			
+
 			// Ensure the experiment is loaded if it's a LazyExperiment
 			if (exp instanceof LazyExperiment) {
 				((LazyExperiment) exp).loadIfNeeded();
 			}
-			
+
 			exp.load_MS96_experiment();
 			exp.getFieldValues(field, textList);
 		}
@@ -521,4 +477,4 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		}
 		return count;
 	}
-} 
+}

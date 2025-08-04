@@ -31,6 +31,8 @@ import icy.sequence.SequenceListener;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentDirectories;
+import plugins.fmp.multiSPOTS96.tools.LazyExperiment;
+import plugins.fmp.multiSPOTS96.tools.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multiSPOTS96.tools.JComponents.SequenceNameListRenderer;
 
 /**
@@ -94,95 +96,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 	private List<ExperimentMetadata> experimentMetadataList = new ArrayList<>();
 	private volatile boolean isProcessing = false;
 	private final AtomicInteger processingCount = new AtomicInteger(0);
-
-	/**
-	 * Lightweight metadata class for experiment information. Contains only
-	 * essential information needed for the dropdown.
-	 */
-	private static class ExperimentMetadata {
-		private final String cameraDirectory;
-		private final String resultsDirectory;
-		private final String binDirectory;
-
-		public ExperimentMetadata(String cameraDirectory, String resultsDirectory, String binDirectory) {
-			this.cameraDirectory = cameraDirectory;
-			this.resultsDirectory = resultsDirectory;
-			this.binDirectory = binDirectory;
-		}
-
-		public String getCameraDirectory() {
-			return cameraDirectory;
-		}
-
-		public String getResultsDirectory() {
-			return resultsDirectory;
-		}
-
-		public String getBinDirectory() {
-			return binDirectory;
-		}
-
-		@Override
-		public String toString() {
-			return cameraDirectory; // Used for dropdown display
-		}
-	}
-
-	/**
-	 * Lazy loading Experiment wrapper that only loads full experiment data when
-	 * needed. This dramatically reduces memory usage by avoiding loading all
-	 * experiments at once.
-	 */
-	private static class LazyExperiment extends Experiment {
-		private final ExperimentMetadata metadata;
-		private boolean isLoaded = false;
-
-		public LazyExperiment(ExperimentMetadata metadata) {
-			this.metadata = metadata;
-			// Set the results directory to provide a meaningful display name
-			this.setResultsDirectory(metadata.getResultsDirectory());
-		}
-
-		@Override
-		public String toString() {
-			return metadata.getCameraDirectory();
-		}
-
-		/**
-		 * Loads the full experiment data only when this method is called. This
-		 * implements the lazy loading pattern.
-		 */
-		public void loadIfNeeded() {
-			if (!isLoaded) {
-				try {
-					ExperimentDirectories expDirectories = new ExperimentDirectories();
-					if (expDirectories.getDirectoriesFromExptPath(metadata.getBinDirectory(),
-							metadata.getCameraDirectory())) {
-						Experiment fullExp = new Experiment(expDirectories);
-						// Copy essential public properties from the fully loaded experiment
-						this.seqCamData = fullExp.seqCamData;
-//						this.seqKymos = fullExp.seqKymos;
-						this.cagesArray = fullExp.cagesArray;
-						this.firstImage_FileTime = fullExp.firstImage_FileTime;
-						this.lastImage_FileTime = fullExp.lastImage_FileTime;
-						this.col = fullExp.col;
-						this.chainToPreviousExperiment = fullExp.chainToPreviousExperiment;
-						this.chainToNextExperiment = fullExp.chainToNextExperiment;
-						this.chainImageFirst_ms = fullExp.chainImageFirst_ms;
-						this.experimentID = fullExp.experimentID;
-						this.isLoaded = true;
-					}
-				} catch (Exception e) {
-					Logger.getLogger(LazyExperiment.class.getName()).warning(
-							"Error loading experiment " + metadata.getCameraDirectory() + ": " + e.getMessage());
-				}
-			}
-		}
-
-//		public boolean isLoaded() {
-//			return isLoaded;
-//		}
-	}
 
 	/**
 	 * Creates a new ultra-efficient LoadSaveExperiment instance.
@@ -466,7 +379,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 			// Add lightweight experiment objects to combo box
 			for (ExperimentMetadata metadata : experimentMetadataList) {
 				LazyExperiment lazyExp = new LazyExperiment(metadata);
-				parent0.expListCombo.addExperiment(lazyExp, false);
+				// Use addLazyExperimentDirect for maximum performance during bulk loading
+				parent0.expListCombo.addLazyExperimentDirect(lazyExp);
 			}
 
 			// Initialize infos combos
@@ -542,14 +456,14 @@ public class LoadSaveExperimentOptimized extends JPanel
 			String experimentName = new File(eDAF.getResultsDirectory()).getName();
 			String experimentPath = eDAF.getResultsDirectory();
 
-			ExperimentMetadata metadata = new ExperimentMetadata(experimentName, experimentPath, binDirectory);
-			experimentMetadataList.add(metadata);
+					ExperimentMetadata metadata = new ExperimentMetadata(experimentName, experimentPath, binDirectory);
+		experimentMetadataList.add(metadata);
 
-			// Create and add LazyExperiment
-			LazyExperiment lazyExp = new LazyExperiment(metadata);
-			parent0.expListCombo.addExperiment(lazyExp, false);
-			parent0.dlgExperiment.tabInfos.initInfosCombos();
-			parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
+		// Create and add LazyExperiment directly
+		LazyExperiment lazyExp = new LazyExperiment(metadata);
+		parent0.expListCombo.addLazyExperiment(lazyExp, false);
+		parent0.dlgExperiment.tabInfos.initInfosCombos();
+		parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
 		}
 	}
 
@@ -562,15 +476,15 @@ public class LoadSaveExperimentOptimized extends JPanel
 			String camDataImagesDirectory = eDAF.getCameraImagesDirectory();
 			String resultsDirectory = eDAF.getResultsDirectory();
 
-			ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory,
-					binDirectory);
-			experimentMetadataList.add(metadata);
+					ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory,
+				binDirectory);
+		experimentMetadataList.add(metadata);
 
-			// Create and add LazyExperiment
-			LazyExperiment lazyExp = new LazyExperiment(metadata);
-			parent0.expListCombo.addExperiment(lazyExp, false);
-			parent0.dlgExperiment.tabInfos.initInfosCombos();
-			parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
+		// Create and add LazyExperiment directly
+		LazyExperiment lazyExp = new LazyExperiment(metadata);
+		parent0.expListCombo.addLazyExperiment(lazyExp, false);
+		parent0.dlgExperiment.tabInfos.initInfosCombos();
+		parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
 		}
 	}
 
