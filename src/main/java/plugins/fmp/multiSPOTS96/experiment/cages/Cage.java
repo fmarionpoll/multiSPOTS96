@@ -186,44 +186,150 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 	// -------------------------------------
 
 	public boolean xmlLoadCage(Node node, int index) {
-		if (node == null)
+		// Memory monitoring before loading
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		System.out.println("  Loading Cage " + index + " - Memory: " + (startMemory / 1024 / 1024) + " MB");
+		
+		try {
+			if (node == null) {
+				System.err.println("ERROR: Null node provided for cage " + index);
+				return false;
+			}
+			
+			Element xmlVal = XMLUtil.getElement(node, "Cage" + index);
+			if (xmlVal == null) {
+				System.err.println("ERROR: Could not find Cage" + index + " element");
+				return false;
+			}
+			
+			// Load cage limits with error handling
+			if (!xmlLoadCageLimits(xmlVal)) {
+				System.err.println("ERROR: Failed to load cage limits for cage " + index);
+				return false;
+			}
+			
+			// Load cage properties with error handling
+			if (!prop.xmlLoadCageParameters(xmlVal)) {
+				System.err.println("ERROR: Failed to load cage parameters for cage " + index);
+				return false;
+			}
+			
+			// Set color from properties
+			if (cageROI2D != null) {
+				cageROI2D.setColor(prop.getColor());
+			}
+			
+			// Load spots array with error handling
+			if (!spotsArray.loadFromXml(xmlVal)) {
+				System.err.println("ERROR: Failed to load spots array for cage " + index);
+				return false;
+			}
+			
+			// Memory monitoring after loading
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			System.out.println("  Cage " + index + " loaded - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			System.out.println("  Spots in cage: " + spotsArray.getSpotsCount());
+			
+			return true;
+			
+		} catch (Exception e) {
+			System.err.println("ERROR loading cage " + index + ": " + e.getMessage());
+			e.printStackTrace();
 			return false;
-		Element xmlVal = XMLUtil.getElement(node, "Cage" + index);
-		if (xmlVal == null)
-			return false;
-		xmlLoadCageLimits(xmlVal);
-		prop.xmlLoadCageParameters(xmlVal);
-		cageROI2D.setColor(prop.getColor());
-		spotsArray.loadFromXml(xmlVal);
-		return true;
+		}
 	}
 
 	public boolean xmlSaveCage(Node node, int index) {
-		if (node == null)
+		// Memory monitoring before saving
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		System.out.println("  Saving Cage " + index + " - Memory: " + (startMemory / 1024 / 1024) + " MB");
+		
+		try {
+			if (node == null) {
+				System.err.println("ERROR: Null node provided for cage " + index);
+				return false;
+			}
+			
+			Element xmlVal = XMLUtil.addElement(node, "Cage" + index);
+			if (xmlVal == null) {
+				System.err.println("ERROR: Could not create Cage" + index + " element");
+				return false;
+			}
+			
+			// Save cage limits with error handling
+			if (!xmlSaveCageLimits(xmlVal)) {
+				System.err.println("ERROR: Failed to save cage limits for cage " + index);
+				return false;
+			}
+			
+			// Save cage properties with error handling
+			if (!prop.xmlSaveCageParameters(xmlVal)) {
+				System.err.println("ERROR: Failed to save cage parameters for cage " + index);
+				return false;
+			}
+			
+			// Save spots array with error handling
+			if (!spotsArray.saveToXml(xmlVal)) {
+				System.err.println("ERROR: Failed to save spots array for cage " + index);
+				return false;
+			}
+			
+			// Memory monitoring after saving
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			System.out.println("  Cage " + index + " saved - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			System.out.println("  Spots in cage: " + spotsArray.getSpotsCount());
+			
+			return true;
+			
+		} catch (Exception e) {
+			System.err.println("ERROR saving cage " + index + ": " + e.getMessage());
+			e.printStackTrace();
 			return false;
-		Element xmlVal = XMLUtil.addElement(node, "Cage" + index);
-		xmlSaveCageLimits(xmlVal);
-		prop.xmlSaveCageParameters(xmlVal);
-		spotsArray.saveToXml(xmlVal);
-		return true;
+		}
 	}
 
 	public boolean xmlLoadCageLimits(Element xmlVal) {
-		Element xmlVal2 = XMLUtil.getElement(xmlVal, ID_CAGELIMITS);
-		if (xmlVal2 != null) {
-			cageROI2D = (ROI2D) ROI.createFromXML(xmlVal2);
-			cageROI2D.setSelected(false);
+		try {
+			Element xmlVal2 = XMLUtil.getElement(xmlVal, ID_CAGELIMITS);
+			if (xmlVal2 != null) {
+				cageROI2D = (ROI2D) ROI.createFromXML(xmlVal2);
+				if (cageROI2D != null) {
+					cageROI2D.setSelected(false);
+					System.out.println("    Loaded cage ROI: " + cageROI2D.getName());
+				} else {
+					System.err.println("WARNING: Failed to create ROI from XML for cage limits");
+				}
+			} else {
+				System.err.println("WARNING: No cage limits found in XML");
+			}
+			return true;
+			
+		} catch (Exception e) {
+			System.err.println("ERROR loading cage limits: " + e.getMessage());
+			e.printStackTrace();
+			return false;
 		}
-		return true;
 	}
 
 	public boolean xmlSaveCageLimits(Element xmlVal) {
-		Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_CAGELIMITS);
-		if (cageROI2D != null) {
-			cageROI2D.setSelected(false);
-			cageROI2D.saveToXML(xmlVal2);
+		try {
+			Element xmlVal2 = XMLUtil.addElement(xmlVal, ID_CAGELIMITS);
+			if (cageROI2D != null) {
+				cageROI2D.setSelected(false);
+				cageROI2D.saveToXML(xmlVal2);
+				System.out.println("    Saved cage ROI: " + cageROI2D.getName());
+			} else {
+				System.err.println("WARNING: No cage ROI to save");
+			}
+			return true;
+			
+		} catch (Exception e) {
+			System.err.println("ERROR saving cage limits: " + e.getMessage());
+			e.printStackTrace();
+			return false;
 		}
-		return true;
 	}
 
 	public boolean xmlLoadFlyPositions(Element xmlVal) {

@@ -689,33 +689,57 @@ public class Spot implements Comparable<Spot> {
 	 */
 	public boolean loadFromXml(Node node) {
 		if (node == null) {
+			System.err.println("ERROR: Null node provided for Spot load");
 			return false;
 		}
 
+		// Memory monitoring before loading
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		System.out.println("      Loading Spot - Memory: " + (startMemory / 1024 / 1024) + " MB");
+
 		try {
-			// Load properties
+			// Load properties with error handling
 			if (!properties.loadFromXml(node)) {
+				System.err.println("ERROR: Failed to load spot properties");
 				return false;
 			}
 
+			// Load ROI metadata with error handling
 			final Node nodeMeta = XMLUtil.getElement(node, ID_META);
 			if (nodeMeta != null) {
-				spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
-				if (spotROI2D != null) {
-					spotROI2D.setColor(getProperties().getColor());
-					getProperties().setName(spotROI2D.getName());
+				try {
+					spotROI2D = (ROI2DShape) ROI2DUtilities.loadFromXML_ROI(nodeMeta);
+					if (spotROI2D != null) {
+						spotROI2D.setColor(getProperties().getColor());
+						getProperties().setName(spotROI2D.getName());
+						System.out.println("        Loaded ROI: " + spotROI2D.getName());
+					} else {
+						System.err.println("WARNING: Failed to create ROI from XML");
+					}
+				} catch (Exception e) {
+					System.err.println("ERROR loading ROI: " + e.getMessage());
 				}
+			} else {
+				System.out.println("        No ROI metadata found");
 			}
 
-			// Load measurements
+			// Load measurements with error handling
 			if (!measurements.loadFromXml(node)) {
+				System.err.println("ERROR: Failed to load spot measurements");
 				return false;
 			}
+
+			// Memory monitoring after loading
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			System.out.println("      Spot loaded - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			System.out.println("      Spot name: " + getProperties().getName());
 
 			return true;
 
 		} catch (Exception e) {
-			System.err.println("Error loading spot from XML: " + e.getMessage());
+			System.err.println("ERROR during spot XML loading: " + e.getMessage());
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -728,28 +752,51 @@ public class Spot implements Comparable<Spot> {
 	 */
 	public boolean saveToXml(Node node) {
 		if (node == null) {
+			System.err.println("ERROR: Null node provided for Spot save");
 			return false;
 		}
 
+		// Memory monitoring before saving
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		System.out.println("      Saving Spot - Memory: " + (startMemory / 1024 / 1024) + " MB");
+
 		try {
-			// Save properties
+			// Save properties with error handling
 			if (!properties.saveToXml(node)) {
+				System.err.println("ERROR: Failed to save spot properties");
 				return false;
 			}
 
-			// Save measurements
+			// Save measurements with error handling
 			if (!measurements.saveToXml(node)) {
+				System.err.println("ERROR: Failed to save spot measurements");
 				return false;
 			}
 
+			// Save ROI metadata with error handling
 			final Node nodeMeta = XMLUtil.setElement(node, ID_META);
-			if (nodeMeta != null)
-				ROI2DUtilities.saveToXML_ROI(nodeMeta, spotROI2D);
+			if (nodeMeta != null && spotROI2D != null) {
+				try {
+					ROI2DUtilities.saveToXML_ROI(nodeMeta, spotROI2D);
+					System.out.println("        Saved ROI: " + spotROI2D.getName());
+				} catch (Exception e) {
+					System.err.println("ERROR saving ROI: " + e.getMessage());
+				}
+			} else {
+				System.out.println("        No ROI to save");
+			}
+
+			// Memory monitoring after saving
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			System.out.println("      Spot saved - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			System.out.println("      Spot name: " + getProperties().getName());
 
 			return true;
 
 		} catch (Exception e) {
-			System.err.println("Error saving spot to XML: " + e.getMessage());
+			System.err.println("ERROR during spot XML saving: " + e.getMessage());
+			e.printStackTrace();
 			return false;
 		}
 	}

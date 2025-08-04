@@ -243,6 +243,127 @@ public class SpotsArray {
 		return csvSaveSpots(directory);
 	}
 
+	// === OPTIMIZED CSV WRITING ===
+	
+	/**
+	 * Optimized CSV saving with reduced memory footprint.
+	 * 
+	 * @param directory the directory to save to
+	 * @return true if successful
+	 */
+	public boolean saveSpotsMeasuresOptimized(String directory) {
+		if (directory == null) {
+			return false;
+		}
+		return csvSaveSpotsOptimized(directory);
+	}
+	
+	private boolean csvSaveSpotsOptimized(String directory) {
+		Path csvPath = Paths.get(directory, CSV_FILENAME);
+		
+		System.out.println("=== OPTIMIZED CSV WRITING ===");
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		
+		try (FileWriter writer = new FileWriter(csvPath.toFile())) {
+			// Write header sections
+			writeCsvHeader(writer);
+			
+			// Write spots data in chunks to reduce memory pressure
+			writeSpotsDataOptimized(writer);
+			
+			// Write measures data in chunks
+			writeMeasuresDataOptimized(writer, EnumSpotMeasures.AREA_SUM);
+			writeMeasuresDataOptimized(writer, EnumSpotMeasures.AREA_SUMCLEAN);
+			
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			
+			System.out.println("CSV writing completed. Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			
+			return true;
+		} catch (IOException e) {
+			System.err.println("Error in optimized CSV writing: " + e.getMessage());
+			return false;
+		} finally {
+			// Force cleanup after writing
+			forcePostWritingCleanup();
+		}
+	}
+	
+	private void writeCsvHeader(FileWriter writer) throws IOException {
+		writer.write("#" + CSV_SEPARATOR + "#\n");
+		writer.write("#" + CSV_SEPARATOR + "SPOTS_ARRAY" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("n spots=" + CSV_SEPARATOR + spotsList.size() + "\n");
+		writer.write("#" + CSV_SEPARATOR + "#\n");
+		writer.write("#" + CSV_SEPARATOR + "SPOTS" + CSV_SEPARATOR + "multiSPOTS96 data\n");
+		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "cageID" + CSV_SEPARATOR + "cagePos"
+				+ CSV_SEPARATOR + "cageColumn" + CSV_SEPARATOR + "cageRow" + CSV_SEPARATOR + "volume" + CSV_SEPARATOR
+				+ "npixels" + CSV_SEPARATOR + "radius" + CSV_SEPARATOR + "stim" + CSV_SEPARATOR + "conc\n");
+	}
+	
+	private void writeSpotsDataOptimized(FileWriter writer) throws IOException {
+		int chunkSize = 100; // Process 100 spots at a time
+		int processed = 0;
+		
+		for (int i = 0; i < spotsList.size(); i += chunkSize) {
+			int endIndex = Math.min(i + chunkSize, spotsList.size());
+			
+			// Process chunk
+			for (int j = i; j < endIndex; j++) {
+				Spot spot = spotsList.get(j);
+				writer.write(spot.getProperties().exportToCsv(CSV_SEPARATOR));
+			}
+			
+			processed += (endIndex - i);
+			
+			// Light cleanup every 400 spots for better performance
+			if (processed % 400 == 0) {
+				System.gc();
+				Thread.yield();
+			}
+		}
+	}
+	
+	private void writeMeasuresDataOptimized(FileWriter writer, EnumSpotMeasures measureType) throws IOException {
+		writer.write("#" + CSV_SEPARATOR + "#\n");
+		writer.write("#" + CSV_SEPARATOR + measureType.toString() + CSV_SEPARATOR + "v0\n");
+		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "npts" + CSV_SEPARATOR + "yi\n");
+		
+		int chunkSize = 100; // Process 100 spots at a time
+		int processed = 0;
+		
+		for (int i = 0; i < spotsList.size(); i += chunkSize) {
+			int endIndex = Math.min(i + chunkSize, spotsList.size());
+			
+			// Process chunk
+			for (int j = i; j < endIndex; j++) {
+				Spot spot = spotsList.get(j);
+				writer.write(spot.exportMeasuresOneType(measureType, CSV_SEPARATOR));
+			}
+			
+			processed += (endIndex - i);
+			
+			// Light cleanup every 400 spots for better performance
+			if (processed % 400 == 0) {
+				System.gc();
+				Thread.yield();
+			}
+		}
+	}
+	
+	private void forcePostWritingCleanup() {
+		System.out.println("=== POST-CSV-WRITING CLEANUP ===");
+		
+		// Light cleanup - only one GC pass for better performance
+		System.gc();
+		Thread.yield();
+		
+		// Log memory state after cleanup
+		Runtime runtime = Runtime.getRuntime();
+		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
+		System.out.println("Post-writing cleanup completed. Memory: " + (usedMemory / 1024 / 1024) + " MB");
+	}
+
 	// === XML OPERATIONS ===
 
 	/**
@@ -253,22 +374,62 @@ public class SpotsArray {
 	 */
 	public boolean saveToXml(Node node) {
 		if (node == null) {
+			System.err.println("ERROR: Null node provided for SpotsArray save");
 			return false;
 		}
 
+		// Memory monitoring before saving
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		System.out.println("    Saving SpotsArray - Memory: " + (startMemory / 1024 / 1024) + " MB");
+		System.out.println("    Spots to save: " + spotsList.size());
+
 		try {
 			Node nodeSpotsArray = XMLUtil.setElement(node, ID_LISTOFSPOTS);
+			if (nodeSpotsArray == null) {
+				System.err.println("ERROR: Could not create List_of_spots element");
+				return false;
+			}
+			
 			XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
 
 			sortSpots();
+			int savedSpots = 0;
 			for (int i = 0; i < spotsList.size(); i++) {
-				Node nodeSpot = XMLUtil.setElement(node, ID_SPOT_ + i);
-				spotsList.get(i).saveToXml(nodeSpot);
+				try {
+					Node nodeSpot = XMLUtil.setElement(node, ID_SPOT_ + i);
+					if (nodeSpot == null) {
+						System.err.println("ERROR: Could not create spot element for index " + i);
+						continue;
+					}
+					
+					Spot spot = spotsList.get(i);
+					if (spot == null) {
+						System.err.println("WARNING: Null spot at index " + i);
+						continue;
+					}
+					
+					boolean spotSuccess = spot.saveToXml(nodeSpot);
+					if (spotSuccess) {
+						savedSpots++;
+					} else {
+						System.err.println("ERROR: Failed to save spot at index " + i);
+					}
+				} catch (Exception e) {
+					System.err.println("ERROR saving spot at index " + i + ": " + e.getMessage());
+				}
 			}
 
-			return true;
+			// Memory monitoring after saving
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			System.out.println("    SpotsArray saved - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			System.out.println("    Successfully saved " + savedSpots + " out of " + spotsList.size() + " spots");
+
+			return savedSpots > 0; // Return true if at least one spot was saved
+			
 		} catch (Exception e) {
-			System.err.println("Error saving spots array to XML: " + e.getMessage());
+			System.err.println("ERROR during SpotsArray save: " + e.getMessage());
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -281,31 +442,65 @@ public class SpotsArray {
 	 */
 	public boolean loadFromXml(Node node) {
 		if (node == null) {
+			System.err.println("ERROR: Null node provided for SpotsArray load");
 			return false;
 		}
+
+		// Memory monitoring before loading
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		System.out.println("    Loading SpotsArray - Memory: " + (startMemory / 1024 / 1024) + " MB");
 
 		try {
 			Node nodeSpotsArray = XMLUtil.getElement(node, ID_LISTOFSPOTS);
 			if (nodeSpotsArray == null) {
+				System.err.println("ERROR: Could not find List_of_spots element");
 				return false;
 			}
 
 			int nitems = XMLUtil.getElementIntValue(nodeSpotsArray, ID_NSPOTS, 0);
+			if (nitems < 0) {
+				System.err.println("ERROR: Invalid number of spots: " + nitems);
+				return false;
+			}
+			
+			System.out.println("    Loading " + nitems + " spots");
 			spotsList.clear();
 
+			int loadedSpots = 0;
 			for (int i = 0; i < nitems; i++) {
-				Node nodeSpot = XMLUtil.getElement(node, ID_SPOT_ + i);
-				if (nodeSpot != null) {
-					Spot spot = new Spot();
-					if (spot.loadFromXml(nodeSpot) && !isSpotPresent(spot)) {
-						spotsList.add(spot);
+				try {
+					Node nodeSpot = XMLUtil.getElement(node, ID_SPOT_ + i);
+					if (nodeSpot == null) {
+						System.err.println("WARNING: Could not find spot element for index " + i);
+						continue;
 					}
+					
+					Spot spot = new Spot();
+					boolean spotSuccess = spot.loadFromXml(nodeSpot);
+					if (spotSuccess && !isSpotPresent(spot)) {
+						spotsList.add(spot);
+						loadedSpots++;
+					} else if (!spotSuccess) {
+						System.err.println("ERROR: Failed to load spot at index " + i);
+					} else {
+						System.out.println("    Skipped duplicate spot at index " + i);
+					}
+				} catch (Exception e) {
+					System.err.println("ERROR loading spot at index " + i + ": " + e.getMessage());
 				}
 			}
 
-			return true;
+			// Memory monitoring after loading
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			System.out.println("    SpotsArray loaded - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			System.out.println("    Successfully loaded " + loadedSpots + " out of " + nitems + " spots");
+
+			return loadedSpots > 0; // Return true if at least one spot was loaded
+			
 		} catch (Exception e) {
-			System.err.println("Error loading spots array from XML: " + e.getMessage());
+			System.err.println("ERROR during SpotsArray load: " + e.getMessage());
+			e.printStackTrace();
 			return false;
 		}
 	}

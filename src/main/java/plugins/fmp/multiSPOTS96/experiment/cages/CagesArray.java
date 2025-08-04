@@ -219,66 +219,165 @@ public class CagesArray {
 	}
 
 	public boolean xmlReadCagesFromFileNoQuestion(String tempname) {
-		if (tempname == null)
-			return false;
-		final Document doc = XMLUtil.loadDocument(tempname);
-		if (doc == null)
-			return false;
-
-		if (xmlLoadCages(XMLUtil.getRootElement(doc))) {
-			return true;
-		} else {
-			System.out.println("Cages:xmlReadCagesFromFileNoQuestion() failed to load cages from file");
+		// Memory monitoring before loading
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		System.out.println("=== XML LOADING: CagesArray ===");
+		System.out.println("Loading file: " + tempname);
+		System.out.println("Memory before loading: " + (startMemory / 1024 / 1024) + " MB");
+		
+		try {
+			final Document doc = XMLUtil.loadDocument(tempname);
+			if (doc == null) {
+				System.err.println("ERROR: Could not load XML document from " + tempname);
+				return false;
+			}
+			
+			// Schema validation
+			if (!plugins.fmp.multiSPOTS96.tools.XMLSchemaValidator.validateXMLDocument(doc, 
+					plugins.fmp.multiSPOTS96.tools.XMLSchemaValidator.SchemaType.CAGES)) {
+				System.err.println("ERROR: XML schema validation failed");
+				return false;
+			}
+			
+			boolean success = xmlLoadCages(XMLUtil.getRootElement(doc));
+			
+			// Memory monitoring after loading
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			System.out.println("Memory after loading: " + (endMemory / 1024 / 1024) + " MB");
+			System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			System.out.println("Loaded cages: " + cagesList.size());
+			System.out.println("=== XML LOADING COMPLETE ===");
+			
+			return success;
+			
+		} catch (Exception e) {
+			System.err.println("ERROR during cages XML loading: " + e.getMessage());
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 	public boolean xmlWriteCagesToFileNoQuestion(String tempname) {
-		if (tempname == null)
+		// Memory monitoring before saving
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		System.out.println("=== XML SAVING: CagesArray ===");
+		System.out.println("Saving file: " + tempname);
+		System.out.println("Memory before saving: " + (startMemory / 1024 / 1024) + " MB");
+		System.out.println("Cages to save: " + cagesList.size());
+		
+		try {
+			final Document doc = XMLUtil.createDocument(true);
+			if (doc == null) {
+				System.err.println("ERROR: Could not create XML document");
+				return false;
+			}
+			
+			Node node = XMLUtil.getRootElement(doc);
+			boolean success = xmlSaveCages(node);
+			
+			if (success) {
+				success = XMLUtil.saveDocument(doc, tempname);
+			}
+			
+			// Memory monitoring after saving
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			System.out.println("Memory after saving: " + (endMemory / 1024 / 1024) + " MB");
+			System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			System.out.println("Save success: " + success);
+			System.out.println("=== XML SAVING COMPLETE ===");
+			
+			return success;
+			
+		} catch (Exception e) {
+			System.err.println("ERROR during cages XML saving: " + e.getMessage());
+			e.printStackTrace();
 			return false;
-		final Document doc = XMLUtil.createDocument(true);
-		if (doc == null)
-			return false;
-
-		Node node = XMLUtil.getRootElement(doc);
-		xmlSaveCages(node);
-		return XMLUtil.saveDocument(doc, tempname);
+		}
 	}
 
 	private boolean xmlSaveCages(Node node) {
-		int index = 0;
-		Element xmlVal = XMLUtil.addElement(node, ID_CAGES);
-		int ncages = cagesList.size();
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, ncages);
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
-		XMLUtil.setAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
-		for (Cage cage : cagesList) {
-			cage.xmlSaveCage(xmlVal, index);
-			index++;
+		try {
+			int index = 0;
+			Element xmlVal = XMLUtil.addElement(node, ID_CAGES);
+			int ncages = cagesList.size();
+			XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGES, ncages);
+			XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
+			XMLUtil.setAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
+			XMLUtil.setAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
+			XMLUtil.setAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
+			
+			System.out.println("Saving " + ncages + " cages with layout " + nCagesAlongX + "x" + nCagesAlongY);
+			
+			for (Cage cage : cagesList) {
+				if (cage == null) {
+					System.err.println("WARNING: Null cage at index " + index);
+					continue;
+				}
+				
+				boolean cageSuccess = cage.xmlSaveCage(xmlVal, index);
+				if (!cageSuccess) {
+					System.err.println("ERROR: Failed to save cage at index " + index);
+				}
+				index++;
+			}
+			
+			return true;
+			
+		} catch (Exception e) {
+			System.err.println("ERROR during xmlSaveCages: " + e.getMessage());
+			e.printStackTrace();
+			return false;
 		}
-		return true;
 	}
 
 	private boolean xmlLoadCages(Node node) {
-		cagesList.clear();
-		Element xmlVal = XMLUtil.getElement(node, ID_CAGES);
-		if (xmlVal == null)
+		try {
+			cagesList.clear();
+			Element xmlVal = XMLUtil.getElement(node, ID_CAGES);
+			if (xmlVal == null) {
+				System.err.println("ERROR: Could not find Cages element in XML");
+				return false;
+			}
+
+			int ncages = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
+			if (ncages <= 0) {
+				System.err.println("ERROR: Invalid number of cages: " + ncages);
+				return false;
+			}
+			
+			nCagesAlongX = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
+			nCagesAlongY = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
+			nColumnsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
+			nRowsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
+			
+			System.out.println("Loading " + ncages + " cages with layout " + nCagesAlongX + "x" + nCagesAlongY);
+			
+			int loadedCages = 0;
+			for (int index = 0; index < ncages; index++) {
+				try {
+					Cage cage = new Cage();
+					boolean cageSuccess = cage.xmlLoadCage(xmlVal, index);
+					if (cageSuccess) {
+						cagesList.add(cage);
+						loadedCages++;
+					} else {
+						System.err.println("WARNING: Failed to load cage at index " + index);
+					}
+				} catch (Exception e) {
+					System.err.println("ERROR loading cage at index " + index + ": " + e.getMessage());
+				}
+			}
+			
+			System.out.println("Successfully loaded " + loadedCages + " out of " + ncages + " cages");
+			return loadedCages > 0; // Return true if at least one cage was loaded
+			
+		} catch (Exception e) {
+			System.err.println("ERROR during xmlLoadCages: " + e.getMessage());
+			e.printStackTrace();
 			return false;
-
-		int ncages = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGES, 0);
-		nCagesAlongX = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGX, nCagesAlongX);
-		nCagesAlongY = XMLUtil.getAttributeIntValue(xmlVal, ID_NCAGESALONGY, nCagesAlongY);
-		nColumnsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NCOLUMNSPERCAGE, nColumnsPerCage);
-		nRowsPerCage = XMLUtil.getAttributeIntValue(xmlVal, ID_NROWSPERCAGE, nRowsPerCage);
-		for (int index = 0; index < ncages; index++) {
-			Cage cage = new Cage();
-			cage.xmlLoadCage(xmlVal, index);
-			cagesList.add(cage);
 		}
-
-		return true;
 	}
 
 	// --------------
@@ -838,7 +937,7 @@ public class CagesArray {
 		if (directory == null)
 			return false;
 		SpotsArray localSpotsArray = getSpotsArrayFromAllCages();
-		localSpotsArray.saveSpotsMeasures(directory);
+		localSpotsArray.saveSpotsMeasuresOptimized(directory);
 		return true;
 	}
 

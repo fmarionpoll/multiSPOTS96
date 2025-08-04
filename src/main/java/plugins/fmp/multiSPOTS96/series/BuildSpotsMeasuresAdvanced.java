@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
-
 import javax.swing.SwingUtilities;
 
 import icy.gui.frame.progress.ProgressFrame;
@@ -45,11 +44,12 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 	// === COMPRESSED MASK STORAGE ===
 	private final ConcurrentHashMap<String, CompressedMask> compressedMasks = new ConcurrentHashMap<>();
-	
+
 	// === MEMORY PROFILING COUNTERS ===
 	private int totalImagesProcessed = 0;
 	private int totalTransformedImagesCreated = 0;
 	private int totalCursorsCreated = 0;
+	private int batchCount = 0; // Counter for batch processing cleanup optimization
 
 	// === ADAPTIVE MEMORY MANAGEMENT ===
 	private final MemoryMonitor memoryMonitor;
@@ -82,7 +82,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 	void analyzeExperiment(Experiment exp) {
 		logMemoryUsage("Before Analysis");
-		
+
 		try {
 			getTimeLimitsOfSequence(exp);
 			loadExperimentDataToMeasureSpots(exp);
@@ -97,10 +97,10 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			exp.cagesArray.setReadyToAnalyze(false, options);
 			closeViewers();
 			cleanupResources();
-			
+
 			// ENHANCED POST-PROCESSING CLEANUP to prevent dialog return memory spike
 			enhancedPostProcessingCleanup();
-			
+
 		} finally {
 			// Ensure cleanup happens even if exceptions occur
 			try {
@@ -214,7 +214,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		System.out.println("=== Processing Complete ===");
 		System.out.println("Total processing time: " + totalTime + "ms (" + (totalTime / 1000.0) + "s)");
 		System.out.println("Processed " + processedBatches + " batches");
-		
+
 		// Memory profiling summary
 		if (options.enableMemoryProfiling) {
 			System.out.println("=== Memory Profiling Summary ===");
@@ -277,14 +277,23 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 		// Wait for all tasks to complete
 		waitFuturesCompletion(processor, tasks, null);
-		
+
 		// Memory profiling - log after batch processing
 		if (options.enableMemoryProfiling) {
 			logMemoryUsage("After Batch " + batchStart + "-" + (batchEnd - 1));
 		}
-		
-		// FORCE AGGRESSIVE CLEANUP to prevent memory leak
-		forceAggressiveCleanup();
+
+		// OPTIMIZED CLEANUP: Only do aggressive cleanup every 5 batches or on high
+		// memory pressure
+		batchCount++;
+
+		if (batchCount % 5 == 0 || getMemoryUsagePercent() > 60) {
+			forceAggressiveCleanup();
+		} else {
+			// Light cleanup for better performance
+			System.gc();
+			Thread.yield();
+		}
 	}
 
 	private void processSingleFrameAdvanced(Experiment exp, int frameIndex, int iiFirst, IcyBufferedImage sourceImage) {
@@ -325,36 +334,16 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				}
 			}
 		} finally {
-			// ENHANCED CLEANUP to prevent memory leaks
-			if (transformToMeasureArea != null) {
-				// Try to clear image data
-				try {
-					transformToMeasureArea.setDataXY(0, null);
-				} catch (Exception e) {
-					// Ignore cleanup errors
-				}
-				transformToMeasureArea = null;
+			// LIGHT CLEANUP for better performance - only clear references
+			transformToMeasureArea = null;
+			transformToDetectFly = null;
+			cursorToDetectFly = null;
+			cursorToMeasureArea = null;
+
+			// Only force GC if memory pressure is high
+			if (getMemoryUsagePercent() > 70) {
+				System.gc();
 			}
-			
-			if (transformToDetectFly != null) {
-				try {
-					transformToDetectFly.setDataXY(0, null);
-				} catch (Exception e) {
-					// Ignore cleanup errors
-				}
-				transformToDetectFly = null;
-			}
-			
-			if (cursorToDetectFly != null) {
-				cursorToDetectFly = null;
-			}
-			
-			if (cursorToMeasureArea != null) {
-				cursorToMeasureArea = null;
-			}
-			
-			// Force immediate cleanup for this frame
-			System.gc();
 		}
 	}
 
@@ -501,8 +490,6 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		}
 	}
 
-
-
 	private void cleanupResources() {
 		compressedMasks.clear();
 	}
@@ -526,40 +513,40 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	}
 
 	// === MEMORY PROFILING ===
-	
+
 	private void logMemoryUsage(String stage) {
 		Runtime runtime = Runtime.getRuntime();
 		long totalMemory = runtime.totalMemory();
 		long freeMemory = runtime.freeMemory();
 		long usedMemory = totalMemory - freeMemory;
 		long maxMemory = runtime.maxMemory();
-		
+
 		System.out.println("=== " + stage + " ===");
 		System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
 		System.out.println("Free Memory: " + (freeMemory / 1024 / 1024) + " MB");
 		System.out.println("Total Memory: " + (totalMemory / 1024 / 1024) + " MB");
 		System.out.println("Max Memory: " + (maxMemory / 1024 / 1024) + " MB");
 		System.out.println("Memory Usage: " + (usedMemory * 100 / maxMemory) + "%");
-		
+
 		// Additional tracking for memory leak analysis
 		System.out.println("Compressed Masks: " + compressedMasks.size());
 		System.out.println("Total Transformed Images: " + totalTransformedImagesCreated);
 		System.out.println("Total Cursors: " + totalCursorsCreated);
 	}
-	
+
 	private void checkForMemoryLeaks() {
 		Runtime runtime = Runtime.getRuntime();
 		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-		
+
 		// Check if memory usage is growing abnormally
 		if (usedMemory > runtime.maxMemory() * 0.8) {
 			System.err.println("WARNING: High memory usage detected!");
 			System.err.println("Consider reducing batch size or enabling more aggressive GC");
 		}
 	}
-	
+
 	// === AGGRESSIVE MEMORY CLEANUP ===
-	
+
 	private void forceAggressiveCleanup() {
 		// Multiple GC passes with delays
 		for (int i = 0; i < 3; i++) {
@@ -570,12 +557,12 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				Thread.currentThread().interrupt();
 			}
 		}
-		
+
 		// Force memory pool cleanup
 		clearImageCaches();
 		clearCompressedMaskCache();
 	}
-	
+
 	private void clearImageCaches() {
 		// Clear any Icy internal caches if accessible
 		try {
@@ -590,7 +577,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			// Icy cache clearing not available
 		}
 	}
-	
+
 	private void clearCompressedMaskCache() {
 		// Limit cache size to prevent unbounded growth
 		if (compressedMasks.size() > 1000) {
@@ -598,36 +585,40 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			compressedMasks.clear();
 		}
 	}
-	
-	private void checkMemoryPressure() {
+
+	// === MEMORY PRESSURE CHECKING ===
+	private double getMemoryUsagePercent() {
 		Runtime runtime = Runtime.getRuntime();
 		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
-		
+		return (usedMemory * 100.0) / runtime.maxMemory();
+	}
+
+	private void checkMemoryPressure() {
+		double usagePercent = getMemoryUsagePercent();
+
+		// Only trigger aggressive cleanup if memory usage is very high (>70%)
 		if (usagePercent > 70) {
-			System.err.println("WARNING: High memory pressure detected: " + usagePercent + "%");
-			System.err.println("Used: " + (usedMemory / 1024 / 1024) + "MB");
-			
-			// Take corrective action
+			System.out.println("=== HIGH MEMORY PRESSURE DETECTED: " + usagePercent + "% ===");
 			forceAggressiveCleanup();
-			
-			// Reduce batch size if needed
-			if (usagePercent > 80) {
+
+			// Reduce batch size for next batch
+			if (adaptiveBatchSizer != null) {
 				adaptiveBatchSizer.reduceBatchSize();
-			}
-			
-			// Generate heap dump if memory profiling is enabled
-			if (options.enableMemoryProfiling) {
-				generateHeapDumpIfNeeded("memory_pressure");
+				System.out.println("Reduced batch size due to memory pressure");
 			}
 		}
+		// For moderate memory usage (50-70%), just do light cleanup
+		else if (usagePercent > 50) {
+			System.gc();
+			Thread.yield();
+		}
 	}
-	
+
 	private void generateHeapDumpIfNeeded(String stage) {
 		Runtime runtime = Runtime.getRuntime();
 		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
 		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
-		
+
 		if (usagePercent > 80) {
 			// Log memory state instead of generating heap dump (more compatible)
 			System.out.println("=== HIGH MEMORY USAGE DETECTED ===");
@@ -641,12 +632,12 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			System.out.println("Consider using external tools like VisualVM or JProfiler for detailed heap analysis");
 		}
 	}
-	
+
 	// === ENHANCED POST-PROCESSING CLEANUP ===
-	
+
 	private void enhancedPostProcessingCleanup() {
 		System.out.println("=== ENHANCED POST-PROCESSING CLEANUP ===");
-		
+
 		// Force multiple GC passes with longer delays
 		for (int i = 0; i < 5; i++) {
 			System.gc();
@@ -656,29 +647,29 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				Thread.currentThread().interrupt();
 			}
 		}
-		
+
 		// Clear all caches and references
 		clearAllCaches();
 		clearAllReferences();
 		forceIcyCleanup();
-		
+
 		// Final memory check
 		logMemoryUsage("After Enhanced Cleanup");
 	}
-	
+
 	private void clearAllCaches() {
 		// Clear compressed mask cache
 		if (compressedMasks != null) {
 			compressedMasks.clear();
 			System.out.println("Cleared compressed mask cache");
 		}
-		
+
 		// Clear any other caches
 		totalTransformedImagesCreated = 0;
 		totalCursorsCreated = 0;
 		totalImagesProcessed = 0;
 	}
-	
+
 	private void clearAllReferences() {
 		// Clear all image references
 		if (seqData != null) {
@@ -693,7 +684,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				// Ignore cleanup errors
 			}
 		}
-		
+
 		// Clear viewer references
 		if (vData != null) {
 			try {
@@ -703,11 +694,11 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			}
 			vData = null;
 		}
-		
+
 		// Clear transform references - these are local variables, not class fields
 		// So we don't need to clear them here
 	}
-	
+
 	private void forceIcyCleanup() {
 		// Try to clear Icy's internal caches
 		try {
@@ -722,7 +713,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		} catch (Exception e) {
 			System.out.println("Could not clear Icy image cache: " + e.getMessage());
 		}
-		
+
 		// Try to clear Icy sequence cache
 		try {
 			Class<?> icySequenceClass = Class.forName("icy.sequence.Sequence");
@@ -736,6 +727,6 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			System.out.println("Could not dispose Icy sequence: " + e.getMessage());
 		}
 	}
-	
+
 	// === INNER CLASSES REMOVED - NOW EXTERNAL CLASSES ===
 }

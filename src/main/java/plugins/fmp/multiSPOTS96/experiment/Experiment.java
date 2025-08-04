@@ -329,79 +329,176 @@ public class Experiment {
 	}
 
 	private boolean load_MS96_experiment(String csFileName) {
-		final Document doc = XMLUtil.loadDocument(csFileName);
-		if (doc == null)
+		// Memory monitoring before loading
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		System.out.println("=== XML LOADING: Experiment ===");
+		System.out.println("Loading file: " + csFileName);
+		System.out.println("Memory before loading: " + (startMemory / 1024 / 1024) + " MB");
+		
+		try {
+			final Document doc = XMLUtil.loadDocument(csFileName);
+			if (doc == null) {
+				System.err.println("ERROR: Could not load XML document from " + csFileName);
+				return false;
+			}
+			
+			// Schema validation
+			if (!plugins.fmp.multiSPOTS96.tools.XMLSchemaValidator.validateXMLDocument(doc, 
+					plugins.fmp.multiSPOTS96.tools.XMLSchemaValidator.SchemaType.EXPERIMENT)) {
+				System.err.println("ERROR: XML schema validation failed");
+				return false;
+			}
+			
+			Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
+			if (node == null) {
+				System.err.println("ERROR: Could not find MCexperiment node in XML");
+				return false;
+			}
+
+			// Version validation with detailed logging
+			String version = XMLUtil.getElementValue(node, ID_VERSION, ID_VERSIONNUM);
+			System.out.println("XML Version: " + version);
+			if (!version.equals(ID_VERSIONNUM)) {
+				System.err.println("ERROR: Version mismatch. Expected: " + ID_VERSIONNUM + ", Found: " + version);
+				return false;
+			}
+
+			// Load ImageLoader configuration with validation
+			ImageLoader imgLoader = seqCamData.getImageLoader();
+			long frameFirst = XMLUtil.getElementLongValue(node, ID_FRAMEFIRST, 0);
+			if (frameFirst < 0) {
+				System.out.println("WARNING: frameFirst < 0, setting to 0");
+				frameFirst = 0;
+			}
+			imgLoader.setAbsoluteIndexFirstImage(frameFirst);
+			
+			long nImages = XMLUtil.getElementLongValue(node, ID_NFRAMES, -1);
+			if (nImages <= 0) {
+				System.err.println("ERROR: Invalid number of frames: " + nImages);
+				return false;
+			}
+			imgLoader.setFixedNumberOfImages(nImages);
+			imgLoader.setNTotalFrames((int) (nImages - frameFirst));
+
+			// Load TimeManager configuration with validation
+			TimeManager timeManager = seqCamData.getTimeManager();
+			long firstMs = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0);
+			timeManager.setFirstImageMs(firstMs);
+			long lastMs = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0);
+			timeManager.setLastImageMs(lastMs);
+			long durationMs = lastMs - firstMs;
+			timeManager.setDurationMs(durationMs);
+			long frameDelta = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
+			timeManager.setDeltaImage(frameDelta);
+			long binFirstMs = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
+			timeManager.setBinFirst_ms(binFirstMs);
+			long binLastMs = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
+			timeManager.setBinLast_ms(binLastMs);
+			long binDurationMs = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
+			timeManager.setBinDurationMs(binDurationMs);
+
+			// Load properties with error handling
+			try {
+				prop.loadXML_Properties(node);
+				System.out.println("Experiment properties loaded successfully");
+			} catch (Exception e) {
+				System.err.println("ERROR: Failed to load experiment properties: " + e.getMessage());
+				return false;
+			}
+
+			ugly_checkOffsetValues();
+			
+			// Memory monitoring after loading
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			System.out.println("Memory after loading: " + (endMemory / 1024 / 1024) + " MB");
+			System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			System.out.println("=== XML LOADING COMPLETE ===");
+			
+			return true;
+			
+		} catch (Exception e) {
+			System.err.println("ERROR during experiment XML loading: " + e.getMessage());
+			e.printStackTrace();
 			return false;
-		Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
-		if (node == null)
-			return false;
-
-		String version = XMLUtil.getElementValue(node, ID_VERSION, ID_VERSIONNUM);
-		if (!version.equals(ID_VERSIONNUM))
-			return false;
-
-		ImageLoader imgLoader = seqCamData.getImageLoader();
-		long frameFirst = XMLUtil.getElementLongValue(node, ID_FRAMEFIRST, 0);
-		if (frameFirst < 0)
-			frameFirst = 0;
-		imgLoader.setAbsoluteIndexFirstImage(frameFirst);
-		long nImages = XMLUtil.getElementLongValue(node, ID_NFRAMES, -1);
-		imgLoader.setFixedNumberOfImages(nImages);
-		imgLoader.setNTotalFrames((int) (nImages - frameFirst));
-
-		TimeManager timeManager = seqCamData.getTimeManager();
-		long firstMs = XMLUtil.getElementLongValue(node, ID_TIMEFIRSTIMAGEMS, 0);
-		timeManager.setFirstImageMs(firstMs);
-		long lastMs = XMLUtil.getElementLongValue(node, ID_TIMELASTIMAGEMS, 0);
-		timeManager.setLastImageMs(lastMs);
-		long durationMs = lastMs - firstMs;
-		timeManager.setDurationMs(durationMs);
-		long frameDelta = XMLUtil.getElementLongValue(node, ID_FRAMEDELTA, 1);
-		timeManager.setDeltaImage(frameDelta);
-		long binFirstMs = XMLUtil.getElementLongValue(node, ID_FIRSTKYMOCOLMS, -1);
-		timeManager.setBinFirst_ms(binFirstMs);
-		long binLastMs = XMLUtil.getElementLongValue(node, ID_LASTKYMOCOLMS, -1);
-		timeManager.setBinLast_ms(binLastMs);
-		long binDurationMs = XMLUtil.getElementLongValue(node, ID_BINKYMOCOLMS, -1);
-		timeManager.setBinDurationMs(binDurationMs);
-
-		ugly_checkOffsetValues();
-		prop.loadXML_Properties(node);
-		return true;
+		}
 	}
 
 	public boolean save_MS96_experiment() {
-		final Document doc = XMLUtil.createDocument(true);
-		if (doc != null) {
+		// Memory monitoring before saving
+		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		System.out.println("=== XML SAVING: Experiment ===");
+		System.out.println("Memory before saving: " + (startMemory / 1024 / 1024) + " MB");
+		
+		try {
+			final Document doc = XMLUtil.createDocument(true);
+			if (doc == null) {
+				System.err.println("ERROR: Could not create XML document");
+				return false;
+			}
+			
 			Node xmlRoot = XMLUtil.getRootElement(doc, true);
 			Node node = XMLUtil.setElement(xmlRoot, ID_MCEXPERIMENT);
-			if (node == null)
+			if (node == null) {
+				System.err.println("ERROR: Could not create MCexperiment node");
 				return false;
+			}
 
+			// Version information
 			XMLUtil.setElementValue(node, ID_VERSION, ID_VERSIONNUM);
+			System.out.println("Saving XML Version: " + ID_VERSIONNUM);
 
+			// Save ImageLoader configuration
 			ImageLoader imgLoader = seqCamData.getImageLoader();
-			XMLUtil.setElementLongValue(node, ID_FRAMEFIRST, imgLoader.getAbsoluteIndexFirstImage());
-			XMLUtil.setElementLongValue(node, ID_NFRAMES, imgLoader.getFixedNumberOfImages());
+			long frameFirst = imgLoader.getAbsoluteIndexFirstImage();
+			long nImages = imgLoader.getFixedNumberOfImages();
+			XMLUtil.setElementLongValue(node, ID_FRAMEFIRST, frameFirst);
+			XMLUtil.setElementLongValue(node, ID_NFRAMES, nImages);
+			System.out.println("Saving frame range: " + frameFirst + " to " + nImages);
 
+			// Save TimeManager configuration
 			TimeManager timeManager = seqCamData.getTimeManager();
-			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, timeManager.getFirstImageMs());
-			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, timeManager.getLastImageMs());
+			long firstMs = timeManager.getFirstImageMs();
+			long lastMs = timeManager.getLastImageMs();
+			XMLUtil.setElementLongValue(node, ID_TIMEFIRSTIMAGEMS, firstMs);
+			XMLUtil.setElementLongValue(node, ID_TIMELASTIMAGEMS, lastMs);
 			XMLUtil.setElementLongValue(node, ID_FRAMEDELTA, timeManager.getDeltaImage());
 			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, timeManager.getBinFirst_ms());
 			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, timeManager.getBinLast_ms());
 			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, timeManager.getBinDurationMs());
+			System.out.println("Saving time range: " + firstMs + " to " + lastMs + " ms");
 
-			prop.saveXML_Properties(node);
+			// Save properties
+			try {
+				prop.saveXML_Properties(node);
+				System.out.println("Experiment properties saved successfully");
+			} catch (Exception e) {
+				System.err.println("ERROR: Failed to save experiment properties: " + e.getMessage());
+				return false;
+			}
 
 			if (camDataImagesDirectory == null)
 				camDataImagesDirectory = seqCamData.getImagesDirectory();
 			XMLUtil.setElementValue(node, ID_IMAGESDIRECTORY, camDataImagesDirectory);
 
 			String tempname = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
-			return XMLUtil.saveDocument(doc, tempname);
+			boolean success = XMLUtil.saveDocument(doc, tempname);
+			
+			// Memory monitoring after saving
+			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			long memoryIncrease = endMemory - startMemory;
+			System.out.println("Memory after saving: " + (endMemory / 1024 / 1024) + " MB");
+			System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
+			System.out.println("Save success: " + success);
+			System.out.println("=== XML SAVING COMPLETE ===");
+			
+			return success;
+			
+		} catch (Exception e) {
+			System.err.println("ERROR during experiment XML saving: " + e.getMessage());
+			e.printStackTrace();
+			return false;
 		}
-		return false;
 	}
 
 	private void ugly_checkOffsetValues() {
