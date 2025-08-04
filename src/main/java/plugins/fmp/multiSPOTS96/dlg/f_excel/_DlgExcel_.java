@@ -147,7 +147,7 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 
 		XLSExportOptions options = new XLSExportOptions();
 		options.spotAreas = true;
-		options.sum = spotsAreas.sumCheckBox.isSelected();
+		options.sum = spotsAreas.areaCheckBox.isSelected();
 		options.nPixels = spotsAreas.nPixelsCheckBox.isSelected();
 		options.relativeToT0 = spotsAreas.t0CheckBox.isSelected();
 

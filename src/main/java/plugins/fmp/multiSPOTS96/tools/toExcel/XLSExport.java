@@ -15,7 +15,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
-import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
+import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelDataException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelResourceException;
@@ -32,7 +32,7 @@ public abstract class XLSExport {
 
 	protected XLSExportOptions options = null;
 	protected Experiment expAll = null;
-	protected JComboBoxExperiment expList = null;
+	protected JComboBoxExperimentLazy expList = null;
 
 	// Resource management
 	protected ExcelResourceManager resourceManager = null;

@@ -5,18 +5,18 @@ import java.awt.Color;
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
+import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 
 public class CageTableModel extends AbstractTableModel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3501225818220221949L;
-	private JComboBoxExperiment expList = null;
+	private JComboBoxExperimentLazy expList = null;
 	String columnNames[] = { "Name", "N flies", "Strain", "Sex", "Age", "Comment", "Color", "Fly?" };
 	public Color colorTable[] = { Color.GRAY, Color.WHITE };
 
-	public CageTableModel(JComboBoxExperiment expList) {
+	public CageTableModel(JComboBoxExperimentLazy expList) {
 		super();
 		this.expList = expList;
 	}

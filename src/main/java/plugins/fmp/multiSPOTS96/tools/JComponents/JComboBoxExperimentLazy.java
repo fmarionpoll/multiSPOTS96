@@ -1,0 +1,524 @@
+package plugins.fmp.multiSPOTS96.tools.JComponents;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.logging.Logger;
+
+import javax.swing.JComboBox;
+
+import icy.gui.frame.progress.ProgressFrame;
+import icy.system.SystemUtil;
+import icy.system.thread.Processor;
+import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.ExperimentDirectories;
+import plugins.fmp.multiSPOTS96.tools.Comparators;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
+
+/**
+ * Memory-optimized version of JComboBoxExperiment that uses LazyExperiment
+ * objects for reduced memory footprint when handling large numbers of experiments.
+ * 
+ * <p>
+ * Key features:
+ * <ul>
+ * <li><strong>Lazy Loading</strong>: Only loads full experiment data when needed</li>
+ * <li><strong>Metadata Storage</strong>: Stores lightweight metadata for all experiments</li>
+ * <li><strong>Memory Efficient</strong>: Dramatically reduces memory usage for large datasets</li>
+ * <li><strong>Backward Compatible</strong>: Maintains same interface as JComboBoxExperiment</li>
+ * </ul>
+ * </p>
+ * 
+ * @author MultiSPOTS96
+ * @version 2.0.0
+ */
+public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
+
+	private static final long serialVersionUID = 2L;
+	private static final Logger LOGGER = Logger.getLogger(JComboBoxExperimentLazy.class.getName());
+
+	public int index0 = 0;
+	public int index1 = 0;
+	public int maxSizeOfSpotsArrays = 0;
+	public String stringExpBinSubDirectory = null;
+
+	// Metadata storage for lazy loading
+	private List<ExperimentMetadata> experimentMetadataList = new ArrayList<>();
+
+	/**
+	 * Lightweight metadata class for experiment information. Contains only
+	 * essential information needed for the dropdown.
+	 */
+	private static class ExperimentMetadata {
+		private final String cameraDirectory;
+		private final String resultsDirectory;
+		private final String binDirectory;
+
+		public ExperimentMetadata(String cameraDirectory, String resultsDirectory, String binDirectory) {
+			this.cameraDirectory = cameraDirectory;
+			this.resultsDirectory = resultsDirectory;
+			this.binDirectory = binDirectory;
+		}
+
+		public String getCameraDirectory() {
+			return cameraDirectory;
+		}
+
+		public String getResultsDirectory() {
+			return resultsDirectory;
+		}
+
+		public String getBinDirectory() {
+			return binDirectory;
+		}
+
+		@Override
+		public String toString() {
+			return cameraDirectory; // Used for dropdown display
+		}
+	}
+
+	/**
+	 * Lazy loading Experiment wrapper that only loads full experiment data when
+	 * needed. This dramatically reduces memory usage by avoiding loading all
+	 * experiments at once.
+	 */
+	private static class LazyExperiment extends Experiment {
+		private final ExperimentMetadata metadata;
+		private boolean isLoaded = false;
+
+		public LazyExperiment(ExperimentMetadata metadata) {
+			this.metadata = metadata;
+			// Set the results directory to provide a meaningful display name
+			this.setResultsDirectory(metadata.getResultsDirectory());
+		}
+
+		@Override
+		public String toString() {
+			return metadata.getCameraDirectory();
+		}
+
+		/**
+		 * Loads the full experiment data only when this method is called. This
+		 * implements the lazy loading pattern.
+		 */
+		public void loadIfNeeded() {
+			if (!isLoaded) {
+				try {
+					ExperimentDirectories expDirectories = new ExperimentDirectories();
+					if (expDirectories.getDirectoriesFromExptPath(metadata.getBinDirectory(),
+							metadata.getCameraDirectory())) {
+						Experiment fullExp = new Experiment(expDirectories);
+						// Copy essential public properties from the fully loaded experiment
+						this.seqCamData = fullExp.seqCamData;
+						this.cagesArray = fullExp.cagesArray;
+						this.firstImage_FileTime = fullExp.firstImage_FileTime;
+						this.lastImage_FileTime = fullExp.lastImage_FileTime;
+						this.col = fullExp.col;
+						this.chainToPreviousExperiment = fullExp.chainToPreviousExperiment;
+						this.chainToNextExperiment = fullExp.chainToNextExperiment;
+						this.chainImageFirst_ms = fullExp.chainImageFirst_ms;
+						this.experimentID = fullExp.experimentID;
+						this.isLoaded = true;
+					}
+				} catch (Exception e) {
+					Logger.getLogger(LazyExperiment.class.getName()).warning(
+							"Error loading experiment " + metadata.getCameraDirectory() + ": " + e.getMessage());
+				}
+			}
+		}
+
+		public boolean isLoaded() {
+			return isLoaded;
+		}
+	}
+
+	public JComboBoxExperimentLazy() {
+	}
+
+	@Override
+	public void removeAllItems() {
+		super.removeAllItems();
+		stringExpBinSubDirectory = null;
+		experimentMetadataList.clear();
+	}
+
+	/**
+	 * Adds a LazyExperiment to the combo box. This method ensures that only
+	 * lightweight experiment objects are stored initially.
+	 * 
+	 * @param exp The experiment to add (will be converted to LazyExperiment if needed)
+	 * @param allowDuplicates Whether to allow duplicate experiments
+	 * @return The index of the added experiment
+	 */
+	public int addExperiment(Experiment exp, boolean allowDuplicates) {
+		String exptName = exp.toString();
+		int index = getExperimentIndexFromExptName(exptName);
+		if (allowDuplicates || index < 0) {
+			// Convert to LazyExperiment if it's not already one
+			Experiment lazyExp = convertToLazyExperiment(exp);
+			addItem(lazyExp);
+			index = getExperimentIndexFromExptName(exptName);
+		}
+		return index;
+	}
+
+	/**
+	 * Converts a regular Experiment to a LazyExperiment for memory efficiency.
+	 * 
+	 * @param exp The experiment to convert
+	 * @return A LazyExperiment wrapper
+	 */
+	private Experiment convertToLazyExperiment(Experiment exp) {
+		if (exp instanceof LazyExperiment) {
+			return exp; // Already a LazyExperiment
+		}
+
+		// Create metadata from the experiment
+		ExperimentMetadata metadata = new ExperimentMetadata(
+				exp.seqCamData != null ? exp.seqCamData.getImagesDirectory() : exp.toString(),
+				exp.getResultsDirectory(),
+				stringExpBinSubDirectory);
+
+		// Store metadata for future reference
+		experimentMetadataList.add(metadata);
+
+		return new LazyExperiment(metadata);
+	}
+
+	/**
+	 * Gets an experiment from the combo box, ensuring it's loaded if needed.
+	 * 
+	 * @param index The index of the experiment
+	 * @return The experiment at the specified index
+	 */
+	@Override
+	public Experiment getItemAt(int index) {
+		Object item = super.getItemAt(index);
+		if (item instanceof Experiment) {
+			Experiment exp = (Experiment) item;
+			if (exp instanceof LazyExperiment) {
+				((LazyExperiment) exp).loadIfNeeded();
+			}
+			return exp;
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the selected experiment, ensuring it's loaded if needed.
+	 * 
+	 * @return The selected experiment
+	 */
+	@Override
+	public Experiment getSelectedItem() {
+		Object selected = super.getSelectedItem();
+		if (selected instanceof Experiment) {
+			Experiment exp = (Experiment) selected;
+			if (exp instanceof LazyExperiment) {
+				((LazyExperiment) exp).loadIfNeeded();
+			}
+			return exp;
+		}
+		return null;
+	}
+
+	public Experiment get_MsTime_of_StartAndEnd_AllExperiments(XLSExportOptions options) {
+		Experiment expAll = new Experiment();
+		Experiment exp0 = getItemAt(0);
+		if (options.fixedIntervals) {
+			expAll.seqCamData.getTimeManager().setFirstImageMs(options.startAll_Ms);
+			expAll.seqCamData.setLastImageMs(options.endAll_Ms);
+		} else {
+			if (options.absoluteTime) {
+				Experiment expFirst = exp0.getFirstChainedExperiment(options.collateSeries);
+				expAll.setFileTimeImageFirst(expFirst.firstImage_FileTime);
+				Experiment expLast = exp0.getLastChainedExperiment(options.collateSeries);
+				expAll.setFileTimeImageLast(expLast.lastImage_FileTime);
+				for (int i = 0; i < getItemCount(); i++) {
+					Experiment exp = getItemAt(i);
+					expFirst = exp.getFirstChainedExperiment(options.collateSeries);
+					if (expAll.firstImage_FileTime.compareTo(expFirst.firstImage_FileTime) > 0)
+						expAll.setFileTimeImageFirst(expFirst.firstImage_FileTime);
+					expLast = exp.getLastChainedExperiment(options.collateSeries);
+					if (expAll.lastImage_FileTime.compareTo(expLast.lastImage_FileTime) < 0)
+						expAll.setFileTimeImageLast(expLast.lastImage_FileTime);
+				}
+				expAll.seqCamData.setFirstImageMs(expAll.firstImage_FileTime.toMillis());
+				expAll.seqCamData.setLastImageMs(expAll.lastImage_FileTime.toMillis());
+			} else {
+				expAll.seqCamData.setFirstImageMs(0);
+				expAll.seqCamData.setLastImageMs(exp0.seqCamData.getTimeManager().getBinLast_ms()
+						- exp0.seqCamData.getTimeManager().getBinFirst_ms());
+				long firstOffset_Ms = 0;
+				long lastOffset_Ms = 0;
+
+				for (int i = 0; i < getItemCount(); i++) {
+					Experiment exp = getItemAt(i);
+					Experiment expFirst = exp.getFirstChainedExperiment(options.collateSeries);
+					firstOffset_Ms = expFirst.seqCamData.getTimeManager().getBinFirst_ms()
+							+ expFirst.seqCamData.getFirstImageMs();
+					exp.chainImageFirst_ms = expFirst.seqCamData.getFirstImageMs()
+							+ expFirst.seqCamData.getTimeManager().getBinFirst_ms();
+
+					Experiment expLast = exp.getLastChainedExperiment(options.collateSeries);
+					if (expLast.seqCamData.getTimeManager().getBinLast_ms() <= 0) {
+						expLast.seqCamData.getTimeManager().setBinLast_ms(
+								expLast.seqCamData.getLastImageMs() - expLast.seqCamData.getFirstImageMs());
+					}
+					lastOffset_Ms = expLast.seqCamData.getTimeManager().getBinLast_ms()
+							+ expLast.seqCamData.getFirstImageMs();
+
+					long diff = lastOffset_Ms - firstOffset_Ms;
+					if (diff < 1) {
+						System.out.println("ExperimentCombo:get_MsTime_of_StartAndEnd_AllExperiments() Expt # " + i
+								+ ": FileTime difference between last and first image < 1; set dt between images = 1 ms");
+						diff = exp.seqCamData.getSequence().getSizeT();
+					}
+					if (expAll.seqCamData.getLastImageMs() < diff)
+						expAll.seqCamData.setLastImageMs(diff);
+				}
+			}
+		}
+		return expAll;
+	}
+
+	/**
+	 * Loads all experiments with lazy loading support. This method ensures that
+	 * experiments are loaded only when accessed.
+	 */
+	public boolean loadListOfMeasuresFromAllExperiments(boolean loadSpots, boolean loadDrosoTrack) {
+		ProgressFrame progress = new ProgressFrame("Load experiment(s) parameters");
+		int nexpts = getItemCount();
+
+		maxSizeOfSpotsArrays = 0;
+		progress.setLength(nexpts);
+		boolean flag = true;
+
+		final Processor processor = new Processor(SystemUtil.getNumberOfCPUs());
+		processor.setThreadName("loadAllExperiments");
+		processor.setPriority(Processor.NORM_PRIORITY);
+		ArrayList<Future<?>> futuresArray = new ArrayList<Future<?>>(nexpts);
+		futuresArray.clear();
+
+		for (int i = 0; i < nexpts; i++) {
+			final int it = i;
+			final Experiment exp = getItemAt(it);
+
+			futuresArray.add(processor.submit(new Runnable() {
+				@Override
+				public void run() {
+					progress.setMessage("Load experiment " + it + " of " + nexpts);
+					
+					// Ensure the experiment is loaded if it's a LazyExperiment
+					if (exp instanceof LazyExperiment) {
+						((LazyExperiment) exp).loadIfNeeded();
+					}
+					
+					exp.load_MS96_experiment();
+					exp.load_MS96_cages();
+					if (loadSpots)
+						exp.load_MS96_spotsMeasures();
+
+					if (loadDrosoTrack)
+						exp.zopenPositionsMeasures();
+
+					int nCages = exp.cagesArray.cagesList.size();
+					int nSpotsPerCage = exp.cagesArray.nColumnsPerCage * exp.cagesArray.nRowsPerCage;
+					int nMaxSpots = nCages * nSpotsPerCage;
+					if (maxSizeOfSpotsArrays < nMaxSpots) {
+						maxSizeOfSpotsArrays = nMaxSpots;
+						if (maxSizeOfSpotsArrays % 2 != 0)
+							maxSizeOfSpotsArrays += 1;
+					}
+					progress.incPosition();
+				}
+			}));
+		}
+		waitFuturesCompletion(processor, futuresArray, progress);
+
+		progress.close();
+		return flag;
+	}
+
+	protected void waitFuturesCompletion(Processor processor, ArrayList<Future<?>> futuresArray,
+			ProgressFrame progressBar) {
+		int frame = 1;
+		int nframes = futuresArray.size();
+		while (!futuresArray.isEmpty()) {
+			final Future<?> f = futuresArray.get(futuresArray.size() - 1);
+			if (progressBar != null)
+				progressBar.setMessage("Analyze experiment: " + (frame) + "//" + nframes);
+			try {
+				f.get();
+			} catch (ExecutionException e) {
+				System.out.println("ExperimentCombo:waitFuturesCompletion() - Warning: " + e);
+			} catch (InterruptedException e) {
+				// ignore
+			}
+			futuresArray.remove(f);
+			frame++;
+		}
+	}
+
+	public void setFirstImageForAllExperiments(boolean collate) {
+		for (int i = 0; i < getItemCount(); i++) {
+			Experiment expi = getItemAt(i);
+			Experiment expFirst = expi.getFirstChainedExperiment(collate);
+			expi.chainImageFirst_ms = expFirst.seqCamData.getFirstImageMs()
+					+ expFirst.seqCamData.getTimeManager().getBinFirst_ms();
+		}
+	}
+
+	private void resetChaining(Experiment expi) {
+		expi.chainToPreviousExperiment = null;
+		expi.chainToNextExperiment = null;
+	}
+
+	public void chainExperimentsUsingKymoIndexes(boolean collate) {
+		for (int i = 0; i < getItemCount(); i++) {
+			Experiment expi = getItemAt(i);
+			if (!collate) {
+				resetChaining(expi);
+				continue;
+			}
+			if (expi.chainToNextExperiment != null || expi.chainToPreviousExperiment != null)
+				continue;
+
+			List<Experiment> list = new ArrayList<Experiment>();
+			list.add(expi);
+
+			for (int j = 0; j < getItemCount(); j++) {
+				if (i == j)
+					continue;
+				Experiment expj = getItemAt(j);
+				if (!expi.getProperties().isSameProperties(expj.getProperties()))
+					continue;
+				if (expj.chainToNextExperiment != null || expj.chainToPreviousExperiment != null)
+					continue;
+				list.add(expj);
+			}
+
+			if (list.size() < 2)
+				continue;
+
+			Collections.sort(list, new Comparators.Experiment_Start());
+			for (int k = 0; k < list.size(); k++) {
+				Experiment expk = list.get(k);
+				if (k > 0)
+					expk.chainToPreviousExperiment = list.get(k - 1);
+				if (k < (list.size() - 1))
+					expk.chainToNextExperiment = list.get(k + 1);
+			}
+		}
+	}
+
+	public int getExperimentIndexFromExptName(String filename) {
+		int position = -1;
+		if (filename != null) {
+			for (int i = 0; i < getItemCount(); i++) {
+				if (filename.equals(getItemAt(i).toString())) {
+					position = i;
+					break;
+				}
+			}
+		}
+		return position;
+	}
+
+	public Experiment getExperimentFromExptName(String filename) {
+		Experiment exp = null;
+		for (int i = 0; i < getItemCount(); i++) {
+			String expString = getItemAt(i).toString();
+			if (filename.equals(expString)) {
+				exp = getItemAt(i);
+				break;
+			}
+		}
+		return exp;
+	}
+
+	/**
+	 * Gets field values from all experiments with lazy loading support.
+	 */
+	public List<String> getFieldValuesFromAllExperiments(EnumXLSColumnHeader field) {
+		List<String> textList = new ArrayList<>();
+		for (int i = 0; i < getItemCount(); i++) {
+			Experiment exp = getItemAt(i);
+			
+			// Ensure the experiment is loaded if it's a LazyExperiment
+			if (exp instanceof LazyExperiment) {
+				((LazyExperiment) exp).loadIfNeeded();
+			}
+			
+			exp.load_MS96_experiment();
+			exp.getFieldValues(field, textList);
+		}
+		return textList;
+	}
+
+	public void getFieldValuesToCombo(JComboBox<String> combo, EnumXLSColumnHeader header) {
+		combo.removeAllItems();
+		List<String> textList = getFieldValuesFromAllExperiments(header);
+		java.util.Collections.sort(textList);
+		for (String text : textList)
+			combo.addItem(text);
+	}
+
+	public List<Experiment> getExperimentsAsList() {
+		int nitems = getItemCount();
+		List<Experiment> expList = new ArrayList<Experiment>(nitems);
+		for (int i = 0; i < nitems; i++)
+			expList.add(getItemAt(i));
+		return expList;
+	}
+
+	public void setExperimentsFromList(List<Experiment> listExp) {
+		removeAllItems();
+		for (Experiment exp : listExp) {
+			Experiment lazyExp = convertToLazyExperiment(exp);
+			addItem(lazyExp);
+		}
+	}
+
+	/**
+	 * Gets memory usage statistics for monitoring.
+	 * 
+	 * @return Memory usage information
+	 */
+	public String getMemoryUsageInfo() {
+		Runtime runtime = Runtime.getRuntime();
+		long totalMemory = runtime.totalMemory();
+		long freeMemory = runtime.freeMemory();
+		long usedMemory = totalMemory - freeMemory;
+
+		return String.format("Memory: %dMB used, %dMB total, %d experiments loaded", usedMemory / 1024 / 1024,
+				totalMemory / 1024 / 1024, experimentMetadataList.size());
+	}
+
+	/**
+	 * Gets the number of loaded experiments (those that have been fully loaded).
+	 * 
+	 * @return The number of loaded experiments
+	 */
+	public int getLoadedExperimentCount() {
+		int count = 0;
+		for (int i = 0; i < getItemCount(); i++) {
+			Object item = super.getItemAt(i);
+			if (item instanceof Experiment) {
+				Experiment exp = (Experiment) item;
+				if (exp instanceof LazyExperiment) {
+					if (((LazyExperiment) exp).isLoaded()) {
+						count++;
+					}
+				} else {
+					count++; // Regular experiments are considered loaded
+				}
+			}
+		}
+		return count;
+	}
+} 

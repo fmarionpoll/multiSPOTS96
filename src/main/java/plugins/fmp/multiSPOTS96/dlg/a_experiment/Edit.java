@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
+import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
 public class Edit extends JPanel {
@@ -36,7 +36,7 @@ public class Edit extends JPanel {
 	private JButton applyButton = new JButton("Apply");
 
 	private MultiSPOTS96 parent0 = null;
-	JComboBoxExperiment editExpList = new JComboBoxExperiment();
+	JComboBoxExperimentLazy editExpList = new JComboBoxExperimentLazy();
 
 	void init(GridLayout capLayout, MultiSPOTS96 parent0) {
 		this.parent0 = parent0;

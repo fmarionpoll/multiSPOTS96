@@ -21,7 +21,7 @@ import icy.sequence.Sequence;
 import icy.system.thread.Processor;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.ViewerFMP;
-import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
+import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.kernel.roi.roi2d.ROI2DRectangle;
 
 public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
@@ -43,7 +43,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		System.out.println("BuildSeries:doInBackground loop over experiments");
 		threadRunning = true;
 		int nbiterations = 0;
-		JComboBoxExperiment expList = options.expList;
+		JComboBoxExperimentLazy expList = options.expList;
 		ProgressFrame progress = new ProgressFrame("Analyze series");
 		selectedExperimentIndex = expList.getSelectedIndex();
 		selectList(expList, -1);
@@ -76,7 +76,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 		return nbiterations;
 	}
 
-	private void selectList(JComboBoxExperiment expList, int index) {
+	private void selectList(JComboBoxExperimentLazy expList, int index) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {

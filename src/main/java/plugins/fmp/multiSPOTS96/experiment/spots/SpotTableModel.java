@@ -5,18 +5,18 @@ import java.awt.Color;
 import javax.swing.table.AbstractTableModel;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
+import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 
 public class SpotTableModel extends AbstractTableModel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6325792669154093747L;
-	private JComboBoxExperiment expList = null;
+	private JComboBoxExperimentLazy expList = null;
 	String columnNames[] = { "Spot name", "pixels", "uL", "IDCage", "Pos", "Row", "Col", "Stimulus", "Concentration",
 			"Color" };
 
-	public SpotTableModel(JComboBoxExperiment expList) {
+	public SpotTableModel(JComboBoxExperimentLazy expList) {
 		super();
 		this.expList = expList;
 	}

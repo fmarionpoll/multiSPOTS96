@@ -38,7 +38,7 @@ import plugins.fmp.multiSPOTS96.series.RegistrationOptions;
 import plugins.fmp.multiSPOTS96.series.RegistrationProcessor;
 import plugins.fmp.multiSPOTS96.series.SafeRegistrationProcessor;
 import plugins.fmp.multiSPOTS96.tools.GaspardRigidRegistration;
-import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
+import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 
@@ -76,7 +76,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 	private final JSpinner squareSizeSpinner = new JSpinner(new SpinnerNumberModel(10, 0, 500, 1));
 
 //	private MultiSPOTS96 parent0 = null;
-	private JComboBoxExperiment experimentList = new JComboBoxExperiment();
+	private JComboBoxExperimentLazy experimentList = new JComboBoxExperimentLazy();
 //	private Registration registration = null;
 
 	private CompletableFuture<Void> currentTask;

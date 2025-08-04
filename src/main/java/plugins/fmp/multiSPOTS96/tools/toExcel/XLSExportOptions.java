@@ -1,6 +1,6 @@
 package plugins.fmp.multiSPOTS96.tools.toExcel;
 
-import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
+import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 
 public class XLSExportOptions {
 	public boolean xyImage = true;
@@ -47,7 +47,7 @@ public class XLSExportOptions {
 	public int cageIndexLast = -1;
 	public int seriesIndexFirst = -1;
 	public int seriesIndexLast = -1;
-	public JComboBoxExperiment expList = null;
+	public JComboBoxExperimentLazy expList = null;
 
 	// internal parameters
 	public boolean trim_alive = false;

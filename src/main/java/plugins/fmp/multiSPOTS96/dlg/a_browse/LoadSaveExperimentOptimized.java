@@ -650,7 +650,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 			closeViewsForCurrentExperiment(exp);
 	}
 
-	void closeAllExperiments() {
+	public void closeAllExperiments() {
 		closeCurrentExperiment();
 		parent0.expListCombo.removeAllItems();
 		parent0.dlgExperiment.tabFilter.clearAllCheckBoxes();

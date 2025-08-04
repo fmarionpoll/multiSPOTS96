@@ -1,6 +1,6 @@
 package plugins.fmp.multiSPOTS96.tools.toExcel;
 
-import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperiment;
+import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.toExcel.ExcelExportConstants.DefaultOptions;
 
 /**
@@ -62,7 +62,7 @@ public class XLSExportOptionsBuilder {
 	private int seriesIndexLast = DefaultOptions.SERIES_INDEX_LAST;
 
 	// External references
-	private JComboBoxExperiment expList = null;
+	private JComboBoxExperimentLazy expList = null;
 
 	// Internal processing options
 	private boolean trim_alive = DefaultOptions.TRIM_ALIVE;
@@ -208,7 +208,7 @@ public class XLSExportOptionsBuilder {
 		return this;
 	}
 
-	public XLSExportOptionsBuilder withExperimentList(JComboBoxExperiment expList) {
+	public XLSExportOptionsBuilder withExperimentList(JComboBoxExperimentLazy expList) {
 		this.expList = expList;
 		return this;
 	}

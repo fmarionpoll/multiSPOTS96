@@ -18,8 +18,8 @@ public class SpotsAreas extends JPanel {
 	JButton exportToXLSButton2 = new JButton("save XLS");
 	JButton exportQToXLSButton = new JButton("save XLS as Query");
 
-	JCheckBox sumCheckBox = new JCheckBox("area", true);
-	JCheckBox nPixelsCheckBox = new JCheckBox("n pixels", true);
+	JCheckBox areaCheckBox = new JCheckBox("area", false);
+	JCheckBox nPixelsCheckBox = new JCheckBox("n pixels", false);
 	JCheckBox t0CheckBox = new JCheckBox("(max-t)/max", true);
 	JCheckBox discardNoFlyCageCheckBox = new JCheckBox("discard cages with no fly", true);
 
@@ -29,7 +29,7 @@ public class SpotsAreas extends JPanel {
 		FlowLayout flowLayout0 = new FlowLayout(FlowLayout.LEFT);
 		flowLayout0.setVgap(0);
 		JPanel panel0 = new JPanel(flowLayout0);
-		panel0.add(sumCheckBox);
+		panel0.add(areaCheckBox);
 		panel0.add(nPixelsCheckBox);
 		panel0.add(t0CheckBox);
 		panel0.add(discardNoFlyCageCheckBox);
@@ -44,6 +44,9 @@ public class SpotsAreas extends JPanel {
 		panel2.add(exportToXLSButton2);
 		panel2.add(exportQToXLSButton);
 		add(panel2);
+
+		areaCheckBox.setEnabled(false);
+		nPixelsCheckBox.setEnabled(false);
 
 		defineActionListeners();
 	}
