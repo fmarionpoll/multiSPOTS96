@@ -60,6 +60,11 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	private final double MEMORY_USAGE_THRESHOLD_PERCENT = 30.0; // Memory usage threshold (reduced from 50.0)
 	private final boolean USE_NATIVE_IO_ONLY = false; // Nuclear option: bypass Icy entirely (disabled for testing)
 
+	// === IMAGE MEMORY POOL ===
+	private ImageMemoryPool imageMemoryPool = null;
+	private ImageMemoryPool transformedImagePool = null; // Pool for transformed images
+	private boolean memoryPoolEnabled = true;
+
 	// === TRADITIONAL FIELDS ===
 	public Sequence seqData = new Sequence();
 	private ViewerFMP vData = null;
@@ -78,6 +83,20 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		this.memoryMonitor = new MemoryMonitor();
 		this.streamingProcessor = new StreamingImageProcessor(memoryMonitor);
 		this.adaptiveBatchSizer = new AdaptiveBatchSizer(memoryMonitor);
+
+		// Initialize image memory pools (will be configured with first image)
+		if (memoryPoolEnabled) {
+			try {
+				this.imageMemoryPool = new ImageMemoryPool();
+				this.transformedImagePool = new ImageMemoryPool();
+//				System.out.println("DEBUG: Image memory pools created (will be initialized with first image)");
+			} catch (Exception e) {
+				System.err.println("WARNING: Failed to create image memory pools: " + e.getMessage());
+				this.memoryPoolEnabled = false;
+				this.imageMemoryPool = null;
+				this.transformedImagePool = null;
+			}
+		}
 	}
 
 	void analyzeExperiment(Experiment exp) {
@@ -211,9 +230,9 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		long endTime = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
 
-		System.out.println("=== Processing Complete ===");
+//		System.out.println("=== Processing Complete ===");
 		System.out.println("Total processing time: " + totalTime + "ms (" + (totalTime / 1000.0) + "s)");
-		System.out.println("Processed " + processedBatches + " batches");
+//		System.out.println("Processed " + processedBatches + " batches");
 
 		// Memory profiling summary
 		if (options.enableMemoryProfiling) {
@@ -303,14 +322,52 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		IcyBufferedImageCursor cursorToMeasureArea = null;
 
 		try {
-			// Create transformed images (same as original)
-			transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage, transformOptions01);
-			transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage, transformOptions02);
-			totalTransformedImagesCreated += 2;
+			// Initialize memory pools with first image if not already done
+			if (imageMemoryPool != null && memoryPoolEnabled && frameIndex == iiFirst) {
+				imageMemoryPool.initializeWithImage(sourceImage);
+				// Initialize transformed image pool with the same format
+				transformedImagePool.initializeWithImage(sourceImage);
+			}
 
-			// Create cursors (same as original)
-			cursorToDetectFly = new IcyBufferedImageCursor(transformToDetectFly);
-			cursorToMeasureArea = new IcyBufferedImageCursor(transformToMeasureArea);
+			// Get transformed images from pool or create new ones
+			if (transformedImagePool != null && memoryPoolEnabled) {
+				transformToMeasureArea = transformedImagePool.getImage();
+				transformToDetectFly = transformedImagePool.getImage();
+
+				if (transformToMeasureArea != null && transformToDetectFly != null) {
+					// Apply transformations to the pooled images
+					// Note: We need to copy the transformed data to the pooled images
+					IcyBufferedImage tempMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage,
+							transformOptions01);
+					IcyBufferedImage tempDetectFly = transformFunctionFly.getTransformedImage(sourceImage,
+							transformOptions02);
+
+					// Copy data to pooled images
+					copyImageData(tempMeasureArea, transformToMeasureArea);
+					copyImageData(tempDetectFly, transformToDetectFly);
+
+					totalTransformedImagesCreated += 2;
+				} else {
+					// Fallback to creating new images if pool is empty
+					transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage, transformOptions01);
+					transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage, transformOptions02);
+					totalTransformedImagesCreated += 2;
+				}
+			} else {
+				// Create new images if memory pool is disabled
+				transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage, transformOptions01);
+				transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage, transformOptions02);
+				totalTransformedImagesCreated += 2;
+			}
+
+			// Create cursors (cursors cannot be pooled as they are tied to specific images)
+			if (imageMemoryPool != null && memoryPoolEnabled) {
+				cursorToDetectFly = imageMemoryPool.createCursor(transformToDetectFly);
+				cursorToMeasureArea = imageMemoryPool.createCursor(transformToMeasureArea);
+			} else {
+				cursorToDetectFly = new IcyBufferedImageCursor(transformToDetectFly);
+				cursorToMeasureArea = new IcyBufferedImageCursor(transformToMeasureArea);
+			}
 			totalCursorsCreated += 2;
 
 			int ii_local = frameIndex - iiFirst;
@@ -334,7 +391,18 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				}
 			}
 		} finally {
-			// LIGHT CLEANUP for better performance - only clear references
+			// Return transformed images to memory pool for reuse
+			if (transformedImagePool != null && memoryPoolEnabled) {
+				if (transformToMeasureArea != null) {
+					transformedImagePool.returnImage(transformToMeasureArea);
+				}
+				if (transformToDetectFly != null) {
+					transformedImagePool.returnImage(transformToDetectFly);
+				}
+			}
+
+			// Clear references (cursors cannot be pooled as they are tied to specific
+			// images)
 			transformToMeasureArea = null;
 			transformToDetectFly = null;
 			cursorToDetectFly = null;
@@ -492,6 +560,14 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 	private void cleanupResources() {
 		compressedMasks.clear();
+
+		// Clean up memory pools
+		if (imageMemoryPool != null) {
+			imageMemoryPool.performPeriodicCleanup();
+		}
+		if (transformedImagePool != null) {
+			transformedImagePool.performPeriodicCleanup();
+		}
 	}
 
 	private void closeViewers() {
@@ -532,6 +608,14 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		System.out.println("Compressed Masks: " + compressedMasks.size());
 		System.out.println("Total Transformed Images: " + totalTransformedImagesCreated);
 		System.out.println("Total Cursors: " + totalCursorsCreated);
+
+		// Memory pool statistics
+		if (imageMemoryPool != null && memoryPoolEnabled) {
+			System.out.println("Source Image Pool: " + imageMemoryPool.getPoolStatistics());
+		}
+		if (transformedImagePool != null && memoryPoolEnabled) {
+			System.out.println("Transformed Image Pool: " + transformedImagePool.getPoolStatistics());
+		}
 	}
 
 	private void checkForMemoryLeaks() {
@@ -561,6 +645,14 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		// Force memory pool cleanup
 		clearImageCaches();
 		clearCompressedMaskCache();
+
+		// Clean up memory pools
+		if (imageMemoryPool != null) {
+			imageMemoryPool.clearPool();
+		}
+		if (transformedImagePool != null) {
+			transformedImagePool.clearPool();
+		}
 	}
 
 	private void clearImageCaches() {
@@ -725,6 +817,26 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			}
 		} catch (Exception e) {
 			System.out.println("Could not dispose Icy sequence: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Copies image data from source to destination image. Both images must have the
+	 * same dimensions and data type.
+	 * 
+	 * @param source      the source image
+	 * @param destination the destination image
+	 */
+	private void copyImageData(IcyBufferedImage source, IcyBufferedImage destination) {
+		if (source == null || destination == null) {
+			return;
+		}
+
+		try {
+			// Copy pixel data from source to destination
+			destination.setDataXY(0, source.getDataXY(0));
+		} catch (Exception e) {
+			System.err.println("Error copying image data: " + e.getMessage());
 		}
 	}
 

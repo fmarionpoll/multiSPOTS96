@@ -14,8 +14,6 @@ import javax.xml.validation.Validator;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import icy.util.XMLUtil;
-
 /**
  * XML Schema validation utility for multiSPOTS96 XML files.
  * 
@@ -29,7 +27,7 @@ public class XMLSchemaValidator {
 	// Schema file paths - using classpath-based resource loading
 	private static final String EXPERIMENT_SCHEMA_PATH = "plugins/fmp/multiSPOTS96/schemas/MS96_experiment.xsd";
 	private static final String CAGES_SCHEMA_PATH = "plugins/fmp/multiSPOTS96/schemas/MCdrosotrack.xsd";
-	
+
 	// Schema validation flags
 	private static boolean enableSchemaValidation = true;
 	private static boolean enableStrictValidation = false;
@@ -37,7 +35,7 @@ public class XMLSchemaValidator {
 	/**
 	 * Validates an XML document against its schema.
 	 * 
-	 * @param doc the XML document to validate
+	 * @param doc        the XML document to validate
 	 * @param schemaType the type of schema to validate against
 	 * @return true if validation passes, false otherwise
 	 */
@@ -54,7 +52,8 @@ public class XMLSchemaValidator {
 
 		// Skip cages validation due to complex dynamic structure
 		if (schemaType == SchemaType.CAGES) {
-			// System.out.println("Skipping cages schema validation (complex dynamic structure)");
+			// System.out.println("Skipping cages schema validation (complex dynamic
+			// structure)");
 			return true;
 		}
 
@@ -66,7 +65,7 @@ public class XMLSchemaValidator {
 			}
 
 			Validator validator = schema.newValidator();
-			
+
 			// Convert Document to String for validation
 			String xmlString = documentToString(doc);
 			if (xmlString == null) {
@@ -74,23 +73,23 @@ public class XMLSchemaValidator {
 				return false;
 			}
 			Source source = new StreamSource(new StringReader(xmlString));
-			
+
 			// Set validation error handler
 			ValidationErrorHandler errorHandler = new ValidationErrorHandler();
 			validator.setErrorHandler(errorHandler);
-			
+
 			// Perform validation
 			validator.validate(source);
-			
+
 			if (errorHandler.hasErrors()) {
 				System.err.println("XML Schema validation failed:");
 				errorHandler.printErrors();
 				return false;
 			}
-			
+
 			// System.out.println("XML Schema validation passed for " + schemaType);
 			return true;
-			
+
 		} catch (SAXException e) {
 			System.err.println("ERROR during XML schema validation: " + e.getMessage());
 			return false;
@@ -112,48 +111,49 @@ public class XMLSchemaValidator {
 	private static Schema getSchema(SchemaType schemaType) {
 		try {
 			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			
+
 			String schemaPath = null;
 			switch (schemaType) {
-				case EXPERIMENT:
-					schemaPath = EXPERIMENT_SCHEMA_PATH;
-					break;
-				case CAGES:
-					schemaPath = CAGES_SCHEMA_PATH;
-					break;
-				default:
-					System.err.println("ERROR: Unknown schema type: " + schemaType);
-					return null;
+			case EXPERIMENT:
+				schemaPath = EXPERIMENT_SCHEMA_PATH;
+				break;
+			case CAGES:
+				schemaPath = CAGES_SCHEMA_PATH;
+				break;
+			default:
+				System.err.println("ERROR: Unknown schema type: " + schemaType);
+				return null;
 			}
-			
+
 			// Try classpath-based loading first (preferred method)
-			java.io.InputStream schemaStream = XMLSchemaValidator.class.getClassLoader().getResourceAsStream(schemaPath);
+			java.io.InputStream schemaStream = XMLSchemaValidator.class.getClassLoader()
+					.getResourceAsStream(schemaPath);
 			if (schemaStream != null) {
-				System.err.println("DEBUG: Schema loaded from classpath: " + schemaPath);
+//				System.err.println("DEBUG: Schema loaded from classpath: " + schemaPath);
 				return factory.newSchema(new StreamSource(schemaStream));
 			}
-			
+
 			// Fallback to file system (for development/testing)
 			File schemaFile = new File(schemaPath);
 			if (schemaFile.exists()) {
-				System.err.println("DEBUG: Schema loaded from file system: " + schemaFile.getAbsolutePath());
+//				System.err.println("DEBUG: Schema loaded from file system: " + schemaFile.getAbsolutePath());
 				return factory.newSchema(schemaFile);
 			}
-			
+
 			// Try relative to current working directory as last resort
 			String currentDir = System.getProperty("user.dir");
 			schemaFile = new File(currentDir, schemaPath);
 			if (schemaFile.exists()) {
-				System.err.println("DEBUG: Schema loaded from working directory: " + schemaFile.getAbsolutePath());
+//				System.err.println("DEBUG: Schema loaded from working directory: " + schemaFile.getAbsolutePath());
 				return factory.newSchema(schemaFile);
 			}
-			
+
 			// Schema not found
 			System.err.println("WARNING: Schema file not found: " + schemaPath);
 			System.err.println("Current directory: " + currentDir);
 			System.err.println("Tried classpath and file locations");
 			return null;
-			
+
 		} catch (SAXException e) {
 			System.err.println("ERROR loading schema: " + e.getMessage());
 			return null;
@@ -167,7 +167,8 @@ public class XMLSchemaValidator {
 	 */
 	public static void setSchemaValidationEnabled(boolean enabled) {
 		enableSchemaValidation = enabled;
-		// System.out.println("Schema validation " + (enabled ? "enabled" : "disabled"));
+		// System.out.println("Schema validation " + (enabled ? "enabled" :
+		// "disabled"));
 	}
 
 	/**
@@ -205,8 +206,7 @@ public class XMLSchemaValidator {
 	 * Schema types for different XML structures.
 	 */
 	public enum SchemaType {
-		EXPERIMENT,
-		CAGES
+		EXPERIMENT, CAGES
 	}
 
 	/**
@@ -219,22 +219,26 @@ public class XMLSchemaValidator {
 		@Override
 		public void error(org.xml.sax.SAXParseException e) throws SAXException {
 			hasErrors = true;
-			errorMessages.append("ERROR: ").append(e.getMessage()).append(" at line ").append(e.getLineNumber()).append("\n");
+			errorMessages.append("ERROR: ").append(e.getMessage()).append(" at line ").append(e.getLineNumber())
+					.append("\n");
 		}
 
 		@Override
 		public void fatalError(org.xml.sax.SAXParseException e) throws SAXException {
 			hasErrors = true;
-			errorMessages.append("FATAL ERROR: ").append(e.getMessage()).append(" at line ").append(e.getLineNumber()).append("\n");
+			errorMessages.append("FATAL ERROR: ").append(e.getMessage()).append(" at line ").append(e.getLineNumber())
+					.append("\n");
 		}
 
 		@Override
 		public void warning(org.xml.sax.SAXParseException e) throws SAXException {
 			if (enableStrictValidation) {
 				hasErrors = true;
-				errorMessages.append("WARNING: ").append(e.getMessage()).append(" at line ").append(e.getLineNumber()).append("\n");
+				errorMessages.append("WARNING: ").append(e.getMessage()).append(" at line ").append(e.getLineNumber())
+						.append("\n");
 			} else {
-				// System.out.println("XML Validation Warning: " + e.getMessage() + " at line " + e.getLineNumber());
+				// System.out.println("XML Validation Warning: " + e.getMessage() + " at line "
+				// + e.getLineNumber());
 			}
 		}
 
@@ -246,4 +250,4 @@ public class XMLSchemaValidator {
 			System.err.println(errorMessages.toString());
 		}
 	}
-} 
+}

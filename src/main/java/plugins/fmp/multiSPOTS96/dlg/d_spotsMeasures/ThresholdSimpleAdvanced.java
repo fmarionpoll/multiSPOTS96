@@ -61,6 +61,7 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 	private JComboBox<ImageTransformEnums> fliesTransformsComboBox = new JComboBox<ImageTransformEnums>(transforms);
 	private JComboBox<String> fliesDirectionComboBox = new JComboBox<String>(directions);
 	private JSpinner fliesThresholdSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 255, 1));
+	private boolean vocalAboutMemory = false;
 
 	// === MEMORY LEAK PREVENTION ===
 	// Use weak reference to avoid holding strong references to the processor
@@ -479,6 +480,9 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 	}
 
 	private void checkMemoryBeforeLoading() {
+		if (!vocalAboutMemory)
+			return;
+
 		Runtime runtime = Runtime.getRuntime();
 		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
 		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
@@ -502,7 +506,8 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 	}
 
 	private void forcePreLoadingCleanup() {
-		System.out.println("=== FORCING PRE-LOADING CLEANUP ===");
+		if (vocalAboutMemory)
+			System.out.println("=== FORCING PRE-LOADING CLEANUP ===");
 
 		// Force multiple GC passes
 		for (int i = 0; i < 3; i++) {
