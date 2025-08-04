@@ -81,17 +81,37 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	}
 
 	void analyzeExperiment(Experiment exp) {
-		getTimeLimitsOfSequence(exp);
-		loadExperimentDataToMeasureSpots(exp);
-		exp.cagesArray.setReadyToAnalyze(true, options);
-		openViewers(exp);
+		logMemoryUsage("Before Analysis");
+		
+		try {
+			getTimeLimitsOfSequence(exp);
+			loadExperimentDataToMeasureSpots(exp);
+			exp.cagesArray.setReadyToAnalyze(true, options);
+			openViewers(exp);
 
-		if (measureSpotsAdvanced(exp))
-			saveComputation(exp);
+			if (measureSpotsAdvanced(exp))
+				saveComputation(exp);
 
-		exp.cagesArray.setReadyToAnalyze(false, options);
-		closeViewers();
-		cleanupResources();
+			logMemoryUsage("After Processing");
+
+			exp.cagesArray.setReadyToAnalyze(false, options);
+			closeViewers();
+			cleanupResources();
+			
+			// ENHANCED POST-PROCESSING CLEANUP to prevent dialog return memory spike
+			enhancedPostProcessingCleanup();
+			
+		} finally {
+			// Ensure cleanup happens even if exceptions occur
+			try {
+				exp.cagesArray.setReadyToAnalyze(false, options);
+				closeViewers();
+				cleanupResources();
+				enhancedPostProcessingCleanup();
+			} catch (Exception e) {
+				System.err.println("Error during final cleanup: " + e.getMessage());
+			}
+		}
 	}
 
 	private boolean loadExperimentDataToMeasureSpots(Experiment exp) {
@@ -178,6 +198,9 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				// Update adaptive batch sizing based on memory usage
 				adaptiveBatchSizer.updateBatchSize(memoryMonitor.getMemoryUsagePercent());
 
+				// Check memory pressure and take corrective action
+				checkMemoryPressure();
+
 				// Force garbage collection between batches (like original)
 				System.gc();
 			}
@@ -259,6 +282,9 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		if (options.enableMemoryProfiling) {
 			logMemoryUsage("After Batch " + batchStart + "-" + (batchEnd - 1));
 		}
+		
+		// FORCE AGGRESSIVE CLEANUP to prevent memory leak
+		forceAggressiveCleanup();
 	}
 
 	private void processSingleFrameAdvanced(Experiment exp, int frameIndex, int iiFirst, IcyBufferedImage sourceImage) {
@@ -299,11 +325,36 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				}
 			}
 		} finally {
-			// Clean up resources (same as original)
-			transformToMeasureArea = null;
-			transformToDetectFly = null;
-			cursorToDetectFly = null;
-			cursorToMeasureArea = null;
+			// ENHANCED CLEANUP to prevent memory leaks
+			if (transformToMeasureArea != null) {
+				// Try to clear image data
+				try {
+					transformToMeasureArea.setDataXY(0, null);
+				} catch (Exception e) {
+					// Ignore cleanup errors
+				}
+				transformToMeasureArea = null;
+			}
+			
+			if (transformToDetectFly != null) {
+				try {
+					transformToDetectFly.setDataXY(0, null);
+				} catch (Exception e) {
+					// Ignore cleanup errors
+				}
+				transformToDetectFly = null;
+			}
+			
+			if (cursorToDetectFly != null) {
+				cursorToDetectFly = null;
+			}
+			
+			if (cursorToMeasureArea != null) {
+				cursorToMeasureArea = null;
+			}
+			
+			// Force immediate cleanup for this frame
+			System.gc();
 		}
 	}
 
@@ -489,6 +540,11 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		System.out.println("Total Memory: " + (totalMemory / 1024 / 1024) + " MB");
 		System.out.println("Max Memory: " + (maxMemory / 1024 / 1024) + " MB");
 		System.out.println("Memory Usage: " + (usedMemory * 100 / maxMemory) + "%");
+		
+		// Additional tracking for memory leak analysis
+		System.out.println("Compressed Masks: " + compressedMasks.size());
+		System.out.println("Total Transformed Images: " + totalTransformedImagesCreated);
+		System.out.println("Total Cursors: " + totalCursorsCreated);
 	}
 	
 	private void checkForMemoryLeaks() {
@@ -499,6 +555,185 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		if (usedMemory > runtime.maxMemory() * 0.8) {
 			System.err.println("WARNING: High memory usage detected!");
 			System.err.println("Consider reducing batch size or enabling more aggressive GC");
+		}
+	}
+	
+	// === AGGRESSIVE MEMORY CLEANUP ===
+	
+	private void forceAggressiveCleanup() {
+		// Multiple GC passes with delays
+		for (int i = 0; i < 3; i++) {
+			System.gc();
+			try {
+				Thread.sleep(100); // Give GC time to work
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+		
+		// Force memory pool cleanup
+		clearImageCaches();
+		clearCompressedMaskCache();
+	}
+	
+	private void clearImageCaches() {
+		// Clear any Icy internal caches if accessible
+		try {
+			// Try to clear Icy's image cache
+			Class<?> icyImageCacheClass = Class.forName("icy.image.ImageCache");
+			java.lang.reflect.Method clearCacheMethod = icyImageCacheClass.getDeclaredMethod("clearCache");
+			if (clearCacheMethod != null) {
+				clearCacheMethod.setAccessible(true);
+				clearCacheMethod.invoke(null);
+			}
+		} catch (Exception e) {
+			// Icy cache clearing not available
+		}
+	}
+	
+	private void clearCompressedMaskCache() {
+		// Limit cache size to prevent unbounded growth
+		if (compressedMasks.size() > 1000) {
+			System.out.println("Clearing compressed mask cache (size: " + compressedMasks.size() + ")");
+			compressedMasks.clear();
+		}
+	}
+	
+	private void checkMemoryPressure() {
+		Runtime runtime = Runtime.getRuntime();
+		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
+		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
+		
+		if (usagePercent > 70) {
+			System.err.println("WARNING: High memory pressure detected: " + usagePercent + "%");
+			System.err.println("Used: " + (usedMemory / 1024 / 1024) + "MB");
+			
+			// Take corrective action
+			forceAggressiveCleanup();
+			
+			// Reduce batch size if needed
+			if (usagePercent > 80) {
+				adaptiveBatchSizer.reduceBatchSize();
+			}
+			
+			// Generate heap dump if memory profiling is enabled
+			if (options.enableMemoryProfiling) {
+				generateHeapDumpIfNeeded("memory_pressure");
+			}
+		}
+	}
+	
+	private void generateHeapDumpIfNeeded(String stage) {
+		Runtime runtime = Runtime.getRuntime();
+		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
+		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
+		
+		if (usagePercent > 80) {
+			// Log memory state instead of generating heap dump (more compatible)
+			System.out.println("=== HIGH MEMORY USAGE DETECTED ===");
+			System.out.println("Stage: " + stage);
+			System.out.println("Memory Usage: " + usagePercent + "%");
+			System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
+			System.out.println("Max Memory: " + (runtime.maxMemory() / 1024 / 1024) + " MB");
+			System.out.println("Compressed Masks: " + compressedMasks.size());
+			System.out.println("Total Transformed Images: " + totalTransformedImagesCreated);
+			System.out.println("Total Cursors: " + totalCursorsCreated);
+			System.out.println("Consider using external tools like VisualVM or JProfiler for detailed heap analysis");
+		}
+	}
+	
+	// === ENHANCED POST-PROCESSING CLEANUP ===
+	
+	private void enhancedPostProcessingCleanup() {
+		System.out.println("=== ENHANCED POST-PROCESSING CLEANUP ===");
+		
+		// Force multiple GC passes with longer delays
+		for (int i = 0; i < 5; i++) {
+			System.gc();
+			try {
+				Thread.sleep(200); // Longer delays for post-processing cleanup
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+		
+		// Clear all caches and references
+		clearAllCaches();
+		clearAllReferences();
+		forceIcyCleanup();
+		
+		// Final memory check
+		logMemoryUsage("After Enhanced Cleanup");
+	}
+	
+	private void clearAllCaches() {
+		// Clear compressed mask cache
+		if (compressedMasks != null) {
+			compressedMasks.clear();
+			System.out.println("Cleared compressed mask cache");
+		}
+		
+		// Clear any other caches
+		totalTransformedImagesCreated = 0;
+		totalCursorsCreated = 0;
+		totalImagesProcessed = 0;
+	}
+	
+	private void clearAllReferences() {
+		// Clear all image references
+		if (seqData != null) {
+			try {
+				// Try to clear sequence data - use reflection to avoid compilation issues
+				java.lang.reflect.Method clearMethod = seqData.getClass().getDeclaredMethod("clear");
+				if (clearMethod != null) {
+					clearMethod.setAccessible(true);
+					clearMethod.invoke(seqData);
+				}
+			} catch (Exception e) {
+				// Ignore cleanup errors
+			}
+		}
+		
+		// Clear viewer references
+		if (vData != null) {
+			try {
+				vData.dispose();
+			} catch (Exception e) {
+				// Ignore cleanup errors
+			}
+			vData = null;
+		}
+		
+		// Clear transform references - these are local variables, not class fields
+		// So we don't need to clear them here
+	}
+	
+	private void forceIcyCleanup() {
+		// Try to clear Icy's internal caches
+		try {
+			// Clear Icy image cache
+			Class<?> icyImageCacheClass = Class.forName("icy.image.ImageCache");
+			java.lang.reflect.Method clearCacheMethod = icyImageCacheClass.getDeclaredMethod("clearCache");
+			if (clearCacheMethod != null) {
+				clearCacheMethod.setAccessible(true);
+				clearCacheMethod.invoke(null);
+				System.out.println("Cleared Icy image cache");
+			}
+		} catch (Exception e) {
+			System.out.println("Could not clear Icy image cache: " + e.getMessage());
+		}
+		
+		// Try to clear Icy sequence cache
+		try {
+			Class<?> icySequenceClass = Class.forName("icy.sequence.Sequence");
+			java.lang.reflect.Method disposeMethod = icySequenceClass.getDeclaredMethod("dispose");
+			if (disposeMethod != null) {
+				disposeMethod.setAccessible(true);
+				disposeMethod.invoke(seqData);
+				System.out.println("Disposed Icy sequence");
+			}
+		} catch (Exception e) {
+			System.out.println("Could not dispose Icy sequence: " + e.getMessage());
 		}
 	}
 	

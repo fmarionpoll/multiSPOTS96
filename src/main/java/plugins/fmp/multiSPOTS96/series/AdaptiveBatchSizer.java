@@ -37,6 +37,12 @@ public class AdaptiveBatchSizer {
             currentBatchSize = Math.min(maxBatchSize, currentBatchSize + 1);
         }
     }
+    
+    public void reduceBatchSize() {
+        // Force batch size reduction for memory pressure
+        currentBatchSize = Math.max(minBatchSize, currentBatchSize - 1);
+        System.out.println("Reduced batch size to: " + currentBatchSize + " due to memory pressure");
+    }
 
     public int getCurrentBatchSize() {
         return currentBatchSize;
