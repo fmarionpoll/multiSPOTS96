@@ -232,12 +232,7 @@ public class CagesArray {
 				return false;
 			}
 			
-			// Schema validation
-			if (!plugins.fmp.multiSPOTS96.tools.XMLSchemaValidator.validateXMLDocument(doc, 
-					plugins.fmp.multiSPOTS96.tools.XMLSchemaValidator.SchemaType.CAGES)) {
-				System.err.println("ERROR: XML schema validation failed");
-				return false;
-			}
+			// Schema validation removed as requested
 			
 			boolean success = xmlLoadCages(XMLUtil.getRootElement(doc));
 			

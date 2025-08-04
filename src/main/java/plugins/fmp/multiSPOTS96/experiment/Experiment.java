@@ -343,12 +343,7 @@ public class Experiment {
 				return false;
 			}
 
-			// Schema validation
-			if (!plugins.fmp.multiSPOTS96.tools.XMLSchemaValidator.validateXMLDocument(doc,
-					plugins.fmp.multiSPOTS96.tools.XMLSchemaValidator.SchemaType.EXPERIMENT)) {
-				System.err.println("ERROR: XML schema validation failed");
-				return false;
-			}
+			// Schema validation removed as requested
 
 			Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
 			if (node == null) {
