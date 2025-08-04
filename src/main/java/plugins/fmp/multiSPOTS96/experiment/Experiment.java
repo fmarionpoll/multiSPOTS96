@@ -330,7 +330,7 @@ public class Experiment {
 
 	private boolean load_MS96_experiment(String csFileName) {
 		// Memory monitoring before loading
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		// System.out.println("=== XML LOADING: Experiment ===");
 		// System.out.println("Loading file: " + csFileName);
 		// System.out.println("Memory before loading: " + (startMemory / 1024 / 1024) +
@@ -410,13 +410,13 @@ public class Experiment {
 			ugly_checkOffsetValues();
 
 			// Memory monitoring after loading
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
-			// System.out.println("Memory after loading: " + (endMemory / 1024 / 1024) + "
-			// MB");
-			// System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + "
-			// MB");
-			// System.out.println("=== XML LOADING COMPLETE ===");
+//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//			long memoryIncrease = endMemory - startMemory;
+//			 System.out.println("Memory after loading: " + (endMemory / 1024 / 1024) + "
+//			 MB");
+//			 System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + "
+//			 MB");
+//			 System.out.println("=== XML LOADING COMPLETE ===");
 
 			return true;
 
@@ -429,7 +429,7 @@ public class Experiment {
 
 	public boolean save_MS96_experiment() {
 		// Memory monitoring before saving
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		// System.out.println("=== XML SAVING: Experiment ===");
 		// System.out.println("Memory before saving: " + (startMemory / 1024 / 1024) + "
 		// MB");
@@ -490,14 +490,14 @@ public class Experiment {
 			boolean success = XMLUtil.saveDocument(doc, tempname);
 
 			// Memory monitoring after saving
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
-			// System.out.println("Memory after saving: " + (endMemory / 1024 / 1024) + "
-			// MB");
-			// System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + "
-			// MB");
-			// System.out.println("Save success: " + success);
-			// System.out.println("=== XML SAVING COMPLETE ===");
+//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//			long memoryIncrease = endMemory - startMemory;
+//			 System.out.println("Memory after saving: " + (endMemory / 1024 / 1024) + "
+//			 MB");
+//			 System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + "
+//			 MB");
+//			 System.out.println("Save success: " + success);
+//			 System.out.println("=== XML SAVING COMPLETE ===");
 
 			return success;
 

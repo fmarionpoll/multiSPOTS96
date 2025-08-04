@@ -373,8 +373,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 	 */
 	private void addMetadataToUI() {
 		try {
-			long startTime = System.currentTimeMillis();
-			
+//			long startTime = System.currentTimeMillis();
+
 			// Clear existing items
 			parent0.expListCombo.removeAllItems();
 
@@ -386,19 +386,19 @@ public class LoadSaveExperimentOptimized extends JPanel
 			}
 
 			// Add all experiments at once using bulk method for maximum performance
-			long bulkStartTime = System.currentTimeMillis();
+//			long bulkStartTime = System.currentTimeMillis();
 			parent0.expListCombo.addLazyExperimentsBulk(lazyExperiments);
-			long bulkEndTime = System.currentTimeMillis();
+//			long bulkEndTime = System.currentTimeMillis();
 
 			// Initialize infos combos
-			long combosStartTime = System.currentTimeMillis();
+//			long combosStartTime = System.currentTimeMillis();
 			parent0.dlgExperiment.tabInfos.initInfosCombos();
-			long combosEndTime = System.currentTimeMillis();
-
-			long endTime = System.currentTimeMillis();
-			LOGGER.info("Added " + experimentMetadataList.size() + " experiments to UI in " + (endTime - startTime) + "ms total");
-			LOGGER.info("  - Bulk add: " + (bulkEndTime - bulkStartTime) + "ms");
-			LOGGER.info("  - Init combos: " + (combosEndTime - combosStartTime) + "ms");
+//			long combosEndTime = System.currentTimeMillis();
+//
+//			long endTime = System.currentTimeMillis();
+//			LOGGER.info("Added " + experimentMetadataList.size() + " experiments to UI in " + (endTime - startTime) + "ms total");
+//			LOGGER.info("  - Bulk add: " + (bulkEndTime - bulkStartTime) + "ms");
+//			LOGGER.info("  - Init combos: " + (combosEndTime - combosStartTime) + "ms");
 
 		} catch (Exception e) {
 			LOGGER.warning("Error adding metadata to UI: " + e.getMessage());
@@ -468,14 +468,14 @@ public class LoadSaveExperimentOptimized extends JPanel
 			String experimentName = new File(eDAF.getResultsDirectory()).getName();
 			String experimentPath = eDAF.getResultsDirectory();
 
-					ExperimentMetadata metadata = new ExperimentMetadata(experimentName, experimentPath, binDirectory);
-		experimentMetadataList.add(metadata);
+			ExperimentMetadata metadata = new ExperimentMetadata(experimentName, experimentPath, binDirectory);
+			experimentMetadataList.add(metadata);
 
-		// Create and add LazyExperiment directly
-		LazyExperiment lazyExp = new LazyExperiment(metadata);
-		parent0.expListCombo.addLazyExperimentDirect(lazyExp);
-		parent0.dlgExperiment.tabInfos.initInfosCombos();
-		parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
+			// Create and add LazyExperiment directly
+			LazyExperiment lazyExp = new LazyExperiment(metadata);
+			parent0.expListCombo.addLazyExperimentDirect(lazyExp);
+			parent0.dlgExperiment.tabInfos.initInfosCombos();
+			parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
 		}
 	}
 
@@ -488,15 +488,15 @@ public class LoadSaveExperimentOptimized extends JPanel
 			String camDataImagesDirectory = eDAF.getCameraImagesDirectory();
 			String resultsDirectory = eDAF.getResultsDirectory();
 
-					ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory,
-				binDirectory);
-		experimentMetadataList.add(metadata);
+			ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory,
+					binDirectory);
+			experimentMetadataList.add(metadata);
 
-		// Create and add LazyExperiment directly
-		LazyExperiment lazyExp = new LazyExperiment(metadata);
-		parent0.expListCombo.addLazyExperimentDirect(lazyExp);
-		parent0.dlgExperiment.tabInfos.initInfosCombos();
-		parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
+			// Create and add LazyExperiment directly
+			LazyExperiment lazyExp = new LazyExperiment(metadata);
+			parent0.expListCombo.addLazyExperimentDirect(lazyExp);
+			parent0.dlgExperiment.tabInfos.initInfosCombos();
+			parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
 		}
 	}
 

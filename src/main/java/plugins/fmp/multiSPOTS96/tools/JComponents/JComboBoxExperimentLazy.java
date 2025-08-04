@@ -86,10 +86,10 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	}
 
 	/**
-	 * Adds a LazyExperiment directly to the combo box without conversion.
-	 * This is more efficient when you already have a LazyExperiment object.
+	 * Adds a LazyExperiment directly to the combo box without conversion. This is
+	 * more efficient when you already have a LazyExperiment object.
 	 * 
-	 * @param lazyExp The LazyExperiment to add
+	 * @param lazyExp         The LazyExperiment to add
 	 * @param allowDuplicates Whether to allow duplicate experiments
 	 * @return The index of the added experiment
 	 */
@@ -104,8 +104,8 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	}
 
 	/**
-	 * Adds a LazyExperiment directly to the combo box without any duplicate checking.
-	 * This is the most efficient method for bulk loading.
+	 * Adds a LazyExperiment directly to the combo box without any duplicate
+	 * checking. This is the most efficient method for bulk loading.
 	 * 
 	 * @param lazyExp The LazyExperiment to add
 	 * @return The index of the added experiment
@@ -117,17 +117,18 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 
 	/**
 	 * Adds multiple LazyExperiments at once for maximum bulk loading performance.
-	 * This method completely bypasses all duplicate checking and individual item processing.
+	 * This method completely bypasses all duplicate checking and individual item
+	 * processing.
 	 * 
 	 * @param lazyExperiments List of LazyExperiments to add
 	 */
 	public void addLazyExperimentsBulk(List<LazyExperiment> lazyExperiments) {
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 		for (LazyExperiment lazyExp : lazyExperiments) {
 			addItem(lazyExp);
 		}
-		long endTime = System.currentTimeMillis();
-		LOGGER.info("Bulk added " + lazyExperiments.size() + " experiments in " + (endTime - startTime) + "ms");
+//		long endTime = System.currentTimeMillis();
+//		LOGGER.info("Bulk added " + lazyExperiments.size() + " experiments in " + (endTime - startTime) + "ms");
 	}
 
 	/**
@@ -432,8 +433,9 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	}
 
 	/**
-	 * Gets field values from all experiments WITHOUT loading them (for performance).
-	 * This method only works with LazyExperiments and uses metadata only.
+	 * Gets field values from all experiments WITHOUT loading them (for
+	 * performance). This method only works with LazyExperiments and uses metadata
+	 * only.
 	 */
 	public List<String> getFieldValuesFromAllExperimentsLightweight(EnumXLSColumnHeader field) {
 		List<String> textList = new ArrayList<>();

@@ -83,13 +83,13 @@ public class ImageMemoryPool {
 	private void initializePool() {
 //		System.out.println(
 //				"DEBUG: Initializing image memory pool for " + imageWidth + "x" + imageHeight + "x" + imageChannels);
-		int successfulImages = 0;
+//		int successfulImages = 0;
 		for (int i = 0; i < DEFAULT_POOL_SIZE; i++) {
 			IcyBufferedImage pooledImage = createNewImage();
 			if (pooledImage != null) {
 				imagePool.offer(pooledImage);
 				totalImagesCreated.incrementAndGet();
-				successfulImages++;
+//				successfulImages++;
 			}
 		}
 //		System.out.println("DEBUG: Successfully created " + successfulImages + " pooled images out of "

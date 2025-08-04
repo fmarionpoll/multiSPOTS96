@@ -56,9 +56,9 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	private final AdaptiveBatchSizer adaptiveBatchSizer;
 
 	// === MEMORY OPTIMIZATION ADDITIONS ===
-	private final long MEMORY_PRESSURE_THRESHOLD_MB = 5; // Memory pressure threshold (reduced from 10)
-	private final double MEMORY_USAGE_THRESHOLD_PERCENT = 30.0; // Memory usage threshold (reduced from 50.0)
-	private final boolean USE_NATIVE_IO_ONLY = false; // Nuclear option: bypass Icy entirely (disabled for testing)
+//	private final long MEMORY_PRESSURE_THRESHOLD_MB = 5; // Memory pressure threshold (reduced from 10)
+//	private final double MEMORY_USAGE_THRESHOLD_PERCENT = 30.0; // Memory usage threshold (reduced from 50.0)
+//	private final boolean USE_NATIVE_IO_ONLY = false; // Nuclear option: bypass Icy entirely (disabled for testing)
 
 	// === IMAGE MEMORY POOL ===
 	private ImageMemoryPool imageMemoryPool = null;
@@ -199,28 +199,20 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		streamingProcessor.start(exp.seqCamData, iiFirst, iiLast);
 
 		long startTime = System.currentTimeMillis();
-		int processedBatches = 0;
+//		int processedBatches = 0;
 
 		try {
-			// Process frames using streaming approach
 			for (int batchStart = iiFirst; batchStart < iiLast; batchStart += adaptiveBatchSizer
 					.getCurrentBatchSize()) {
 				if (stopFlag)
 					break;
 
 				int batchEnd = Math.min(batchStart + adaptiveBatchSizer.getCurrentBatchSize(), iiLast);
-
 				processFrameBatchAdvanced(exp, batchStart, batchEnd, iiFirst, iiLast, progressBar1);
+//				processedBatches++;
 
-				processedBatches++;
-
-				// Update adaptive batch sizing based on memory usage
 				adaptiveBatchSizer.updateBatchSize(memoryMonitor.getMemoryUsagePercent());
-
-				// Check memory pressure and take corrective action
 				checkMemoryPressure();
-
-				// Force garbage collection between batches (like original)
 				System.gc();
 			}
 		} finally {
@@ -618,16 +610,16 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		}
 	}
 
-	private void checkForMemoryLeaks() {
-		Runtime runtime = Runtime.getRuntime();
-		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-
-		// Check if memory usage is growing abnormally
-		if (usedMemory > runtime.maxMemory() * 0.8) {
-			System.err.println("WARNING: High memory usage detected!");
-			System.err.println("Consider reducing batch size or enabling more aggressive GC");
-		}
-	}
+//	private void checkForMemoryLeaks() {
+//		Runtime runtime = Runtime.getRuntime();
+//		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
+//
+//		// Check if memory usage is growing abnormally
+//		if (usedMemory > runtime.maxMemory() * 0.8) {
+//			System.err.println("WARNING: High memory usage detected!");
+//			System.err.println("Consider reducing batch size or enabling more aggressive GC");
+//		}
+//	}
 
 	// === AGGRESSIVE MEMORY CLEANUP ===
 
@@ -706,24 +698,24 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		}
 	}
 
-	private void generateHeapDumpIfNeeded(String stage) {
-		Runtime runtime = Runtime.getRuntime();
-		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
-
-		if (usagePercent > 80) {
-			// Log memory state instead of generating heap dump (more compatible)
-			System.out.println("=== HIGH MEMORY USAGE DETECTED ===");
-			System.out.println("Stage: " + stage);
-			System.out.println("Memory Usage: " + usagePercent + "%");
-			System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
-			System.out.println("Max Memory: " + (runtime.maxMemory() / 1024 / 1024) + " MB");
-			System.out.println("Compressed Masks: " + compressedMasks.size());
-			System.out.println("Total Transformed Images: " + totalTransformedImagesCreated);
-			System.out.println("Total Cursors: " + totalCursorsCreated);
-			System.out.println("Consider using external tools like VisualVM or JProfiler for detailed heap analysis");
-		}
-	}
+//	private void generateHeapDumpIfNeeded(String stage) {
+//		Runtime runtime = Runtime.getRuntime();
+//		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
+//		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
+//
+//		if (usagePercent > 80) {
+//			// Log memory state instead of generating heap dump (more compatible)
+//			System.out.println("=== HIGH MEMORY USAGE DETECTED ===");
+//			System.out.println("Stage: " + stage);
+//			System.out.println("Memory Usage: " + usagePercent + "%");
+//			System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
+//			System.out.println("Max Memory: " + (runtime.maxMemory() / 1024 / 1024) + " MB");
+//			System.out.println("Compressed Masks: " + compressedMasks.size());
+//			System.out.println("Total Transformed Images: " + totalTransformedImagesCreated);
+//			System.out.println("Total Cursors: " + totalCursorsCreated);
+//			System.out.println("Consider using external tools like VisualVM or JProfiler for detailed heap analysis");
+//		}
+//	}
 
 	// === ENHANCED POST-PROCESSING CLEANUP ===
 
@@ -800,10 +792,10 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			if (clearCacheMethod != null) {
 				clearCacheMethod.setAccessible(true);
 				clearCacheMethod.invoke(null);
-				System.out.println("Cleared Icy image cache");
+//				System.out.println("Cleared Icy image cache");
 			}
 		} catch (Exception e) {
-			System.out.println("Could not clear Icy image cache: " + e.getMessage());
+			System.out.println("WARNING: Could not clear Icy image cache: " + e.getMessage());
 		}
 
 		// Try to clear Icy sequence cache
@@ -816,7 +808,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				System.out.println("Disposed Icy sequence");
 			}
 		} catch (Exception e) {
-			System.out.println("Could not dispose Icy sequence: " + e.getMessage());
+			System.out.println("WARNING: Could not dispose Icy sequence: " + e.getMessage());
 		}
 	}
 

@@ -482,7 +482,7 @@ public final class ModernCagesArray implements AutoCloseable {
 					cagesByName.clear();
 					closed = true;
 
-					LOGGER.info("ModernCagesArray closed successfully");
+//					LOGGER.info("ModernCagesArray closed successfully");
 				}
 			} finally {
 				lock.writeLock().unlock();

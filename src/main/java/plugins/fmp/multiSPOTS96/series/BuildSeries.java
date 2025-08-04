@@ -40,7 +40,7 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 
 	@Override
 	protected Integer doInBackground() throws Exception {
-		System.out.println("BuildSeries:doInBackground loop over experiments");
+//		System.out.println("BuildSeries:doInBackground loop over experiments");
 		threadRunning = true;
 		int nbiterations = 0;
 		JComboBoxExperimentLazy expList = options.expList;
@@ -54,19 +54,13 @@ public abstract class BuildSeries extends SwingWorker<Integer, Integer> {
 			long startTimeInNs = System.nanoTime();
 			Experiment exp = expList.getItemAt(index);
 			progress.setMessage("Processing file: " + (index + 1) + "//" + (expList.index1 + 1));
-			System.out.println("BuildSeries:doInBackground " + (index + 1) + ": " + exp.getResultsDirectory());
+//			System.out.println("BuildSeries:doInBackground " + (index + 1) + ": " + exp.getResultsDirectory());
 
-//			exp.setBinSubDirectory(options.binSubDirectory);
-//			boolean flag = exp.createDirectoryIfDoesNotExist(exp.getKymosBinFullDirectory());
-//			if (flag) {
 			analyzeExperiment(exp);
 			long endTime2InNs = System.nanoTime();
 			System.out.println("BuildSeries:doInBackground process ended - duration: "
 					+ ((endTime2InNs - startTimeInNs) / 1000000000f) + " s");
-//			} else {
-//				System.out.println("BuildSeries:doInBackground process aborted - subdirectory not created: "
-//						+ exp.getKymosBinFullDirectory());
-//			}
+
 			System.gc();
 		}
 		progress.close();
