@@ -75,8 +75,6 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		panel0.add(new JLabel("memory use"));
 		panel0.add(memUseComboBox);
 		panel0.add(allSeriesCheckBox);
-//		panel0.add(topSpotCheckBox);
-//		panel0.add(bottomSpotCheckBox);
 		add(panel0);
 
 		JPanel panel1 = new JPanel(layoutLeft);
@@ -104,19 +102,6 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	}
 
 	private void declareListeners() {
-//		spotsOverlayCheckBox.addItemListener(new ItemListener() {
-//			public void itemStateChanged(ItemEvent e) {
-//				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-//				if (exp != null) {
-//					if (spotsOverlayCheckBox.isSelected()) {
-//						setOverlays(exp);
-//						updateOverlaysThreshold();
-//					} else
-//						removeOverlays(exp);
-//				}
-//			}
-//		});
-
 		spotsTransformsComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -247,8 +232,8 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	void startDetection() {
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			// AdvancedMemoryOptions memOptions = new AdvancedMemoryOptions();
-			AdvancedMemoryOptions memOptions = createMemoryOptionsAccordingToUserSelection();
+			AdvancedMemoryOptions memOptions = new AdvancedMemoryOptions();
+//			AdvancedMemoryOptions memOptions = createMemoryOptionsAccordingToUserSelection();
 			// Validate configuration
 			AdvancedMemoryOptions.ValidationResult result = memOptions.validate();
 			if (result.isValid()) {

@@ -158,10 +158,11 @@ public class BuildSpotsMeasures extends BuildSeries {
 				continue;
 			}
 
+			final IcyBufferedImage sourceImage = imageIORead(fileName);
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					processSingleFrame(exp, t, iiFirst, fileName);
+					processSingleFrame(exp, t, iiFirst, sourceImage);
 				}
 			}));
 		}
@@ -169,15 +170,15 @@ public class BuildSpotsMeasures extends BuildSeries {
 		waitFuturesCompletion(processor, tasks, null);
 	}
 
-	private void processSingleFrame(Experiment exp, int frameIndex, int iiFirst, String fileName) {
-		IcyBufferedImage sourceImage = null;
+	private void processSingleFrame(Experiment exp, int frameIndex, int iiFirst, IcyBufferedImage sourceImage) {
+
 		IcyBufferedImage transformToMeasureArea = null;
 		IcyBufferedImage transformToDetectFly = null;
 		IcyBufferedImageCursor cursorToDetectFly = null;
 		IcyBufferedImageCursor cursorToMeasureArea = null;
 
 		try {
-			sourceImage = imageIORead(fileName);
+
 			transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage, transformOptions01);
 			transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage, transformOptions02);
 
@@ -202,18 +203,23 @@ public class BuildSpotsMeasures extends BuildSeries {
 			}
 		} finally {
 			// Clean up image resources
-			if (options.enableMemoryCleanup) {
-				if (sourceImage != null)
-					sourceImage = null;
-				if (transformToMeasureArea != null)
-					transformToMeasureArea = null;
-				if (transformToDetectFly != null)
-					transformToDetectFly = null;
-				if (cursorToDetectFly != null)
-					cursorToDetectFly = null;
-				if (cursorToMeasureArea != null)
-					cursorToMeasureArea = null;
-			}
+//			if (options.enableMemoryCleanup) {
+//				if (sourceImage != null)
+//					sourceImage = null;
+//				if (transformToMeasureArea != null)
+//					transformToMeasureArea = null;
+//				if (transformToDetectFly != null)
+//					transformToDetectFly = null;
+//				if (cursorToDetectFly != null)
+//					cursorToDetectFly = null;
+//				if (cursorToMeasureArea != null)
+//					cursorToMeasureArea = null;
+//			}
+			transformToMeasureArea = null;
+			transformToDetectFly = null;
+			cursorToDetectFly = null;
+			cursorToMeasureArea = null;
+
 		}
 	}
 

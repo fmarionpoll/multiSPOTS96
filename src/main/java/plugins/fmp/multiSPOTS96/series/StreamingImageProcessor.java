@@ -55,7 +55,7 @@ public class StreamingImageProcessor {
 
 	public void clearAllImages() {
 		// No buffer to clear - images are loaded on demand and immediately discarded
-		System.out.println("No image buffer to clear - using on-demand loading");
+//		System.out.println("No image buffer to clear - using on-demand loading");
 	}
 
 	public IcyBufferedImage getImage(int frameIndex) {
@@ -84,7 +84,7 @@ public class StreamingImageProcessor {
 		IcyBufferedImage image = null;
 
 		// Try native I/O first, then fallback to Icy's original method
-		System.out.println("Loading frame " + frameIndex + " sequentially -- " + fileName);
+//		System.out.println("Loading frame " + frameIndex + " sequentially -- " + fileName);
 		image = loadImageWithNativeIO(fileName);
 		if (image == null) {
 			System.out.println("Native I/O failed, falling back to Icy's imageIORead for frame " + frameIndex);
@@ -98,7 +98,7 @@ public class StreamingImageProcessor {
 							+ frameIndex);
 					image = imageIORead(fileName);
 				} else {
-					System.out.println("Successfully loaded frame " + frameIndex + " with native I/O");
+//					System.out.println("Successfully loaded frame " + frameIndex + " with native I/O");
 				}
 			} catch (Exception e) {
 				System.out.println(
@@ -115,9 +115,9 @@ public class StreamingImageProcessor {
 
 			if (memoryDelta > 10 || estimatedFootprint > 1) { // Log if significant memory increase or large
 																// footprint
-				System.out.println("Frame " + frameIndex + " loaded: " + memoryDelta + "MB memory increase "
-						+ "(expected ~0.27MB). Estimated footprint: " + estimatedFootprint + "MB. " + "Total memory: "
-						+ memoryAfter + "MB");
+//				System.out.println("Frame " + frameIndex + " loaded: " + memoryDelta + "MB memory increase "
+//						+ "(expected ~0.27MB). Estimated footprint: " + estimatedFootprint + "MB. " + "Total memory: "
+//						+ memoryAfter + "MB");
 			}
 
 			// Force immediate cleanup after loading

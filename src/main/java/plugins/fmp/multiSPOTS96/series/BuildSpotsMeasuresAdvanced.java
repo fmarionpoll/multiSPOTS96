@@ -134,7 +134,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 	private boolean measureSpotsAdvanced(Experiment exp) {
 		if (exp.cagesArray.getTotalNumberOfSpots() < 1) {
-			System.out.println("DetectAreas:measureAreas Abort (1): nbspots = 0");
+//			System.out.println("DetectAreas:measureAreas Abort (1): nbspots = 0");
 			return false;
 		}
 
@@ -149,13 +149,13 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack (Advanced)");
 
 		// Log initial memory state
-		System.out.println("=== Memory Optimization Analysis ===");
-		System.out.println("Initial memory usage: " + memoryMonitor.getUsedMemoryMB() + "MB / "
-				+ memoryMonitor.getMaxMemoryMB() + "MB (" + memoryMonitor.getMemoryUsagePercent() + "%)");
-		System.out.println("Available memory: " + memoryMonitor.getAvailableMemoryMB() + "MB");
-		System.out.println("Total frames to process: " + (iiLast - iiFirst));
-		System.out.println("Memory thresholds - Available: " + MEMORY_PRESSURE_THRESHOLD_MB + "MB, Usage: "
-				+ MEMORY_USAGE_THRESHOLD_PERCENT + "%");
+//		System.out.println("=== Memory Optimization Analysis ===");
+//		System.out.println("Initial memory usage: " + memoryMonitor.getUsedMemoryMB() + "MB / "
+//				+ memoryMonitor.getMaxMemoryMB() + "MB (" + memoryMonitor.getMemoryUsagePercent() + "%)");
+//		System.out.println("Available memory: " + memoryMonitor.getAvailableMemoryMB() + "MB");
+//		System.out.println("Total frames to process: " + (iiLast - iiFirst));
+//		System.out.println("Memory thresholds - Available: " + MEMORY_PRESSURE_THRESHOLD_MB + "MB, Usage: "
+//				+ MEMORY_USAGE_THRESHOLD_PERCENT + "%");
 
 		// Initialize with adaptive batch sizing
 		adaptiveBatchSizer.initialize(iiLast - iiFirst, memoryMonitor.getAvailableMemoryMB());
@@ -178,17 +178,17 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 				// Log memory state before batch
 				long batchStartMemory = memoryMonitor.getUsedMemoryMB();
-				System.out.println("Processing batch " + (processedBatches + 1) + " (frames " + batchStart + "-"
-						+ (batchEnd - 1) + "). Memory: " + batchStartMemory + "MB ("
-						+ memoryMonitor.getMemoryUsagePercent() + "%)");
+//				System.out.println("Processing batch " + (processedBatches + 1) + " (frames " + batchStart + "-"
+//						+ (batchEnd - 1) + "). Memory: " + batchStartMemory + "MB ("
+//						+ memoryMonitor.getMemoryUsagePercent() + "%)");
 
 				processFrameBatchAdvanced(exp, batchStart, batchEnd, iiFirst, iiLast, progressBar1);
 
 				// Log memory state after batch
 				long batchEndMemory = memoryMonitor.getUsedMemoryMB();
-				System.out.println("Batch " + (processedBatches + 1) + " completed. Memory: " + batchEndMemory + "MB ("
-						+ memoryMonitor.getMemoryUsagePercent() + "%). Delta: " + (batchEndMemory - batchStartMemory)
-						+ "MB");
+//				System.out.println("Batch " + (processedBatches + 1) + " completed. Memory: " + batchEndMemory + "MB ("
+//						+ memoryMonitor.getMemoryUsagePercent() + "%). Delta: " + (batchEndMemory - batchStartMemory)
+//						+ "MB");
 
 				processedBatches++;
 
@@ -198,37 +198,37 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				// Force garbage collection if memory pressure is high
 				if (memoryMonitor.getMemoryUsagePercent() > 60.0) { // Reduced from
 																	// advancedOptions.memoryThresholdPercent (80%)
-					System.out.println("High memory pressure detected: " + memoryMonitor.getMemoryUsagePercent()
-							+ "%. Forcing GC...");
+//					System.out.println("High memory pressure detected: " + memoryMonitor.getMemoryUsagePercent()
+//							+ "%. Forcing GC...");
 					System.gc();
 					Thread.yield(); // Give GC time to work
 
 					// Log memory after GC
-					System.out.println("After GC: " + memoryMonitor.getUsedMemoryMB() + "MB ("
-							+ memoryMonitor.getMemoryUsagePercent() + "%)");
+//					System.out.println("After GC: " + memoryMonitor.getUsedMemoryMB() + "MB ("
+//							+ memoryMonitor.getMemoryUsagePercent() + "%)");
 				}
 
 				// Also force GC every few batches to prevent memory buildup
 				if (processedBatches % 5 == 0) {
-					System.out.println("Periodic GC after " + processedBatches + " batches. Memory: "
-							+ memoryMonitor.getUsedMemoryMB() + "MB");
+//					System.out.println("Periodic GC after " + processedBatches + " batches. Memory: "
+//							+ memoryMonitor.getUsedMemoryMB() + "MB");
 					System.gc();
 					Thread.yield();
 				}
 
 				// Check if we need to pause processing due to memory pressure
 				if (memoryMonitor.getMemoryUsagePercent() > 98) {
-					System.out.println("Critical memory pressure: " + memoryMonitor.getMemoryUsagePercent()
-							+ "%. Pausing processing...");
+//					System.out.println("Critical memory pressure: " + memoryMonitor.getMemoryUsagePercent()
+//							+ "%. Pausing processing...");
 					try {
 						Thread.sleep(1000); // Wait for memory to be freed
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt(); // Restore interrupt status
-						System.out.println("Processing interrupted during memory pause");
+//						System.out.println("Processing interrupted during memory pause");
 					}
 					System.gc();
-					System.out.println("After pause: " + memoryMonitor.getUsedMemoryMB() + "MB ("
-							+ memoryMonitor.getMemoryUsagePercent() + "%)");
+//					System.out.println("After pause: " + memoryMonitor.getUsedMemoryMB() + "MB ("
+//							+ memoryMonitor.getMemoryUsagePercent() + "%)");
 				}
 			}
 		} finally {
@@ -284,7 +284,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			}
 
 		} catch (Exception e) {
-			System.out.println("Error during Icy cache cleanup: " + e.getMessage());
+//			System.out.println("Error during Icy cache cleanup: " + e.getMessage());
 		}
 
 		// Multiple GC passes with longer delays
@@ -295,12 +295,12 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
-			System.out.println("GC pass " + (i + 1) + ": " + memoryMonitor.getUsedMemoryMB() + "MB ("
-					+ memoryMonitor.getMemoryUsagePercent() + "%)");
+//			System.out.println("GC pass " + (i + 1) + ": " + memoryMonitor.getUsedMemoryMB() + "MB ("
+//					+ memoryMonitor.getMemoryUsagePercent() + "%)");
 		}
 
-		System.out.println("After final cleanup: " + memoryMonitor.getUsedMemoryMB() + "MB ("
-				+ memoryMonitor.getMemoryUsagePercent() + "%)");
+//		System.out.println("After final cleanup: " + memoryMonitor.getUsedMemoryMB() + "MB ("
+//				+ memoryMonitor.getMemoryUsagePercent() + "%)");
 
 		progressBar1.close();
 		return true;
@@ -311,8 +311,8 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 		// Check memory pressure before processing batch
 		if (memoryMonitor.getMemoryUsagePercent() > MEMORY_USAGE_THRESHOLD_PERCENT) {
-			System.out
-					.println("Memory pressure detected: " + memoryMonitor.getMemoryUsagePercent() + "%. Forcing GC...");
+//			System.out
+//					.println("Memory pressure detected: " + memoryMonitor.getMemoryUsagePercent() + "%. Forcing GC...");
 			System.gc();
 			Thread.yield(); // Give GC time to work
 		}
@@ -334,7 +334,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			progressBar1.setMessage("Analyze frame: " + ii + "//" + iiLast);
 
 			// Process frame sequentially to maintain order
-			System.out.println("Processing frame " + ii + " sequentially");
+//			System.out.println("Processing frame " + ii + " sequentially");
 			processSingleFrameAdvanced(exp, ii, iiFirst);
 		}
 	}
@@ -633,9 +633,9 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	private void cleanupResources() {
 		cursorPool.clear();
 		compressedMasks.clear();
-
-		System.out.println("Memory Pool Stats - Hits: " + poolHits.get() + ", Misses: " + poolMisses.get());
-		System.out.println("Hit Rate: " + (poolHits.get() * 100.0 / (poolHits.get() + poolMisses.get())) + "%");
+//
+//		System.out.println("Memory Pool Stats - Hits: " + poolHits.get() + ", Misses: " + poolMisses.get());
+//		System.out.println("Hit Rate: " + (poolHits.get() * 100.0 / (poolHits.get() + poolMisses.get())) + "%");
 	}
 
 	private void closeViewers() {
