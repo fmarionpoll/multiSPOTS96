@@ -115,20 +115,20 @@ public class LoadSaveExperimentOptimized extends JPanel
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(400, 200));
 
-		JPanel twoLinesPanel = initUI();
+		JPanel group2Panel = initUI();
 		defineActionListeners();
 		parent0.expListCombo.addItemListener(this);
 
-		return twoLinesPanel;
+		return group2Panel;
 	}
 
 	private JPanel initUI() {
-		JPanel twoLinesPanel = new JPanel(new GridLayout(2, 1));
+		JPanel group2Panel = new JPanel(new GridLayout(2, 1));
 		JPanel navPanel = initNavigationPanel();
 		JPanel buttonPanel = initButtonPanel();
-		twoLinesPanel.add(navPanel);
-		twoLinesPanel.add(buttonPanel);
-		return twoLinesPanel;
+		group2Panel.add(navPanel);
+		group2Panel.add(buttonPanel);
+		return group2Panel;
 	}
 
 	private JPanel initNavigationPanel() {
@@ -139,6 +139,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 		int height = 20;
 		previousButton.setPreferredSize(new Dimension(bWidth, height));
 		nextButton.setPreferredSize(new Dimension(bWidth, height));
+
 		navPanel.add(previousButton, BorderLayout.LINE_START);
 		navPanel.add(parent0.expListCombo, BorderLayout.CENTER);
 		navPanel.add(nextButton, BorderLayout.LINE_END);
