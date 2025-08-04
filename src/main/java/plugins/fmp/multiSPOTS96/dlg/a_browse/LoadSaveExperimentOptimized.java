@@ -386,13 +386,19 @@ public class LoadSaveExperimentOptimized extends JPanel
 			}
 
 			// Add all experiments at once using bulk method for maximum performance
+			long bulkStartTime = System.currentTimeMillis();
 			parent0.expListCombo.addLazyExperimentsBulk(lazyExperiments);
+			long bulkEndTime = System.currentTimeMillis();
 
 			// Initialize infos combos
+			long combosStartTime = System.currentTimeMillis();
 			parent0.dlgExperiment.tabInfos.initInfosCombos();
+			long combosEndTime = System.currentTimeMillis();
 
 			long endTime = System.currentTimeMillis();
-			LOGGER.info("Added " + experimentMetadataList.size() + " experiments to UI in " + (endTime - startTime) + "ms (metadata only)");
+			LOGGER.info("Added " + experimentMetadataList.size() + " experiments to UI in " + (endTime - startTime) + "ms total");
+			LOGGER.info("  - Bulk add: " + (bulkEndTime - bulkStartTime) + "ms");
+			LOGGER.info("  - Init combos: " + (combosEndTime - combosStartTime) + "ms");
 
 		} catch (Exception e) {
 			LOGGER.warning("Error adding metadata to UI: " + e.getMessage());

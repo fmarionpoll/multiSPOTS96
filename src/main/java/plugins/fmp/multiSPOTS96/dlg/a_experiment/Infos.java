@@ -211,14 +211,15 @@ public class Infos extends JPanel {
 	}
 
 	public void initInfosCombos() {
-		parent0.expListCombo.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
-		parent0.expListCombo.getFieldValuesToCombo(stimCombo, EnumXLSColumnHeader.EXP_STIM);
-		parent0.expListCombo.getFieldValuesToCombo(concCombo, EnumXLSColumnHeader.EXP_CONC);
-		parent0.expListCombo.getFieldValuesToCombo(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
-		parent0.expListCombo.getFieldValuesToCombo(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
-		parent0.expListCombo.getFieldValuesToCombo(sexCombo, EnumXLSColumnHeader.EXP_SEX);
-		parent0.expListCombo.getFieldValuesToCombo(cond1Combo, EnumXLSColumnHeader.EXP_COND1);
-		parent0.expListCombo.getFieldValuesToCombo(cond2Combo, EnumXLSColumnHeader.EXP_COND2);
+		// Use lightweight version to avoid loading all experiments
+		parent0.expListCombo.getFieldValuesToComboLightweight(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
+		parent0.expListCombo.getFieldValuesToComboLightweight(stimCombo, EnumXLSColumnHeader.EXP_STIM);
+		parent0.expListCombo.getFieldValuesToComboLightweight(concCombo, EnumXLSColumnHeader.EXP_CONC);
+		parent0.expListCombo.getFieldValuesToComboLightweight(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
+		parent0.expListCombo.getFieldValuesToComboLightweight(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
+		parent0.expListCombo.getFieldValuesToComboLightweight(sexCombo, EnumXLSColumnHeader.EXP_SEX);
+		parent0.expListCombo.getFieldValuesToComboLightweight(cond1Combo, EnumXLSColumnHeader.EXP_COND1);
+		parent0.expListCombo.getFieldValuesToComboLightweight(cond2Combo, EnumXLSColumnHeader.EXP_COND2);
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
 			transferPreviousExperimentInfosToDialog(exp, exp);
