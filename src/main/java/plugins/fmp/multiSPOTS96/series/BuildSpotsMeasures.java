@@ -128,9 +128,9 @@ public class BuildSpotsMeasures extends BuildSeries {
 			processFrameBatch(exp, batchStart, batchEnd, iiFirst, iiLast, processor, progressBar1);
 
 			// Force garbage collection between batches
-			if (options.enableMemoryCleanup) {
-				System.gc();
-			}
+//			if (options.enableMemoryCleanup) {
+			System.gc();
+//			}
 		}
 
 		progressBar1.close();

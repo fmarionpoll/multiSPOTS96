@@ -13,24 +13,14 @@ import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
  */
 public class StreamingImageProcessor {
 	private final ArrayList<String> imageFiles;
-	private final int startFrame;
-	private final int endFrame;
-	private volatile boolean running = false;
-	private Thread prefetchThread;
 	private final MemoryMonitor memoryMonitor;
-	private final long MEMORY_PRESSURE_THRESHOLD_MB = 5;
-	private final double MEMORY_USAGE_THRESHOLD_PERCENT = 30.0;
 
 	public StreamingImageProcessor(MemoryMonitor memoryMonitor) {
 		this.imageFiles = new ArrayList<>();
-		this.startFrame = 0;
-		this.endFrame = 0;
 		this.memoryMonitor = memoryMonitor;
 	}
 
 	public void start(SequenceCamData seqCamData, int startFrame, int endFrame) {
-		this.running = true;
-
 		// Initialize image file list
 		for (int i = startFrame; i < endFrame; i++) {
 			String fileName = seqCamData.getFileNameFromImageList(i);
@@ -38,18 +28,9 @@ public class StreamingImageProcessor {
 				imageFiles.add(fileName);
 			}
 		}
-
-		// Start prefetch thread
-		prefetchThread = new Thread(() -> prefetchImages());
-		prefetchThread.setDaemon(true);
-		prefetchThread.start();
 	}
 
 	public void stop() {
-		running = false;
-		if (prefetchThread != null) {
-			prefetchThread.interrupt();
-		}
 		clearAllImages();
 	}
 
@@ -72,20 +53,7 @@ public class StreamingImageProcessor {
 
 
 
-	private void prefetchImages() {
-		// No prefetching - images are loaded on demand only
-		System.out.println("Prefetching disabled - using on-demand loading only");
 
-		// Just wait for the processing to complete
-		while (running) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				break;
-			}
-		}
-	}
 
 	// Use the same imageIORead method as BuildSeries
 	private IcyBufferedImage imageIORead(String fileName) {

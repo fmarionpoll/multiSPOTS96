@@ -97,6 +97,7 @@ public class BuildSeriesOptions implements XMLPersistent {
 	public boolean enableMemoryCleanup = true; // Enable explicit memory cleanup
 	public boolean usePrimitiveArrays = true; // Use primitive arrays instead of Point objects
 	public boolean enableGarbageCollection = true; // Force GC between batches
+	public boolean enableMemoryProfiling = true;
 
 	// -----------------------
 

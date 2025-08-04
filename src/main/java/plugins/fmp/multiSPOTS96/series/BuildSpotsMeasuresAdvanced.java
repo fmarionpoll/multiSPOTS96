@@ -45,6 +45,11 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 	// === COMPRESSED MASK STORAGE ===
 	private final ConcurrentHashMap<String, CompressedMask> compressedMasks = new ConcurrentHashMap<>();
+	
+	// === MEMORY PROFILING COUNTERS ===
+	private int totalImagesProcessed = 0;
+	private int totalTransformedImagesCreated = 0;
+	private int totalCursorsCreated = 0;
 
 	// === ADAPTIVE MEMORY MANAGEMENT ===
 	private final MemoryMonitor memoryMonitor;
@@ -147,20 +152,11 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		vData.setTitle(exp.seqCamData.getCSCamFileName() + ": " + iiFirst + "-" + iiLast);
 		ProgressFrame progressBar1 = new ProgressFrame("Analyze stack (Advanced)");
 
-		// Log initial memory state
-//		System.out.println("=== Memory Optimization Analysis ===");
-//		System.out.println("Initial memory usage: " + memoryMonitor.getUsedMemoryMB() + "MB / "
-//				+ memoryMonitor.getMaxMemoryMB() + "MB (" + memoryMonitor.getMemoryUsagePercent() + "%)");
-//		System.out.println("Available memory: " + memoryMonitor.getAvailableMemoryMB() + "MB");
-//		System.out.println("Total frames to process: " + (iiLast - iiFirst));
-//		System.out.println("Memory thresholds - Available: " + MEMORY_PRESSURE_THRESHOLD_MB + "MB, Usage: "
-//				+ MEMORY_USAGE_THRESHOLD_PERCENT + "%");
-
 		// Initialize with adaptive batch sizing
 		adaptiveBatchSizer.initialize(iiLast - iiFirst, memoryMonitor.getAvailableMemoryMB());
 		initMeasureSpots(exp);
 
-		// Initialize streaming processor (but don't start prefetching)
+		// Initialize streaming processor
 		streamingProcessor.start(exp.seqCamData, iiFirst, iiLast);
 
 		long startTime = System.currentTimeMillis();
@@ -175,36 +171,15 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 				int batchEnd = Math.min(batchStart + adaptiveBatchSizer.getCurrentBatchSize(), iiLast);
 
-				// Log memory state before batch
-				long batchStartMemory = memoryMonitor.getUsedMemoryMB();
-//				System.out.println("Processing batch " + (processedBatches + 1) + " (frames " + batchStart + "-"
-//						+ (batchEnd - 1) + "). Memory: " + batchStartMemory + "MB ("
-//						+ memoryMonitor.getMemoryUsagePercent() + "%)");
-
 				processFrameBatchAdvanced(exp, batchStart, batchEnd, iiFirst, iiLast, progressBar1);
-
-				// Log memory state after batch
-				long batchEndMemory = memoryMonitor.getUsedMemoryMB();
-//				System.out.println("Batch " + (processedBatches + 1) + " completed. Memory: " + batchEndMemory + "MB ("
-//						+ memoryMonitor.getMemoryUsagePercent() + "%). Delta: " + (batchEndMemory - batchStartMemory)
-//						+ "MB");
 
 				processedBatches++;
 
 				// Update adaptive batch sizing based on memory usage
 				adaptiveBatchSizer.updateBatchSize(memoryMonitor.getMemoryUsagePercent());
 
-				// Force garbage collection if memory pressure is high (less aggressive)
-				if (memoryMonitor.getMemoryUsagePercent() > 80.0) {
-					System.gc();
-					Thread.yield();
-				}
-
-				// Periodic GC every 10 batches (less frequent)
-				if (processedBatches % 10 == 0) {
-					System.gc();
-					Thread.yield();
-				}
+				// Force garbage collection between batches (like original)
+				System.gc();
 			}
 		} finally {
 			streamingProcessor.stop();
@@ -213,69 +188,18 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		long endTime = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
 
-		// Log final memory state
 		System.out.println("=== Processing Complete ===");
 		System.out.println("Total processing time: " + totalTime + "ms (" + (totalTime / 1000.0) + "s)");
 		System.out.println("Processed " + processedBatches + " batches");
-		System.out.println("Final memory usage: " + memoryMonitor.getUsedMemoryMB() + "MB / "
-				+ memoryMonitor.getMaxMemoryMB() + "MB (" + memoryMonitor.getMemoryUsagePercent() + "%)");
-		System.out.println("Available memory: " + memoryMonitor.getAvailableMemoryMB() + "MB");
-
-		// Force final cleanup
-		System.out.println("Performing final cleanup...");
-
-		// Clear image buffer completely
-		streamingProcessor.clearAllImages();
-
-		// Try to force Icy to release all cached data
-		try {
-			// Force Icy to clear any internal caches
-			System.out.println("Attempting to clear Icy internal caches...");
-
-			// Try to access Icy's internal image cache if it exists
-			try {
-				Class<?> icyImageCacheClass = Class.forName("icy.image.ImageCache");
-				java.lang.reflect.Method clearCacheMethod = icyImageCacheClass.getDeclaredMethod("clearCache");
-				if (clearCacheMethod != null) {
-					clearCacheMethod.setAccessible(true);
-					clearCacheMethod.invoke(null);
-					System.out.println("Cleared Icy image cache");
-				}
-			} catch (Exception e) {
-				System.out.println("Could not clear Icy image cache: " + e.getMessage());
-			}
-
-			// Try to force Icy to release any internal buffers
-			try {
-				Class<?> icyImageClass = Class.forName("icy.image.IcyBufferedImage");
-				java.lang.reflect.Method disposeMethod = icyImageClass.getDeclaredMethod("dispose");
-				if (disposeMethod != null) {
-					disposeMethod.setAccessible(true);
-					// This is just to check if the method exists
-					System.out.println("IcyBufferedImage has dispose method available");
-				}
-			} catch (Exception e) {
-				System.out.println("IcyBufferedImage dispose method not available: " + e.getMessage());
-			}
-
-		} catch (Exception e) {
-//			System.out.println("Error during Icy cache cleanup: " + e.getMessage());
+		
+		// Memory profiling summary
+		if (options.enableMemoryProfiling) {
+			System.out.println("=== Memory Profiling Summary ===");
+			System.out.println("Total transformed images created: " + totalTransformedImagesCreated);
+			System.out.println("Total cursors created: " + totalCursorsCreated);
+			System.out.println("Compressed masks cached: " + compressedMasks.size());
+			logMemoryUsage("Final");
 		}
-
-		// Multiple GC passes with longer delays
-		for (int i = 0; i < 7; i++) {
-			System.gc();
-			try {
-				Thread.sleep(1000); // Give much more time for GC to work
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
-//			System.out.println("GC pass " + (i + 1) + ": " + memoryMonitor.getUsedMemoryMB() + "MB ("
-//					+ memoryMonitor.getMemoryUsagePercent() + "%)");
-		}
-
-//		System.out.println("After final cleanup: " + memoryMonitor.getUsedMemoryMB() + "MB ("
-//				+ memoryMonitor.getMemoryUsagePercent() + "%)");
 
 		progressBar1.close();
 		return true;
@@ -284,12 +208,9 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	private void processFrameBatchAdvanced(Experiment exp, int batchStart, int batchEnd, int iiFirst, int iiLast,
 			ProgressFrame progressBar1) {
 
-		// Check memory pressure before processing batch
-		if (memoryMonitor.getMemoryUsagePercent() > MEMORY_USAGE_THRESHOLD_PERCENT) {
-//			System.out
-//					.println("Memory pressure detected: " + memoryMonitor.getMemoryUsagePercent() + "%. Forcing GC...");
-			System.gc();
-			Thread.yield(); // Give GC time to work
+		// Memory profiling - log before batch processing
+		if (options.enableMemoryProfiling) {
+			logMemoryUsage("Before Batch " + batchStart + "-" + (batchEnd - 1));
 		}
 
 		// Use parallel processing like the original BuildSpotsMeasures
@@ -315,40 +236,47 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			final int t = ii;
 			progressBar1.setMessage("Analyze frame: " + t + "//" + iiLast);
 
-			// Submit task for parallel processing
+			// Load image once and pass to processing method (like original)
+			String fileName = exp.seqCamData.getFileNameFromImageList(t);
+			if (fileName == null) {
+				System.out.println("filename null at t=" + t);
+				continue;
+			}
+
+			final IcyBufferedImage sourceImage = streamingProcessor.getImage(t);
 			tasks.add(processor.submit(new Runnable() {
 				@Override
 				public void run() {
-					processSingleFrameAdvanced(exp, t, iiFirst);
+					processSingleFrameAdvanced(exp, t, iiFirst, sourceImage);
 				}
 			}));
 		}
 
 		// Wait for all tasks to complete
 		waitFuturesCompletion(processor, tasks, null);
+		
+		// Memory profiling - log after batch processing
+		if (options.enableMemoryProfiling) {
+			logMemoryUsage("After Batch " + batchStart + "-" + (batchEnd - 1));
+		}
 	}
 
-	private void processSingleFrameAdvanced(Experiment exp, int frameIndex, int iiFirst) {
-		IcyBufferedImage sourceImage = null;
+	private void processSingleFrameAdvanced(Experiment exp, int frameIndex, int iiFirst, IcyBufferedImage sourceImage) {
 		IcyBufferedImage transformToMeasureArea = null;
 		IcyBufferedImage transformToDetectFly = null;
 		IcyBufferedImageCursor cursorToDetectFly = null;
 		IcyBufferedImageCursor cursorToMeasureArea = null;
 
 		try {
-			// Get image from streaming processor (same as original imageIORead)
-			sourceImage = streamingProcessor.getImage(frameIndex);
-			if (sourceImage == null) {
-				return;
-			}
-
 			// Create transformed images (same as original)
 			transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage, transformOptions01);
 			transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage, transformOptions02);
+			totalTransformedImagesCreated += 2;
 
 			// Create cursors (same as original)
 			cursorToDetectFly = new IcyBufferedImageCursor(transformToDetectFly);
 			cursorToMeasureArea = new IcyBufferedImageCursor(transformToMeasureArea);
+			totalCursorsCreated += 2;
 
 			int ii_local = frameIndex - iiFirst;
 			for (Cage cage : exp.cagesArray.cagesList) {
@@ -546,5 +474,33 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		}
 	}
 
+	// === MEMORY PROFILING ===
+	
+	private void logMemoryUsage(String stage) {
+		Runtime runtime = Runtime.getRuntime();
+		long totalMemory = runtime.totalMemory();
+		long freeMemory = runtime.freeMemory();
+		long usedMemory = totalMemory - freeMemory;
+		long maxMemory = runtime.maxMemory();
+		
+		System.out.println("=== " + stage + " ===");
+		System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
+		System.out.println("Free Memory: " + (freeMemory / 1024 / 1024) + " MB");
+		System.out.println("Total Memory: " + (totalMemory / 1024 / 1024) + " MB");
+		System.out.println("Max Memory: " + (maxMemory / 1024 / 1024) + " MB");
+		System.out.println("Memory Usage: " + (usedMemory * 100 / maxMemory) + "%");
+	}
+	
+	private void checkForMemoryLeaks() {
+		Runtime runtime = Runtime.getRuntime();
+		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
+		
+		// Check if memory usage is growing abnormally
+		if (usedMemory > runtime.maxMemory() * 0.8) {
+			System.err.println("WARNING: High memory usage detected!");
+			System.err.println("Consider reducing batch size or enabling more aggressive GC");
+		}
+	}
+	
 	// === INNER CLASSES REMOVED - NOW EXTERNAL CLASSES ===
 }
