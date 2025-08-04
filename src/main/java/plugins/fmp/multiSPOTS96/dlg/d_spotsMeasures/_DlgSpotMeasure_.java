@@ -25,6 +25,7 @@ public class _DlgSpotMeasure_ extends JPanel implements PropertyChangeListener, 
 	public PopupPanel capPopupPanel = null;
 	JTabbedPane tabsPane = new JTabbedPane();
 	ThresholdSimple tabSimpleThreshold = new ThresholdSimple();
+	ThresholdSimpleAdvanced tabSimpleThresholdAdvanced = new ThresholdSimpleAdvanced();
 //	ThresholdColors colorsThreshold = new ThresholdColors();
 	Edit tabEdit = new Edit();
 	public Charts tabCharts = new Charts();
@@ -47,6 +48,13 @@ public class _DlgSpotMeasure_ extends JPanel implements PropertyChangeListener, 
 		tabSimpleThreshold.init(gridLayout, parent0);
 		tabSimpleThreshold.addPropertyChangeListener(this);
 		tabsPane.addTab("Simple threshold", null, tabSimpleThreshold,
+				"Measure area using a simple transform and threshold");
+		id_threshold = order;
+		order++;
+
+		tabSimpleThresholdAdvanced.init(gridLayout, parent0);
+		tabSimpleThresholdAdvanced.addPropertyChangeListener(this);
+		tabsPane.addTab("Threshold advanced", null, tabSimpleThresholdAdvanced,
 				"Measure area using a simple transform and threshold");
 		id_threshold = order;
 		order++;

@@ -2,9 +2,10 @@ package plugins.fmp.multiSPOTS96.series;
 
 import java.awt.Point;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.Future;
+
 
 import javax.swing.SwingUtilities;
 
@@ -12,6 +13,8 @@ import icy.gui.frame.progress.ProgressFrame;
 import icy.image.IcyBufferedImage;
 import icy.image.IcyBufferedImageCursor;
 import icy.sequence.Sequence;
+import icy.system.SystemUtil;
+import icy.system.thread.Processor;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
@@ -35,11 +38,7 @@ import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformOptions;
 public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 	// === MEMORY POOL ===
-	// Removed image pooling due to null pointer issues
-	private final LinkedBlockingQueue<IcyBufferedImageCursor> cursorPool = new LinkedBlockingQueue<>();
-	private final int MAX_POOL_SIZE = 20;
-	private final AtomicInteger poolHits = new AtomicInteger(0);
-	private final AtomicInteger poolMisses = new AtomicInteger(0);
+	// Removed cursor pooling to simplify and match original approach
 
 	// === STREAMING PROCESSING ===
 	private final StreamingImageProcessor streamingProcessor;
@@ -161,7 +160,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		adaptiveBatchSizer.initialize(iiLast - iiFirst, memoryMonitor.getAvailableMemoryMB());
 		initMeasureSpots(exp);
 
-		// Start streaming processor
+		// Initialize streaming processor (but don't start prefetching)
 		streamingProcessor.start(exp.seqCamData, iiFirst, iiLast);
 
 		long startTime = System.currentTimeMillis();
@@ -195,40 +194,16 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				// Update adaptive batch sizing based on memory usage
 				adaptiveBatchSizer.updateBatchSize(memoryMonitor.getMemoryUsagePercent());
 
-				// Force garbage collection if memory pressure is high
-				if (memoryMonitor.getMemoryUsagePercent() > 60.0) { // Reduced from
-																	// advancedOptions.memoryThresholdPercent (80%)
-//					System.out.println("High memory pressure detected: " + memoryMonitor.getMemoryUsagePercent()
-//							+ "%. Forcing GC...");
-					System.gc();
-					Thread.yield(); // Give GC time to work
-
-					// Log memory after GC
-//					System.out.println("After GC: " + memoryMonitor.getUsedMemoryMB() + "MB ("
-//							+ memoryMonitor.getMemoryUsagePercent() + "%)");
-				}
-
-				// Also force GC every few batches to prevent memory buildup
-				if (processedBatches % 5 == 0) {
-//					System.out.println("Periodic GC after " + processedBatches + " batches. Memory: "
-//							+ memoryMonitor.getUsedMemoryMB() + "MB");
+				// Force garbage collection if memory pressure is high (less aggressive)
+				if (memoryMonitor.getMemoryUsagePercent() > 80.0) {
 					System.gc();
 					Thread.yield();
 				}
 
-				// Check if we need to pause processing due to memory pressure
-				if (memoryMonitor.getMemoryUsagePercent() > 98) {
-//					System.out.println("Critical memory pressure: " + memoryMonitor.getMemoryUsagePercent()
-//							+ "%. Pausing processing...");
-					try {
-						Thread.sleep(1000); // Wait for memory to be freed
-					} catch (InterruptedException e) {
-						Thread.currentThread().interrupt(); // Restore interrupt status
-//						System.out.println("Processing interrupted during memory pause");
-					}
+				// Periodic GC every 10 batches (less frequent)
+				if (processedBatches % 10 == 0) {
 					System.gc();
-//					System.out.println("After pause: " + memoryMonitor.getUsedMemoryMB() + "MB ("
-//							+ memoryMonitor.getMemoryUsagePercent() + "%)");
+					Thread.yield();
 				}
 			}
 		} finally {
@@ -317,7 +292,13 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			Thread.yield(); // Give GC time to work
 		}
 
-		// Process frames SEQUENTIALLY to maintain order and prevent scrambled results
+		// Use parallel processing like the original BuildSpotsMeasures
+		final Processor processor = new Processor(Math.min(options.maxConcurrentTasks, SystemUtil.getNumberOfCPUs()));
+		processor.setThreadName("measureSpotsAdvanced");
+		processor.setPriority(Processor.NORM_PRIORITY);
+
+		ArrayList<Future<?>> tasks = new ArrayList<Future<?>>(batchEnd - batchStart);
+
 		for (int ii = batchStart; ii < batchEnd; ii++) {
 			if (stopFlag) {
 				break;
@@ -331,12 +312,20 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 				}
 			}
 
-			progressBar1.setMessage("Analyze frame: " + ii + "//" + iiLast);
+			final int t = ii;
+			progressBar1.setMessage("Analyze frame: " + t + "//" + iiLast);
 
-			// Process frame sequentially to maintain order
-//			System.out.println("Processing frame " + ii + " sequentially");
-			processSingleFrameAdvanced(exp, ii, iiFirst);
+			// Submit task for parallel processing
+			tasks.add(processor.submit(new Runnable() {
+				@Override
+				public void run() {
+					processSingleFrameAdvanced(exp, t, iiFirst);
+				}
+			}));
 		}
+
+		// Wait for all tasks to complete
+		waitFuturesCompletion(processor, tasks, null);
 	}
 
 	private void processSingleFrameAdvanced(Experiment exp, int frameIndex, int iiFirst) {
@@ -347,76 +336,19 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		IcyBufferedImageCursor cursorToMeasureArea = null;
 
 		try {
-			// Get image from streaming processor
+			// Get image from streaming processor (same as original imageIORead)
 			sourceImage = streamingProcessor.getImage(frameIndex);
 			if (sourceImage == null) {
-				System.err.println("Failed to get image for frame " + frameIndex + ". Skipping processing.");
 				return;
 			}
 
-			// Check if image data is valid
-			try {
-				Object data = sourceImage.getDataXY(0);
-				if (data == null) {
-					System.err.println("Source image data is null for frame " + frameIndex + ". Skipping processing.");
-					return;
-				}
-			} catch (Exception e) {
-				System.err.println("Error accessing source image data for frame " + frameIndex + ": " + e.getMessage()
-						+ ". Skipping processing.");
-				return;
-			}
-
-			// Create new transformed images
-			transformToMeasureArea = null;
-			transformToDetectFly = null;
-
-			// Always create new transformed images - the pool approach is causing issues
+			// Create transformed images (same as original)
 			transformToMeasureArea = transformFunctionSpot.getTransformedImage(sourceImage, transformOptions01);
 			transformToDetectFly = transformFunctionFly.getTransformedImage(sourceImage, transformOptions02);
 
-			// Validate transformed images
-			if (transformToMeasureArea == null) {
-				System.err.println("transformToMeasureArea is null for frame " + frameIndex);
-				return;
-			}
-			try {
-				Object data = transformToMeasureArea.getDataXY(0);
-				if (data == null) {
-					System.err.println("transformToMeasureArea data is null for frame " + frameIndex);
-					return;
-				}
-			} catch (Exception e) {
-				System.err.println(
-						"Error accessing transformToMeasureArea data for frame " + frameIndex + ": " + e.getMessage());
-				return;
-			}
-
-			if (transformToDetectFly == null) {
-				System.err.println("transformToDetectFly is null for frame " + frameIndex);
-				return;
-			}
-			try {
-				Object data = transformToDetectFly.getDataXY(0);
-				if (data == null) {
-					System.err.println("transformToDetectFly data is null for frame " + frameIndex);
-					return;
-				}
-			} catch (Exception e) {
-				System.err.println(
-						"Error accessing transformToDetectFly data for frame " + frameIndex + ": " + e.getMessage());
-				return;
-			}
-
-			// Get cursors from pool
-			cursorToDetectFly = getCursorFromPool(transformToDetectFly);
-			cursorToMeasureArea = getCursorFromPool(transformToMeasureArea);
-
-			// Validate cursors
-			if (cursorToDetectFly == null || cursorToMeasureArea == null) {
-				System.err.println("Failed to create cursors for frame " + frameIndex);
-				return;
-			}
+			// Create cursors (same as original)
+			cursorToDetectFly = new IcyBufferedImageCursor(transformToDetectFly);
+			cursorToMeasureArea = new IcyBufferedImageCursor(transformToMeasureArea);
 
 			int ii_local = frameIndex - iiFirst;
 			for (Cage cage : exp.cagesArray.cagesList) {
@@ -426,15 +358,9 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 					}
 
 					ROI2DWithMask roiT = spot.getROIMask();
-					if (roiT == null) {
-						System.err.println("ROI mask is null for spot in frame " + frameIndex);
-						continue;
-					}
-
 					ResultsThreshold results = measureSpotOverThresholdCompressed(cursorToMeasureArea,
 							cursorToDetectFly, roiT, transformToMeasureArea);
 
-					// Validate results before setting values
 					if (results.npoints_in > 0) {
 						spot.getFlyPresent().setIsPresentAt(ii_local, results.nPoints_fly_present);
 						spot.getSum().setValueAt(ii_local, results.sumOverThreshold / results.npoints_in);
@@ -444,33 +370,12 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 					}
 				}
 			}
-		} catch (Exception e) {
-			System.err.println("Error processing frame " + frameIndex + ": " + e.getMessage());
-			e.printStackTrace();
 		} finally {
-			// Simplified cleanup - just nullify references to let GC handle it
-			// The setDataXY(null) approach is causing issues with Icy's internal state
-			if (sourceImage != null) {
-				sourceImage = null;
-			}
-			if (transformToMeasureArea != null) {
-				transformToMeasureArea = null;
-			}
-			if (transformToDetectFly != null) {
-				transformToDetectFly = null;
-			}
-
-			// Clear cursors to release references
-			if (cursorToDetectFly != null) {
-				cursorToDetectFly = null;
-			}
-			if (cursorToMeasureArea != null) {
-				cursorToMeasureArea = null;
-			}
-
-			// Force cleanup after each frame
-			System.gc();
-			Thread.yield();
+			// Clean up resources (same as original)
+			transformToMeasureArea = null;
+			transformToDetectFly = null;
+			cursorToDetectFly = null;
+			cursorToMeasureArea = null;
 		}
 	}
 
@@ -617,25 +522,10 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		}
 	}
 
-	// === MEMORY POOL MANAGEMENT ===
 
-	private IcyBufferedImageCursor getCursorFromPool(IcyBufferedImage image) {
-		if (image == null) {
-			System.err.println("Cannot create cursor for null image");
-			return null;
-		}
-
-		// Always create a new cursor for each image to avoid issues
-		poolMisses.incrementAndGet();
-		return new IcyBufferedImageCursor(image);
-	}
 
 	private void cleanupResources() {
-		cursorPool.clear();
 		compressedMasks.clear();
-//
-//		System.out.println("Memory Pool Stats - Hits: " + poolHits.get() + ", Misses: " + poolMisses.get());
-//		System.out.println("Hit Rate: " + (poolHits.get() * 100.0 / (poolHits.get() + poolMisses.get())) + "%");
 	}
 
 	private void closeViewers() {

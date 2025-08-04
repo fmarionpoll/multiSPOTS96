@@ -26,7 +26,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
 import plugins.fmp.multiSPOTS96.series.AdvancedMemoryOptions;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.series.BuildSpotsMeasuresAdvanced;
+import plugins.fmp.multiSPOTS96.series.BuildSpotsMeasures;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 
@@ -61,7 +61,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	private JComboBox<String> fliesDirectionComboBox = new JComboBox<String>(directions);
 	private JSpinner fliesThresholdSpinner = new JSpinner(new SpinnerNumberModel(50, 0, 255, 1));
 
-	private BuildSpotsMeasuresAdvanced processor = null;
+	private BuildSpotsMeasures processor = null;
 	private MultiSPOTS96 parent0 = null;
 
 	public void init(GridLayout gridLayout, MultiSPOTS96 parent0) {
@@ -243,7 +243,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 				System.err.println("Configuration issues: " + result);
 			}
 
-			processor = new BuildSpotsMeasuresAdvanced(memOptions);
+			processor = new BuildSpotsMeasures();
 			processor.options = initDetectOptions(exp);
 			processor.addPropertyChangeListener(this);
 			processor.execute();
