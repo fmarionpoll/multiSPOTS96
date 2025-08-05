@@ -75,7 +75,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 	private static final int PROGRESS_UPDATE_INTERVAL = 10; // Update progress every 10 experiments
 
 	// UI Components
-	private JButton createButton = new JButton("Create...");
 	private JButton openButton = new JButton("Open...");
 	private JButton searchButton = new JButton("Search...");
 	private JButton closeButton = new JButton("Close");
@@ -152,7 +151,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 		layout.setVgap(1);
 		JPanel subPanel = new JPanel(layout);
 		subPanel.add(openButton);
-		subPanel.add(createButton);
 		subPanel.add(searchButton);
 		subPanel.add(closeButton);
 		subPanel.add(filteredCheck);
@@ -164,13 +162,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 	 * Defines action listeners with optimized event handling.
 	 */
 	private void defineActionListeners() {
-		createButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				handleCreateButton();
-			}
-		});
-
 		openButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -459,27 +450,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 		}
 	}
 
-	// UI Event Handlers
-	private void handleCreateButton() {
-		ExperimentDirectories eDAF = new ExperimentDirectories();
-		final String binDirectory = parent0.expListCombo.stringExpBinSubDirectory;
-		if (eDAF.getDirectoriesFromDialog(binDirectory, null, true)) {
-			// Create metadata for new experiment
-			// Get the experiment name from the directory path
-			String experimentName = new File(eDAF.getResultsDirectory()).getName();
-			String experimentPath = eDAF.getResultsDirectory();
-
-			ExperimentMetadata metadata = new ExperimentMetadata(experimentName, experimentPath, binDirectory);
-			experimentMetadataList.add(metadata);
-
-			// Create and add LazyExperiment directly
-			LazyExperiment lazyExp = new LazyExperiment(metadata);
-			parent0.expListCombo.addLazyExperiment(lazyExp);
-			parent0.dlgExperiment.tabInfos.initInfosCombos();
-			parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
-		}
-	}
-
 	private void handleOpenButton() {
 		ExperimentDirectories eDAF = new ExperimentDirectories();
 		final String binDirectory = parent0.expListCombo.stringExpBinSubDirectory;
@@ -491,7 +461,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 			ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory,
 					binDirectory);
-			experimentMetadataList.add(metadata);
+//			experimentMetadataList.add(metadata);
 
 			// Create and add LazyExperiment directly
 			LazyExperiment lazyExp = new LazyExperiment(metadata);
