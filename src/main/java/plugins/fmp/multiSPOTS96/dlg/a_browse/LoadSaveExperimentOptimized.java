@@ -10,7 +10,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -365,32 +364,14 @@ public class LoadSaveExperimentOptimized extends JPanel
 	 */
 	private void addMetadataToUI() {
 		try {
-//			long startTime = System.currentTimeMillis();
-
-			// Clear existing items
-			parent0.expListCombo.removeAllItems();
-
-			// Create all LazyExperiments first
 			List<LazyExperiment> lazyExperiments = new ArrayList<>();
 			for (ExperimentMetadata metadata : experimentMetadataList) {
 				LazyExperiment lazyExp = new LazyExperiment(metadata);
 				lazyExperiments.add(lazyExp);
 			}
 
-			// Add all experiments at once using bulk method for maximum performance
-//			long bulkStartTime = System.currentTimeMillis();
 			parent0.expListCombo.addLazyExperimentsBulk(lazyExperiments);
-//			long bulkEndTime = System.currentTimeMillis();
-
-			// Initialize infos combos
-//			long combosStartTime = System.currentTimeMillis();
 			parent0.dlgExperiment.tabInfos.initInfosCombos();
-//			long combosEndTime = System.currentTimeMillis();
-//
-//			long endTime = System.currentTimeMillis();
-//			LOGGER.info("Added " + experimentMetadataList.size() + " experiments to UI in " + (endTime - startTime) + "ms total");
-//			LOGGER.info("  - Bulk add: " + (bulkEndTime - bulkStartTime) + "ms");
-//			LOGGER.info("  - Init combos: " + (combosEndTime - combosStartTime) + "ms");
 
 		} catch (Exception e) {
 			LOGGER.warning("Error adding metadata to UI: " + e.getMessage());
@@ -454,20 +435,15 @@ public class LoadSaveExperimentOptimized extends JPanel
 		ExperimentDirectories eDAF = new ExperimentDirectories();
 		final String binDirectory = parent0.expListCombo.stringExpBinSubDirectory;
 		if (eDAF.getDirectoriesFromDialog(binDirectory, null, false)) {
-			// Create metadata for opened experiment
-			// Get the experiment name from the directory path
 			String camDataImagesDirectory = eDAF.getCameraImagesDirectory();
 			String resultsDirectory = eDAF.getResultsDirectory();
-
 			ExperimentMetadata metadata = new ExperimentMetadata(camDataImagesDirectory, resultsDirectory,
 					binDirectory);
-//			experimentMetadataList.add(metadata);
 
-			// Create and add LazyExperiment directly
 			LazyExperiment lazyExp = new LazyExperiment(metadata);
-			parent0.expListCombo.addLazyExperiment(lazyExp);
+			int selectedIndex = parent0.expListCombo.addLazyExperiment(lazyExp);
 			parent0.dlgExperiment.tabInfos.initInfosCombos();
-			parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
+			parent0.expListCombo.setSelectedIndex(selectedIndex);
 		}
 	}
 

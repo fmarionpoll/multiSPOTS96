@@ -13,14 +13,14 @@ import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
 /**
- * Shared LazyExperiment implementation that can be used across different components
- * to provide memory-efficient experiment loading.
+ * Shared LazyExperiment implementation that can be used across different
+ * components to provide memory-efficient experiment loading.
  * 
  * <p>
- * This class implements the lazy loading pattern for Experiment objects, allowing
- * components to store lightweight experiment references and only load full data
- * when needed. This dramatically reduces memory usage when handling large numbers
- * of experiments.
+ * This class implements the lazy loading pattern for Experiment objects,
+ * allowing components to store lightweight experiment references and only load
+ * full data when needed. This dramatically reduces memory usage when handling
+ * large numbers of experiments.
  * </p>
  * 
  * <p>
@@ -33,14 +33,14 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
  * @version 2.0.0
  */
 public class LazyExperiment extends Experiment {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(LazyExperiment.class.getName());
-	
+
 	private final ExperimentMetadata metadata;
 	private boolean isLoaded = false;
 	private boolean propertiesLoaded = false;
 	private ExperimentProperties cachedProperties = null;
-	
+
 	// XML file constants for properties loading
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
 	private final static String ID_MS96_experiment_XML = "MS96_experiment.xml";
@@ -87,40 +87,40 @@ public class LazyExperiment extends Experiment {
 				if (resultsDir == null) {
 					resultsDir = metadata.getCameraDirectory() + File.separator + "results";
 				}
-				
+
 				String xmlFileName = resultsDir + File.separator + ID_MS96_experiment_XML;
 				File xmlFile = new File(xmlFileName);
-				
+
 				if (!xmlFile.exists()) {
 					LOGGER.warning("XML file not found: " + xmlFileName);
 					return false;
 				}
-				
+
 				Document doc = XMLUtil.loadDocument(xmlFileName);
 				if (doc == null) {
 					LOGGER.warning("Could not load XML document from " + xmlFileName);
 					return false;
 				}
-				
+
 				Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
 				if (node == null) {
 					LOGGER.warning("Could not find MCexperiment node in XML");
 					return false;
 				}
-				
+
 				cachedProperties = new ExperimentProperties();
 				cachedProperties.loadXML_Properties(node);
 				propertiesLoaded = true;
-				
+
 				return true;
 			} catch (Exception e) {
-				LOGGER.warning("Error loading properties for experiment " + metadata.getCameraDirectory() + ": " + e.getMessage());
+				LOGGER.warning("Error loading properties for experiment " + metadata.getCameraDirectory() + ": "
+						+ e.getMessage());
 				return false;
 			}
 		}
 		return true;
 	}
-
 
 	public String getFieldValue(EnumXLSColumnHeader field) {
 		if (loadPropertiesIfNeeded() && cachedProperties != null) {
@@ -155,7 +155,6 @@ public class LazyExperiment extends Experiment {
 		private final String resultsDirectory;
 		private final String binDirectory;
 
-
 		public ExperimentMetadata(String cameraDirectory, String resultsDirectory, String binDirectory) {
 			this.cameraDirectory = cameraDirectory;
 			this.resultsDirectory = resultsDirectory;
@@ -181,20 +180,21 @@ public class LazyExperiment extends Experiment {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj) return true;
-			if (obj == null || getClass() != obj.getClass()) return false;
+			if (this == obj)
+				return true;
+			if (obj == null || getClass() != obj.getClass())
+				return false;
 			ExperimentMetadata that = (ExperimentMetadata) obj;
-			return cameraDirectory.equals(that.cameraDirectory) &&
-				   resultsDirectory.equals(that.resultsDirectory) &&
-				   binDirectory.equals(that.binDirectory);
+			return cameraDirectory.equals(that.cameraDirectory) && resultsDirectory.equals(that.resultsDirectory)
+					&& binDirectory.equals(that.binDirectory);
 		}
 
 		@Override
 		public int hashCode() {
-			int result = cameraDirectory.hashCode();
-			result = 31 * result + resultsDirectory.hashCode();
-			result = 31 * result + binDirectory.hashCode();
+			int result = cameraDirectory != null ? cameraDirectory.hashCode() : 0;
+			result = 31 * result + (resultsDirectory != null ? resultsDirectory.hashCode() : 0);
+			result = 31 * result + (binDirectory != null ? binDirectory.hashCode() : 0);
 			return result;
 		}
 	}
-} 
+}

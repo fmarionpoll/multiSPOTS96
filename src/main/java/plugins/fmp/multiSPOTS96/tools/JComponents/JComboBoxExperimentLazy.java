@@ -70,41 +70,48 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	}
 
 	public int addLazyExperiment(LazyExperiment lazyExp) {
-		if (isUnique(lazyExp)) {
+		int index = isFoundAt(lazyExp);
+		if (index < 0) {
 			experimentMetadataList.add(lazyExp.getMetadata());
 			addItem(lazyExp);
 			return getItemCount() - 1;
 		}
-		setSelectedItem(lazyExp);
-		return getSelectedIndex();
+		return index;
 	}
 
-
 	public void addLazyExperimentsBulk(List<LazyExperiment> lazyExperiments) {
-//		long startTime = System.currentTimeMillis();
 		for (LazyExperiment lazyExp : lazyExperiments) {
 			if (isUnique(lazyExp)) {
 				experimentMetadataList.add(lazyExp.getMetadata());
 				addItem(lazyExp);
 			}
 		}
-//		long endTime = System.currentTimeMillis();
-//		LOGGER.info("Bulk added " + lazyExperiments.size() + " experiments in " + (endTime - startTime) + "ms");
+	}
+
+	private int isFoundAt(LazyExperiment newLazyExperiment) {
+		int newCode = newLazyExperiment.getMetadata().hashCode();
+		int index = 0;
+		for (ExperimentMetadata expData : experimentMetadataList) {
+			int codeFromList = expData.hashCode();
+			if (codeFromList == newCode) {
+				return index;
+			}
+			index++;
+		}
+		return index;
 	}
 
 	private boolean isUnique(LazyExperiment newLazyExperiment) {
-		boolean isUnique = true;
-		int newLazyCode = newLazyExperiment.hashCode();
-		for (ExperimentMetadata expData : experimentMetadataList ) {
-			int code = expData.hashCode();
-			if (code == newLazyCode) {
-				isUnique = false;
-				break;
+		int newCode = newLazyExperiment.getMetadata().hashCode();
+		for (ExperimentMetadata expData : experimentMetadataList) {
+			int codeFromList = expData.hashCode();
+			if (codeFromList == newCode) {
+				return false;
 			}
 		}
-		return isUnique;
+		return true;
 	}
-	
+
 	private LazyExperiment convertToLazyExperiment(Experiment exp) {
 		if (exp instanceof LazyExperiment) {
 			return (LazyExperiment) exp;
