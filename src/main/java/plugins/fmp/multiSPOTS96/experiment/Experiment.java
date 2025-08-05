@@ -611,7 +611,8 @@ public class Experiment {
 		this.lastImage_FileTime = fileTimeImageLast;
 	}
 
-	public void getFieldValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
+	public List<String> getFieldValues(EnumXLSColumnHeader fieldEnumCode) {
+		List<String> textList = new ArrayList<String>();
 		switch (fieldEnumCode) {
 		case EXP_STIM:
 		case EXP_CONC:
@@ -621,21 +622,22 @@ public class Experiment {
 		case EXP_SEX:
 		case EXP_COND1:
 		case EXP_COND2:
-			addValue(prop.getExperimentField(fieldEnumCode), textList);
+			textList.add(prop.getExperimentField(fieldEnumCode));
 			break;
 		case SPOT_STIM:
 		case SPOT_CONC:
 		case SPOT_VOLUME:
-			addSpotsValues(fieldEnumCode, textList);
+			textList = getSpotsFieldValues(fieldEnumCode);
 			break;
 		case CAGE_SEX:
 		case CAGE_STRAIN:
 		case CAGE_AGE:
-			addCagesValues(fieldEnumCode, textList);
+			textList = getCagesFieldValues(fieldEnumCode);
 			break;
 		default:
 			break;
 		}
+		return textList;
 	}
 
 	public boolean replaceExperimentFieldIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
@@ -851,20 +853,24 @@ public class Experiment {
 			return resultsDirectory + File.separator + name;
 	}
 
-	private void addSpotsValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
+	private List<String> getSpotsFieldValues(EnumXLSColumnHeader fieldEnumCode) {
 		load_MS96_cages();
+		List<String> textList = new ArrayList<String>();
 		for (Cage cage : cagesArray.cagesList)
 			for (Spot spot : cage.spotsArray.getSpotsList())
-				addValue(spot.getField(fieldEnumCode), textList);
+				addValueIfUnique(spot.getField(fieldEnumCode), textList);
+		return textList;
 	}
 
-	private void addCagesValues(EnumXLSColumnHeader fieldEnumCode, List<String> textList) {
+	private List<String> getCagesFieldValues(EnumXLSColumnHeader fieldEnumCode) {
 		load_MS96_cages();
+		List<String> textList = new ArrayList<String>();
 		for (Cage cage : cagesArray.cagesList)
-			addValue(cage.getField(fieldEnumCode), textList);
+			addValueIfUnique(cage.getField(fieldEnumCode), textList);
+		return textList;
 	}
 
-	private void addValue(String text, List<String> textList) {
+	private void addValueIfUnique(String text, List<String> textList) {
 		if (!isFound(text, textList))
 			textList.add(text);
 	}

@@ -420,22 +420,20 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		List<String> textList = new ArrayList<>();
 		for (int i = 0; i < getItemCount(); i++) {
 			Experiment exp = getItemAt(i);
-
-			// Ensure the experiment is loaded if it's a LazyExperiment
 			if (exp instanceof LazyExperiment) {
 				((LazyExperiment) exp).loadIfNeeded();
 			}
 
 			exp.load_MS96_experiment();
-			exp.getFieldValues(field, textList);
+			textList.addAll(exp.getFieldValues(field));
 		}
 		return textList;
 	}
 
 	/**
 	 * Gets field values from all experiments WITHOUT loading them (for
-	 * performance). This method only works with LazyExperiments and uses metadata
-	 * only.
+	 * performance). This method uses the optimized LazyExperiment.getFieldValue()
+	 * method to avoid repeated XML file reads. Only unique values are returned.
 	 */
 	public List<String> getFieldValuesFromAllExperimentsLightweight(EnumXLSColumnHeader field) {
 		List<String> textList = new ArrayList<>();
@@ -443,21 +441,30 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 			Object item = super.getItemAt(i);
 			if (item instanceof LazyExperiment) {
 				LazyExperiment lazyExp = (LazyExperiment) item;
-				// For now, just add the experiment name as a placeholder
-				// This prevents loading all experiments just for combo box population
-				// textList.add(lazyExp.toString());
-				textList.add("..");
+				// Use the optimized method that caches properties
+				String fieldValue = lazyExp.getFieldValue(field);
+				if (fieldValue != null && !fieldValue.isEmpty() && !fieldValue.equals("..")) {
+					textList.add(fieldValue);
+				}
 			} else if (item instanceof Experiment) {
 				Experiment exp = (Experiment) item;
-				// For regular experiments, we still need to load them
+				// For regular experiments, we need to load them to get field values
 				if (exp instanceof LazyExperiment) {
 					((LazyExperiment) exp).loadIfNeeded();
 				}
 				exp.load_MS96_experiment();
-				exp.getFieldValues(field, textList);
+				textList.addAll(exp.getFieldValues(field));
 			}
 		}
-		return textList;
+
+		// Remove duplicates while preserving order
+		List<String> uniqueList = new ArrayList<>();
+		for (String value : textList) {
+			if (!uniqueList.contains(value)) {
+				uniqueList.add(value);
+			}
+		}
+		return uniqueList;
 	}
 
 	public void getFieldValuesToCombo(JComboBox<String> combo, EnumXLSColumnHeader header) {

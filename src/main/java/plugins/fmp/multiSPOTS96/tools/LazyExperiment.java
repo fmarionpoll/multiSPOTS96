@@ -1,9 +1,16 @@
 package plugins.fmp.multiSPOTS96.tools;
 
+import java.io.File;
 import java.util.logging.Logger;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import icy.util.XMLUtil;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentDirectories;
+import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
+import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
 /**
  * Shared LazyExperiment implementation that can be used across different components
@@ -16,8 +23,14 @@ import plugins.fmp.multiSPOTS96.experiment.ExperimentDirectories;
  * of experiments.
  * </p>
  * 
+ * <p>
+ * <strong>Performance Optimization:</strong> This class now caches experiment
+ * properties to avoid repeated XML file reads when retrieving field values for
+ * combo boxes.
+ * </p>
+ * 
  * @author MultiSPOTS96
- * @version 1.0.0
+ * @version 2.0.0
  */
 public class LazyExperiment extends Experiment {
 	
@@ -25,6 +38,12 @@ public class LazyExperiment extends Experiment {
 	
 	private final ExperimentMetadata metadata;
 	private boolean isLoaded = false;
+	private boolean propertiesLoaded = false;
+	private ExperimentProperties cachedProperties = null;
+	
+	// XML file constants for properties loading
+	private final static String ID_MCEXPERIMENT = "MCexperiment";
+	private final static String ID_MS96_experiment_XML = "MS96_experiment.xml";
 
 	/**
 	 * Creates a new LazyExperiment with the specified metadata.
@@ -72,6 +91,67 @@ public class LazyExperiment extends Experiment {
 	}
 
 	/**
+	 * Loads only the experiment properties from XML file for efficient field value
+	 * retrieval. This method avoids loading the full experiment data.
+	 * 
+	 * @return true if properties were loaded successfully, false otherwise
+	 */
+	public boolean loadPropertiesIfNeeded() {
+		if (!propertiesLoaded) {
+			try {
+				String resultsDir = metadata.getResultsDirectory();
+				if (resultsDir == null) {
+					resultsDir = metadata.getCameraDirectory() + File.separator + "results";
+				}
+				
+				String xmlFileName = resultsDir + File.separator + ID_MS96_experiment_XML;
+				File xmlFile = new File(xmlFileName);
+				
+				if (!xmlFile.exists()) {
+					LOGGER.warning("XML file not found: " + xmlFileName);
+					return false;
+				}
+				
+				Document doc = XMLUtil.loadDocument(xmlFileName);
+				if (doc == null) {
+					LOGGER.warning("Could not load XML document from " + xmlFileName);
+					return false;
+				}
+				
+				Node node = XMLUtil.getElement(XMLUtil.getRootElement(doc), ID_MCEXPERIMENT);
+				if (node == null) {
+					LOGGER.warning("Could not find MCexperiment node in XML");
+					return false;
+				}
+				
+				cachedProperties = new ExperimentProperties();
+				cachedProperties.loadXML_Properties(node);
+				propertiesLoaded = true;
+				
+				return true;
+			} catch (Exception e) {
+				LOGGER.warning("Error loading properties for experiment " + metadata.getCameraDirectory() + ": " + e.getMessage());
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Gets a field value from the cached properties without loading the full experiment.
+	 * This is much more efficient than loading the entire experiment just for field values.
+	 * 
+	 * @param field The field to retrieve
+	 * @return The field value, or ".." if not available
+	 */
+	public String getFieldValue(EnumXLSColumnHeader field) {
+		if (loadPropertiesIfNeeded() && cachedProperties != null) {
+			return cachedProperties.getExperimentField(field);
+		}
+		return "..";
+	}
+
+	/**
 	 * Checks if the experiment has been fully loaded.
 	 * 
 	 * @return true if the experiment is loaded, false otherwise
@@ -81,12 +161,31 @@ public class LazyExperiment extends Experiment {
 	}
 
 	/**
+	 * Checks if the experiment properties have been loaded.
+	 * 
+	 * @return true if the properties are loaded, false otherwise
+	 */
+	public boolean isPropertiesLoaded() {
+		return propertiesLoaded;
+	}
+
+	/**
 	 * Gets the metadata associated with this lazy experiment.
 	 * 
 	 * @return The experiment metadata
 	 */
 	public ExperimentMetadata getMetadata() {
 		return metadata;
+	}
+
+	/**
+	 * Gets the cached properties. This method will load properties if needed.
+	 * 
+	 * @return The cached experiment properties, or null if loading failed
+	 */
+	public ExperimentProperties getCachedProperties() {
+		loadPropertiesIfNeeded();
+		return cachedProperties;
 	}
 
 	/**
