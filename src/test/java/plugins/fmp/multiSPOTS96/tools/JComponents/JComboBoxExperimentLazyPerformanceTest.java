@@ -33,7 +33,7 @@ public class JComboBoxExperimentLazyPerformanceTest {
 
 		for (ExperimentMetadata metadata : metadataList) {
 			LazyExperiment lazyExp = new LazyExperiment(metadata);
-			combo1.addLazyExperiment(lazyExp, false);
+			combo1.addLazyExperiment(lazyExp);
 		}
 
 		long endTime1 = System.currentTimeMillis();
@@ -47,7 +47,7 @@ public class JComboBoxExperimentLazyPerformanceTest {
 
 		for (ExperimentMetadata metadata : metadataList) {
 			LazyExperiment lazyExp = new LazyExperiment(metadata);
-			combo2.addLazyExperimentDirect(lazyExp);
+			combo2.addLazyExperiment(lazyExp);
 		}
 
 		long endTime2 = System.currentTimeMillis();

@@ -34,7 +34,7 @@ public class Experiment {
 
 	private String camDataImagesDirectory = null;
 	private String resultsDirectory = null;
-//	private String binSubDirectory = null;
+	private String binDirectory = null;
 
 	public SequenceCamData seqCamData = null;
 //	public SequenceKymos seqKymos = null;
@@ -142,13 +142,13 @@ public class Experiment {
 //		return filename;
 //	}
 
-//	public void setBinSubDirectory(String bin) {
-//		binSubDirectory = bin;
-//	}
+	public void setBinDirectory(String bin) {
+		binDirectory = bin;
+	}
 
-//	public String getBinSubDirectory() {
-//		return binSubDirectory;
-//	}
+	public String getBinDirectory() {
+		return binDirectory;
+	}
 
 	public boolean createDirectoryIfDoesNotExist(String directory) {
 		Path pathDir = Paths.get(directory);

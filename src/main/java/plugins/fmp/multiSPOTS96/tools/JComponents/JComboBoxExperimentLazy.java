@@ -64,92 +64,56 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		experimentMetadataList.clear();
 	}
 
-	/**
-	 * Adds a LazyExperiment to the combo box. This method ensures that only
-	 * lightweight experiment objects are stored initially.
-	 * 
-	 * @param exp             The experiment to add (will be converted to
-	 *                        LazyExperiment if needed)
-	 * @param allowDuplicates Whether to allow duplicate experiments
-	 * @return The index of the added experiment
-	 */
-	public int addExperiment(Experiment exp, boolean allowDuplicates) {
-		String exptName = exp.toString();
-		int index = getExperimentIndexFromExptName(exptName);
-		if (allowDuplicates || index < 0) {
-			// Convert to LazyExperiment if it's not already one
-			Experiment lazyExp = convertToLazyExperiment(exp);
+	public int addExperiment(Experiment exp) {
+		LazyExperiment lazyExp = convertToLazyExperiment(exp);
+		return addLazyExperiment(lazyExp);
+	}
+
+	public int addLazyExperiment(LazyExperiment lazyExp) {
+		if (isUnique(lazyExp)) {
+			experimentMetadataList.add(lazyExp.getMetadata());
 			addItem(lazyExp);
-			index = getExperimentIndexFromExptName(exptName);
+			return getItemCount() - 1;
 		}
-		return index;
+		setSelectedItem(lazyExp);
+		return getSelectedIndex();
 	}
 
-	/**
-	 * Adds a LazyExperiment directly to the combo box without conversion. This is
-	 * more efficient when you already have a LazyExperiment object.
-	 * 
-	 * @param lazyExp         The LazyExperiment to add
-	 * @param allowDuplicates Whether to allow duplicate experiments
-	 * @return The index of the added experiment
-	 */
-	public int addLazyExperiment(LazyExperiment lazyExp, boolean allowDuplicates) {
-		String exptName = lazyExp.toString();
-		int index = getExperimentIndexFromExptName(exptName);
-		if (allowDuplicates || index < 0) {
-			addItem(lazyExp);
-			index = getItemCount() - 1; // Use the actual index instead of searching again
-		}
-		return index;
-	}
 
-	/**
-	 * Adds a LazyExperiment directly to the combo box without any duplicate
-	 * checking. This is the most efficient method for bulk loading.
-	 * 
-	 * @param lazyExp The LazyExperiment to add
-	 * @return The index of the added experiment
-	 */
-	public int addLazyExperimentDirect(LazyExperiment lazyExp) {
-		addItem(lazyExp);
-		return getItemCount() - 1;
-	}
-
-	/**
-	 * Adds multiple LazyExperiments at once for maximum bulk loading performance.
-	 * This method completely bypasses all duplicate checking and individual item
-	 * processing.
-	 * 
-	 * @param lazyExperiments List of LazyExperiments to add
-	 */
 	public void addLazyExperimentsBulk(List<LazyExperiment> lazyExperiments) {
 //		long startTime = System.currentTimeMillis();
 		for (LazyExperiment lazyExp : lazyExperiments) {
-			addItem(lazyExp);
+			if (isUnique(lazyExp)) {
+				experimentMetadataList.add(lazyExp.getMetadata());
+				addItem(lazyExp);
+			}
 		}
 //		long endTime = System.currentTimeMillis();
 //		LOGGER.info("Bulk added " + lazyExperiments.size() + " experiments in " + (endTime - startTime) + "ms");
 	}
 
-	/**
-	 * Converts a regular Experiment to a LazyExperiment for memory efficiency.
-	 * 
-	 * @param exp The experiment to convert
-	 * @return A LazyExperiment wrapper
-	 */
-	private Experiment convertToLazyExperiment(Experiment exp) {
+	private boolean isUnique(LazyExperiment newLazyExperiment) {
+		boolean isUnique = true;
+		int newLazyCode = newLazyExperiment.hashCode();
+		for (ExperimentMetadata expData : experimentMetadataList ) {
+			int code = expData.hashCode();
+			if (code == newLazyCode) {
+				isUnique = false;
+				break;
+			}
+		}
+		return isUnique;
+	}
+	
+	private LazyExperiment convertToLazyExperiment(Experiment exp) {
 		if (exp instanceof LazyExperiment) {
-			return exp;
+			return (LazyExperiment) exp;
 		}
 
 		// Create metadata from the experiment
 		ExperimentMetadata metadata = new ExperimentMetadata(
 				exp.seqCamData != null ? exp.seqCamData.getImagesDirectory() : exp.toString(),
-				exp.getResultsDirectory(), stringExpBinSubDirectory);
-
-		// Store metadata for future reference
-		experimentMetadataList.add(metadata);
-
+				exp.getResultsDirectory(), exp.getBinDirectory());
 		return new LazyExperiment(metadata);
 	}
 

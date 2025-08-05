@@ -474,7 +474,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 			// Create and add LazyExperiment directly
 			LazyExperiment lazyExp = new LazyExperiment(metadata);
-			parent0.expListCombo.addLazyExperimentDirect(lazyExp);
+			parent0.expListCombo.addLazyExperiment(lazyExp);
 			parent0.dlgExperiment.tabInfos.initInfosCombos();
 			parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
 		}
@@ -495,7 +495,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 			// Create and add LazyExperiment directly
 			LazyExperiment lazyExp = new LazyExperiment(metadata);
-			parent0.expListCombo.addLazyExperimentDirect(lazyExp);
+			parent0.expListCombo.addLazyExperiment(lazyExp);
 			parent0.dlgExperiment.tabInfos.initInfosCombos();
 			parent0.expListCombo.setSelectedIndex(parent0.expListCombo.getItemCount() - 1);
 		}

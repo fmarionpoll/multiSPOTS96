@@ -41,7 +41,7 @@ public class JComboBoxExperimentLazyTest {
 		// Test adding experiments
 		List<Experiment> experiments = createTestExperiments(5);
 		for (Experiment exp : experiments) {
-			int index = combo.addExperiment(exp, false);
+			int index = combo.addExperiment(exp);
 			System.out.println("Added experiment at index: " + index);
 		}
 		
@@ -71,7 +71,7 @@ public class JComboBoxExperimentLazyTest {
 		// Add experiments
 		List<Experiment> experiments = createTestExperiments(10);
 		for (Experiment exp : experiments) {
-			lazyCombo.addExperiment(exp, false);
+			lazyCombo.addExperiment(exp);
 		}
 		
 		// Check initial memory usage
@@ -104,7 +104,7 @@ public class JComboBoxExperimentLazyTest {
 		// Add experiments
 		List<Experiment> experiments = createTestExperiments(3);
 		for (Experiment exp : experiments) {
-			combo.addExperiment(exp, false);
+			combo.addExperiment(exp);
 		}
 		
 		// Test that experiments are not loaded initially
@@ -145,7 +145,7 @@ public class JComboBoxExperimentLazyTest {
 		// Test all methods that should work the same as JComboBoxExperiment
 		List<Experiment> experiments = createTestExperiments(3);
 		for (Experiment exp : experiments) {
-			combo.addExperiment(exp, false);
+			combo.addExperiment(exp);
 		}
 		
 		// Test getExperimentIndexFromExptName

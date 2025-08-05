@@ -187,7 +187,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public boolean xmlLoadCage(Node node, int index) {
 		// Memory monitoring before loading
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		// System.out.println("  Loading Cage " + index + " - Memory: " + (startMemory / 1024 / 1024) + " MB");
 		
 		try {
@@ -226,8 +226,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			}
 			
 			// Memory monitoring after loading
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
+//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//			long memoryIncrease = endMemory - startMemory;
 					// System.out.println("  Cage " + index + " loaded - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
 		// System.out.println("  Spots in cage: " + spotsArray.getSpotsCount());
 			
@@ -242,7 +242,7 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 
 	public boolean xmlSaveCage(Node node, int index) {
 		// Memory monitoring before saving
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		// System.out.println("  Saving Cage " + index + " - Memory: " + (startMemory / 1024 / 1024) + " MB");
 		
 		try {
@@ -276,8 +276,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			}
 			
 			// Memory monitoring after saving
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
+//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//			long memoryIncrease = endMemory - startMemory;
 					// System.out.println("  Cage " + index + " saved - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
 		// System.out.println("  Spots in cage: " + spotsArray.getSpotsCount());
 			

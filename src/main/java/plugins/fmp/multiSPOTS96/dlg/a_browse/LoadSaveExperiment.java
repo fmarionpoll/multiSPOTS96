@@ -160,7 +160,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				ExperimentDirectories eDAF = new ExperimentDirectories();
 				final String subDir = parent0.expListCombo.stringExpBinSubDirectory;
 				if (eDAF.getDirectoriesFromDialog(subDir, null, true)) {
-					int item = parent0.expListCombo.addExperiment(new Experiment(eDAF), false);
+					int item = parent0.expListCombo.addExperiment(new Experiment(eDAF));
 					parent0.dlgExperiment.tabInfos.initInfosCombos();
 					parent0.expListCombo.setSelectedIndex(item);
 				}
@@ -173,7 +173,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				ExperimentDirectories eDAF = new ExperimentDirectories();
 				final String subDir = parent0.expListCombo.stringExpBinSubDirectory;
 				if (eDAF.getDirectoriesFromDialog(subDir, null, false)) {
-					int item = parent0.expListCombo.addExperiment(new Experiment(eDAF), false);
+					int item = parent0.expListCombo.addExperiment(new Experiment(eDAF));
 					parent0.dlgExperiment.tabInfos.initInfosCombos();
 					parent0.expListCombo.setSelectedIndex(item);
 				}
@@ -233,7 +233,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			ExperimentDirectories expDirectories = new ExperimentDirectories();
 			final String subDir = parent0.expListCombo.stringExpBinSubDirectory;
 			if (expDirectories.getDirectoriesFromExptPath(subDir, selectedNames.get(0))) {
-				int item = parent0.expListCombo.addExperiment(new Experiment(expDirectories), false);
+				int item = parent0.expListCombo.addExperiment(new Experiment(expDirectories));
 				parent0.dlgExperiment.tabInfos.initInfosCombos();
 				parent0.expListCombo.setSelectedIndex(item);
 
@@ -242,7 +242,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 						for (int i = 1; i < selectedNames.size(); i++) {
 							ExperimentDirectories eDAF = new ExperimentDirectories();
 							if (eDAF.getDirectoriesFromExptPath(subDir, selectedNames.get(i))) {
-								parent0.expListCombo.addExperiment(new Experiment(eDAF), false);
+								parent0.expListCombo.addExperiment(new Experiment(eDAF));
 							}
 						}
 						selectedNames.clear();

@@ -45,14 +45,8 @@ public class LazyExperiment extends Experiment {
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
 	private final static String ID_MS96_experiment_XML = "MS96_experiment.xml";
 
-	/**
-	 * Creates a new LazyExperiment with the specified metadata.
-	 * 
-	 * @param metadata The metadata containing experiment information
-	 */
 	public LazyExperiment(ExperimentMetadata metadata) {
 		this.metadata = metadata;
-		// Set the results directory to provide a meaningful display name
 		this.setResultsDirectory(metadata.getResultsDirectory());
 	}
 
@@ -61,10 +55,6 @@ public class LazyExperiment extends Experiment {
 		return metadata.getCameraDirectory();
 	}
 
-	/**
-	 * Loads the full experiment data only when this method is called. This
-	 * implements the lazy loading pattern.
-	 */
 	public void loadIfNeeded() {
 		if (!isLoaded) {
 			try {
@@ -90,12 +80,6 @@ public class LazyExperiment extends Experiment {
 		}
 	}
 
-	/**
-	 * Loads only the experiment properties from XML file for efficient field value
-	 * retrieval. This method avoids loading the full experiment data.
-	 * 
-	 * @return true if properties were loaded successfully, false otherwise
-	 */
 	public boolean loadPropertiesIfNeeded() {
 		if (!propertiesLoaded) {
 			try {
@@ -137,13 +121,7 @@ public class LazyExperiment extends Experiment {
 		return true;
 	}
 
-	/**
-	 * Gets a field value from the cached properties without loading the full experiment.
-	 * This is much more efficient than loading the entire experiment just for field values.
-	 * 
-	 * @param field The field to retrieve
-	 * @return The field value, or ".." if not available
-	 */
+
 	public String getFieldValue(EnumXLSColumnHeader field) {
 		if (loadPropertiesIfNeeded() && cachedProperties != null) {
 			return cachedProperties.getExperimentField(field);
@@ -151,38 +129,18 @@ public class LazyExperiment extends Experiment {
 		return "..";
 	}
 
-	/**
-	 * Checks if the experiment has been fully loaded.
-	 * 
-	 * @return true if the experiment is loaded, false otherwise
-	 */
 	public boolean isLoaded() {
 		return isLoaded;
 	}
 
-	/**
-	 * Checks if the experiment properties have been loaded.
-	 * 
-	 * @return true if the properties are loaded, false otherwise
-	 */
 	public boolean isPropertiesLoaded() {
 		return propertiesLoaded;
 	}
 
-	/**
-	 * Gets the metadata associated with this lazy experiment.
-	 * 
-	 * @return The experiment metadata
-	 */
 	public ExperimentMetadata getMetadata() {
 		return metadata;
 	}
 
-	/**
-	 * Gets the cached properties. This method will load properties if needed.
-	 * 
-	 * @return The cached experiment properties, or null if loading failed
-	 */
 	public ExperimentProperties getCachedProperties() {
 		loadPropertiesIfNeeded();
 		return cachedProperties;
@@ -197,42 +155,21 @@ public class LazyExperiment extends Experiment {
 		private final String resultsDirectory;
 		private final String binDirectory;
 
-		/**
-		 * Creates a new ExperimentMetadata object.
-		 * 
-		 * @param cameraDirectory The camera directory path
-		 * @param resultsDirectory The results directory path
-		 * @param binDirectory The bin directory path
-		 */
+
 		public ExperimentMetadata(String cameraDirectory, String resultsDirectory, String binDirectory) {
 			this.cameraDirectory = cameraDirectory;
 			this.resultsDirectory = resultsDirectory;
 			this.binDirectory = binDirectory;
 		}
 
-		/**
-		 * Gets the camera directory path.
-		 * 
-		 * @return The camera directory path
-		 */
 		public String getCameraDirectory() {
 			return cameraDirectory;
 		}
 
-		/**
-		 * Gets the results directory path.
-		 * 
-		 * @return The results directory path
-		 */
 		public String getResultsDirectory() {
 			return resultsDirectory;
 		}
 
-		/**
-		 * Gets the bin directory path.
-		 * 
-		 * @return The bin directory path
-		 */
 		public String getBinDirectory() {
 			return binDirectory;
 		}
