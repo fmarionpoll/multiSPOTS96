@@ -139,7 +139,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 	 */
 	private Experiment convertToLazyExperiment(Experiment exp) {
 		if (exp instanceof LazyExperiment) {
-			return exp; // Already a LazyExperiment
+			return exp;
 		}
 
 		// Create metadata from the experiment
@@ -445,7 +445,8 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 				LazyExperiment lazyExp = (LazyExperiment) item;
 				// For now, just add the experiment name as a placeholder
 				// This prevents loading all experiments just for combo box population
-				textList.add(lazyExp.toString());
+				// textList.add(lazyExp.toString());
+				textList.add("..");
 			} else if (item instanceof Experiment) {
 				Experiment exp = (Experiment) item;
 				// For regular experiments, we still need to load them

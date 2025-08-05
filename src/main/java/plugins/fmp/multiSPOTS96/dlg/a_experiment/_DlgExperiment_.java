@@ -52,7 +52,7 @@ public class _DlgExperiment_ extends JPanel implements ViewerListener, ChangeLis
 		GridLayout tabsLayout = new GridLayout(4, 1);
 
 		tabInfos.init(tabsLayout, parent0);
-		tabsPane.addTab("Infos", null, tabInfos, "Define infos for this experiment/box");
+		tabsPane.addTab("Infos", null, tabInfos, "Define descriptors for experiment");
 
 		tabFilter.init(tabsLayout, parent0);
 		tabsPane.addTab("Filter", null, tabFilter, "Filter experiments based on descriptors");
