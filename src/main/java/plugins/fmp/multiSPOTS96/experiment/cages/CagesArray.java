@@ -220,7 +220,7 @@ public class CagesArray {
 
 	public boolean xmlReadCagesFromFileNoQuestion(String tempname) {
 		// Memory monitoring before loading
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		// System.out.println("=== XML LOADING: CagesArray ===");
 		// System.out.println("Loading file: " + tempname);
 		// System.out.println("Memory before loading: " + (startMemory / 1024 / 1024) + " MB");
@@ -237,8 +237,8 @@ public class CagesArray {
 			boolean success = xmlLoadCages(XMLUtil.getRootElement(doc));
 			
 			// Memory monitoring after loading
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
+//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//			long memoryIncrease = endMemory - startMemory;
 					// System.out.println("Memory after loading: " + (endMemory / 1024 / 1024) + " MB");
 		// System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
 		// System.out.println("Loaded cages: " + cagesList.size());
@@ -255,7 +255,7 @@ public class CagesArray {
 
 	public boolean xmlWriteCagesToFileNoQuestion(String tempname) {
 		// Memory monitoring before saving
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		// System.out.println("=== XML SAVING: CagesArray ===");
 		// System.out.println("Saving file: " + tempname);
 		// System.out.println("Memory before saving: " + (startMemory / 1024 / 1024) + " MB");
@@ -276,8 +276,8 @@ public class CagesArray {
 			}
 			
 			// Memory monitoring after saving
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
+//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//			long memoryIncrease = endMemory - startMemory;
 					// System.out.println("Memory after saving: " + (endMemory / 1024 / 1024) + " MB");
 		// System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
 		// System.out.println("Save success: " + success);

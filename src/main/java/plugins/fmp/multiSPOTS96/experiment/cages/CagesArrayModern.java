@@ -52,14 +52,14 @@ import plugins.fmp.multiSPOTS96.experiment.sequence.SequenceCamData;
  * @version 2.3.3
  * @since 2.3.3
  */
-public final class ModernCagesArray implements AutoCloseable {
-	private static final Logger LOGGER = Logger.getLogger(ModernCagesArray.class.getName());
+public final class CagesArrayModern implements AutoCloseable {
+	private static final Logger LOGGER = Logger.getLogger(CagesArrayModern.class.getName());
 
 	// === THREAD-SAFE COLLECTIONS ===
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-	private final List<ModernCage> cages = new CopyOnWriteArrayList<>();
-	private final Map<Integer, ModernCage> cagesByID = new ConcurrentHashMap<>();
-	private final Map<String, ModernCage> cagesByName = new ConcurrentHashMap<>();
+	private final List<CageModern> cages = new CopyOnWriteArrayList<>();
+	private final Map<Integer, CageModern> cagesByID = new ConcurrentHashMap<>();
+	private final Map<String, CageModern> cagesByName = new ConcurrentHashMap<>();
 
 	// === CONFIGURATION ===
 	private final CagesArrayConfiguration configuration;
@@ -73,7 +73,7 @@ public final class ModernCagesArray implements AutoCloseable {
 	 * @param configuration the configuration to use
 	 * @throws IllegalArgumentException if configuration is null
 	 */
-	public ModernCagesArray(CagesArrayConfiguration configuration) {
+	public CagesArrayModern(CagesArrayConfiguration configuration) {
 		this.configuration = Objects.requireNonNull(configuration, "Configuration cannot be null");
 	}
 
@@ -94,7 +94,7 @@ public final class ModernCagesArray implements AutoCloseable {
 	 * @return detailed cages array information
 	 * @throws IllegalStateException if the array is closed
 	 */
-	public CagesArrayInfo getArrayInfo() {
+	public CagesArrayProperties getArrayInfo() {
 		ensureNotClosed();
 		lock.readLock().lock();
 		try {
@@ -106,7 +106,7 @@ public final class ModernCagesArray implements AutoCloseable {
 
 			long cagesWithSpots = cages.stream().filter(cage -> cage.getSpotsArray().getSpotsList().size() > 0).count();
 
-			return CagesArrayInfo.builder().totalCages(cages.size()).validCages((int) validCages)
+			return CagesArrayProperties.builder().totalCages(cages.size()).validCages((int) validCages)
 					.activeCages((int) activeCages).cagesWithSpots((int) cagesWithSpots)
 					.gridSize(configuration.getNTotalCages()).cageNames(cageNames).hasTimeIntervals(false) // TODO:
 																											// implement
@@ -125,7 +125,7 @@ public final class ModernCagesArray implements AutoCloseable {
 	 * @return immutable list of cages
 	 * @throws IllegalStateException if the array is closed
 	 */
-	public List<ModernCage> getCages() {
+	public List<CageModern> getCages() {
 		ensureNotClosed();
 		return Collections.unmodifiableList(new ArrayList<>(cages));
 	}
@@ -139,7 +139,7 @@ public final class ModernCagesArray implements AutoCloseable {
 	 * @return detailed operation result
 	 * @throws IllegalStateException if the array is closed
 	 */
-	public CageOperationResult addCage(ModernCage cage) {
+	public CageOperationResult addCage(CageModern cage) {
 		if (cage == null) {
 			return CageOperationResult.failure("ADD_CAGE", new IllegalArgumentException("Cage cannot be null"),
 					"Cannot add null cage");
@@ -203,7 +203,7 @@ public final class ModernCagesArray implements AutoCloseable {
 		try {
 			long startTime = System.currentTimeMillis();
 
-			ModernCage cage = cagesByID.remove(cageID);
+			CageModern cage = cagesByID.remove(cageID);
 			if (cage != null) {
 				cages.remove(cage);
 				cagesByName.remove(cage.getData().getName());
@@ -238,7 +238,7 @@ public final class ModernCagesArray implements AutoCloseable {
 	 * @return optional containing the cage if found
 	 * @throws IllegalStateException if the array is closed
 	 */
-	public Optional<ModernCage> findCageById(int cageID) {
+	public Optional<CageModern> findCageById(int cageID) {
 		ensureNotClosed();
 		return Optional.ofNullable(cagesByID.get(cageID));
 	}
@@ -251,7 +251,7 @@ public final class ModernCagesArray implements AutoCloseable {
 	 * @throws IllegalArgumentException if name is null or empty
 	 * @throws IllegalStateException    if the array is closed
 	 */
-	public Optional<ModernCage> findCageByName(String name) {
+	public Optional<CageModern> findCageByName(String name) {
 		if (name == null || name.trim().isEmpty()) {
 			throw new IllegalArgumentException("Name cannot be null or empty");
 		}
@@ -267,7 +267,7 @@ public final class ModernCagesArray implements AutoCloseable {
 	 * @throws IllegalArgumentException if region is null
 	 * @throws IllegalStateException    if the array is closed
 	 */
-	public List<ModernCage> findCagesInRegion(Rectangle2D region) {
+	public List<CageModern> findCagesInRegion(Rectangle2D region) {
 		if (region == null) {
 			throw new IllegalArgumentException("Region cannot be null");
 		}
@@ -288,7 +288,7 @@ public final class ModernCagesArray implements AutoCloseable {
 	 * @return list of valid cages
 	 * @throws IllegalStateException if the array is closed
 	 */
-	public List<ModernCage> findValidCages() {
+	public List<CageModern> findValidCages() {
 		ensureNotClosed();
 		lock.readLock().lock();
 		try {
@@ -304,7 +304,7 @@ public final class ModernCagesArray implements AutoCloseable {
 	 * @return list of active cages
 	 * @throws IllegalStateException if the array is closed
 	 */
-	public List<ModernCage> findActiveCages() {
+	public List<CageModern> findActiveCages() {
 		ensureNotClosed();
 		lock.readLock().lock();
 		try {
@@ -324,7 +324,7 @@ public final class ModernCagesArray implements AutoCloseable {
 	 * @throws IllegalArgumentException if otherArray is null
 	 * @throws IllegalStateException    if the array is closed
 	 */
-	public CageOperationResult mergeCages(ModernCagesArray otherArray) {
+	public CageOperationResult mergeCages(CagesArrayModern otherArray) {
 		if (otherArray == null) {
 			return CageOperationResult.failure("MERGE_CAGES",
 					new IllegalArgumentException("Other array cannot be null"), "Cannot merge with null array");
@@ -340,7 +340,7 @@ public final class ModernCagesArray implements AutoCloseable {
 			List<String> addedCages = new ArrayList<>();
 			List<String> skippedCages = new ArrayList<>();
 
-			for (ModernCage cage : otherArray.getCages()) {
+			for (CageModern cage : otherArray.getCages()) {
 				String cageName = cage.getData().getName();
 				int cageID = cage.getData().getProperties().getCageID();
 
@@ -383,7 +383,7 @@ public final class ModernCagesArray implements AutoCloseable {
 			int removedCount = cages.size();
 
 			// Close all cages to free resources
-			for (ModernCage cage : cages) {
+			for (CageModern cage : cages) {
 				try {
 					cage.close();
 				} catch (Exception e) {
@@ -427,7 +427,7 @@ public final class ModernCagesArray implements AutoCloseable {
 			long startTime = System.currentTimeMillis();
 
 			List<ROI2D> cageROIList = new ArrayList<>(cages.size());
-			for (ModernCage cage : cages) {
+			for (CageModern cage : cages) {
 				cageROIList.add(cage.getData().getRoi());
 			}
 
@@ -469,7 +469,7 @@ public final class ModernCagesArray implements AutoCloseable {
 			try {
 				if (!closed) {
 					// Close all cages
-					for (ModernCage cage : cages) {
+					for (CageModern cage : cages) {
 						try {
 							cage.close();
 						} catch (Exception e) {
@@ -533,8 +533,8 @@ public final class ModernCagesArray implements AutoCloseable {
 		 * 
 		 * @return the created cages array
 		 */
-		public ModernCagesArray build() {
-			return new ModernCagesArray(configuration);
+		public CagesArrayModern build() {
+			return new CagesArrayModern(configuration);
 		}
 	}
 }

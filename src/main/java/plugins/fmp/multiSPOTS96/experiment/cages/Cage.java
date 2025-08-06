@@ -27,7 +27,7 @@ import plugins.kernel.roi.roi2d.ROI2DRectangle;
 import plugins.kernel.roi.roi2d.ROI2DShape;
 
 public class Cage implements Comparable<Cage>, AutoCloseable {
-	private static final Logger LOGGER = Logger.getLogger(ModernCage.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CageModern.class.getName());
 
 	private ROI2D cageROI2D = null;
 	public int kymographIndex = -1;

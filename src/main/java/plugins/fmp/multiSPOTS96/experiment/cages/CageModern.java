@@ -44,8 +44,8 @@ import plugins.kernel.roi.roi2d.ROI2DEllipse;
  * @version 2.3.3
  * @since 2.3.3
  */
-public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
-	private static final Logger LOGGER = Logger.getLogger(ModernCage.class.getName());
+public final class CageModern implements Comparable<CageModern>, AutoCloseable {
+	private static final Logger LOGGER = Logger.getLogger(CageModern.class.getName());
 
 	// === CORE DATA ===
 	private final CageData data;
@@ -54,7 +54,7 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 	private final AtomicBoolean closed = new AtomicBoolean(false);
 
 	// === CONSTRUCTORS ===
-	private ModernCage(Builder builder) {
+	private CageModern(Builder builder) {
 		this.data = Objects.requireNonNull(builder.data, "CageData cannot be null");
 		this.flyPositions = builder.flyPositions != null ? builder.flyPositions : new FlyPositions();
 		this.spotsArray = builder.spotsArray != null ? builder.spotsArray : new SpotsArray();
@@ -64,12 +64,12 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 		return new Builder();
 	}
 
-	public static ModernCage createValid(ROI2D roi, CageProperties properties) {
+	public static CageModern createValid(ROI2D roi, CageProperties properties) {
 		CageData cageData = CageData.createValid(roi, properties);
 		return builder().withData(cageData).build();
 	}
 
-	public static ModernCage createInvalid(ROI2D roi, String reason) {
+	public static CageModern createInvalid(ROI2D roi, String reason) {
 		CageData cageData = CageData.createInvalid(roi, reason);
 		return builder().withData(cageData).build();
 	}
@@ -262,7 +262,7 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 	// === COMPARISON & LIFECYCLE ===
 
 	@Override
-	public int compareTo(ModernCage other) {
+	public int compareTo(CageModern other) {
 		if (other == null) {
 			throw new IllegalArgumentException("Cannot compare with null cage");
 		}
@@ -284,7 +284,7 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 			return true;
 		if (obj == null || getClass() != obj.getClass())
 			return false;
-		ModernCage that = (ModernCage) obj;
+		CageModern that = (CageModern) obj;
 		return Objects.equals(data.getName(), that.data.getName())
 				&& Objects.equals(data.getProperties().getCageID(), that.data.getProperties().getCageID());
 	}
@@ -393,11 +393,11 @@ public final class ModernCage implements Comparable<ModernCage>, AutoCloseable {
 		 * @return the created cage
 		 * @throws IllegalArgumentException if required data is missing
 		 */
-		public ModernCage build() {
+		public CageModern build() {
 			if (data == null) {
 				throw new IllegalArgumentException("CageData is required");
 			}
-			return new ModernCage(this);
+			return new CageModern(this);
 		}
 	}
 }

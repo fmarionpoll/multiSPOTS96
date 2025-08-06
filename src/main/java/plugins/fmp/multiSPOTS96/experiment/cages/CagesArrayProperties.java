@@ -8,7 +8,7 @@ import java.util.List;
  * @author MultiSPOTS96
  * @version 2.3.3
  */
-public final class CagesArrayInfo {
+public final class CagesArrayProperties {
     private final int totalCages;
     private final int validCages;
     private final int activeCages;
@@ -18,7 +18,7 @@ public final class CagesArrayInfo {
     private final boolean hasTimeIntervals;
     private final int timeIntervalsCount;
     
-    private CagesArrayInfo(Builder builder) {
+    private CagesArrayProperties(Builder builder) {
         this.totalCages = builder.totalCages;
         this.validCages = builder.validCages;
         this.activeCages = builder.activeCages;
@@ -127,8 +127,8 @@ public final class CagesArrayInfo {
             return this;
         }
         
-        public CagesArrayInfo build() {
-            return new CagesArrayInfo(this);
+        public CagesArrayProperties build() {
+            return new CagesArrayProperties(this);
         }
     }
 } 
