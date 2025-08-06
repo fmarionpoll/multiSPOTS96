@@ -64,10 +64,10 @@ public class ExperimentProperties {
 	public String getExperimentField(EnumXLSColumnHeader fieldEnumCode) {
 		String strField = null;
 		switch (fieldEnumCode) {
-		case EXP_STIM:
+		case EXP_STIM1:
 			strField = field_stim1;
 			break;
-		case EXP_CONC:
+		case EXP_CONC1:
 			strField = field_conc1;
 			break;
 		case EXP_EXPT:
@@ -82,10 +82,10 @@ public class ExperimentProperties {
 		case EXP_SEX:
 			strField = field_sex;
 			break;
-		case EXP_COND1:
+		case EXP_STIM2:
 			strField = field_stim2;
 			break;
-		case EXP_COND2:
+		case EXP_CONC2:
 			strField = field_conc2;
 			break;
 		default:
@@ -96,10 +96,10 @@ public class ExperimentProperties {
 
 	public void setExperimentFieldNoTest(EnumXLSColumnHeader fieldEnumCode, String newValue) {
 		switch (fieldEnumCode) {
-		case EXP_STIM:
+		case EXP_STIM1:
 			field_stim1 = newValue;
 			break;
-		case EXP_CONC:
+		case EXP_CONC1:
 			field_conc1 = newValue;
 			break;
 		case EXP_EXPT:
@@ -114,10 +114,10 @@ public class ExperimentProperties {
 		case EXP_SEX:
 			field_sex = newValue;
 			break;
-		case EXP_COND1:
+		case EXP_STIM2:
 			field_stim2 = newValue;
 			break;
-		case EXP_COND2:
+		case EXP_CONC2:
 			field_conc2 = newValue;
 			break;
 		default:
@@ -128,12 +128,12 @@ public class ExperimentProperties {
 	public void copyExperimentFieldsFrom(ExperimentProperties expSource) {
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_EXPT);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_BOXID);
-		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STIM);
-		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_CONC);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STIM1);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_CONC1);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STRAIN);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_SEX);
-		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_COND1);
-		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_COND2);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STIM2);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_CONC2);
 	}
 
 	private void copyExperimentalField(ExperimentProperties expSource, EnumXLSColumnHeader fieldEnumCode) {
@@ -145,12 +145,12 @@ public class ExperimentProperties {
 		boolean flag = true;
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_EXPT);
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_BOXID);
-		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_STIM);
-		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_CONC);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_STIM1);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_CONC1);
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_STRAIN);
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_SEX);
-		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_COND1);
-		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_COND2);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_STIM2);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_CONC2);
 		return flag;
 	}
 

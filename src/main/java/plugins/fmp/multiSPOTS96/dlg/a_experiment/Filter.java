@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
+import plugins.fmp.multiSPOTS96.tools.DialogTools;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxModelSorted;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
@@ -28,23 +29,24 @@ public class Filter extends JPanel {
 	 */
 	private static final long serialVersionUID = 2190848825783418962L;
 
-	private JComboBox<String> cmt1Combo = new JComboBox<String>(new JComboBoxModelSorted());
-	private JComboBox<String> comt2Combo = new JComboBox<String>(new JComboBoxModelSorted());
+	private JComboBox<String> stim1Combo = new JComboBox<String>(new JComboBoxModelSorted());
+	private JComboBox<String> conc1Combo = new JComboBox<String>(new JComboBoxModelSorted());
 	private JComboBox<String> boxIDCombo = new JComboBox<String>(new JComboBoxModelSorted());
 	private JComboBox<String> exptCombo = new JComboBox<String>(new JComboBoxModelSorted());
 	private JComboBox<String> strainCombo = new JComboBox<String>(new JComboBoxModelSorted());
 	private JComboBox<String> sexCombo = new JComboBox<String>(new JComboBoxModelSorted());
-	private JComboBox<String> cond1Combo = new JComboBox<String>(new JComboBoxModelSorted());
-	private JComboBox<String> cond2Combo = new JComboBox<String>(new JComboBoxModelSorted());
+	private JComboBox<String> stim2Combo = new JComboBox<String>(new JComboBoxModelSorted());
+	private JComboBox<String> conc2Combo = new JComboBox<String>(new JComboBoxModelSorted());
 
 	private JCheckBox experimentCheck = new JCheckBox(EnumXLSColumnHeader.EXP_EXPT.toString());
 	private JCheckBox boxIDCheck = new JCheckBox(EnumXLSColumnHeader.EXP_BOXID.toString());
-	private JCheckBox comment1Check = new JCheckBox(EnumXLSColumnHeader.EXP_STIM.toString());
-	private JCheckBox comment2Check = new JCheckBox(EnumXLSColumnHeader.EXP_CONC.toString());
+	private JCheckBox stim1Check = new JCheckBox(EnumXLSColumnHeader.EXP_STIM1.toString());
+	private JCheckBox conc1Check = new JCheckBox(EnumXLSColumnHeader.EXP_CONC1.toString());
 	private JCheckBox strainCheck = new JCheckBox(EnumXLSColumnHeader.EXP_STRAIN.toString());
 	private JCheckBox sexCheck = new JCheckBox(EnumXLSColumnHeader.EXP_SEX.toString());
-	private JCheckBox cond1Check = new JCheckBox(EnumXLSColumnHeader.EXP_COND1.toString());
-	private JCheckBox cond2Check = new JCheckBox(EnumXLSColumnHeader.EXP_COND2.toString());
+	private JCheckBox stim2Check = new JCheckBox(EnumXLSColumnHeader.EXP_STIM2.toString());
+	private JCheckBox conc2Check = new JCheckBox(EnumXLSColumnHeader.EXP_CONC2.toString());
+
 	private JButton applyButton = new JButton("Apply");
 	private JButton clearButton = new JButton("Clear");
 
@@ -69,65 +71,38 @@ public class Filter extends JPanel {
 		// line 0
 		c.gridx = 0;
 		c.gridy = 0;
-		add(experimentCheck, c);
-		c.gridx += delta1;
-		add(exptCombo, c);
-		c.gridx += delta2;
-		add(boxIDCheck, c);
-		c.gridx += delta1;
-		add(boxIDCombo, c);
-		c.gridx += delta2;
-		add(applyButton, c);
-
+		DialogTools.addFiveComponentOnARow(this, experimentCheck, exptCombo, boxIDCheck, boxIDCombo, applyButton, c,
+				delta1, delta2);
 		// line 2
 		c.gridy = 1;
 		c.gridx = 0;
-		add(strainCheck, c);
-		c.gridx += delta1;
-		add(strainCombo, c);
-		c.gridx += delta2;
-		add(sexCheck, c);
-		c.gridx += delta1;
-		add(sexCombo, c);
-		c.gridx += delta2;
-		add(clearButton, c);
-
+		DialogTools.addFiveComponentOnARow(this, strainCheck, strainCombo, sexCheck, sexCombo, clearButton, c, delta1,
+				delta2);
 		// line 1
 		c.gridy = 2;
 		c.gridx = 0;
-		add(comment1Check, c);
-		c.gridx += delta1;
-		add(cmt1Combo, c);
-		c.gridx += delta2;
-		add(comment2Check, c);
-		c.gridx += delta1;
-		add(comt2Combo, c);
-
+		DialogTools.addFiveComponentOnARow(this, stim1Check, stim1Combo, conc1Check, conc1Combo, null, c, delta1,
+				delta2);
 		// line 3
 		c.gridy = 3;
 		c.gridx = 0;
-		add(cond1Check, c);
-		c.gridx += delta1;
-		add(cond1Combo, c);
-		c.gridx += delta2;
-		add(cond2Check, c);
-		c.gridx += delta1;
-		add(cond2Combo, c);
+		DialogTools.addFiveComponentOnARow(this, stim2Check, stim2Combo, conc2Check, conc2Combo, null, c, delta1,
+				delta2);
 
 		defineActionListeners();
 	}
 
-	public void initFilterCombos() {
+	public void initCombos() {
 		if (!parent0.dlgBrowse.loadSaveExperiment.filteredCheck.isSelected())
 			filterExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsList());
 		filterExpList.getFieldValuesToComboLightweight(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
-		filterExpList.getFieldValuesToComboLightweight(cmt1Combo, EnumXLSColumnHeader.EXP_STIM);
-		filterExpList.getFieldValuesToComboLightweight(comt2Combo, EnumXLSColumnHeader.EXP_CONC);
+		filterExpList.getFieldValuesToComboLightweight(stim1Combo, EnumXLSColumnHeader.EXP_STIM1);
+		filterExpList.getFieldValuesToComboLightweight(conc1Combo, EnumXLSColumnHeader.EXP_CONC1);
 		filterExpList.getFieldValuesToComboLightweight(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
 		filterExpList.getFieldValuesToComboLightweight(sexCombo, EnumXLSColumnHeader.EXP_SEX);
 		filterExpList.getFieldValuesToComboLightweight(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
-		filterExpList.getFieldValuesToComboLightweight(cond1Combo, EnumXLSColumnHeader.EXP_COND1);
-		filterExpList.getFieldValuesToComboLightweight(cond2Combo, EnumXLSColumnHeader.EXP_COND2);
+		filterExpList.getFieldValuesToComboLightweight(stim2Combo, EnumXLSColumnHeader.EXP_STIM2);
+		filterExpList.getFieldValuesToComboLightweight(conc2Combo, EnumXLSColumnHeader.EXP_CONC2);
 	}
 
 	private void defineActionListeners() {
@@ -165,8 +140,8 @@ public class Filter extends JPanel {
 		boolean select = false;
 		experimentCheck.setSelected(select);
 		boxIDCheck.setSelected(select);
-		comment1Check.setSelected(select);
-		comment2Check.setSelected(select);
+		stim1Check.setSelected(select);
+		conc1Check.setSelected(select);
 		strainCheck.setSelected(select);
 		sexCheck.setSelected(select);
 	}
@@ -177,18 +152,18 @@ public class Filter extends JPanel {
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_EXPT, (String) exptCombo.getSelectedItem());
 		if (boxIDCheck.isSelected())
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_BOXID, (String) boxIDCombo.getSelectedItem());
-		if (comment1Check.isSelected())
-			filterItem(filteredList, EnumXLSColumnHeader.EXP_STIM, (String) cmt1Combo.getSelectedItem());
-		if (comment2Check.isSelected())
-			filterItem(filteredList, EnumXLSColumnHeader.EXP_CONC, (String) comt2Combo.getSelectedItem());
+		if (stim1Check.isSelected())
+			filterItem(filteredList, EnumXLSColumnHeader.EXP_STIM1, (String) stim1Combo.getSelectedItem());
+		if (conc1Check.isSelected())
+			filterItem(filteredList, EnumXLSColumnHeader.EXP_CONC1, (String) conc1Combo.getSelectedItem());
 		if (sexCheck.isSelected())
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_SEX, (String) sexCombo.getSelectedItem());
 		if (strainCheck.isSelected())
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_STRAIN, (String) strainCombo.getSelectedItem());
-		if (cond1Check.isSelected())
-			filterItem(filteredList, EnumXLSColumnHeader.EXP_COND1, (String) cond1Combo.getSelectedItem());
-		if (cond2Check.isSelected())
-			filterItem(filteredList, EnumXLSColumnHeader.EXP_COND2, (String) cond2Combo.getSelectedItem());
+		if (stim2Check.isSelected())
+			filterItem(filteredList, EnumXLSColumnHeader.EXP_STIM2, (String) stim2Combo.getSelectedItem());
+		if (conc2Check.isSelected())
+			filterItem(filteredList, EnumXLSColumnHeader.EXP_CONC2, (String) conc2Combo.getSelectedItem());
 		return filteredList;
 	}
 
@@ -198,7 +173,7 @@ public class Filter extends JPanel {
 			Experiment exp = iterator.next();
 			ExperimentProperties prop = exp.getProperties();
 			String value = prop.getExperimentField(header);
-			int compare = exp.getProperties().getExperimentField(header).compareTo(filter);
+			int compare = value.compareTo(filter);
 			if (compare != 0)
 				iterator.remove();
 		}

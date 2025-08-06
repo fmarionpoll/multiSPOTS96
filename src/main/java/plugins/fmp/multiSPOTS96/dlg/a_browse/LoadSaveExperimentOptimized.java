@@ -371,7 +371,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 			}
 
 			parent0.expListCombo.addLazyExperimentsBulk(lazyExperiments);
-			parent0.dlgExperiment.tabInfos.initInfosCombos();
+			parent0.dlgExperiment.tabInfos.initCombos();
 
 		} catch (Exception e) {
 			LOGGER.warning("Error adding metadata to UI: " + e.getMessage());
@@ -442,7 +442,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 			LazyExperiment lazyExp = new LazyExperiment(metadata);
 			int selectedIndex = parent0.expListCombo.addLazyExperiment(lazyExp);
-			parent0.dlgExperiment.tabInfos.initInfosCombos();
+			parent0.dlgExperiment.tabInfos.initCombos();
 			parent0.expListCombo.setSelectedIndex(selectedIndex);
 		}
 	}

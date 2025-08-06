@@ -614,14 +614,14 @@ public class Experiment {
 	public List<String> getFieldValues(EnumXLSColumnHeader fieldEnumCode) {
 		List<String> textList = new ArrayList<String>();
 		switch (fieldEnumCode) {
-		case EXP_STIM:
-		case EXP_CONC:
+		case EXP_STIM1:
+		case EXP_CONC1:
 		case EXP_EXPT:
 		case EXP_BOXID:
 		case EXP_STRAIN:
 		case EXP_SEX:
-		case EXP_COND1:
-		case EXP_COND2:
+		case EXP_STIM2:
+		case EXP_CONC2:
 			textList.add(prop.getExperimentField(fieldEnumCode));
 			break;
 		case SPOT_STIM:
@@ -651,14 +651,14 @@ public class Experiment {
 
 	public void replaceFieldValue(EnumXLSColumnHeader fieldEnumCode, String oldValue, String newValue) {
 		switch (fieldEnumCode) {
-		case EXP_STIM:
-		case EXP_CONC:
+		case EXP_STIM1:
+		case EXP_CONC1:
 		case EXP_EXPT:
 		case EXP_BOXID:
 		case EXP_STRAIN:
 		case EXP_SEX:
-		case EXP_COND1:
-		case EXP_COND2:
+		case EXP_STIM2:
+		case EXP_CONC2:
 			replaceExperimentFieldIfEqualOld(fieldEnumCode, oldValue, newValue);
 			break;
 		case SPOT_STIM:

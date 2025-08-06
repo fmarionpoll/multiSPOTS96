@@ -161,7 +161,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				final String subDir = parent0.expListCombo.stringExpBinSubDirectory;
 				if (eDAF.getDirectoriesFromDialog(subDir, null, true)) {
 					int item = parent0.expListCombo.addExperiment(new Experiment(eDAF));
-					parent0.dlgExperiment.tabInfos.initInfosCombos();
+					parent0.dlgExperiment.tabInfos.initCombos();
 					parent0.expListCombo.setSelectedIndex(item);
 				}
 			}
@@ -174,7 +174,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 				final String subDir = parent0.expListCombo.stringExpBinSubDirectory;
 				if (eDAF.getDirectoriesFromDialog(subDir, null, false)) {
 					int item = parent0.expListCombo.addExperiment(new Experiment(eDAF));
-					parent0.dlgExperiment.tabInfos.initInfosCombos();
+					parent0.dlgExperiment.tabInfos.initCombos();
 					parent0.expListCombo.setSelectedIndex(item);
 				}
 			}
@@ -234,7 +234,7 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			final String subDir = parent0.expListCombo.stringExpBinSubDirectory;
 			if (expDirectories.getDirectoriesFromExptPath(subDir, selectedNames.get(0))) {
 				int item = parent0.expListCombo.addExperiment(new Experiment(expDirectories));
-				parent0.dlgExperiment.tabInfos.initInfosCombos();
+				parent0.dlgExperiment.tabInfos.initCombos();
 				parent0.expListCombo.setSelectedIndex(item);
 
 				SwingUtilities.invokeLater(new Runnable() {

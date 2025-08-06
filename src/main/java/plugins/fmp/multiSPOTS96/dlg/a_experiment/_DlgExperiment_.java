@@ -168,9 +168,9 @@ public class _DlgExperiment_ extends JPanel implements ViewerListener, ChangeLis
 	public void stateChanged(ChangeEvent e) {
 		JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
 		if (tabbedPane.getSelectedIndex() == 0)
-			tabInfos.initInfosCombos();
+			tabInfos.initCombos();
 		else if (tabbedPane.getSelectedIndex() == 1)
-			tabFilter.initFilterCombos();
+			tabFilter.initCombos();
 		else if (tabbedPane.getSelectedIndex() == 2)
 			tabEdit.initEditCombos();
 	}
