@@ -90,7 +90,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 
 	private int isFoundAt(LazyExperiment newLazyExperiment) {
 		int newCode = newLazyExperiment.getMetadata().hashCode();
-		int index = 0;
+		int index = -1;
 		for (ExperimentMetadata expData : experimentMetadataList) {
 			int codeFromList = expData.hashCode();
 			if (codeFromList == newCode) {
@@ -98,7 +98,7 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 			}
 			index++;
 		}
-		return index;
+		return -1;
 	}
 
 	private boolean isUnique(LazyExperiment newLazyExperiment) {
@@ -124,12 +124,6 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		return new LazyExperiment(metadata);
 	}
 
-	/**
-	 * Gets an experiment from the combo box, ensuring it's loaded if needed.
-	 * 
-	 * @param index The index of the experiment
-	 * @return The experiment at the specified index
-	 */
 	@Override
 	public Experiment getItemAt(int index) {
 		Object item = super.getItemAt(index);
@@ -143,11 +137,6 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		return null;
 	}
 
-	/**
-	 * Gets the selected experiment, ensuring it's loaded if needed.
-	 * 
-	 * @return The selected experiment
-	 */
 	@Override
 	public Experiment getSelectedItem() {
 		Object selected = super.getSelectedItem();
@@ -221,10 +210,6 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		return expAll;
 	}
 
-	/**
-	 * Loads all experiments with lazy loading support. This method ensures that
-	 * experiments are loaded only when accessed.
-	 */
 	public boolean loadListOfMeasuresFromAllExperiments(boolean loadSpots, boolean loadDrosoTrack) {
 		ProgressFrame progress = new ProgressFrame("Load experiment(s) parameters");
 		int nexpts = getItemCount();
@@ -443,11 +428,6 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		}
 	}
 
-	/**
-	 * Gets memory usage statistics for monitoring.
-	 * 
-	 * @return Memory usage information
-	 */
 	public String getMemoryUsageInfo() {
 		Runtime runtime = Runtime.getRuntime();
 		long totalMemory = runtime.totalMemory();
@@ -458,11 +438,6 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 				totalMemory / 1024 / 1024, experimentMetadataList.size());
 	}
 
-	/**
-	 * Gets the number of loaded experiments (those that have been fully loaded).
-	 * 
-	 * @return The number of loaded experiments
-	 */
 	public int getLoadedExperimentCount() {
 		int count = 0;
 		for (int i = 0; i < getItemCount(); i++) {

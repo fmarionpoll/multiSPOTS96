@@ -74,25 +74,16 @@ public class Experiment {
 	// ----------------------------------
 
 	public Experiment() {
-		// Use builder pattern for modern initialization
 		seqCamData = SequenceCamData.builder().withStatus(EnumStatus.FILESTACK).build();
-//		seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.defaultConfiguration())
-//				.build();
 	}
 
 	public Experiment(String expDirectory) {
-		// Use builder pattern with specific directory configuration
 		seqCamData = SequenceCamData.builder().withStatus(EnumStatus.FILESTACK).build();
-//		seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.defaultConfiguration())
-//				.build();
 		this.resultsDirectory = expDirectory;
 	}
 
 	public Experiment(SequenceCamData seqCamData) {
 		this.seqCamData = seqCamData;
-		// Use builder for kymographs with default configuration
-//		this.seqKymos = SequenceKymos.kymographBuilder()
-//				.withConfiguration(KymographConfiguration.defaultConfiguration()).build();
 		resultsDirectory = this.seqCamData.getImagesDirectory() + File.separator + RESULTS;
 		getFileIntervalsFromSeqCamData();
 		load_MS96_experiment(concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML));
@@ -101,8 +92,6 @@ public class Experiment {
 	public Experiment(ExperimentDirectories eADF) {
 		camDataImagesDirectory = eADF.getCameraImagesDirectory();
 		resultsDirectory = eADF.getResultsDirectory();
-//		binSubDirectory = eADF.getBinSubDirectory();
-		// Use builder pattern for modern sequence initialization
 		seqCamData = SequenceCamData.builder().withStatus(EnumStatus.FILESTACK).build();
 		String fileName = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
 		load_MS96_experiment(fileName);
@@ -113,12 +102,6 @@ public class Experiment {
 		seqCamData.loadImageList(imagesList);
 		if (eADF.cameraImagesList.size() > 1)
 			getFileIntervalsFromSeqCamData();
-
-//		if (eADF.kymosImagesList != null && eADF.kymosImagesList.size() > 0) {
-//			// Use builder pattern with image list and quality configuration
-//			seqKymos = SequenceKymos.kymographBuilder().withImageList(eADF.kymosImagesList)
-//					.withConfiguration(KymographConfiguration.qualityProcessing()).build();
-//		}
 	}
 
 	// ----------------------------------
@@ -134,13 +117,6 @@ public class Experiment {
 	public void setResultsDirectory(String fileName) {
 		resultsDirectory = ExperimentDirectories.getParentIf(fileName, BIN);
 	}
-
-//	public String getKymosBinFullDirectory() {
-//		String filename = resultsDirectory;
-//		if (binSubDirectory != null)
-//			filename += File.separator + binSubDirectory;
-//		return filename;
-//	}
 
 	public void setBinDirectory(String bin) {
 		binDirectory = bin;
@@ -206,8 +182,6 @@ public class Experiment {
 	}
 
 	public void closeSequences() {
-//		if (seqKymos != null)
-//			seqKymos.closeSequence();
 		if (seqCamData != null)
 			seqCamData.closeSequence();
 		if (seqReference != null)
@@ -221,12 +195,6 @@ public class Experiment {
 		}
 		load_MS96_experiment();
 		getFileIntervalsFromSeqCamData();
-
-//		if (seqKymos == null) {
-//			// Use builder pattern for kymographs initialization
-//			seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.defaultConfiguration())
-//					.build();
-//		}
 
 		return zxmlReadDrosoTrack(null);
 	}
@@ -317,7 +285,6 @@ public class Experiment {
 	}
 
 	// -------------------------------
-	// -------------------------------
 
 	public boolean load_MS96_experiment() {
 		if (resultsDirectory == null && seqCamData != null) {
@@ -329,13 +296,6 @@ public class Experiment {
 	}
 
 	private boolean load_MS96_experiment(String csFileName) {
-		// Memory monitoring before loading
-//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		// System.out.println("=== XML LOADING: Experiment ===");
-		// System.out.println("Loading file: " + csFileName);
-		// System.out.println("Memory before loading: " + (startMemory / 1024 / 1024) +
-		// " MB");
-
 		try {
 			final Document doc = XMLUtil.loadDocument(csFileName);
 			if (doc == null) {
@@ -370,7 +330,7 @@ public class Experiment {
 
 			long nImages = XMLUtil.getElementLongValue(node, ID_NFRAMES, -1);
 			if (nImages <= 0) {
-				System.err.println("ERROR: Invalid number of frames: " + nImages);
+				System.err.println("ERROR: Invalid number of frames: " + nImages + " in " +csFileName);
 				return false;
 			}
 			imgLoader.setFixedNumberOfImages(nImages);
@@ -404,15 +364,6 @@ public class Experiment {
 
 			ugly_checkOffsetValues();
 
-			// Memory monitoring after loading
-//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-//			long memoryIncrease = endMemory - startMemory;
-//			 System.out.println("Memory after loading: " + (endMemory / 1024 / 1024) + "
-//			 MB");
-//			 System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + "
-//			 MB");
-//			 System.out.println("=== XML LOADING COMPLETE ===");
-
 			return true;
 
 		} catch (Exception e) {
@@ -423,12 +374,6 @@ public class Experiment {
 	}
 
 	public boolean save_MS96_experiment() {
-		// Memory monitoring before saving
-//		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		// System.out.println("=== XML SAVING: Experiment ===");
-		// System.out.println("Memory before saving: " + (startMemory / 1024 / 1024) + "
-		// MB");
-
 		try {
 			final Document doc = XMLUtil.createDocument(true);
 			if (doc == null) {
@@ -453,7 +398,6 @@ public class Experiment {
 			long nImages = imgLoader.getFixedNumberOfImages();
 			XMLUtil.setElementLongValue(node, ID_FRAMEFIRST, frameFirst);
 			XMLUtil.setElementLongValue(node, ID_NFRAMES, nImages);
-			// System.out.println("Saving frame range: " + frameFirst + " to " + nImages);
 
 			// Save TimeManager configuration
 			TimeManager timeManager = seqCamData.getTimeManager();
@@ -465,8 +409,6 @@ public class Experiment {
 			XMLUtil.setElementLongValue(node, ID_FIRSTKYMOCOLMS, timeManager.getBinFirst_ms());
 			XMLUtil.setElementLongValue(node, ID_LASTKYMOCOLMS, timeManager.getBinLast_ms());
 			XMLUtil.setElementLongValue(node, ID_BINKYMOCOLMS, timeManager.getBinDurationMs());
-			// System.out.println("Saving time range: " + firstMs + " to " + lastMs + "
-			// ms");
 
 			// Save properties
 			try {
@@ -483,19 +425,7 @@ public class Experiment {
 
 			String tempname = concatenateExptDirectoryWithSubpathAndName(null, ID_MS96_experiment_XML);
 			boolean success = XMLUtil.saveDocument(doc, tempname);
-
-			// Memory monitoring after saving
-//			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-//			long memoryIncrease = endMemory - startMemory;
-//			 System.out.println("Memory after saving: " + (endMemory / 1024 / 1024) + "
-//			 MB");
-//			 System.out.println("Memory increase: " + (memoryIncrease / 1024 / 1024) + "
-//			 MB");
-//			 System.out.println("Save success: " + success);
-//			 System.out.println("=== XML SAVING COMPLETE ===");
-
 			return success;
-
 		} catch (Exception e) {
 			System.err.println("ERROR during experiment XML saving: " + e.getMessage());
 			e.printStackTrace();
@@ -555,39 +485,9 @@ public class Experiment {
 		return false;
 	}
 
-//	public boolean load_MS96_kymographs() {
-//		// TODO write real code
-//		return false;
-//	}
-
-//	public boolean save_MS96_kymographs() {
-//		// TODO write real code
-//		return false;
-//	}
-
 	// -------------------------------
 
 	final String csvSep = ";";
-
-//	public boolean zloadKymographs() {
-//		if (seqKymos == null) {
-//			// Use builder pattern with quality processing configuration
-//			seqKymos = SequenceKymos.kymographBuilder().withConfiguration(KymographConfiguration.qualityProcessing())
-//					.build();
-//		}
-//		// Use modern API for creating file list and loading kymographs
-//		List<ImageFileDescriptor> fileList = seqKymos.createKymographFileList(getKymosBinFullDirectory(), cagesArray);
-//		ImageFileDescriptor.getExistingFileNames(fileList);
-//
-//		// Use modern loading API with size adjustment - use deprecated method for
-//		// dimensions
-//		Rectangle maxDimensions = seqKymos.calculateMaxDimensions(fileList);
-//		ImageProcessingResult result = seqKymos.loadKymographs(fileList,
-//				ImageAdjustmentOptions.withSizeAdjustment(maxDimensions));
-//		return result.isSuccess();
-//	}
-
-	// ------------------------------------------------
 
 	public Experiment getFirstChainedExperiment(boolean globalValue) {
 		Experiment exp = this;
@@ -914,7 +814,6 @@ public class Experiment {
 		return flag;
 	}
 
-	// ============== get/set =============
 	public ExperimentProperties getProperties() {
 		return prop;
 	}
