@@ -1,6 +1,5 @@
 package plugins.fmp.multiSPOTS96.dlg.a_experiment;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -74,10 +73,6 @@ public class Infos extends JPanel {
 		add(experimentCheck, c);
 		c.gridx += delta1;
 		add(exptCombo, c);
-		int bWidth = 100;
-		int bHeight = 21;
-		Dimension dimension = new Dimension(bWidth, bHeight);
-		exptCombo.setPreferredSize(dimension);
 		c.gridx += delta2;
 		add(boxIDCheck, c);
 		c.gridx += delta1;

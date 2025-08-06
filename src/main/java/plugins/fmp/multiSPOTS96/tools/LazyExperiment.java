@@ -38,12 +38,13 @@ public class LazyExperiment extends Experiment {
 
 	private final ExperimentMetadata metadata;
 	private boolean isLoaded = false;
-	private boolean propertiesLoaded = false;
-	private ExperimentProperties cachedProperties = null;
+	private boolean experimentPropertiesLoaded = false;
+	private ExperimentProperties cachedExperimentProperties = null;
 
 	// XML file constants for properties loading
 	private final static String ID_MCEXPERIMENT = "MCexperiment";
 	private final static String ID_MS96_experiment_XML = "MS96_experiment.xml";
+//	private final static String ID_MS96_cages_XML = "MS96_cages.xml";
 
 	public LazyExperiment(ExperimentMetadata metadata) {
 		this.metadata = metadata;
@@ -81,7 +82,7 @@ public class LazyExperiment extends Experiment {
 	}
 
 	public boolean loadPropertiesIfNeeded() {
-		if (!propertiesLoaded) {
+		if (!experimentPropertiesLoaded) {
 			try {
 				String resultsDir = metadata.getResultsDirectory();
 				if (resultsDir == null) {
@@ -108,9 +109,9 @@ public class LazyExperiment extends Experiment {
 					return false;
 				}
 
-				cachedProperties = new ExperimentProperties();
-				cachedProperties.loadXML_Properties(node);
-				propertiesLoaded = true;
+				cachedExperimentProperties = new ExperimentProperties();
+				cachedExperimentProperties.loadXML_Properties(node);
+				experimentPropertiesLoaded = true;
 
 				return true;
 			} catch (Exception e) {
@@ -123,8 +124,8 @@ public class LazyExperiment extends Experiment {
 	}
 
 	public String getFieldValue(EnumXLSColumnHeader field) {
-		if (loadPropertiesIfNeeded() && cachedProperties != null) {
-			return cachedProperties.getExperimentField(field);
+		if (loadPropertiesIfNeeded() && cachedExperimentProperties != null) {
+			return cachedExperimentProperties.getExperimentField(field);
 		}
 		return "..";
 	}
@@ -134,7 +135,7 @@ public class LazyExperiment extends Experiment {
 	}
 
 	public boolean isPropertiesLoaded() {
-		return propertiesLoaded;
+		return experimentPropertiesLoaded;
 	}
 
 	public ExperimentMetadata getMetadata() {
@@ -143,7 +144,7 @@ public class LazyExperiment extends Experiment {
 
 	public ExperimentProperties getCachedProperties() {
 		loadPropertiesIfNeeded();
-		return cachedProperties;
+		return cachedExperimentProperties;
 	}
 
 	/**

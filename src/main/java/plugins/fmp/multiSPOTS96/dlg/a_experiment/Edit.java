@@ -74,7 +74,8 @@ public class Edit extends JPanel {
 
 	public void initEditCombos() {
 		editExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsList());
-		editExpList.getFieldValuesToCombo(fieldOldValuesCombo, (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
+		editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo,
+				(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 	}
 
 	private void defineActionListeners() {
@@ -90,7 +91,7 @@ public class Edit extends JPanel {
 		fieldNamesCombo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				editExpList.getFieldValuesToCombo(fieldOldValuesCombo,
+				editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo,
 						(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
 			}
 		});

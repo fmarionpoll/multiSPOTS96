@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxModelSorted;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
@@ -119,14 +120,14 @@ public class Filter extends JPanel {
 	public void initFilterCombos() {
 		if (!parent0.dlgBrowse.loadSaveExperiment.filteredCheck.isSelected())
 			filterExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsList());
-		filterExpList.getFieldValuesToCombo(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
-		filterExpList.getFieldValuesToCombo(cmt1Combo, EnumXLSColumnHeader.EXP_STIM);
-		filterExpList.getFieldValuesToCombo(comt2Combo, EnumXLSColumnHeader.EXP_CONC);
-		filterExpList.getFieldValuesToCombo(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
-		filterExpList.getFieldValuesToCombo(sexCombo, EnumXLSColumnHeader.EXP_SEX);
-		filterExpList.getFieldValuesToCombo(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
-		filterExpList.getFieldValuesToCombo(cond1Combo, EnumXLSColumnHeader.EXP_COND1);
-		filterExpList.getFieldValuesToCombo(cond2Combo, EnumXLSColumnHeader.EXP_COND2);
+		filterExpList.getFieldValuesToComboLightweight(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
+		filterExpList.getFieldValuesToComboLightweight(cmt1Combo, EnumXLSColumnHeader.EXP_STIM);
+		filterExpList.getFieldValuesToComboLightweight(comt2Combo, EnumXLSColumnHeader.EXP_CONC);
+		filterExpList.getFieldValuesToComboLightweight(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
+		filterExpList.getFieldValuesToComboLightweight(sexCombo, EnumXLSColumnHeader.EXP_SEX);
+		filterExpList.getFieldValuesToComboLightweight(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
+		filterExpList.getFieldValuesToComboLightweight(cond1Combo, EnumXLSColumnHeader.EXP_COND1);
+		filterExpList.getFieldValuesToComboLightweight(cond2Combo, EnumXLSColumnHeader.EXP_COND2);
 	}
 
 	private void defineActionListeners() {
@@ -195,6 +196,8 @@ public class Filter extends JPanel {
 		Iterator<Experiment> iterator = filteredList.iterator();
 		while (iterator.hasNext()) {
 			Experiment exp = iterator.next();
+			ExperimentProperties prop = exp.getProperties();
+			String value = prop.getExperimentField(header);
 			int compare = exp.getProperties().getExperimentField(header).compareTo(filter);
 			if (compare != 0)
 				iterator.remove();
