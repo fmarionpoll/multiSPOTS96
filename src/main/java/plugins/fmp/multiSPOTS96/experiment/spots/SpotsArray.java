@@ -16,10 +16,7 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import icy.type.geom.Polygon2D;
 import icy.util.XMLUtil;
-import plugins.fmp.multiSPOTS96.experiment.sequence.TInterval;
-import plugins.fmp.multiSPOTS96.experiment.sequence.TIntervalsArray;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 
@@ -49,90 +46,46 @@ public class SpotsArray {
 
 	// === CORE FIELDS ===
 	private final List<Spot> spotsList;
-	private TIntervalsArray timeIntervals;
 
 	// === CONSTRUCTORS ===
 
-	/**
-	 * Creates a new SpotsArray.
-	 */
 	public SpotsArray() {
 		this.spotsList = new ArrayList<>();
-		this.timeIntervals = new TIntervalsArray();
 	}
 
 	// === SPOTS MANAGEMENT ===
 
-	/**
-	 * Gets the list of spots.
-	 * 
-	 * @return the spots list
-	 */
 	public List<Spot> getSpotsList() {
 		return spotsList;
 	}
 
-	/**
-	 * Gets the number of spots.
-	 * 
-	 * @return the number of spots
-	 */
 	public int getSpotsCount() {
 		return spotsList.size();
 	}
 
-	/**
-	 * Checks if the spots list is empty.
-	 * 
-	 * @return true if empty
-	 */
 	public boolean isEmpty() {
 		return spotsList.isEmpty();
 	}
 
-	/**
-	 * Adds a spot to the array.
-	 * 
-	 * @param spot the spot to add
-	 * @throws IllegalArgumentException if spot is null
-	 */
 	public void addSpot(Spot spot) {
 		Objects.requireNonNull(spot, "Spot cannot be null");
 		spotsList.add(spot);
 	}
 
-	/**
-	 * Removes a spot from the array.
-	 * 
-	 * @param spot the spot to remove
-	 * @return true if removed
-	 */
 	public boolean removeSpot(Spot spot) {
 		return spotsList.remove(spot);
 	}
 
-	/**
-	 * Clears all spots from the array.
-	 */
 	public void clearSpots() {
 		spotsList.clear();
 	}
 
-	/**
-	 * Sorts the spots list.
-	 */
 	public void sortSpots() {
 		Collections.sort(spotsList);
 	}
 
 	// === SPOT SEARCH ===
 
-	/**
-	 * Finds a spot by name.
-	 * 
-	 * @param name the spot name
-	 * @return the spot if found, null otherwise
-	 */
 	public Spot findSpotByName(String name) {
 		if (name == null || name.trim().isEmpty()) {
 			return null;
@@ -141,12 +94,6 @@ public class SpotsArray {
 		return spotsList.stream().filter(spot -> name.equals(spot.getName())).findFirst().orElse(null);
 	}
 
-	/**
-	 * Finds spots containing a pattern in their name.
-	 * 
-	 * @param pattern the pattern to search for
-	 * @return list of matching spots
-	 */
 	public List<Spot> findSpotsContainingPattern(String pattern) {
 		if (pattern == null || pattern.trim().isEmpty()) {
 			return new ArrayList<>();
@@ -156,12 +103,6 @@ public class SpotsArray {
 				.collect(Collectors.toList());
 	}
 
-	/**
-	 * Checks if a spot is present in the array.
-	 * 
-	 * @param spot the spot to check
-	 * @return true if present
-	 */
 	public boolean isSpotPresent(Spot newSpot) {
 		if (newSpot == null)
 			return false;
@@ -175,33 +116,14 @@ public class SpotsArray {
 
 	// === DATA LOADING ===
 
-	/**
-	 * Loads spots measures from directory.
-	 * 
-	 * @param directory the directory path
-	 * @return true if successful
-	 */
 	public boolean loadSpotsMeasures(String directory) {
 		return loadSpots(directory, EnumSpotMeasures.SPOTS_MEASURES);
 	}
 
-	/**
-	 * Loads all spots data from directory.
-	 * 
-	 * @param directory the directory path
-	 * @return true if successful
-	 */
 	public boolean loadSpotsAll(String directory) {
 		return loadSpots(directory, EnumSpotMeasures.ALL);
 	}
 
-	/**
-	 * Loads spots from directory with specified measure type.
-	 * 
-	 * @param directory   the directory path
-	 * @param measureType the measure type
-	 * @return true if successful
-	 */
 	private boolean loadSpots(String directory, EnumSpotMeasures measureType) {
 		if (directory == null) {
 			return false;
@@ -217,12 +139,6 @@ public class SpotsArray {
 
 	// === DATA SAVING ===
 
-	/**
-	 * Saves all spots data to directory.
-	 * 
-	 * @param directory the directory path
-	 * @return true if successful
-	 */
 	public boolean saveSpotsAll(String directory) {
 		if (directory == null) {
 			return false;
@@ -230,12 +146,6 @@ public class SpotsArray {
 		return csvSaveSpots(directory);
 	}
 
-	/**
-	 * Saves spots measures to directory.
-	 * 
-	 * @param directory the directory path
-	 * @return true if successful
-	 */
 	public boolean saveSpotsMeasures(String directory) {
 		if (directory == null) {
 			return false;
@@ -244,42 +154,25 @@ public class SpotsArray {
 	}
 
 	// === OPTIMIZED CSV WRITING ===
-	
-	/**
-	 * Optimized CSV saving with reduced memory footprint.
-	 * 
-	 * @param directory the directory to save to
-	 * @return true if successful
-	 */
+
 	public boolean saveSpotsMeasuresOptimized(String directory) {
 		if (directory == null) {
 			return false;
 		}
 		return csvSaveSpotsOptimized(directory);
 	}
-	
+
 	private boolean csvSaveSpotsOptimized(String directory) {
 		Path csvPath = Paths.get(directory, CSV_FILENAME);
-		
-		// System.out.println("=== OPTIMIZED CSV WRITING ===");
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		
 		try (FileWriter writer = new FileWriter(csvPath.toFile())) {
 			// Write header sections
 			writeCsvHeader(writer);
-			
+
 			// Write spots data in chunks to reduce memory pressure
 			writeSpotsDataOptimized(writer);
-			
-			// Write measures data in chunks
 			writeMeasuresDataOptimized(writer, EnumSpotMeasures.AREA_SUM);
 			writeMeasuresDataOptimized(writer, EnumSpotMeasures.AREA_SUMCLEAN);
-			
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
-			
-			// System.out.println("CSV writing completed. Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-			
+
 			return true;
 		} catch (IOException e) {
 			System.err.println("Error in optimized CSV writing: " + e.getMessage());
@@ -289,7 +182,7 @@ public class SpotsArray {
 			forcePostWritingCleanup();
 		}
 	}
-	
+
 	private void writeCsvHeader(FileWriter writer) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
 		writer.write("#" + CSV_SEPARATOR + "SPOTS_ARRAY" + CSV_SEPARATOR + "multiSPOTS96 data\n");
@@ -300,22 +193,22 @@ public class SpotsArray {
 				+ CSV_SEPARATOR + "cageColumn" + CSV_SEPARATOR + "cageRow" + CSV_SEPARATOR + "volume" + CSV_SEPARATOR
 				+ "npixels" + CSV_SEPARATOR + "radius" + CSV_SEPARATOR + "stim" + CSV_SEPARATOR + "conc\n");
 	}
-	
+
 	private void writeSpotsDataOptimized(FileWriter writer) throws IOException {
 		int chunkSize = 100; // Process 100 spots at a time
 		int processed = 0;
-		
+
 		for (int i = 0; i < spotsList.size(); i += chunkSize) {
 			int endIndex = Math.min(i + chunkSize, spotsList.size());
-			
+
 			// Process chunk
 			for (int j = i; j < endIndex; j++) {
 				Spot spot = spotsList.get(j);
 				writer.write(spot.getProperties().exportToCsv(CSV_SEPARATOR));
 			}
-			
+
 			processed += (endIndex - i);
-			
+
 			// Light cleanup every 400 spots for better performance
 			if (processed % 400 == 0) {
 				System.gc();
@@ -323,26 +216,26 @@ public class SpotsArray {
 			}
 		}
 	}
-	
+
 	private void writeMeasuresDataOptimized(FileWriter writer, EnumSpotMeasures measureType) throws IOException {
 		writer.write("#" + CSV_SEPARATOR + "#\n");
 		writer.write("#" + CSV_SEPARATOR + measureType.toString() + CSV_SEPARATOR + "v0\n");
 		writer.write("name" + CSV_SEPARATOR + "index" + CSV_SEPARATOR + "npts" + CSV_SEPARATOR + "yi\n");
-		
+
 		int chunkSize = 100; // Process 100 spots at a time
 		int processed = 0;
-		
+
 		for (int i = 0; i < spotsList.size(); i += chunkSize) {
 			int endIndex = Math.min(i + chunkSize, spotsList.size());
-			
+
 			// Process chunk
 			for (int j = i; j < endIndex; j++) {
 				Spot spot = spotsList.get(j);
 				writer.write(spot.exportMeasuresOneType(measureType, CSV_SEPARATOR));
 			}
-			
+
 			processed += (endIndex - i);
-			
+
 			// Light cleanup every 400 spots for better performance
 			if (processed % 400 == 0) {
 				System.gc();
@@ -350,18 +243,10 @@ public class SpotsArray {
 			}
 		}
 	}
-	
+
 	private void forcePostWritingCleanup() {
-		// System.out.println("=== POST-CSV-WRITING CLEANUP ===");
-		
-		// Light cleanup - only one GC pass for better performance
 		System.gc();
 		Thread.yield();
-		
-		// Log memory state after cleanup
-		Runtime runtime = Runtime.getRuntime();
-		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-		// System.out.println("Post-writing cleanup completed. Memory: " + (usedMemory / 1024 / 1024) + " MB");
 	}
 
 	// === XML OPERATIONS ===
@@ -377,19 +262,13 @@ public class SpotsArray {
 			System.err.println("ERROR: Null node provided for SpotsArray save");
 			return false;
 		}
-
-		// Memory monitoring before saving
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		// System.out.println("    Saving SpotsArray - Memory: " + (startMemory / 1024 / 1024) + " MB");
-		// System.out.println("    Spots to save: " + spotsList.size());
-
 		try {
 			Node nodeSpotsArray = XMLUtil.setElement(node, ID_LISTOFSPOTS);
 			if (nodeSpotsArray == null) {
 				System.err.println("ERROR: Could not create List_of_spots element");
 				return false;
 			}
-			
+
 			XMLUtil.setElementIntValue(nodeSpotsArray, ID_NSPOTS, spotsList.size());
 
 			sortSpots();
@@ -401,13 +280,13 @@ public class SpotsArray {
 						System.err.println("ERROR: Could not create spot element for index " + i);
 						continue;
 					}
-					
+
 					Spot spot = spotsList.get(i);
 					if (spot == null) {
 						System.err.println("WARNING: Null spot at index " + i);
 						continue;
 					}
-					
+
 					boolean spotSuccess = spot.saveToXml(nodeSpot);
 					if (spotSuccess) {
 						savedSpots++;
@@ -418,15 +297,8 @@ public class SpotsArray {
 					System.err.println("ERROR saving spot at index " + i + ": " + e.getMessage());
 				}
 			}
-
-			// Memory monitoring after saving
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
-					// System.out.println("    SpotsArray saved - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-		// System.out.println("    Successfully saved " + savedSpots + " out of " + spotsList.size() + " spots");
-
 			return savedSpots > 0; // Return true if at least one spot was saved
-			
+
 		} catch (Exception e) {
 			System.err.println("ERROR during SpotsArray save: " + e.getMessage());
 			e.printStackTrace();
@@ -445,11 +317,6 @@ public class SpotsArray {
 			System.err.println("ERROR: Null node provided for SpotsArray load");
 			return false;
 		}
-
-		// Memory monitoring before loading
-		long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		// System.out.println("    Loading SpotsArray - Memory: " + (startMemory / 1024 / 1024) + " MB");
-
 		try {
 			Node nodeSpotsArray = XMLUtil.getElement(node, ID_LISTOFSPOTS);
 			if (nodeSpotsArray == null) {
@@ -462,8 +329,8 @@ public class SpotsArray {
 				System.err.println("ERROR: Invalid number of spots: " + nitems);
 				return false;
 			}
-			
-			// System.out.println("    Loading " + nitems + " spots");
+
+			// System.out.println(" Loading " + nitems + " spots");
 			spotsList.clear();
 
 			int loadedSpots = 0;
@@ -474,7 +341,7 @@ public class SpotsArray {
 						System.err.println("WARNING: Could not find spot element for index " + i);
 						continue;
 					}
-					
+
 					Spot spot = new Spot();
 					boolean spotSuccess = spot.loadFromXml(nodeSpot);
 					if (spotSuccess && !isSpotPresent(spot)) {
@@ -483,21 +350,14 @@ public class SpotsArray {
 					} else if (!spotSuccess) {
 						System.err.println("ERROR: Failed to load spot at index " + i);
 					} else {
-						// System.out.println("    Skipped duplicate spot at index " + i);
+						// System.out.println(" Skipped duplicate spot at index " + i);
 					}
 				} catch (Exception e) {
 					System.err.println("ERROR loading spot at index " + i + ": " + e.getMessage());
 				}
 			}
-
-			// Memory monitoring after loading
-			long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			long memoryIncrease = endMemory - startMemory;
-					// System.out.println("    SpotsArray loaded - Memory increase: " + (memoryIncrease / 1024 / 1024) + " MB");
-		// System.out.println("    Successfully loaded " + loadedSpots + " out of " + nitems + " spots");
-
 			return loadedSpots > 0; // Return true if at least one spot was loaded
-			
+
 		} catch (Exception e) {
 			System.err.println("ERROR during SpotsArray load: " + e.getMessage());
 			e.printStackTrace();
@@ -505,12 +365,6 @@ public class SpotsArray {
 		}
 	}
 
-	/**
-	 * Saves spots descriptors to XML file.
-	 * 
-	 * @param fileName the file name
-	 * @return true if successful
-	 */
 	public boolean saveDescriptorsToXml(String fileName) {
 		if (fileName == null) {
 			return false;
@@ -530,12 +384,6 @@ public class SpotsArray {
 		}
 	}
 
-	/**
-	 * Loads spots descriptors from XML file.
-	 * 
-	 * @param fileName the file name
-	 * @return true if successful
-	 */
 	public boolean loadDescriptorsFromXml(String fileName) {
 		if (fileName == null) {
 			return false;
@@ -556,50 +404,26 @@ public class SpotsArray {
 
 	// === COPY OPERATIONS ===
 
-	/**
-	 * Copies spots information from another array.
-	 * 
-	 * @param sourceArray the source array
-	 */
 	public void copySpotsInfo(SpotsArray sourceArray) {
 		copySpots(sourceArray, false);
 	}
 
-	/**
-	 * Copies spots from another array.
-	 * 
-	 * @param sourceArray         the source array
-	 * @param includeMeasurements whether to include measurements
-	 */
 	public void copySpots(SpotsArray sourceArray, boolean includeMeasurements) {
 		if (sourceArray == null) {
 			return;
 		}
 
 		spotsList.clear();
-		// spotsList.ensureCapacity(sourceArray.getSpotsList().size());
-
 		for (Spot sourceSpot : sourceArray.getSpotsList()) {
 			Spot spot = new Spot(sourceSpot, includeMeasurements);
 			spotsList.add(spot);
 		}
 	}
 
-	/**
-	 * Pastes spots information to another array.
-	 * 
-	 * @param targetArray the target array
-	 */
 	public void pasteSpotsInfo(SpotsArray targetArray) {
 		pasteSpots(targetArray, false);
 	}
 
-	/**
-	 * Pastes spots to another array.
-	 * 
-	 * @param targetArray         the target array
-	 * @param includeMeasurements whether to include measurements
-	 */
 	public void pasteSpots(SpotsArray targetArray, boolean includeMeasurements) {
 		if (targetArray == null) {
 			return;
@@ -615,11 +439,6 @@ public class SpotsArray {
 		}
 	}
 
-	/**
-	 * Merges spots from another array.
-	 * 
-	 * @param sourceArray the source array
-	 */
 	public void mergeSpots(SpotsArray sourceArray) {
 		if (sourceArray == null) {
 			return;
@@ -634,27 +453,14 @@ public class SpotsArray {
 
 	// === LEVEL2D OPERATIONS ===
 
-	/**
-	 * Adjusts spots level2D measures to image width.
-	 * 
-	 * @param imageWidth the image width
-	 */
 	public void adjustSpotsLevel2DMeasuresToImageWidth(int imageWidth) {
 		spotsList.forEach(spot -> spot.adjustLevel2DMeasuresToImageWidth(imageWidth));
 	}
 
-	/**
-	 * Crops spots level2D measures to image width.
-	 * 
-	 * @param imageWidth the image width
-	 */
 	public void cropSpotsLevel2DMeasuresToImageWidth(int imageWidth) {
 		spotsList.forEach(spot -> spot.cropLevel2DMeasuresToImageWidth(imageWidth));
 	}
 
-	/**
-	 * Initializes level2D measures for all spots.
-	 */
 	public void initializeLevel2DMeasures() {
 		spotsList.forEach(Spot::initializeLevel2DMeasures);
 	}
@@ -663,75 +469,8 @@ public class SpotsArray {
 		spotsList.forEach(Spot::transferMeasuresToLevel2D);
 	}
 
-	// === TIME INTERVALS ===
-
-	/**
-	 * Gets the time intervals array.
-	 * 
-	 * @return the time intervals
-	 */
-	public TIntervalsArray getTimeIntervals() {
-		return timeIntervals;
-	}
-
-	/**
-	 * Sets the time intervals array.
-	 * 
-	 * @param timeIntervals the time intervals
-	 */
-	public void setTimeIntervals(TIntervalsArray timeIntervals) {
-		this.timeIntervals = timeIntervals;
-	}
-
-	/**
-	 * Finds the first time interval.
-	 * 
-	 * @param intervalT the interval time
-	 * @return the interval index
-	 */
-	public int findFirstTimeInterval(long intervalT) {
-		return timeIntervals != null ? timeIntervals.findStartItem(intervalT) : -1;
-	}
-
-	/**
-	 * Gets the time interval at the specified index.
-	 * 
-	 * @param selectedItem the selected item index
-	 * @return the time interval
-	 */
-	public long getTimeIntervalAt(int selectedItem) {
-		return timeIntervals != null ? timeIntervals.getTIntervalAt(selectedItem).start : -1;
-	}
-
-	/**
-	 * Adds a time interval.
-	 * 
-	 * @param start the start time
-	 * @return the interval index
-	 */
-	public int addTimeInterval(long start) {
-		if (timeIntervals == null) {
-			timeIntervals = new TIntervalsArray();
-		}
-		return timeIntervals.addIfNew(new TInterval(start, -1));
-	}
-
-	/**
-	 * Deletes a time interval.
-	 * 
-	 * @param start the start time
-	 */
-	public void deleteTimeInterval(long start) {
-		if (timeIntervals != null) {
-			timeIntervals.deleteIntervalStartingAt(start);
-		}
-	}
-
 	// === UTILITY OPERATIONS ===
 
-	/**
-	 * Transfers sum to sum clean for all spots.
-	 */
 	public void medianFilterFromSumToSumClean() {
 		int span = 10;
 		spotsList.forEach(spot -> {
@@ -743,38 +482,21 @@ public class SpotsArray {
 		});
 	}
 
-	/**
-	 * Gets the scaling factor to physical units.
-	 * 
-	 * @param xlsOption the Excel export option
-	 * @return the scaling factor
-	 */
 	public double getScalingFactorToPhysicalUnits(EnumXLSExport xlsOption) {
 		// Implementation would depend on specific scaling logic
 		return 1.0;
 	}
 
-	/**
-	 * Gets the 2D polygon enclosing all spots.
-	 * 
-	 * @return the polygon
-	 */
-	public Polygon2D get2DPolygonEnclosingSpots() {
-		if (spotsList.isEmpty()) {
-			return new Polygon2D();
-		}
+//	public Polygon2D get2DPolygonEnclosingSpots() {
+//		if (spotsList.isEmpty()) {
+//			return new Polygon2D();
+//		}
+//
+//		// Implementation would create a polygon encompassing all spots
+//		// This is a placeholder for the actual implementation
+//		return new Polygon2D();
+//	}
 
-		// Implementation would create a polygon encompassing all spots
-		// This is a placeholder for the actual implementation
-		return new Polygon2D();
-	}
-
-	/**
-	 * Sets filter for spots to analyze.
-	 * 
-	 * @param setFilter whether to set filter
-	 * @param options   the build series options
-	 */
 	public void setReadyToAnalyze(boolean setFilter, BuildSeriesOptions options) {
 		spotsList.forEach(spot -> spot.setReadyForAnalysis(setFilter));
 	}
@@ -980,6 +702,6 @@ public class SpotsArray {
 
 	@Override
 	public String toString() {
-		return String.format("SpotsArray{spotsCount=%d, hasTimeIntervals=%b}", spotsList.size(), timeIntervals != null);
+		return String.format("SpotsArray{spotsCount=%d}", spotsList.size());
 	}
 }

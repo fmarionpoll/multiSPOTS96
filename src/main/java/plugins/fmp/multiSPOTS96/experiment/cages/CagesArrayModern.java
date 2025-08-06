@@ -94,11 +94,23 @@ public final class CagesArrayModern implements AutoCloseable {
 	 * @return detailed cages array information
 	 * @throws IllegalStateException if the array is closed
 	 */
-	public CagesArrayProperties getArrayInfo() {
+	public CagesArrayProperties getArrayProperties() {
 		ensureNotClosed();
 		lock.readLock().lock();
 		try {
 			List<String> cageNames = cages.stream().map(cage -> cage.getData().getName()).collect(Collectors.toList());
+			List<String> cageSex = cages.stream().map(cage -> cage.getData().getProperties().getFlySex())
+					.collect(Collectors.toList());
+			List<String> cageStrain = cages.stream().map(cage -> cage.getData().getProperties().getFlyStrain())
+					.collect(Collectors.toList());
+//			List<Integer> cageAge = cages.stream().map(cage -> cage.getData().getProperties().getFlyAge())
+//					.collect(Collectors.toList());
+//			List<String> spotStimulus = cages.stream().map(cage -> cage.getSpotsArray().getSpotStimulus())
+//					.collect(Collectors.toList());
+//			List<String> spotConcentration = cages.stream().map(cage -> cage.getData().geSpotConcentration())
+//					.collect(Collectors.toList());
+//			List<String> spotVolume = cages.stream().map(cage -> cage.getData().getSpotVolume())
+//					.collect(Collectors.toList());
 
 			long validCages = cages.stream().filter(cage -> cage.getData().isValid()).count();
 
@@ -106,25 +118,22 @@ public final class CagesArrayModern implements AutoCloseable {
 
 			long cagesWithSpots = cages.stream().filter(cage -> cage.getSpotsArray().getSpotsList().size() > 0).count();
 
-			return CagesArrayProperties.builder().totalCages(cages.size()).validCages((int) validCages)
-					.activeCages((int) activeCages).cagesWithSpots((int) cagesWithSpots)
-					.gridSize(configuration.getNTotalCages()).cageNames(cageNames).hasTimeIntervals(false) // TODO:
-																											// implement
-																											// time
-																											// intervals
-					.timeIntervalsCount(0) // TODO: implement time intervals
+			return CagesArrayProperties.builder() //
+					.totalCages(cages.size()) //
+					.validCages((int) validCages) //
+					.activeCages((int) activeCages) //
+					.cagesWithSpots((int) cagesWithSpots) //
+					.gridSize(configuration.getNTotalCages()) //
+					.cageNames(cageNames) //
+					.cageSex(cageSex) //
+					.cageStrain(cageStrain) //
+//					.cageAge(cageAge) //
 					.build();
 		} finally {
 			lock.readLock().unlock();
 		}
 	}
 
-	/**
-	 * Gets an immutable view of all cages.
-	 * 
-	 * @return immutable list of cages
-	 * @throws IllegalStateException if the array is closed
-	 */
 	public List<CageModern> getCages() {
 		ensureNotClosed();
 		return Collections.unmodifiableList(new ArrayList<>(cages));
