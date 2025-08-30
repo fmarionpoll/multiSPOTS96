@@ -11,11 +11,13 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
+import icy.gui.frame.progress.ProgressFrame;
 
 public class Edit extends JPanel {
 	/**
@@ -126,28 +128,42 @@ public class Edit extends JPanel {
 	}
 
 	void applyChange() {
-		int nExperiments = editExpList.getItemCount();
-		EnumXLSColumnHeader fieldEnumCode = (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem();
-		String oldValue = (String) fieldOldValuesCombo.getSelectedItem();
-		String newValue = newValueTextField.getText();
+		final int nExperiments = editExpList.getItemCount();
+		final EnumXLSColumnHeader fieldEnumCode = (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem();
+		final String oldValue = (String) fieldOldValuesCombo.getSelectedItem();
+		final String newValue = newValueTextField.getText();
 
-		for (int i = 0; i < nExperiments; i++) {
-			Experiment exp = editExpList.getItemAt(i);
-			exp.load_MS96_experiment();
-			exp.load_MS96_cages();
+		final ProgressFrame progress = new ProgressFrame("Apply changes to " + fieldEnumCode);
+		progress.setLength(nExperiments);
 
-			exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				for (int i = 0; i < nExperiments; i++) {
+					Experiment exp = editExpList.getItemAt(i);
+					progress.setMessage("Updating (" + (i + 1) + "/" + nExperiments + ")");
+					exp.load_MS96_experiment();
+					exp.load_MS96_cages();
+					exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
+					exp.save_MS96_experiment();
+					exp.save_MS96_cages();
+					progress.incPosition();
+				}
+				return null;
+			}
 
-			exp.save_MS96_experiment();
-			exp.save_MS96_cages();
-		}
-
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
-		if (exp != null) {
-			exp.load_MS96_spotsMeasures();
-			parent0.dlgMeasure.tabCharts.displayChartPanels(exp);
-		}
-
+			@Override
+			protected void done() {
+				progress.close();
+				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				if (exp != null) {
+					exp.load_MS96_spotsMeasures();
+					parent0.dlgMeasure.tabCharts.displayChartPanels(exp);
+				}
+				initEditCombos();
+			}
+		};
+		worker.execute();
 	}
 
 }

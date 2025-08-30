@@ -221,8 +221,8 @@ public class Cage implements Comparable<Cage>, AutoCloseable {
 			
 			// Load spots array with error handling
 			if (!spotsArray.loadFromXml(xmlVal)) {
-				System.err.println("ERROR: Failed to load spots array for cage " + index);
-				return false;
+				// Keep cage loaded even if spots descriptors are missing
+				System.err.println("WARNING: Failed to load spots array for cage " + index + " (continuing)");
 			}
 			
 			// Memory monitoring after loading
