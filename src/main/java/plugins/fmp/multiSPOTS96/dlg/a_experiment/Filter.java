@@ -22,6 +22,7 @@ import plugins.fmp.multiSPOTS96.tools.DialogTools;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxModelSorted;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multiSPOTS96.tools.LazyExperiment;
 
 public class Filter extends JPanel {
 	/**
@@ -94,7 +95,7 @@ public class Filter extends JPanel {
 
 	public void initCombos() {
 		if (!parent0.dlgBrowse.loadSaveExperiment.filteredCheck.isSelected())
-			filterExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsList());
+			filterExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsListNoLoad());
 		filterExpList.getFieldValuesToComboLightweight(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
 		filterExpList.getFieldValuesToComboLightweight(stim1Combo, EnumXLSColumnHeader.EXP_STIM1);
 		filterExpList.getFieldValuesToComboLightweight(conc1Combo, EnumXLSColumnHeader.EXP_CONC1);
@@ -127,7 +128,7 @@ public class Filter extends JPanel {
 			parent0.expListCombo.setExperimentsFromList(filterAllItems());
 		} else {
 			clearAllCheckBoxes();
-			parent0.expListCombo.setExperimentsFromList(filterExpList.getExperimentsAsList());
+			parent0.expListCombo.setExperimentsFromList(filterExpList.getExperimentsAsListNoLoad());
 		}
 
 		if (parent0.expListCombo.getItemCount() > 0)
@@ -147,7 +148,7 @@ public class Filter extends JPanel {
 	}
 
 	private List<Experiment> filterAllItems() {
-		List<Experiment> filteredList = new ArrayList<Experiment>(filterExpList.getExperimentsAsList());
+		List<Experiment> filteredList = new ArrayList<Experiment>(filterExpList.getExperimentsAsListNoLoad());
 		if (experimentCheck.isSelected())
 			filterItem(filteredList, EnumXLSColumnHeader.EXP_EXPT, (String) exptCombo.getSelectedItem());
 		if (boxIDCheck.isSelected())
@@ -171,8 +172,13 @@ public class Filter extends JPanel {
 		Iterator<Experiment> iterator = filteredList.iterator();
 		while (iterator.hasNext()) {
 			Experiment exp = iterator.next();
-			ExperimentProperties prop = exp.getProperties();
-			String value = prop.getExperimentField(header);
+			String value;
+			if (exp instanceof LazyExperiment) {
+				value = ((LazyExperiment) exp).getFieldValue(header);
+			} else {
+				ExperimentProperties prop = exp.getProperties();
+				value = prop.getExperimentField(header);
+			}
 			int compare = value.compareTo(filter);
 			if (compare != 0)
 				iterator.remove();

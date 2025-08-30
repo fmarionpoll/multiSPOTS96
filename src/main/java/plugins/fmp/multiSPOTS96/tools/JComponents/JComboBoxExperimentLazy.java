@@ -137,6 +137,18 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		return null;
 	}
 
+	/**
+	 * Return item without triggering lazy loading. Use this for UI operations that
+	 * only need lightweight metadata or descriptor properties.
+	 */
+	public Experiment getItemAtNoLoad(int index) {
+		Object item = super.getItemAt(index);
+		if (item instanceof Experiment) {
+			return (Experiment) item;
+		}
+		return null;
+	}
+
 	@Override
 	public Experiment getSelectedItem() {
 		Object selected = super.getSelectedItem();
@@ -417,6 +429,20 @@ public class JComboBoxExperimentLazy extends JComboBox<Experiment> {
 		List<Experiment> expList = new ArrayList<Experiment>(nitems);
 		for (int i = 0; i < nitems; i++)
 			expList.add(getItemAt(i));
+		return expList;
+	}
+
+	/**
+	 * Returns experiments list without triggering lazy loading.
+	 */
+	public List<Experiment> getExperimentsAsListNoLoad() {
+		int nitems = getItemCount();
+		List<Experiment> expList = new ArrayList<Experiment>(nitems);
+		for (int i = 0; i < nitems; i++) {
+			Experiment exp = getItemAtNoLoad(i);
+			if (exp != null)
+				expList.add(exp);
+		}
 		return expList;
 	}
 
