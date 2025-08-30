@@ -74,8 +74,19 @@ public class Edit extends JPanel {
 
 	public void initEditCombos() {
 		editExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsListNoLoad());
-		editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo,
-				(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
+		EnumXLSColumnHeader field = (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem();
+		fieldOldValuesCombo.removeAllItems();
+		java.util.List<String> values;
+		if (parent0.descriptorIndex != null && parent0.descriptorIndex.isReady()) {
+			values = parent0.descriptorIndex.getDistinctValues(field);
+		} else {
+			// fallback: use existing lightweight scan
+			editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo, field);
+			return;
+		}
+		java.util.Collections.sort(values);
+		for (String v : values)
+			fieldOldValuesCombo.addItem(v);
 	}
 
 	private void defineActionListeners() {
@@ -91,8 +102,17 @@ public class Edit extends JPanel {
 		fieldNamesCombo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo,
-						(EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem());
+				EnumXLSColumnHeader field = (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem();
+				fieldOldValuesCombo.removeAllItems();
+				java.util.List<String> values;
+				if (parent0.descriptorIndex != null && parent0.descriptorIndex.isReady()) {
+					values = parent0.descriptorIndex.getDistinctValues(field);
+					java.util.Collections.sort(values);
+					for (String v : values)
+						fieldOldValuesCombo.addItem(v);
+				} else {
+					editExpList.getFieldValuesToComboLightweight(fieldOldValuesCombo, field);
+				}
 			}
 		});
 

@@ -373,6 +373,16 @@ public class LoadSaveExperimentOptimized extends JPanel
 			parent0.expListCombo.addLazyExperimentsBulk(lazyExperiments);
 			parent0.dlgExperiment.tabInfos.initCombos();
 
+			// Kick off background descriptor preloading for fast filters/infos
+			parent0.descriptorIndex.preloadFromCombo(parent0.expListCombo, new Runnable() {
+				@Override
+				public void run() {
+					// Once preloaded, refresh Infos and Filter combos if tabs are visited
+					parent0.dlgExperiment.tabInfos.initCombos();
+					parent0.dlgExperiment.tabFilter.initCombos();
+				}
+			});
+
 		} catch (Exception e) {
 			LOGGER.warning("Error adding metadata to UI: " + e.getMessage());
 		}
@@ -531,6 +541,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 		parent0.dlgExperiment.tabInfos.clearCombos();
 		filteredCheck.setSelected(false);
 		experimentMetadataList.clear();
+		if (parent0.descriptorIndex != null)
+			parent0.descriptorIndex.clear();
 	}
 
 	void updateBrowseInterface() {

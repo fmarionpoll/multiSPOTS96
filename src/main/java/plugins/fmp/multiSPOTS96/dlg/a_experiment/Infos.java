@@ -184,18 +184,37 @@ public class Infos extends JPanel {
 	}
 
 	public void initCombos() {
-		// Use lightweight version to avoid loading all experiments
-		parent0.expListCombo.getFieldValuesToComboLightweight(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
-		parent0.expListCombo.getFieldValuesToComboLightweight(stim1Combo, EnumXLSColumnHeader.EXP_STIM1);
-		parent0.expListCombo.getFieldValuesToComboLightweight(conc1Combo, EnumXLSColumnHeader.EXP_CONC1);
-		parent0.expListCombo.getFieldValuesToComboLightweight(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
-		parent0.expListCombo.getFieldValuesToComboLightweight(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
-		parent0.expListCombo.getFieldValuesToComboLightweight(sexCombo, EnumXLSColumnHeader.EXP_SEX);
-		parent0.expListCombo.getFieldValuesToComboLightweight(stim2Combo, EnumXLSColumnHeader.EXP_STIM2);
-		parent0.expListCombo.getFieldValuesToComboLightweight(conc2Combo, EnumXLSColumnHeader.EXP_CONC2);
+		// Prefer DescriptorIndex when ready; fallback to lightweight combo collection
+		if (parent0.descriptorIndex != null && parent0.descriptorIndex.isReady()) {
+			refreshComboFromIndex(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
+			refreshComboFromIndex(stim1Combo, EnumXLSColumnHeader.EXP_STIM1);
+			refreshComboFromIndex(conc1Combo, EnumXLSColumnHeader.EXP_CONC1);
+			refreshComboFromIndex(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
+			refreshComboFromIndex(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
+			refreshComboFromIndex(sexCombo, EnumXLSColumnHeader.EXP_SEX);
+			refreshComboFromIndex(stim2Combo, EnumXLSColumnHeader.EXP_STIM2);
+			refreshComboFromIndex(conc2Combo, EnumXLSColumnHeader.EXP_CONC2);
+		} else {
+			// Use lightweight version to avoid loading all experiments
+			parent0.expListCombo.getFieldValuesToComboLightweight(exptCombo, EnumXLSColumnHeader.EXP_EXPT);
+			parent0.expListCombo.getFieldValuesToComboLightweight(stim1Combo, EnumXLSColumnHeader.EXP_STIM1);
+			parent0.expListCombo.getFieldValuesToComboLightweight(conc1Combo, EnumXLSColumnHeader.EXP_CONC1);
+			parent0.expListCombo.getFieldValuesToComboLightweight(boxIDCombo, EnumXLSColumnHeader.EXP_BOXID);
+			parent0.expListCombo.getFieldValuesToComboLightweight(strainCombo, EnumXLSColumnHeader.EXP_STRAIN);
+			parent0.expListCombo.getFieldValuesToComboLightweight(sexCombo, EnumXLSColumnHeader.EXP_SEX);
+			parent0.expListCombo.getFieldValuesToComboLightweight(stim2Combo, EnumXLSColumnHeader.EXP_STIM2);
+			parent0.expListCombo.getFieldValuesToComboLightweight(conc2Combo, EnumXLSColumnHeader.EXP_CONC2);
+		}
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null)
 			transferPreviousExperimentInfosToDialog(exp, exp);
+	}
+
+	private void refreshComboFromIndex(JComboBox<String> combo, EnumXLSColumnHeader field) {
+		combo.removeAllItems();
+		for (String text : parent0.descriptorIndex.getDistinctValues(field)) {
+			combo.addItem(text);
+		}
 	}
 
 	public void clearCombos() {

@@ -62,7 +62,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 	private final JSpinner ySpinner = new JSpinner(new SpinnerNumberModel(0, -500, 500, 1));
 	private final JButton testTranslationButton = new JButton("Test");
 	private final JButton applyTranslationButton = new JButton("Apply");
-	private final JButton restoreTranslationButton = new JButton("Restore 1 step");
+	private final JButton restoreTranslationButton = new JButton("Back -1");
 	int previousX = 0;
 	int previousY = 0;
 	int previousT = 0;
@@ -71,7 +71,7 @@ public class CorrectDrift extends JPanel implements ViewerListener, PropertyChan
 	private final JSpinner angleSpinner = new JSpinner(new SpinnerNumberModel(0., -180., 180., 1.));
 	private final JButton testRotationButton = new JButton("Test");
 	private final JButton applyRotationButton = new JButton("Apply");
-	private final JButton restoreRotationButton = new JButton("Restore 1 step");
+	private final JButton restoreRotationButton = new JButton("Back-1");
 
 	private final JSpinner squareSizeSpinner = new JSpinner(new SpinnerNumberModel(10, 0, 500, 1));
 
