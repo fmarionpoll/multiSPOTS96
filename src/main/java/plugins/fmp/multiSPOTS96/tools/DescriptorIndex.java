@@ -79,6 +79,16 @@ public class DescriptorIndex {
 					if (exp == null)
 						continue;
 					String resDir = exp.getResultsDirectory();
+					// Prefer new descriptors file if available
+					Map<EnumXLSColumnHeader, List<String>> preDicts = DescriptorsIO.readDescriptors(resDir);
+					if (preDicts != null && !preDicts.isEmpty()) {
+						for (Map.Entry<EnumXLSColumnHeader, List<String>> e : preDicts.entrySet()) {
+							TreeSet<String> set = distinctLocal.get(e.getKey());
+							if (set != null)
+								set.addAll(e.getValue());
+						}
+						continue;
+					}
 					ExperimentProperties props = null;
 					if (exp instanceof LazyExperiment) {
 						LazyExperiment lexp = (LazyExperiment) exp;

@@ -383,6 +383,22 @@ public class LoadSaveExperimentOptimized extends JPanel
 				}
 			});
 
+			// Also generate descriptors files in background for any experiment missing it
+			new javax.swing.SwingWorker<Void, Void>() {
+				@Override
+				protected Void doInBackground() throws Exception {
+					for (int i = 0; i < parent0.expListCombo.getItemCount(); i++) {
+						plugins.fmp.multiSPOTS96.experiment.Experiment exp = parent0.expListCombo.getItemAt(i);
+						String path = plugins.fmp.multiSPOTS96.tools.DescriptorsIO.getDescriptorsFullName(exp.getResultsDirectory());
+						java.io.File f = new java.io.File(path);
+						if (!f.exists()) {
+							plugins.fmp.multiSPOTS96.tools.DescriptorsIO.buildFromExperiment(exp);
+						}
+					}
+					return null;
+				}
+			}.execute();
+
 		} catch (Exception e) {
 			LOGGER.warning("Error adding metadata to UI: " + e.getMessage());
 		}

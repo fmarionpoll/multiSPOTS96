@@ -17,6 +17,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
+import plugins.fmp.multiSPOTS96.tools.DescriptorsIO;
 import icy.gui.frame.progress.ProgressFrame;
 
 public class Edit extends JPanel {
@@ -147,6 +148,8 @@ public class Edit extends JPanel {
 					exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
 					exp.save_MS96_experiment();
 					exp.save_MS96_cages();
+					// keep descriptors file in sync for this experiment
+					DescriptorsIO.buildFromExperiment(exp);
 					progress.incPosition();
 				}
 				return null;
@@ -160,7 +163,15 @@ public class Edit extends JPanel {
 					exp.load_MS96_spotsMeasures();
 					parent0.dlgMeasure.tabCharts.displayChartPanels(exp);
 				}
-				initEditCombos();
+				// refresh descriptor index and UI combos
+				parent0.descriptorIndex.preloadFromCombo(parent0.expListCombo, new Runnable() {
+					@Override
+					public void run() {
+						parent0.dlgExperiment.tabInfos.initCombos();
+						parent0.dlgExperiment.tabFilter.initCombos();
+						initEditCombos();
+					}
+				});
 			}
 		};
 		worker.execute();
