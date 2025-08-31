@@ -55,11 +55,6 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	private final MemoryMonitor memoryMonitor;
 	private final AdaptiveBatchSizer adaptiveBatchSizer;
 
-	// === MEMORY OPTIMIZATION ADDITIONS ===
-//	private final long MEMORY_PRESSURE_THRESHOLD_MB = 5; // Memory pressure threshold (reduced from 10)
-//	private final double MEMORY_USAGE_THRESHOLD_PERCENT = 30.0; // Memory usage threshold (reduced from 50.0)
-//	private final boolean USE_NATIVE_IO_ONLY = false; // Nuclear option: bypass Icy entirely (disabled for testing)
-
 	// === IMAGE MEMORY POOL ===
 	private ImageMemoryPool imageMemoryPool = null;
 	private ImageMemoryPool transformedImagePool = null; // Pool for transformed images
@@ -108,7 +103,8 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			exp.cagesArray.setReadyToAnalyze(true, options);
 			openViewers(exp);
 
-			if (measureSpotsAdvanced(exp))
+			boolean processed = measureSpotsAdvanced(exp);
+			if (processed)
 				saveComputation(exp);
 
 			logMemoryUsage("After Processing");
@@ -116,17 +112,15 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			exp.cagesArray.setReadyToAnalyze(false, options);
 			closeViewers();
 			cleanupResources();
-
-			// ENHANCED POST-PROCESSING CLEANUP to prevent dialog return memory spike
 			enhancedPostProcessingCleanup();
 
 		} finally {
 			// Ensure cleanup happens even if exceptions occur
 			try {
-				exp.cagesArray.setReadyToAnalyze(false, options);
-				closeViewers();
-				cleanupResources();
-				enhancedPostProcessingCleanup();
+//				exp.cagesArray.setReadyToAnalyze(false, options);
+//				closeViewers();
+//				cleanupResources();
+//				enhancedPostProcessingCleanup();
 			} catch (Exception e) {
 				System.err.println("Error during final cleanup: " + e.getMessage());
 			}
