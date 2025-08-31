@@ -1,7 +1,7 @@
 package plugins.fmp.multiSPOTS96.dlg.a_experiment;
 
-import java.awt.Dimension;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -14,12 +14,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
+import icy.gui.frame.progress.ProgressFrame;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.tools.DescriptorsIO;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
-import plugins.fmp.multiSPOTS96.tools.DescriptorsIO;
-import icy.gui.frame.progress.ProgressFrame;
 
 public class Edit extends JPanel {
 	/**
@@ -38,7 +38,7 @@ public class Edit extends JPanel {
 	private JButton refreshButton = new JButton("Refresh");
 	private JTextField newValueTextField = new JTextField(10);
 	private JButton applyButton = new JButton("Apply");
-    private JLabel statusLabel = new JLabel("");
+	private JLabel statusLabel = new JLabel("");
 
 	private MultiSPOTS96 parent0 = null;
 	JComboBoxExperimentLazy editExpList = new JComboBoxExperimentLazy();
@@ -158,10 +158,13 @@ public class Edit extends JPanel {
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+			private boolean anyChanged = false;
+
 			@Override
 			protected Void doInBackground() throws Exception {
 				for (int i = 0; i < nExperiments; i++) {
 					Experiment exp = editExpList.getItemAtNoLoad(i);
+					boolean isChanged = false;
 					progress.setMessage("Updating (" + (i + 1) + "/" + nExperiments + ")");
 					// Apply change without triggering image loads
 					switch (fieldEnumCode) {
@@ -173,24 +176,32 @@ public class Edit extends JPanel {
 					case EXP_SEX:
 					case EXP_STIM2:
 					case EXP_CONC2:
-						exp.load_MS96_experiment();
-						exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
-						exp.save_MS96_experiment();
+						isChanged = exp.replaceExperimentFieldIfEqualOldValue(fieldEnumCode, oldValue, newValue);
+						if (isChanged)
+							exp.save_MS96_experiment();
 						break;
 					case CAGE_SEX:
 					case CAGE_STRAIN:
 					case CAGE_AGE:
+						isChanged = exp.replaceCageFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue);
+						if (isChanged)
+							exp.save_MS96_cages();
+						break;
 					case SPOT_STIM:
 					case SPOT_CONC:
 					case SPOT_VOLUME:
-						// replaceFieldValue will load/save cages internally for these
-						exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
+						isChanged = exp.replaceSpotsFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue);
+						if (isChanged)
+							exp.save_MS96_cages();
 						break;
 					default:
 						break;
 					}
 					// keep descriptors file in sync for this experiment
-					DescriptorsIO.buildFromExperiment(exp);
+					if (isChanged)
+						DescriptorsIO.buildFromExperiment(exp);
+					anyChanged |= isChanged;
+
 					progress.incPosition();
 				}
 				return null;
@@ -211,15 +222,15 @@ public class Edit extends JPanel {
 					exp.load_MS96_spotsMeasures();
 					parent0.dlgMeasure.tabCharts.displayChartPanels(exp);
 				}
-				// refresh descriptor index and UI combos
-				parent0.descriptorIndex.preloadFromCombo(parent0.expListCombo, new Runnable() {
-					@Override
-					public void run() {
-						parent0.dlgExperiment.tabInfos.initCombos();
-						parent0.dlgExperiment.tabFilter.initCombos();
-						initEditCombos();
-					}
-				});
+				// Incremental update of in-memory index for the edited field only
+				if (anyChanged) {
+					parent0.descriptorIndex.removeValue(fieldEnumCode, oldValue);
+					parent0.descriptorIndex.addValue(fieldEnumCode, newValue);
+				}
+				// Refresh UI combos from current in-memory index
+				parent0.dlgExperiment.tabInfos.initCombos();
+				parent0.dlgExperiment.tabFilter.initCombos();
+				initEditCombos();
 			}
 		};
 		worker.execute();

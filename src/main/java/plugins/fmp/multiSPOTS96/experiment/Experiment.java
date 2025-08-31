@@ -330,7 +330,7 @@ public class Experiment {
 
 			long nImages = XMLUtil.getElementLongValue(node, ID_NFRAMES, -1);
 			if (nImages <= 0) {
-				System.err.println("ERROR: Invalid number of frames: " + nImages + " in " +csFileName);
+				System.err.println("ERROR: Invalid number of frames: " + nImages + " in " + csFileName);
 				return false;
 			}
 			imgLoader.setFixedNumberOfImages(nImages);
@@ -540,40 +540,13 @@ public class Experiment {
 		return textList;
 	}
 
-	public boolean replaceExperimentFieldIfEqualOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
+	public boolean replaceExperimentFieldIfEqualOldValue(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
 		boolean flag = prop.getExperimentField(fieldEnumCode).equals(oldValue);
 		if (flag) {
 			prop.setExperimentFieldNoTest(fieldEnumCode, newValue);
 		}
 		return flag;
-	}
-
-	public void replaceFieldValue(EnumXLSColumnHeader fieldEnumCode, String oldValue, String newValue) {
-		switch (fieldEnumCode) {
-		case EXP_STIM1:
-		case EXP_CONC1:
-		case EXP_EXPT:
-		case EXP_BOXID:
-		case EXP_STRAIN:
-		case EXP_SEX:
-		case EXP_STIM2:
-		case EXP_CONC2:
-			replaceExperimentFieldIfEqualOld(fieldEnumCode, oldValue, newValue);
-			break;
-		case SPOT_STIM:
-		case SPOT_CONC:
-		case SPOT_VOLUME:
-			replaceSpotsFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue);
-			break;
-		case CAGE_SEX:
-		case CAGE_STRAIN:
-		case CAGE_AGE:
-			replaceCageFieldValueWithNewValueIfOld(fieldEnumCode, oldValue, newValue);
-			break;
-		default:
-			break;
-		}
 	}
 
 	// --------------------------------------------
@@ -713,7 +686,7 @@ public class Experiment {
 		return (f.exists() && !f.isDirectory());
 	}
 
-	private boolean replaceSpotsFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
+	public boolean replaceSpotsFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
 		load_MS96_cages();
 		boolean flag = false;
@@ -726,12 +699,10 @@ public class Experiment {
 				}
 			}
 		}
-		if (flag)
-			save_MS96_cages();
 		return flag;
 	}
 
-	private boolean replaceCageFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
+	public boolean replaceCageFieldValueWithNewValueIfOld(EnumXLSColumnHeader fieldEnumCode, String oldValue,
 			String newValue) {
 		load_MS96_cages();
 		boolean flag = false;
@@ -741,10 +712,7 @@ public class Experiment {
 				cage.setField(fieldEnumCode, newValue);
 				flag = true;
 			}
-
 		}
-		if (flag)
-			save_MS96_cages();
 		return flag;
 	}
 
