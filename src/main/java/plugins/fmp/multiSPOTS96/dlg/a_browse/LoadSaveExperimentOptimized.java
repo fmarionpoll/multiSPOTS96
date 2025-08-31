@@ -388,7 +388,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 				@Override
 				protected Void doInBackground() throws Exception {
 					for (int i = 0; i < parent0.expListCombo.getItemCount(); i++) {
-						plugins.fmp.multiSPOTS96.experiment.Experiment exp = parent0.expListCombo.getItemAt(i);
+						plugins.fmp.multiSPOTS96.experiment.Experiment exp = parent0.expListCombo.getItemAtNoLoad(i);
 						String path = plugins.fmp.multiSPOTS96.tools.DescriptorsIO.getDescriptorsFullName(exp.getResultsDirectory());
 						java.io.File f = new java.io.File(path);
 						if (!f.exists()) {
@@ -528,8 +528,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 	public void closeViewsForCurrentExperiment(Experiment exp) {
 		if (exp != null) {
 			if (exp.seqCamData != null) {
+				// Avoid auto-saving analysis when closing; saving should be explicit
 				exp.save_MS96_experiment();
-				exp.save_MS96_spotsMeasures();
 
 				if (exp.seqCamData.getSequence() != null) {
 					Viewer v = exp.seqCamData.getSequence().getFirstViewer();

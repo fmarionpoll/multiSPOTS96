@@ -1,6 +1,7 @@
 package plugins.fmp.multiSPOTS96.dlg.a_experiment;
 
 import java.awt.Dimension;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -37,6 +38,7 @@ public class Edit extends JPanel {
 	private JButton refreshButton = new JButton("Refresh");
 	private JTextField newValueTextField = new JTextField(10);
 	private JButton applyButton = new JButton("Apply");
+    private JLabel statusLabel = new JLabel("");
 
 	private MultiSPOTS96 parent0 = null;
 	JComboBoxExperimentLazy editExpList = new JComboBoxExperimentLazy();
@@ -71,6 +73,10 @@ public class Edit extends JPanel {
 		newValueTextField.setPreferredSize(new Dimension(bWidth, bHeight));
 		panel2.add(applyButton);
 		add(panel2);
+
+		JPanel panel3 = new JPanel(flowlayout);
+		panel3.add(statusLabel);
+		add(panel3);
 
 		defineActionListeners();
 	}
@@ -122,7 +128,14 @@ public class Edit extends JPanel {
 		refreshButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				initEditCombos();
+				final ProgressFrame pf = new ProgressFrame("Refreshing descriptors");
+				parent0.descriptorIndex.preloadFromCombo(parent0.expListCombo, new Runnable() {
+					@Override
+					public void run() {
+						pf.close();
+						initEditCombos();
+					}
+				});
 			}
 		});
 
@@ -136,18 +149,46 @@ public class Edit extends JPanel {
 
 		final ProgressFrame progress = new ProgressFrame("Apply changes to " + fieldEnumCode);
 		progress.setLength(nExperiments);
+		statusLabel.setText("Applying changes to " + fieldEnumCode + "...");
+		applyButton.setEnabled(false);
+		refreshButton.setEnabled(false);
+		fieldNamesCombo.setEnabled(false);
+		fieldOldValuesCombo.setEnabled(false);
+		newValueTextField.setEnabled(false);
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
 				for (int i = 0; i < nExperiments; i++) {
-					Experiment exp = editExpList.getItemAt(i);
+					Experiment exp = editExpList.getItemAtNoLoad(i);
 					progress.setMessage("Updating (" + (i + 1) + "/" + nExperiments + ")");
-					exp.load_MS96_experiment();
-					exp.load_MS96_cages();
-					exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
-					exp.save_MS96_experiment();
-					exp.save_MS96_cages();
+					// Apply change without triggering image loads
+					switch (fieldEnumCode) {
+					case EXP_EXPT:
+					case EXP_BOXID:
+					case EXP_STIM1:
+					case EXP_CONC1:
+					case EXP_STRAIN:
+					case EXP_SEX:
+					case EXP_STIM2:
+					case EXP_CONC2:
+						exp.load_MS96_experiment();
+						exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
+						exp.save_MS96_experiment();
+						break;
+					case CAGE_SEX:
+					case CAGE_STRAIN:
+					case CAGE_AGE:
+					case SPOT_STIM:
+					case SPOT_CONC:
+					case SPOT_VOLUME:
+						// replaceFieldValue will load/save cages internally for these
+						exp.replaceFieldValue(fieldEnumCode, oldValue, newValue);
+						break;
+					default:
+						break;
+					}
 					// keep descriptors file in sync for this experiment
 					DescriptorsIO.buildFromExperiment(exp);
 					progress.incPosition();
@@ -158,6 +199,13 @@ public class Edit extends JPanel {
 			@Override
 			protected void done() {
 				progress.close();
+				statusLabel.setText("Done applying changes to " + fieldEnumCode + ".");
+				applyButton.setEnabled(true);
+				refreshButton.setEnabled(true);
+				fieldNamesCombo.setEnabled(true);
+				fieldOldValuesCombo.setEnabled(true);
+				newValueTextField.setEnabled(true);
+				setCursor(Cursor.getDefaultCursor());
 				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 				if (exp != null) {
 					exp.load_MS96_spotsMeasures();
