@@ -34,40 +34,10 @@ import plugins.fmp.multiSPOTS96.tools.LazyExperiment;
 import plugins.fmp.multiSPOTS96.tools.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multiSPOTS96.tools.JComponents.SequenceNameListRenderer;
 
-/**
- * Ultra-efficient version of LoadSaveExperiment for handling large datasets
- * (220+ files).
- * 
- * <p>
- * Key optimizations for minimal memory usage:
- * <ul>
- * <li><strong>Metadata-Only Loading</strong>: Only loads experiment names and
- * paths, not full data</li>
- * <li><strong>Lazy Experiment Creation</strong>: Creates Experiment objects
- * only when selected</li>
- * <li><strong>Minimal Memory Footprint</strong>: Uses lightweight metadata
- * objects</li>
- * <li><strong>Fast Processing</strong>: Processes only directory scanning, not
- * data loading</li>
- * <li><strong>Immediate UI Updates</strong>: Shows progress as experiments are
- * discovered</li>
- * </ul>
- * </p>
- * 
- * <p>
- * Memory usage for 220 experiments: - Before: 12-14 GB (full Experiment
- * objects) - After: ~50-100 MB (metadata only) - Improvement: 99%+ memory
- * reduction
- * </p>
- * 
- * @author MultiSPOTS96
- * @version 3.0.0
- */
-public class LoadSaveExperimentOptimized extends JPanel
-		implements PropertyChangeListener, ItemListener, SequenceListener {
+public class LoadSaveExperiment extends JPanel implements PropertyChangeListener, ItemListener, SequenceListener {
 
 	private static final long serialVersionUID = -690874563607080412L;
-	private static final Logger LOGGER = Logger.getLogger(LoadSaveExperimentOptimized.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(LoadSaveExperiment.class.getName());
 
 	// Performance constants for metadata-only processing
 	private static final int METADATA_BATCH_SIZE = 20; // Process 20 experiments at a time
@@ -95,19 +65,9 @@ public class LoadSaveExperimentOptimized extends JPanel
 	private volatile boolean isProcessing = false;
 	private final AtomicInteger processingCount = new AtomicInteger(0);
 
-	/**
-	 * Creates a new ultra-efficient LoadSaveExperiment instance.
-	 */
-	public LoadSaveExperimentOptimized() {
-		// No heavy initialization needed
+	public LoadSaveExperiment() {
 	}
 
-	/**
-	 * Initializes the panel with the parent component.
-	 * 
-	 * @param parent0 The parent MultiSPOTS96 component
-	 * @return The initialized panel
-	 */
 	public JPanel initPanel(MultiSPOTS96 parent0) {
 		this.parent0 = parent0;
 		setLayout(new BorderLayout());
@@ -157,9 +117,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 		return buttonPanel;
 	}
 
-	/**
-	 * Defines action listeners with optimized event handling.
-	 */
 	private void defineActionListeners() {
 		openButton.addActionListener(new ActionListener() {
 			@Override
@@ -212,11 +169,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 
 	}
 
-	/**
-	 * Ultra-efficient property change handler that processes only metadata.
-	 * 
-	 * @param evt The property change event
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("SELECT1_CLOSED")) {
@@ -224,31 +176,23 @@ public class LoadSaveExperimentOptimized extends JPanel
 				return;
 			}
 
-			// Prevent multiple simultaneous processing
 			if (isProcessing) {
 				LOGGER.warning("File processing already in progress, ignoring new request");
 				return;
 			}
 
-			// Process files asynchronously with metadata-only approach
 			processSelectedFilesMetadataOnly();
 		}
 	}
 
-	/**
-	 * Processes selected files using metadata-only approach for minimal memory
-	 * usage. IMPROVED: Only loads experiment metadata, not full data
-	 */
 	private void processSelectedFilesMetadataOnly() {
 		isProcessing = true;
 		processingCount.set(0);
 		experimentMetadataList.clear();
 
-		// Create progress frame
 		ProgressFrame progressFrame = new ProgressFrame("Processing Experiment Metadata");
 		progressFrame.setMessage("Scanning " + selectedNames.size() + " experiment directories...");
 
-		// Create background worker for metadata processing
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -269,12 +213,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 		worker.execute();
 	}
 
-	/**
-	 * Processes experiment metadata only, without loading full experiment data.
-	 * IMPROVED: Dramatically reduced memory usage
-	 * 
-	 * @param progressFrame The progress frame for user feedback
-	 */
 	private void processMetadataOnly(ProgressFrame progressFrame) {
 		final String subDir = parent0.expListCombo.stringExpBinSubDirectory;
 		final int totalFiles = selectedNames.size();
@@ -333,13 +271,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 		}
 	}
 
-	/**
-	 * Processes a single file for metadata only. IMPROVED: Only scans directory
-	 * structure, doesn't load experiment data
-	 * 
-	 * @param fileName The file name to process
-	 * @param subDir   The subdirectory
-	 */
 	private void processSingleFileMetadataOnly(String fileName, String subDir) {
 		try {
 			// Create lightweight ExperimentDirectories for metadata scanning only
@@ -358,10 +289,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 		}
 	}
 
-	/**
-	 * Adds metadata to UI using lightweight Experiment objects. IMPROVED: Uses
-	 * LazyExperiment objects that only load data when needed
-	 */
 	private void addMetadataToUI() {
 		try {
 			List<LazyExperiment> lazyExperiments = new ArrayList<>();
@@ -389,7 +316,8 @@ public class LoadSaveExperimentOptimized extends JPanel
 				protected Void doInBackground() throws Exception {
 					for (int i = 0; i < parent0.expListCombo.getItemCount(); i++) {
 						plugins.fmp.multiSPOTS96.experiment.Experiment exp = parent0.expListCombo.getItemAtNoLoad(i);
-						String path = plugins.fmp.multiSPOTS96.tools.DescriptorsIO.getDescriptorsFullName(exp.getResultsDirectory());
+						String path = plugins.fmp.multiSPOTS96.tools.DescriptorsIO
+								.getDescriptorsFullName(exp.getResultsDirectory());
 						java.io.File f = new java.io.File(path);
 						if (!f.exists()) {
 							plugins.fmp.multiSPOTS96.tools.DescriptorsIO.buildFromExperiment(exp);
@@ -404,12 +332,6 @@ public class LoadSaveExperimentOptimized extends JPanel
 		}
 	}
 
-	/**
-	 * Optimized experiment opening with lazy loading.
-	 * 
-	 * @param exp The experiment to open (could be LazyExperiment)
-	 * @return true if successful, false otherwise
-	 */
 	public boolean openSelectedExperiment(Experiment exp) {
 		ProgressFrame progressFrame = new ProgressFrame("Load Experiment Data");
 
@@ -528,7 +450,7 @@ public class LoadSaveExperimentOptimized extends JPanel
 	public void closeViewsForCurrentExperiment(Experiment exp) {
 		if (exp != null) {
 			if (exp.seqCamData != null) {
-				// Avoid auto-saving analysis when closing; saving should be explicit
+				// TODO??? Avoid auto-saving analysis when closing; saving should be explicit
 				exp.save_MS96_experiment();
 
 				if (exp.seqCamData.getSequence() != null) {

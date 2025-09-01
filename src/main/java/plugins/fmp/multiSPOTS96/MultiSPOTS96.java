@@ -22,7 +22,7 @@ import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 
 public class MultiSPOTS96 extends PluginActionable {
 
-	public IcyFrame mainFrame = new IcyFrame("multiSPOTS96 August 31, 2025", true, true, true, true);
+	public IcyFrame mainFrame = new IcyFrame("multiSPOTS96 September 1, 2025", true, true, true, true);
 	public JComboBoxExperimentLazy expListCombo = new JComboBoxExperimentLazy();
 	public DescriptorIndex descriptorIndex = new DescriptorIndex();
 
@@ -48,8 +48,6 @@ public class MultiSPOTS96 extends PluginActionable {
 
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(mainPanel, BorderLayout.WEST);
-
-
 
 		mainFrame.pack();
 		mainFrame.center();
