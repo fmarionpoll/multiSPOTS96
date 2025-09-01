@@ -46,7 +46,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	private final ConcurrentHashMap<String, CompressedMask> compressedMasks = new ConcurrentHashMap<>();
 
 	// === MEMORY PROFILING COUNTERS ===
-	private int totalImagesProcessed = 0;
+//	private int totalImagesProcessed = 0;
 	private int totalTransformedImagesCreated = 0;
 	private int totalCursorsCreated = 0;
 	private int batchCount = 0; // Counter for batch processing cleanup optimization
@@ -604,17 +604,6 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		}
 	}
 
-//	private void checkForMemoryLeaks() {
-//		Runtime runtime = Runtime.getRuntime();
-//		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-//
-//		// Check if memory usage is growing abnormally
-//		if (usedMemory > runtime.maxMemory() * 0.8) {
-//			System.err.println("WARNING: High memory usage detected!");
-//			System.err.println("Consider reducing batch size or enabling more aggressive GC");
-//		}
-//	}
-
 	// === AGGRESSIVE MEMORY CLEANUP ===
 
 	private void forceAggressiveCleanup() {
@@ -659,7 +648,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	private void clearCompressedMaskCache() {
 		// Limit cache size to prevent unbounded growth
 		if (compressedMasks.size() > 1000) {
-//			System.out.println("Clearing compressed mask cache (size: " + compressedMasks.size() + ")");
+			System.out.println("Clearing compressed mask cache (size: " + compressedMasks.size() + ")");
 			compressedMasks.clear();
 		}
 	}
@@ -676,13 +665,13 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 
 		// Only trigger aggressive cleanup if memory usage is very high (>70%)
 		if (usagePercent > 70) {
-//			System.out.println("=== HIGH MEMORY PRESSURE DETECTED: " + usagePercent + "% ===");
+			System.out.println("=== HIGH MEMORY PRESSURE DETECTED: " + usagePercent + "% ===");
 			forceAggressiveCleanup();
 
 			// Reduce batch size for next batch
 			if (adaptiveBatchSizer != null) {
 				adaptiveBatchSizer.reduceBatchSize();
-//				System.out.println("Reduced batch size due to memory pressure");
+				System.out.println("Reduced batch size due to memory pressure");
 			}
 		}
 		// For moderate memory usage (50-70%), just do light cleanup
@@ -691,25 +680,6 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			Thread.yield();
 		}
 	}
-
-//	private void generateHeapDumpIfNeeded(String stage) {
-//		Runtime runtime = Runtime.getRuntime();
-//		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-//		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
-//
-//		if (usagePercent > 80) {
-//			// Log memory state instead of generating heap dump (more compatible)
-//			System.out.println("=== HIGH MEMORY USAGE DETECTED ===");
-//			System.out.println("Stage: " + stage);
-//			System.out.println("Memory Usage: " + usagePercent + "%");
-//			System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
-//			System.out.println("Max Memory: " + (runtime.maxMemory() / 1024 / 1024) + " MB");
-//			System.out.println("Compressed Masks: " + compressedMasks.size());
-//			System.out.println("Total Transformed Images: " + totalTransformedImagesCreated);
-//			System.out.println("Total Cursors: " + totalCursorsCreated);
-//			System.out.println("Consider using external tools like VisualVM or JProfiler for detailed heap analysis");
-//		}
-//	}
 
 	// === ENHANCED POST-PROCESSING CLEANUP ===
 
@@ -730,22 +700,18 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		clearAllCaches();
 		clearAllReferences();
 		forceIcyCleanup();
-
-		// Final memory check
-//		logMemoryUsage("After Enhanced Cleanup");
 	}
 
 	private void clearAllCaches() {
 		// Clear compressed mask cache
 		if (compressedMasks != null) {
 			compressedMasks.clear();
-//			System.out.println("Cleared compressed mask cache");
 		}
 
 		// Clear any other caches
 		totalTransformedImagesCreated = 0;
 		totalCursorsCreated = 0;
-		totalImagesProcessed = 0;
+//		totalImagesProcessed = 0;
 	}
 
 	private void clearAllReferences() {
@@ -773,8 +739,6 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			vData = null;
 		}
 
-		// Clear transform references - these are local variables, not class fields
-		// So we don't need to clear them here
 	}
 
 	private void forceIcyCleanup() {
@@ -786,7 +750,6 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			if (clearCacheMethod != null) {
 				clearCacheMethod.setAccessible(true);
 				clearCacheMethod.invoke(null);
-//				System.out.println("Cleared Icy image cache");
 			}
 		} catch (Exception e) {
 			System.out.println("WARNING: Could not clear Icy image cache: " + e.getMessage());

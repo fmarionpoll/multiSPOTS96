@@ -25,7 +25,7 @@ public class _DlgSpotMeasure_ extends JPanel implements PropertyChangeListener, 
 	public PopupPanel capPopupPanel = null;
 	JTabbedPane tabsPane = new JTabbedPane();
 //	ThresholdSimple tabSimpleThreshold = new ThresholdSimple();
-	ThresholdSimpleAdvanced tabSimpleThresholdAdvanced = new ThresholdSimpleAdvanced();
+	ThresholdSimple tabSimpleThresholdAdvanced = new ThresholdSimple();
 //	ThresholdColors colorsThreshold = new ThresholdColors();
 	Edit tabEdit = new Edit();
 	public Charts tabCharts = new Charts();

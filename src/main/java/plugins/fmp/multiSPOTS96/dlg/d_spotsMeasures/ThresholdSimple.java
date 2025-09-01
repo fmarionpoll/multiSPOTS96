@@ -31,7 +31,7 @@ import plugins.fmp.multiSPOTS96.series.BuildSpotsMeasuresAdvanced;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 
-public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeListener {
+public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	/**
 	 * 
 	 */
@@ -105,46 +105,6 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 	}
 
 	// === MEMORY MONITORING AND CLEANUP ===
-
-//	private void logMemoryUsage(String stage) {
-//		Runtime runtime = Runtime.getRuntime();
-//		long totalMemory = runtime.totalMemory();
-//		long freeMemory = runtime.freeMemory();
-//		long usedMemory = totalMemory - freeMemory;
-//		long maxMemory = runtime.maxMemory();
-//		
-//		System.out.println("=== DIALOG " + stage + " ===");
-//		System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
-//		System.out.println("Free Memory: " + (freeMemory / 1024 / 1024) + " MB");
-//		System.out.println("Total Memory: " + (totalMemory / 1024 / 1024) + " MB");
-//		System.out.println("Max Memory: " + (maxMemory / 1024 / 1024) + " MB");
-//		System.out.println("Memory Usage: " + (usedMemory * 100 / maxMemory) + "%");
-//	}
-
-//	private void checkMemoryBeforeReturn() {
-//		Runtime runtime = Runtime.getRuntime();
-//		long usedMemory = runtime.totalMemory() - runtime.freeMemory();
-//		double usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
-//		
-//		System.out.println("=== DIALOG RETURN MEMORY CHECK ===");
-//		System.out.println("Memory Usage: " + usagePercent + "%");
-//		System.out.println("Used Memory: " + (usedMemory / 1024 / 1024) + " MB");
-//		System.out.println("Max Memory: " + (runtime.maxMemory() / 1024 / 1024) + " MB");
-//		
-//		if (usagePercent > 60) {
-//			System.err.println("WARNING: High memory usage on dialog return: " + usagePercent + "%");
-//			System.err.println("Consider forcing cleanup before dialog return");
-//			
-//			// Force cleanup if memory is high
-//			forceDialogReturnCleanup();
-//			
-//			// Check again
-//			usedMemory = runtime.totalMemory() - runtime.freeMemory();
-//			usagePercent = (usedMemory * 100.0) / runtime.maxMemory();
-//			
-//			System.out.println("After cleanup: " + usagePercent + "%");
-//		}
-//	}
 
 	private void forceDialogReturnCleanup() {
 //		System.out.println("=== FORCING DIALOG RETURN CLEANUP ===");
@@ -311,12 +271,10 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 	}
 
 	void startDetection() {
-//		logMemoryUsage("Before Detection Start");
-
 		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
 		if (exp != null) {
-			AdvancedMemoryOptions memOptions = new AdvancedMemoryOptions();
-//			AdvancedMemoryOptions memOptions = createMemoryOptionsAccordingToUserSelection();
+//			AdvancedMemoryOptions memOptions = new AdvancedMemoryOptions();
+			AdvancedMemoryOptions memOptions = createMemoryOptionsAccordingToUserSelection();
 			// Validate configuration
 			AdvancedMemoryOptions.ValidationResult result = memOptions.validate();
 			if (result.isValid()) {
@@ -332,7 +290,6 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 
 			// Use weak reference to avoid memory leak
 			setProcessor(processor);
-
 			processor.execute();
 			detectButton.setText("STOP");
 		}
@@ -461,8 +418,6 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (StringUtil.equals("thread_ended", evt.getPropertyName())) {
 			detectButton.setText(detectString);
-
-			// Check memory before loading experiment data
 			checkMemoryBeforeLoading();
 
 			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
@@ -471,11 +426,8 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 				loadExperimentDataOptimized(exp);
 				parent0.dlgMeasure.tabCharts.displayChartPanels(exp);
 			}
-
-			// Clear processor reference to allow GC
 			processorRef = null;
 
-//			logMemoryUsage("After Detection Complete");
 		}
 	}
 
@@ -521,7 +473,6 @@ public class ThresholdSimpleAdvanced extends JPanel implements PropertyChangeLis
 	}
 
 	private void loadExperimentDataOptimized(Experiment exp) {
-//		System.out.println("=== OPTIMIZED EXPERIMENT LOADING ===");
 
 		try {
 			// Load with memory monitoring
