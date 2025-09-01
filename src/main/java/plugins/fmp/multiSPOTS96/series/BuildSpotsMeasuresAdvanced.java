@@ -40,7 +40,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 	// Removed cursor pooling to simplify and match original approach
 
 	// === STREAMING PROCESSING ===
-	private final StreamingImageProcessor streamingProcessor;
+	private StreamingImageProcessor streamingProcessor;
 
 	// === COMPRESSED MASK STORAGE ===
 	private final ConcurrentHashMap<String, CompressedMask> compressedMasks = new ConcurrentHashMap<>();
@@ -98,6 +98,9 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		logMemoryUsage("Before Analysis");
 
 		try {
+			// Reinitialize streaming state per experiment
+			this.streamingProcessor = new StreamingImageProcessor(new MemoryMonitor());
+			this.batchCount = 0;
 			getTimeLimitsOfSequence(exp);
 			loadExperimentDataToMeasureSpots(exp);
 			exp.cagesArray.setReadyToAnalyze(true, options);
@@ -192,7 +195,7 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 		// Initialize streaming processor
 		streamingProcessor.start(exp.seqCamData, iiFirst, iiLast);
 
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 //		int processedBatches = 0;
 
 		try {
@@ -213,21 +216,21 @@ public class BuildSpotsMeasuresAdvanced extends BuildSeries {
 			streamingProcessor.stop();
 		}
 
-		long endTime = System.currentTimeMillis();
-		long totalTime = endTime - startTime;
+//		long endTime = System.currentTimeMillis();
+//		long totalTime = endTime - startTime;
 
 //		System.out.println("=== Processing Complete ===");
-		System.out.println("Total processing time: " + totalTime + "ms (" + (totalTime / 1000.0) + "s)");
+//		System.out.println("Total processing time: " + totalTime + "ms (" + (totalTime / 1000.0) + "s)");
 //		System.out.println("Processed " + processedBatches + " batches");
 
 		// Memory profiling summary
-		if (options.enableMemoryProfiling) {
-			System.out.println("=== Memory Profiling Summary ===");
-			System.out.println("Total transformed images created: " + totalTransformedImagesCreated);
-			System.out.println("Total cursors created: " + totalCursorsCreated);
-			System.out.println("Compressed masks cached: " + compressedMasks.size());
-			logMemoryUsage("Final");
-		}
+//		if (options.enableMemoryProfiling) {
+//			System.out.println("=== Memory Profiling Summary ===");
+//			System.out.println("Total transformed images created: " + totalTransformedImagesCreated);
+//			System.out.println("Total cursors created: " + totalCursorsCreated);
+//			System.out.println("Compressed masks cached: " + compressedMasks.size());
+//			logMemoryUsage("Final");
+//		}
 
 		progressBar1.close();
 		return true;
