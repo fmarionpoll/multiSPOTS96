@@ -74,6 +74,29 @@ dbwave64/
 
 ---
 
+## dataAcq Project
+
+### Basic Information
+- Project Type: Standalone MFC SDI app (acquisition-only)
+- IDE: Visual Studio 2022
+- C++ Standard: C++20
+- Platform: Windows (Win32 now; x64 later)
+
+### Purpose
+- Decoupled data acquisition tool producing `.dat` files and a mailbox (`manifest.txt`, `diary.txt`) for dbWave64 to import later.
+
+### Locations
+- Solution: `C:\Users\fred\source\repos\dataAcq\dataAcq.sln`
+- Mailbox helpers: `dataAcq\dataAcq\Mailbox.*`
+- Acquisition code: `dataAcq\dataAcq\data_acquisition\*`
+- Resources: `dataAcq\dataAcq\dataAcq.rc` includes `dbWave_src.rc` and `resource_dbwave_src.h`
+- Context file: `C:\Users\fred\source\repos\dataAcq\Cursor\DATAACQ_SPLIT_PROGRESS_AND_CONTEXT.md`
+
+### Notes
+- Uses Data Translation OpenLayers; ensure 32-bit runtime present.
+- Resource IDs imported from dbWave64; prune unused resources progressively.
+
+
 ## dbWave2 Project
 
 ### Basic Information
