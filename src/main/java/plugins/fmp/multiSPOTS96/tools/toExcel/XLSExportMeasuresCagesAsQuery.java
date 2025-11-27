@@ -17,7 +17,7 @@ import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelExportException;
 import plugins.fmp.multiSPOTS96.tools.toExcel.exceptions.ExcelResourceException;
 
 public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
-	ArrayList<EnumXLS_QColumnHeader> headers = new ArrayList<EnumXLS_QColumnHeader>();
+	ArrayList<EnumXLS_QueryColumnHeader> headers = new ArrayList<EnumXLS_QueryColumnHeader>();
 
 	public void exportQToFile(String filename, XLSExportOptions options) throws ExcelExportException {
 		System.out.println("XLSExportBase:exportQToFile() - " + ExcelExportConstants.EXPORT_START_MESSAGE);
@@ -106,23 +106,23 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 	}
 
 	private void initHeadersArray() {
-		headers.add(EnumXLS_QColumnHeader.DATE);
-		headers.add(EnumXLS_QColumnHeader.EXP_BOXID);
-		headers.add(EnumXLS_QColumnHeader.EXP_EXPT);
-		headers.add(EnumXLS_QColumnHeader.EXP_STIM1);
-		headers.add(EnumXLS_QColumnHeader.EXP_CONC1);
-		headers.add(EnumXLS_QColumnHeader.EXP_STIM2);
-		headers.add(EnumXLS_QColumnHeader.EXP_CONC2);
-		headers.add(EnumXLS_QColumnHeader.EXP_STRAIN);
-		headers.add(EnumXLS_QColumnHeader.CAGE_NFLIES);
-		headers.add(EnumXLS_QColumnHeader.CAGE_POS);
-		headers.add(EnumXLS_QColumnHeader.VAL_TIME);
-		headers.add(EnumXLS_QColumnHeader.VAL_STIM1);
-		headers.add(EnumXLS_QColumnHeader.N_STIM1);
-		headers.add(EnumXLS_QColumnHeader.VAL_STIM2);
-		headers.add(EnumXLS_QColumnHeader.N_STIM2);
-		headers.add(EnumXLS_QColumnHeader.VAL_SUM);
-		headers.add(EnumXLS_QColumnHeader.VAL_PI);
+		headers.add(EnumXLS_QueryColumnHeader.DATE);
+		headers.add(EnumXLS_QueryColumnHeader.EXP_BOXID);
+		headers.add(EnumXLS_QueryColumnHeader.EXP_EXPT);
+		headers.add(EnumXLS_QueryColumnHeader.EXP_STIM1);
+		headers.add(EnumXLS_QueryColumnHeader.EXP_CONC1);
+		headers.add(EnumXLS_QueryColumnHeader.EXP_STIM2);
+		headers.add(EnumXLS_QueryColumnHeader.EXP_CONC2);
+		headers.add(EnumXLS_QueryColumnHeader.EXP_STRAIN);
+		headers.add(EnumXLS_QueryColumnHeader.CAGE_NFLIES);
+		headers.add(EnumXLS_QueryColumnHeader.CAGE_POS);
+		headers.add(EnumXLS_QueryColumnHeader.VAL_TIME);
+		headers.add(EnumXLS_QueryColumnHeader.VAL_STIM1);
+		headers.add(EnumXLS_QueryColumnHeader.N_STIM1);
+		headers.add(EnumXLS_QueryColumnHeader.VAL_STIM2);
+		headers.add(EnumXLS_QueryColumnHeader.N_STIM2);
+		headers.add(EnumXLS_QueryColumnHeader.VAL_SUM);
+		headers.add(EnumXLS_QueryColumnHeader.VAL_PI);
 		for (int i = 0; i < headers.size(); i++)
 			headers.get(i).setValue(i);
 	}
@@ -165,7 +165,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		int x = 0;
 		boolean transpose = options.transpose;
 		int nextcol = -1;
-		for (EnumXLS_QColumnHeader dumb : headers) {
+		for (EnumXLS_QueryColumnHeader dumb : headers) {
 			XLSUtils.setValue(sheet, x, dumb.getValue(), transpose, dumb.getName());
 			if (nextcol < dumb.getValue())
 				nextcol = dumb.getValue();
@@ -266,16 +266,16 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 
 	void writeCageMeasuresAtT(SXSSFSheet sheet, Point pt, int t, XLSResults xlsStim1, XLSResults xlsStim2,
 			XLSResults xlsPI, XLSResults xlsSUM, EnumXLSExport xlsExportType) {
-		pt.y = EnumXLS_QColumnHeader.VAL_TIME.getValue();
+		pt.y = EnumXLS_QueryColumnHeader.VAL_TIME.getValue();
 		XLSUtils.setValue(sheet, pt, options.transpose, t);
 
-		pt.y = EnumXLS_QColumnHeader.VAL_STIM1.getValue();
+		pt.y = EnumXLS_QueryColumnHeader.VAL_STIM1.getValue();
 		writeDataToXLS(sheet, pt, t, xlsStim1);
-		pt.y = EnumXLS_QColumnHeader.VAL_STIM2.getValue();
+		pt.y = EnumXLS_QueryColumnHeader.VAL_STIM2.getValue();
 		writeDataToXLS(sheet, pt, t, xlsStim2);
-		pt.y = EnumXLS_QColumnHeader.VAL_SUM.getValue();
+		pt.y = EnumXLS_QueryColumnHeader.VAL_SUM.getValue();
 		writeDataToXLS(sheet, pt, t, xlsSUM);
-		pt.y = EnumXLS_QColumnHeader.VAL_PI.getValue();
+		pt.y = EnumXLS_QueryColumnHeader.VAL_PI.getValue();
 		writeDataToXLS(sheet, pt, t, xlsPI);
 
 		pt.y++;
@@ -291,7 +291,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		}
 	}
 
-	String getDescriptorStr(Experiment exp, Cage cage, EnumXLS_QColumnHeader col) {
+	String getDescriptorStr(Experiment exp, Cage cage, EnumXLS_QueryColumnHeader col) {
 		String dummy = null;
 		switch (col) {
 		case DATE:
@@ -329,7 +329,7 @@ public class XLSExportMeasuresCagesAsQuery extends XLSExportMeasuresFromSpot {
 		return dummy;
 	}
 
-	int getDescriptorInt(Experiment exp, Cage cage, EnumXLS_QColumnHeader col) {
+	int getDescriptorInt(Experiment exp, Cage cage, EnumXLS_QueryColumnHeader col) {
 		int dummy = -1;
 		switch (col) {
 		case CAGE_POS:

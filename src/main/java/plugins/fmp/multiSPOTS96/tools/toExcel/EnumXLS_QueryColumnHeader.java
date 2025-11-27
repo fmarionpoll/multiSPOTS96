@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum EnumXLS_QColumnHeader {
+public enum EnumXLS_QueryColumnHeader {
 	DATE("Date", 0, EnumColumnType.DESCRIPTOR_STR), //
 	EXP_BOXID("Box_ID", 1, EnumColumnType.DESCRIPTOR_STR), //
 	CAGEID("Cage_ID", 2, EnumColumnType.DESCRIPTOR_STR), //
@@ -36,7 +36,7 @@ public enum EnumXLS_QColumnHeader {
 	private int value;
 	private final EnumColumnType type;
 
-	EnumXLS_QColumnHeader(String label, int value, EnumColumnType type) {
+	EnumXLS_QueryColumnHeader(String label, int value, EnumColumnType type) {
 		this.name = label;
 		this.value = value;
 		this.type = type;
@@ -54,17 +54,17 @@ public enum EnumXLS_QColumnHeader {
 		this.value = val;
 	}
 
-	static final Map<String, EnumXLS_QColumnHeader> names = Arrays.stream(EnumXLS_QColumnHeader.values())
-			.collect(Collectors.toMap(EnumXLS_QColumnHeader::getName, Function.identity()));
+	static final Map<String, EnumXLS_QueryColumnHeader> names = Arrays.stream(EnumXLS_QueryColumnHeader.values())
+			.collect(Collectors.toMap(EnumXLS_QueryColumnHeader::getName, Function.identity()));
 
-	static final Map<Integer, EnumXLS_QColumnHeader> values = Arrays.stream(EnumXLS_QColumnHeader.values())
-			.collect(Collectors.toMap(EnumXLS_QColumnHeader::getValue, Function.identity()));
+	static final Map<Integer, EnumXLS_QueryColumnHeader> values = Arrays.stream(EnumXLS_QueryColumnHeader.values())
+			.collect(Collectors.toMap(EnumXLS_QueryColumnHeader::getValue, Function.identity()));
 
-	public static EnumXLS_QColumnHeader fromName(final String name) {
+	public static EnumXLS_QueryColumnHeader fromName(final String name) {
 		return names.get(name);
 	}
 
-	public static EnumXLS_QColumnHeader fromValue(final int value) {
+	public static EnumXLS_QueryColumnHeader fromValue(final int value) {
 		return values.get(value);
 	}
 
@@ -76,8 +76,8 @@ public enum EnumXLS_QColumnHeader {
 		return type;
 	}
 
-	public static EnumXLS_QColumnHeader findByText(String abbr) {
-		for (EnumXLS_QColumnHeader v : values()) {
+	public static EnumXLS_QueryColumnHeader findByText(String abbr) {
+		for (EnumXLS_QueryColumnHeader v : values()) {
 			if (v.toString().equals(abbr))
 				return v;
 		}
