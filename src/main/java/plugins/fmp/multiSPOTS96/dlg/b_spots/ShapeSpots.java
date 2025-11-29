@@ -103,7 +103,7 @@ public class ShapeSpots extends JPanel {
 	private void declareListeners() {
 		spotsOverlayCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					if (spotsOverlayCheckBox.isSelected()) {
 						updateOverlay(exp);
@@ -119,7 +119,7 @@ public class ShapeSpots extends JPanel {
 		spotsTransformsComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					int index = spotsTransformsComboBox.getSelectedIndex();
 					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
@@ -150,7 +150,7 @@ public class ShapeSpots extends JPanel {
 		spotsViewButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					displayTransform(exp);
 			}
@@ -159,7 +159,7 @@ public class ShapeSpots extends JPanel {
 		detectContoursButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.seqCamData.removeROIsContainingString("_mask");
 					detectContours(exp);
@@ -171,7 +171,7 @@ public class ShapeSpots extends JPanel {
 		restoreContoursButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					restoreContours(exp);
 				}
@@ -181,7 +181,7 @@ public class ShapeSpots extends JPanel {
 		cutAndInterpolateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					cutAndInterpolate(exp);
 					exp.saveSpotsArray_file();
@@ -210,7 +210,7 @@ public class ShapeSpots extends JPanel {
 			return;
 
 		if (overlayThreshold == null) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null)
 				updateOverlay(exp);
 		}
@@ -226,9 +226,9 @@ public class ShapeSpots extends JPanel {
 		BuildSeriesOptions options = new BuildSeriesOptions();
 
 		// list of stack experiments
-		options.expList = parent0.expListCombo;
-		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
-		options.expList.index1 = parent0.expListCombo.getSelectedIndex();
+		options.expList = parent0.expListComboLazy;
+		options.expList.index0 = parent0.expListComboLazy.getSelectedIndex();
+		options.expList.index1 = parent0.expListComboLazy.getSelectedIndex();
 		options.detectAllSeries = false;
 		options.seriesFirst = 0;
 

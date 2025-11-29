@@ -91,7 +91,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 		copyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					cagesArrayCopy = exp.cagesArray;
 					pasteButton.setEnabled(true);
@@ -102,7 +102,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 		pasteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					for (Cage cageFrom : cagesArrayCopy.cagesList) {
 						cageFrom.valid = false;
@@ -121,7 +121,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 		duplicateAllButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					int rowIndex = cageTable.getSelectedRow();
 					int columnIndex = cageTable.getSelectedColumn();
@@ -139,7 +139,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 		selectedCageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					ArrayList<ROI> roiList = exp.seqCamData.getSequence().getSelectedROIs();
 					if (roiList.size() > 0) {
@@ -169,7 +169,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 
 	public void close() {
 		dialogFrame.close();
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			exp.saveSpotsArray_file();
 		}
@@ -183,7 +183,7 @@ public class InfosCageTable extends JPanel implements ListSelectionListener {
 	}
 
 	void selectCage(int cageID) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			Cage cage = exp.cagesArray.getCageFromID(cageID);
 			ROI2D roi = cage.getRoi();

@@ -84,7 +84,7 @@ public class Intervals extends JPanel implements ItemListener {
 		applyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					setExperimentParameters(exp);
 			}
@@ -93,7 +93,7 @@ public class Intervals extends JPanel implements ItemListener {
 		refreshButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					refreshBinSize(exp);
 			}
@@ -102,7 +102,7 @@ public class Intervals extends JPanel implements ItemListener {
 		indexFirstImageJSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				long newValue = (long) indexFirstImageJSpinner.getValue();
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null && exp.seqCamData.getImageLoader().getAbsoluteIndexFirstImage() != newValue) {
 					exp.seqCamData.getImageLoader().setAbsoluteIndexFirstImage(newValue);
 					List<String> imagesList = ExperimentDirectories
@@ -118,7 +118,7 @@ public class Intervals extends JPanel implements ItemListener {
 
 		fixedNumberOfImagesJSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				long newValue = (long) fixedNumberOfImagesJSpinner.getValue();
 				if (exp != null && exp.seqCamData.getImageLoader().getFixedNumberOfImages() != newValue) {
 					exp.seqCamData.getImageLoader().setFixedNumberOfImages(newValue);
@@ -134,7 +134,7 @@ public class Intervals extends JPanel implements ItemListener {
 
 		binSizeJSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					long bin_ms = (long) (((double) binSizeJSpinner.getValue()) * binUnit.getMsUnitValue());
 					exp.seqCamData.getTimeManager().setBinImage_ms(bin_ms);
@@ -192,7 +192,7 @@ public class Intervals extends JPanel implements ItemListener {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			Object source = e.getSource();
 			if (source instanceof JComboBox) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					boolean clipped = clipNumberImagesCombo.getSelectedIndex() == 1 ? true : false;
 					fixedNumberOfImagesJSpinner.setVisible(clipped);

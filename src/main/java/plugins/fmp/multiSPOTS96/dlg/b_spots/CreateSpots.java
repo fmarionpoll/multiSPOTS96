@@ -83,7 +83,7 @@ public class CreateSpots extends JPanel {
 		cageGridButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.seqCamData.removeROIsContainingString("carre");
 					exp.seqCamData.removeROIsContainingString("spot");
@@ -110,7 +110,7 @@ public class CreateSpots extends JPanel {
 		selectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					keepSelectedAreas(exp);
 				}
@@ -120,7 +120,7 @@ public class CreateSpots extends JPanel {
 		createSpotsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.seqCamData.removeROIsContainingString("spot");
 					createSpotsForAllCages(exp, roiGrid, referencePosition);

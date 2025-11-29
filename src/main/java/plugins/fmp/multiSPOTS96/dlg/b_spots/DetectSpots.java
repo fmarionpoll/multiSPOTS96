@@ -153,7 +153,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		spotsViewButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					displayTransform(exp);
 			}
@@ -161,7 +161,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 
 		spotsOverlayCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					if (spotsOverlayCheckBox.isSelected()) {
 						updateOverlay(exp);
@@ -190,7 +190,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		deleteSelectedSpotsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					deleteSelectedSpot(exp);
 			}
@@ -199,7 +199,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		duplicateSelectedSpotButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					duplicateSelectedSpot(exp);
 			}
@@ -208,7 +208,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		convertSpotToEllipseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					int diameter = (int) spotDiameterSpinner.getValue();
 					convertBlobsToCircularSpots(exp, diameter);
@@ -218,7 +218,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 
 		spotDiameterSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					changeSpotsDiameter(exp);
 			}
@@ -227,7 +227,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		cleanUpNamesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					cleanUpSpotNames(exp);
 				}
@@ -238,7 +238,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() == spotsThresholdSpinner) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null)
 				exp.cagesArray.detect_threshold = (int) spotsThresholdSpinner.getValue();
 		}
@@ -284,7 +284,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 			return;
 
 		if (overlayThreshold == null) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null)
 				updateOverlay(exp);
 		}
@@ -298,12 +298,12 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 
 	private BuildSeriesOptions initTrackParameters(Experiment exp) {
 		BuildSeriesOptions options = detectSpots.options;
-		options.expList = parent0.expListCombo;
-		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
+		options.expList = parent0.expListComboLazy;
+		options.expList.index0 = parent0.expListComboLazy.getSelectedIndex();
 		if (allCheckBox.isSelected())
 			options.expList.index1 = options.expList.getItemCount() - 1;
 		else
-			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
+			options.expList.index1 = parent0.expListComboLazy.getSelectedIndex();
 
 		options.btrackWhite = (spotsDirectionComboBox.getSelectedIndex() == 1);
 		options.threshold = (int) spotsThresholdSpinner.getValue();
@@ -335,7 +335,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	}
 
 	void startComputation() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		parent0.dlgBrowse.loadSaveExperiment.closeViewsForCurrentExperiment(exp);
@@ -364,7 +364,7 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 	void selectCagesAccordingToOptions(ArrayList<Integer> selectedCagesList) {
 		if (allCellsComboBox.getSelectedIndex() == 0 || selectedCagesList == null || selectedCagesList.size() < 1)
 			return;
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		for (Cage cage : exp.cagesArray.cagesList) {

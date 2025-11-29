@@ -93,7 +93,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 		copyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					allSpotsCopy = exp.cagesArray.getAllSpotsArray();
 					pasteButton.setEnabled(true);
@@ -104,7 +104,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 		pasteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					SpotsArray spotsArray = exp.cagesArray.getAllSpotsArray();
 					allSpotsCopy.pasteSpotsInfo(spotsArray);
@@ -115,7 +115,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 		getNPixelsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					measureNPixelsForAllSpots(exp);
 			}
@@ -124,7 +124,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 		duplicateRowAtCagePositionButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					duplicatePos(exp);
 			}
@@ -133,7 +133,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 		duplicateCageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					duplicateCage(exp);
 			}
@@ -142,7 +142,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 		duplicatePreviousButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					duplicateRelativeRow(exp, -1);
 			}
@@ -151,7 +151,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 		duplicateNextButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					duplicateRelativeRow(exp, 1);
 			}
@@ -160,7 +160,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 		duplicateAllButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					duplicateAll(exp);
 				}
@@ -170,7 +170,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 		selectedSpotButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					locateSelectedROI(exp);
 			}
@@ -345,7 +345,7 @@ public class InfosSpotTable extends JPanel implements ListSelectionListener {
 	}
 
 	void selectSpot(Spot spot) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			String name = spot.getName();
 			ROI2D roiSpot = spot.getRoi();

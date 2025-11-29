@@ -82,7 +82,7 @@ public class Edit extends JPanel {
 	}
 
 	public void initEditCombos() {
-		editExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsListNoLoad());
+		editExpList.setExperimentsFromList(parent0.expListComboLazy.getExperimentsAsListNoLoad());
 		EnumXLSColumnHeader field = (EnumXLSColumnHeader) fieldNamesCombo.getSelectedItem();
 		fieldOldValuesCombo.removeAllItems();
 		java.util.List<String> values;
@@ -129,7 +129,7 @@ public class Edit extends JPanel {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				final ProgressFrame pf = new ProgressFrame("Refreshing descriptors");
-				parent0.descriptorIndex.preloadFromCombo(parent0.expListCombo, new Runnable() {
+				parent0.descriptorIndex.preloadFromCombo(parent0.expListComboLazy, new Runnable() {
 					@Override
 					public void run() {
 						pf.close();
@@ -217,7 +217,7 @@ public class Edit extends JPanel {
 				fieldOldValuesCombo.setEnabled(true);
 				newValueTextField.setEnabled(true);
 				setCursor(Cursor.getDefaultCursor());
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.load_MS96_spotsMeasures();
 					parent0.dlgMeasure.tabCharts.displayChartPanels(exp);

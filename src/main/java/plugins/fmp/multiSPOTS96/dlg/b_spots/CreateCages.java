@@ -101,7 +101,7 @@ public class CreateCages extends JPanel {
 		createFrameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					selectRoiPerimeterEnclosingCages(exp);
 					exp.seqCamData.removeROIsContainingString("cage");
@@ -113,7 +113,7 @@ public class CreateCages extends JPanel {
 		createGridButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					createGrid(exp);
 				}
@@ -123,7 +123,7 @@ public class CreateCages extends JPanel {
 		createCagesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					createCages(exp);
 					removeGrid(exp);
@@ -160,7 +160,7 @@ public class CreateCages extends JPanel {
 	}
 
 	void updateNColumnsFieldFromSequence() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			int nrois = exp.cagesArray.cagesList.size();
 			if (nrois > 0) {
@@ -301,7 +301,7 @@ public class CreateCages extends JPanel {
 	}
 
 	public void clearTemporaryROIs() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			removeGrid(exp);
 			exp.seqCamData.getSequence().removeROI(roiCagesPerimeter);

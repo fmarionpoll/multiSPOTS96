@@ -47,7 +47,7 @@ public class LoadSaveSpots extends JPanel {
 		loadButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.load_MS96_cages();
 					exp.transferCagesROI_toSequence();
@@ -60,7 +60,7 @@ public class LoadSaveSpots extends JPanel {
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					exp.save_MS96_experiment();
 					exp.saveSpotsArray_file();

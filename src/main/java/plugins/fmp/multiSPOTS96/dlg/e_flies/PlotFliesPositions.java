@@ -79,7 +79,7 @@ public class PlotFliesPositions extends JPanel implements SequenceListener {
 	}
 
 	private void displayGraphsPanels() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		final Rectangle rectv = exp.seqCamData.getSequence().getFirstViewer().getBounds();

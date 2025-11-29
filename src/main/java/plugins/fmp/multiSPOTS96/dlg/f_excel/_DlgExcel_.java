@@ -77,7 +77,7 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 
@@ -139,10 +139,10 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 
 	private XLSExportOptions getSpotsOptions() {
 		int first = 0;
-		int last = parent0.expListCombo.getItemCount() - 1;
+		int last = parent0.expListComboLazy.getItemCount() - 1;
 		if (!tabCommonOptions.exportAllFilesCheckBox.isSelected()) {
-			first = parent0.expListCombo.getSelectedIndex();
-			last = parent0.expListCombo.getSelectedIndex();
+			first = parent0.expListComboLazy.getSelectedIndex();
+			last = parent0.expListComboLazy.getSelectedIndex();
 		}
 
 		XLSExportOptions options = new XLSExportOptions();
@@ -163,7 +163,7 @@ public class _DlgExcel_ extends JPanel implements PropertyChangeListener {
 		options.absoluteTime = false;
 		options.onlyalive = spotsAreas.discardNoFlyCageCheckBox.isSelected();
 		options.exportAllFiles = tabCommonOptions.exportAllFilesCheckBox.isSelected();
-		options.expList = parent0.expListCombo;
+		options.expList = parent0.expListComboLazy;
 		options.experimentIndexFirst = first;
 		options.experimentIndexLast = last;
 

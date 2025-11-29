@@ -60,7 +60,7 @@ public class Edit extends JPanel implements PropertyChangeListener {
 		cutAndInterpolateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					cutAndInterpolate(exp);
 			}
@@ -69,7 +69,7 @@ public class Edit extends JPanel implements PropertyChangeListener {
 		compensateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					compensate(exp);
 			}
@@ -126,7 +126,7 @@ public class Edit extends JPanel implements PropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (StringUtil.equals("thread_ended", evt.getPropertyName())) {
 			buildMedianButton.setText(buildMedianString);
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null) {
 				exp.load_MS96_spotsMeasures();
 				parent0.dlgMeasure.tabCharts.displayChartPanels(exp);

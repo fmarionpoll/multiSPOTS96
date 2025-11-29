@@ -74,7 +74,7 @@ public class ChartOptions extends JPanel {
 
 	public void close() {
 		dialogFrame.close();
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			exp.saveSpotsArray_file();
 		}
@@ -84,7 +84,7 @@ public class ChartOptions extends JPanel {
 		setXaxis.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					updateXAxis();
 				}
@@ -94,7 +94,7 @@ public class ChartOptions extends JPanel {
 		setYaxis.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					updateYAxis();
 				}

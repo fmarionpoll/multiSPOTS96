@@ -108,7 +108,7 @@ public class Filter extends JPanel {
 
 	public void initCombos() {
 		if (!parent0.dlgBrowse.loadSaveExperiment.filteredCheck.isSelected())
-			filterExpList.setExperimentsFromList(parent0.expListCombo.getExperimentsAsListNoLoad());
+			filterExpList.setExperimentsFromList(parent0.expListComboLazy.getExperimentsAsListNoLoad());
 		// nothing else to populate up-front; values are loaded on demand via dialogs
 		updateIndexStatus();
 	}
@@ -264,14 +264,14 @@ public class Filter extends JPanel {
 
 	public void filterExperimentList(boolean setFilter) {
 		if (setFilter) {
-			parent0.expListCombo.setExperimentsFromList(filterAllItems());
+			parent0.expListComboLazy.setExperimentsFromList(filterAllItems());
 		} else {
 			clearAllCheckBoxes();
-			parent0.expListCombo.setExperimentsFromList(filterExpList.getExperimentsAsListNoLoad());
+			parent0.expListComboLazy.setExperimentsFromList(filterExpList.getExperimentsAsListNoLoad());
 		}
 
-		if (parent0.expListCombo.getItemCount() > 0)
-			parent0.expListCombo.setSelectedIndex(0);
+		if (parent0.expListComboLazy.getItemCount() > 0)
+			parent0.expListComboLazy.setSelectedIndex(0);
 		if (setFilter != parent0.dlgBrowse.loadSaveExperiment.filteredCheck.isSelected())
 			parent0.dlgBrowse.loadSaveExperiment.filteredCheck.setSelected(setFilter);
 	}

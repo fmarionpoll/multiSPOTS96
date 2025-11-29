@@ -146,7 +146,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		spotsTransformsComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 //					if (!viewButton1.isSelected()) {
 //						viewButton1.setSelected(true);
@@ -162,7 +162,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		fliesTransformsComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null && viewButton2.isSelected()) {
 					int index = fliesTransformsComboBox.getSelectedIndex();
 					Canvas2D_3Transforms canvas = (Canvas2D_3Transforms) exp.seqCamData.getSequence().getFirstViewer()
@@ -205,7 +205,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		viewButton1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					displayTransform1(exp);
 					displayOverlays(viewButton1.isSelected(), exp);
@@ -216,7 +216,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 		viewButton2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null)
 					displayTransform2(exp);
 			}
@@ -248,7 +248,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 			ifGreater = (fliesDirectionComboBox.getSelectedIndex() == 0);
 		}
 
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			if (exp.seqCamData != null)
 				exp.seqCamData.updateOverlayThreshold(threshold, transform, ifGreater);
@@ -271,7 +271,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	}
 
 	void startDetection() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 //			AdvancedMemoryOptions memOptions = new AdvancedMemoryOptions();
 			AdvancedMemoryOptions memOptions = createMemoryOptionsAccordingToUserSelection();
@@ -304,12 +304,12 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 	private BuildSeriesOptions initDetectOptions(Experiment exp) {
 		BuildSeriesOptions options = new BuildSeriesOptions();
 
-		options.expList = parent0.expListCombo;
-		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
+		options.expList = parent0.expListComboLazy;
+		options.expList.index0 = parent0.expListComboLazy.getSelectedIndex();
 		if (allSeriesCheckBox.isSelected())
 			options.expList.index1 = options.expList.getItemCount() - 1;
 		else
-			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
+			options.expList.index1 = parent0.expListComboLazy.getSelectedIndex();
 		options.detectAllSeries = allSeriesCheckBox.isSelected();
 		if (!allSeriesCheckBox.isSelected()) {
 			options.seriesLast = options.seriesFirst;
@@ -420,7 +420,7 @@ public class ThresholdSimple extends JPanel implements PropertyChangeListener {
 			detectButton.setText(detectString);
 			checkMemoryBeforeLoading();
 
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null) {
 				// Use memory-optimized loading
 				loadExperimentDataOptimized(exp);

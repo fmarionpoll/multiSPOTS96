@@ -125,7 +125,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 		overlayCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp != null) {
 					if (overlayCheckBox.isSelected()) {
 						updateOverlay(exp, (int) thresholdSpinner.getValue());
@@ -153,7 +153,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() == thresholdSpinner) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null)
 				exp.cagesArray.detect_threshold = (int) thresholdSpinner.getValue();
 		}
@@ -186,7 +186,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 		int threshold = (int) thresholdSpinner.getValue();
 
 		if (overlayThreshold2 == null) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null)
 				updateOverlay(exp, threshold);
 		} else {
@@ -216,12 +216,12 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 
 	private BuildSeriesOptions initTrackParameters() {
 		BuildSeriesOptions options = flyDetect2.options;
-		options.expList = parent0.expListCombo;
-		options.expList.index0 = parent0.expListCombo.getSelectedIndex();
+		options.expList = parent0.expListComboLazy;
+		options.expList.index0 = parent0.expListComboLazy.getSelectedIndex();
 		if (allCheckBox.isSelected())
 			options.expList.index1 = options.expList.getItemCount() - 1;
 		else
-			options.expList.index1 = parent0.expListCombo.getSelectedIndex();
+			options.expList.index1 = parent0.expListComboLazy.getSelectedIndex();
 //		parent0.paneKymos.tabDisplay.indexImagesCombo = parent0.paneKymos.tabDisplay.kymographsCombo.getSelectedIndex();
 
 		options.btrackWhite = true;
@@ -245,7 +245,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 	}
 
 	void startComputation() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp == null)
 			return;
 		parent0.dlgBrowse.loadSaveExperiment.closeViewsForCurrentExperiment(exp);
@@ -275,7 +275,7 @@ public class Detect2Flies extends JPanel implements ChangeListener, PropertyChan
 	@Override
 	public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 		int nitems = 1;
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null)
 			nitems = exp.cagesArray.cagesList.size() + 1;
 		if (allCagesComboBox.getItemCount() != nitems) {

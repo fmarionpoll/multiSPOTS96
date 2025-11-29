@@ -78,7 +78,7 @@ public class EditSpots extends JPanel {
 		selectRoisCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp == null)
 					return;
 				boolean isSelected = selectRoisCheckBox.isSelected();
@@ -90,7 +90,7 @@ public class EditSpots extends JPanel {
 		displaySnakeCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp == null)
 					return;
 				boolean isSelected = displaySnakeCheckBox.isSelected();
@@ -103,7 +103,7 @@ public class EditSpots extends JPanel {
 		centerRoisToSnakeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp == null)
 					return;
 				updateRoisFromSnake(exp);
@@ -113,7 +113,7 @@ public class EditSpots extends JPanel {
 		dilateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp == null)
 					return;
 				resizeRois(exp, +1);
@@ -123,7 +123,7 @@ public class EditSpots extends JPanel {
 		erodeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 				if (exp == null)
 					return;
 				resizeRois(exp, -1);
@@ -248,7 +248,7 @@ public class EditSpots extends JPanel {
 	}
 
 	public void clearTemporaryROIs() {
-		Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+		Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 		if (exp != null) {
 			exp.seqCamData.getSequence().removeROI(roiSnake);
 			exp.seqCamData.getSequence().removeROI(roiPerimeter);

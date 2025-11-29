@@ -24,7 +24,7 @@ public class CageTable extends JTable {
 	public CageTable(MultiSPOTS96 parent0) {
 		cellsOrigBackColor = this.getBackground();
 		cellsOrigForeColor = this.getForeground();
-		cageTableModel = new CageTableModel(parent0.expListCombo);
+		cageTableModel = new CageTableModel(parent0.expListComboLazy);
 		setModel(cageTableModel);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 

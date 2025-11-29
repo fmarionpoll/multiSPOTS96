@@ -110,7 +110,7 @@ public class _DlgSpots_ extends JPanel implements PropertyChangeListener, Change
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getPropertyName().equals("SPOTS_ROIS_OPEN")) {
-			Experiment exp = (Experiment) parent0.expListCombo.getSelectedItem();
+			Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
 			if (exp != null) {
 				displaySpotsInformation(exp);
 				tabbedPane.setSelectedIndex(id_infos);
