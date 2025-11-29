@@ -28,9 +28,9 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentUtils;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGeometryException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.GeometryException;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ValidationException;
 import plugins.fmp.multiSPOTS96.tools.polyline.PolygonUtilities;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
@@ -293,7 +293,7 @@ public class CreateCages extends JPanel {
 			roiGrid.createGridFromFrame(polyGon, n_columns, n_rows);
 			exp.seqCamData.getSequence().addROIs(roiGrid.getHorizontalRois(), false);
 			exp.seqCamData.getSequence().addROIs(roiGrid.getVerticalRois(), false);
-		} catch (ROI2DValidationException | ROI2DGeometryException e) {
+		} catch (ValidationException | GeometryException e) {
 			System.err.println("Error creating grid from frame: " + e.getMessage());
 			e.printStackTrace();
 			new AnnounceFrame("Error creating grid: " + e.getMessage());

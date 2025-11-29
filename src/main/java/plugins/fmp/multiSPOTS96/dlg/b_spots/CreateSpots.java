@@ -22,11 +22,11 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentUtils;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGeometryException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.GeometryException;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DGrid;
 import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DPolygonPlus;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DProcessingException;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DValidationException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ProcessingException;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.ValidationException;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 
 public class CreateSpots extends JPanel {
@@ -156,7 +156,7 @@ public class CreateSpots extends JPanel {
 					Point2D.Double center = (Double) roiP.getPosition2D();
 					int radius = (int) (rect.getHeight() / 2);
 					cage.addEllipseSpot(center, radius);
-				} catch (ROI2DValidationException e) {
+				} catch (ValidationException e) {
 					System.err
 							.println("Error getting area at position " + roi.getCagePosition() + ": " + e.getMessage());
 					e.printStackTrace();
@@ -171,7 +171,7 @@ public class CreateSpots extends JPanel {
 			Sequence sequence = exp.seqCamData.getSequence();
 			try {
 				roiGrid.clearGridRois(sequence);
-			} catch (ROI2DValidationException e) {
+			} catch (ValidationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -189,13 +189,13 @@ public class CreateSpots extends JPanel {
 			grid = new ROI2DGrid();
 			try {
 				grid.createGridFromFrame(polygon, n_columns, n_rows);
-			} catch (ROI2DValidationException | ROI2DGeometryException e) {
+			} catch (ValidationException | GeometryException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			try {
 				grid.gridToRois("carre", Color.RED, 1, 1);
-			} catch (ROI2DValidationException | ROI2DProcessingException e) {
+			} catch (ValidationException | ProcessingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

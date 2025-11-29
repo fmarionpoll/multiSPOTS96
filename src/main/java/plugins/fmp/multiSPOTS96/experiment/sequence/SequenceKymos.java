@@ -29,7 +29,7 @@ import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.CagesArray;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.Utilities;
 import plugins.kernel.roi.roi2d.ROI2DPolyLine;
 
 /**
@@ -175,7 +175,7 @@ public class SequenceKymos extends SequenceCamData {
 
 				try {
 					if (roi.getName() != null && roi.getName().contains("level")) {
-						ROI2DUtilities.interpolateMissingPointsAlongXAxis((ROI2DPolyLine) roi, sequenceWidth);
+						Utilities.interpolateMissingPointsAlongXAxis((ROI2DPolyLine) roi, sequenceWidth);
 						processed++;
 					} else if (roi.getName() != null && roi.getName().contains("derivative")) {
 						// Skip derivative ROIs

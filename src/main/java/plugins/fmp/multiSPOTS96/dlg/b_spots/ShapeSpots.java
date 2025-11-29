@@ -31,7 +31,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DMeasures;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.Measures;
 import plugins.fmp.multiSPOTS96.tools.canvas2D.Canvas2D_3Transforms;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformEnums;
 import plugins.fmp.multiSPOTS96.tools.imageTransform.ImageTransformInterface;
@@ -297,7 +297,7 @@ public class ShapeSpots extends JPanel {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				ROI2DPolygon roi0 = ROI2DMeasures.getContourOfDetectedSpot(workImage, spot, options);
+				ROI2DPolygon roi0 = Measures.getContourOfDetectedSpot(workImage, spot, options);
 				if (roi0 != null) {
 					List<Point2D> listPoints = QuickHull2D.computeConvexEnvelope(((ROI2DShape) roi0).getPoints());
 					ROI2DPolygon roi_new = new ROI2DPolygon(listPoints);

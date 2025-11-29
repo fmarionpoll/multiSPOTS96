@@ -29,7 +29,7 @@ import plugins.fmp.multiSPOTS96.series.BuildSeriesOptions;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
 import plugins.fmp.multiSPOTS96.tools.JComponents.Dialog;
 import plugins.fmp.multiSPOTS96.tools.JComponents.exceptions.FileDialogException;
-import plugins.fmp.multiSPOTS96.tools.ROI2D.ROI2DUtilities;
+import plugins.fmp.multiSPOTS96.tools.ROI2D.Utilities;
 import plugins.kernel.roi.roi2d.ROI2DArea;
 import plugins.kernel.roi.roi2d.ROI2DPolygon;
 import plugins.kernel.roi.roi2d.ROI2DShape;
@@ -890,7 +890,7 @@ public class CagesArray {
 
 	public void transferSpotsMeasuresToSequenceAsROIs(Sequence seq) {
 		List<ROI2D> seqRoisList = seq.getROI2Ds(false);
-		ROI2DUtilities.removeROI2DsMissingChar(seqRoisList, '_');
+		Utilities.removeROI2DsMissingChar(seqRoisList, '_');
 		List<ROI2D> newRoisList = new ArrayList<ROI2D>();
 		int height = seq.getHeight();
 		int i = 0;
@@ -905,7 +905,7 @@ public class CagesArray {
 				i++;
 			}
 		}
-		ROI2DUtilities.mergeROI2DsListNoDuplicate(seqRoisList, newRoisList, seq);
+		Utilities.mergeROI2DsListNoDuplicate(seqRoisList, newRoisList, seq);
 		seq.removeAllROI();
 		seq.addROIs(seqRoisList, false);
 	}
