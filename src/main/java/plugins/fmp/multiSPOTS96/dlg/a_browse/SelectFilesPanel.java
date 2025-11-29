@@ -51,7 +51,6 @@ public class SelectFilesPanel extends JPanel {
 	private JList<String> directoriesJList = new JList<String>(new DefaultListModel<String>());
 	private MultiSPOTS96 parent0 = null;
 	List<String> selectedNames = null;
-//	private LoadSaveExperiment 	parent1 		= null;
 
 	public void initialize(MultiSPOTS96 parent0, List<String> stringList) {
 		this.parent0 = parent0;
