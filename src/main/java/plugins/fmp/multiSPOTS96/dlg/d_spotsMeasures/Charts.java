@@ -37,7 +37,7 @@ public class Charts extends JPanel implements SequenceListener {
 	private MultiSPOTS96 parent0 = null;
 	private JButton displayResultsButton = new JButton("Display results");
 	private JButton axisOptionsButton = new JButton("Axis options");
-	private ChartOptions graphOptions = null;
+	private AxisOptions graphOptions = null;
 	private EnumXLSExport[] measures = new EnumXLSExport[] { //
 			EnumXLSExport.AREA_SUM, //
 			EnumXLSExport.AREA_SUMCLEAN // ,
@@ -98,9 +98,8 @@ public class Charts extends JPanel implements SequenceListener {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Experiment exp = (Experiment) parent0.expListComboLazy.getSelectedItem();
-				if (exp != null) {
+				if (exp != null)
 					displayChartPanels(exp);
-				}
 			}
 		});
 
@@ -112,7 +111,7 @@ public class Charts extends JPanel implements SequenceListener {
 					if (graphOptions != null) {
 						graphOptions.close();
 					}
-					graphOptions = new ChartOptions();
+					graphOptions = new AxisOptions();
 					graphOptions.initialize(parent0, chartCageArray);
 					graphOptions.requestFocus();
 				}

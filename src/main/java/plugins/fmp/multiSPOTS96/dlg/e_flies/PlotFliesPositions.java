@@ -21,7 +21,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.cages.FlyPositions;
-import plugins.fmp.multiSPOTS96.tools.chart.ChartFliesPositions;
+import plugins.fmp.multiSPOTS96.tools.chart.ChartFlyPositions;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSExport;
 
 public class PlotFliesPositions extends JPanel implements SequenceListener {
@@ -30,10 +30,10 @@ public class PlotFliesPositions extends JPanel implements SequenceListener {
 	 */
 	private static final long serialVersionUID = -7079184380174992501L;
 
-	private ChartFliesPositions ypositionsChart = null;
-	private ChartFliesPositions distanceChart = null;
-	private ChartFliesPositions aliveChart = null;
-	private ChartFliesPositions sleepChart = null;
+	private ChartFlyPositions ypositionsChart = null;
+	private ChartFlyPositions distanceChart = null;
+	private ChartFlyPositions aliveChart = null;
+	private ChartFlyPositions sleepChart = null;
 	private MultiSPOTS96 parent0 = null;
 
 	public JCheckBox moveCheckbox = new JCheckBox("y position", true);
@@ -119,10 +119,10 @@ public class PlotFliesPositions extends JPanel implements SequenceListener {
 		}
 	}
 
-	private void displayYPos(String title, ChartFliesPositions iChart, Rectangle rectv, Point ptRelative, Experiment exp,
+	private void displayYPos(String title, ChartFlyPositions iChart, Rectangle rectv, Point ptRelative, Experiment exp,
 			EnumXLSExport option) {
 		if (iChart == null || !iChart.getMainChartPanel().isValid()) {
-			iChart = new ChartFliesPositions();
+			iChart = new ChartFlyPositions();
 			iChart.createPanel(title);
 			iChart.setLocationRelativeToPoint(new Point(rectv.x, rectv.y), ptRelative);
 		}
@@ -137,7 +137,7 @@ public class PlotFliesPositions extends JPanel implements SequenceListener {
 		close(sleepChart);
 	}
 
-	private void close(ChartFliesPositions chart) {
+	private void close(ChartFlyPositions chart) {
 		if (chart != null) {
 			chart.mainChartFrame.close();
 			chart = null;

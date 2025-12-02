@@ -23,7 +23,7 @@ import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.tools.chart.ChartCageArrayFrame;
 
-public class ChartOptions extends JPanel {
+public class AxisOptions extends JPanel {
 	/**
 	 * 
 	 */
