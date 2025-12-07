@@ -33,7 +33,7 @@ public class Charts extends JPanel implements SequenceListener {
 	 * 
 	 */
 	private static final long serialVersionUID = -7079184380174992501L;
-	private ChartCageArrayFrame chartCageArray = null;
+	private ChartCageArrayFrame chartCageArrayFrame = null;
 	private MultiSPOTS96 parent0 = null;
 	private JButton displayResultsButton = new JButton("Display results");
 	private JButton axisOptionsButton = new JButton("Axis options");
@@ -112,7 +112,7 @@ public class Charts extends JPanel implements SequenceListener {
 						graphOptions.close();
 					}
 					graphOptions = new AxisOptions();
-					graphOptions.initialize(parent0, chartCageArray);
+					graphOptions.initialize(parent0, chartCageArrayFrame);
 					graphOptions.requestFocus();
 				}
 			}
@@ -149,7 +149,7 @@ public class Charts extends JPanel implements SequenceListener {
 		exp.seqCamData.getSequence().removeListener(this);
 		EnumXLSExport exportType = (EnumXLSExport) exportTypeComboBox.getSelectedItem();
 		if (isThereAnyDataToDisplay(exp, exportType))
-			chartCageArray = plotSpotMeasuresToChart(exp, exportType, chartCageArray);
+			chartCageArrayFrame = plotSpotMeasuresToChart(exp, exportType, chartCageArrayFrame);
 		exp.seqCamData.getSequence().addListener(this);
 	}
 
@@ -186,9 +186,9 @@ public class Charts extends JPanel implements SequenceListener {
 	}
 
 	public void closeAllCharts() {
-		if (chartCageArray != null)
-			chartCageArray.getMainChartFrame().dispose();
-		chartCageArray = null;
+		if (chartCageArrayFrame != null)
+			chartCageArrayFrame.getMainChartFrame().dispose();
+		chartCageArrayFrame = null;
 	}
 
 	private boolean isThereAnyDataToDisplay(Experiment exp, EnumXLSExport option) {
