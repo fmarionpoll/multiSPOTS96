@@ -18,10 +18,10 @@ import javax.swing.JLabel;
 import plugins.fmp.multiSPOTS96.MultiSPOTS96;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
+import plugins.fmp.multiSPOTS96.experiment.LazyExperiment;
 import plugins.fmp.multiSPOTS96.tools.DialogTools;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
-import plugins.fmp.multiSPOTS96.tools.LazyExperiment;
 
 public class Filter extends JPanel {
 	/**

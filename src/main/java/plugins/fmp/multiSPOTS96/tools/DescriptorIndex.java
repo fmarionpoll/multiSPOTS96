@@ -13,6 +13,7 @@ import javax.swing.SwingWorker;
 
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
+import plugins.fmp.multiSPOTS96.experiment.LazyExperiment;
 import plugins.fmp.multiSPOTS96.experiment.cages.Cage;
 import plugins.fmp.multiSPOTS96.experiment.spots.Spot;
 import plugins.fmp.multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;

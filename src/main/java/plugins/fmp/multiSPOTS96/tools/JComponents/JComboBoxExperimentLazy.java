@@ -13,9 +13,9 @@ import icy.gui.frame.progress.ProgressFrame;
 import icy.system.SystemUtil;
 import icy.system.thread.Processor;
 import plugins.fmp.multiSPOTS96.experiment.Experiment;
+import plugins.fmp.multiSPOTS96.experiment.LazyExperiment;
+import plugins.fmp.multiSPOTS96.experiment.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multiSPOTS96.tools.Comparators;
-import plugins.fmp.multiSPOTS96.tools.LazyExperiment;
-import plugins.fmp.multiSPOTS96.tools.LazyExperiment.ExperimentMetadata;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 import plugins.fmp.multiSPOTS96.tools.toExcel.XLSExportOptions;
 

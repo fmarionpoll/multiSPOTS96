@@ -1,4 +1,4 @@
-package plugins.fmp.multiSPOTS96.tools;
+package plugins.fmp.multiSPOTS96.experiment;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -7,9 +7,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import icy.util.XMLUtil;
-import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.ExperimentDirectories;
-import plugins.fmp.multiSPOTS96.experiment.ExperimentProperties;
 import plugins.fmp.multiSPOTS96.tools.toExcel.EnumXLSColumnHeader;
 
 /**
