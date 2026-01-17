@@ -310,8 +310,6 @@ public class DetectSpots extends JPanel implements ChangeListener, PropertyChang
 		options.detectFlies = false;
 
 		options.parent0Rect = parent0.mainFrame.getBoundsInternal();
-//		options.binSubDirectory = exp.getBinSubDirectory();
-
 		options.fromFrame = exp.seqCamData.getCurrentFrame();
 
 		options.transformop = (ImageTransformEnums) spotsTransformsComboBox.getSelectedItem();
