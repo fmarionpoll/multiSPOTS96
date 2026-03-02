@@ -10,6 +10,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,6 +33,7 @@ import plugins.fmp.multiSPOTS96.experiment.Experiment;
 import plugins.fmp.multiSPOTS96.experiment.ExperimentDirectories;
 import plugins.fmp.multiSPOTS96.experiment.LazyExperiment;
 import plugins.fmp.multiSPOTS96.experiment.LazyExperiment.ExperimentMetadata;
+import plugins.fmp.multiSPOTS96.tools.DescriptorsIO;
 import plugins.fmp.multiSPOTS96.tools.JComponents.SequenceNameListRenderer;
 
 public class LoadSaveExperiment extends JPanel implements PropertyChangeListener, ItemListener, SequenceListener {
@@ -311,16 +313,15 @@ public class LoadSaveExperiment extends JPanel implements PropertyChangeListener
 			});
 
 			// Also generate descriptors files in background for any experiment missing it
-			new javax.swing.SwingWorker<Void, Void>() {
+			new SwingWorker<Void, Void>() {
 				@Override
 				protected Void doInBackground() throws Exception {
 					for (int i = 0; i < parent0.expListComboLazy.getItemCount(); i++) {
-						plugins.fmp.multiSPOTS96.experiment.Experiment exp = parent0.expListComboLazy.getItemAtNoLoad(i);
-						String path = plugins.fmp.multiSPOTS96.tools.DescriptorsIO
-								.getDescriptorsFullName(exp.getResultsDirectory());
-						java.io.File f = new java.io.File(path);
+						Experiment exp = parent0.expListComboLazy.getItemAtNoLoad(i);
+						String path = DescriptorsIO.getDescriptorsFullName(exp.getResultsDirectory());
+						File f = new java.io.File(path);
 						if (!f.exists()) {
-							plugins.fmp.multiSPOTS96.tools.DescriptorsIO.buildFromExperiment(exp);
+							DescriptorsIO.buildFromExperiment(exp);
 						}
 					}
 					return null;
