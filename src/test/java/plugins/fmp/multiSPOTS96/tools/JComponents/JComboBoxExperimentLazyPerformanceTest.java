@@ -3,9 +3,10 @@ package plugins.fmp.multiSPOTS96.tools.JComponents;
 import java.util.ArrayList;
 import java.util.List;
 
-import plugins.fmp.multiSPOTS96.experiment.Experiment;
-import plugins.fmp.multiSPOTS96.experiment.LazyExperiment;
-import plugins.fmp.multiSPOTS96.experiment.LazyExperiment.ExperimentMetadata;
+import plugins.fmp.l_multiSPOTS96.experiment.Experiment;
+import plugins.fmp.l_multiSPOTS96.experiment.LazyExperiment;
+import plugins.fmp.l_multiSPOTS96.experiment.LazyExperiment.ExperimentMetadata;
+import plugins.fmp.l_multiSPOTS96.tools.JComponents.JComboBoxExperimentLazy;
 
 /**
  * Performance test for JComboBoxExperimentLazy to verify that bulk loading

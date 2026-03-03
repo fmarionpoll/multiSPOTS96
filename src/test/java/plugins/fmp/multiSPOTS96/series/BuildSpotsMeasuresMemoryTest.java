@@ -4,6 +4,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 
+import plugins.fmp.l_multiSPOTS96.series.BuildSeriesOptions;
+
 /**
  * Test class to demonstrate and validate memory optimizations in BuildSpotsMeasures.
  * This class provides utilities to monitor memory usage and compare different configurations.

@@ -2,6 +2,11 @@ package plugins.fmp.multiSPOTS96.series;
 
 import java.awt.Point;
 
+import plugins.fmp.l_multiSPOTS96.series.AdaptiveBatchSizer;
+import plugins.fmp.l_multiSPOTS96.series.CompressedMask;
+import plugins.fmp.l_multiSPOTS96.series.MemoryMonitor;
+import plugins.fmp.l_multiSPOTS96.series.StreamingImageProcessor;
+
 /**
  * Test class to verify that the externalized classes work correctly.
  * This demonstrates how the externalized classes can be used by other classes.
