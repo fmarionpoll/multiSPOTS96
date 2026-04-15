@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public enum EnumXLS_QueryColumnHeader {
 	DATE("Date", 0, EnumColumnType.DESCRIPTOR_STR), //
-	EXP_BOXID("Box_ID", 1, EnumColumnType.DESCRIPTOR_STR), //
+	EXP_BOXID("ExpCage_ID", 1, EnumColumnType.DESCRIPTOR_STR), //
 	CAGEID("Cage_ID", 2, EnumColumnType.DESCRIPTOR_STR), //
 	EXP_EXPT("Expmt", 3, EnumColumnType.DESCRIPTOR_STR), //
 	EXP_STRAIN("Strain", 4, EnumColumnType.DESCRIPTOR_STR), //
@@ -23,10 +23,10 @@ public enum EnumXLS_QueryColumnHeader {
 	CAGE_AGE("Cage_age", 14, EnumColumnType.DESCRIPTOR_INT), //
 	CAGE_COMMENT("Cage_comment", 15, EnumColumnType.DESCRIPTOR_STR), //
 	DUM4("Dum4", 16, EnumColumnType.DESCRIPTOR_STR), //
-	
+
 	VAL_TIME("time", 17, EnumColumnType.MEASURE), //
 	VAL_STIM1("value1", 18, EnumColumnType.MEASURE), //
-	N_STIM1("n_spots_value1", 19, EnumColumnType.DESCRIPTOR_INT), // 
+	N_STIM1("n_spots_value1", 19, EnumColumnType.DESCRIPTOR_INT), //
 	VAL_STIM2("value2", 20, EnumColumnType.MEASURE), //
 	N_STIM2("n_spots_value2", 21, EnumColumnType.DESCRIPTOR_INT), //
 	VAL_SUM("sum", 22, EnumColumnType.MEASURE), //

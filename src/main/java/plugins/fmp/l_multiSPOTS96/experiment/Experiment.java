@@ -517,7 +517,7 @@ public class Experiment {
 		case EXP_STIM1:
 		case EXP_CONC1:
 		case EXP_EXPT:
-		case EXP_BOXID:
+		case BOX_ID:
 		case EXP_STRAIN:
 		case EXP_SEX:
 		case EXP_STIM2:

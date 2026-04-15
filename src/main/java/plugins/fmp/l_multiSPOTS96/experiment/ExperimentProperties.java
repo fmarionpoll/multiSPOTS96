@@ -73,7 +73,7 @@ public class ExperimentProperties {
 		case EXP_EXPT:
 			strField = ffield_experiment;
 			break;
-		case EXP_BOXID:
+		case BOX_ID:
 			strField = ffield_boxID;
 			break;
 		case EXP_STRAIN:
@@ -105,7 +105,7 @@ public class ExperimentProperties {
 		case EXP_EXPT:
 			ffield_experiment = newValue;
 			break;
-		case EXP_BOXID:
+		case BOX_ID:
 			ffield_boxID = newValue;
 			break;
 		case EXP_STRAIN:
@@ -127,7 +127,7 @@ public class ExperimentProperties {
 
 	public void copyExperimentFieldsFrom(ExperimentProperties expSource) {
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_EXPT);
-		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_BOXID);
+		copyExperimentalField(expSource, EnumXLSColumnHeader.BOX_ID);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STIM1);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_CONC1);
 		copyExperimentalField(expSource, EnumXLSColumnHeader.EXP_STRAIN);
@@ -144,7 +144,7 @@ public class ExperimentProperties {
 	public boolean isSameProperties(ExperimentProperties expi) {
 		boolean flag = true;
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_EXPT);
-		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_BOXID);
+		flag &= isFieldEqual(expi, EnumXLSColumnHeader.BOX_ID);
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_STIM1);
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_CONC1);
 		flag &= isFieldEqual(expi, EnumXLSColumnHeader.EXP_STRAIN);

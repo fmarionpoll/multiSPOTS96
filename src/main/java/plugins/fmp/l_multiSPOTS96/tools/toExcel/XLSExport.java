@@ -360,7 +360,7 @@ public abstract class XLSExport {
 	private void writeExperimentProperties(SXSSFSheet sheet, int x, int y, boolean transpose, Experiment exp) {
 		ExperimentProperties props = exp.getProperties();
 
-		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_BOXID);
+		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.BOX_ID);
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_EXPT);
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_STIM1);
 		XLSUtils.setFieldValue(sheet, x, y, transpose, props, EnumXLSColumnHeader.EXP_CONC1);
