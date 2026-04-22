@@ -7,7 +7,7 @@ public enum EnumXLSExport {
 	XYTIPCAPS("xy-tipcaps", "mm", "xy tip capillaries"), //
 	ELLIPSEAXES("ellipse-axes", "mm", "Ellipse of axes"), //
 	DISTANCE("distance", "mm", "Distance between consecutive points"), //
-	ISALIVE("_alive", "yes/no", "Fly alive or not"), //
+	ISALIVE("alive", "yes(1)/no(0)", "Fly alive or not"), //
 	SLEEP("sleep", "yes, no", "Fly sleeping"), //
 
 	AREA_SUM("AREA_SUM", "grey value", "Consumption (estimated/threshold)"), //
